@@ -25,9 +25,42 @@
 
 package de.unijena.cheminf.curation;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smiles.SmilesParser;
+
 /**
  *
  */
 public class ChemicalStructureCurationUtilsTest {
+
+    ChemicalStructureCurationUtilsTest() {
+    }
+
+    @Test
+    private void checkMoleculeTest() {
+        SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        try {
+            IAtomContainer tmpMolecule = tmpSmilesParser.parseSmiles("OC=1C=C(OC)C=2C(O)=C3C(=C(C2C1)C=4C=5C=C(OC)C=C(OC)C5C(O)=C6C4C(O)C(OC6)C)C(O)C(OC3)C");
+        } catch (InvalidSmilesException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Test
+    private void test() {   //TODO: remove
+        System.out.println("It works!! - 1");
+        Assertions.assertEquals(true, true);
+    }
+
+    @Test
+    private void test2() {  //TODO: remove
+        System.out.println("It works!! - 2");
+    }
 
 }
