@@ -2,7 +2,6 @@ package de.unijena.cheminf.curation;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class ValenceListContainer {
         this.VALENCE_LIST = new ArrayList<>();
 
         try {
-            File tmpValenceListFile = new File("src/test/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt");
+            File tmpValenceListFile = new File("src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt");
             FileReader tmpFileReader = new FileReader(tmpValenceListFile);
             BufferedReader tmpBufferedReader = new BufferedReader(tmpFileReader);
             //

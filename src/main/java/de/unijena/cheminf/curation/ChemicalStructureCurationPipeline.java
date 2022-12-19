@@ -1,13 +1,10 @@
 package de.unijena.cheminf.curation;
 
-import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
-
-import java.util.Arrays;
 import java.util.BitSet;
 
 public class ChemicalStructureCurationPipeline {

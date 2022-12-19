@@ -28,10 +28,9 @@ package de.unijena.cheminf.curation;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -86,7 +85,55 @@ public class ChemicalStructureCurationUtils {
         }
     }
 
-    public static boolean hasCorrectValencies(IAtomContainer anAtomContainer, ValenceListContainer aValenceListContainer) {     //TODO: switch correct to known?
+    public static boolean[] checkForBondTypes(IAtomContainerSet anAtomContainerSet) {
+        boolean[] tmpBondTypesBooleanArray = new boolean[7];
+        boolean[] tmpMoleculeBondTypesBooleanArray;
+        for (IAtomContainer tmpAtomContainer :
+                anAtomContainerSet.atomContainers()) {
+            tmpMoleculeBondTypesBooleanArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainer);
+            for (int i = 0; i < 7; i++) {
+                tmpBondTypesBooleanArray[i] = tmpBondTypesBooleanArray[i] || tmpMoleculeBondTypesBooleanArray[i];
+            }
+        }
+        System.out.println("SINGLE - DOUBLE - TRIPLE - QUADRUPLE - QUINTUPLE - SEXTUPLE - UNSET");
+        System.out.println(Arrays.toString(tmpBondTypesBooleanArray));
+        return tmpBondTypesBooleanArray;
+    }
+
+    public static boolean[] checkForBondTypes(IAtomContainer aMolecule) {
+        boolean[] tmpBondTypesBooleanArray = new boolean[7];
+        for (IAtom tmpAtom : aMolecule.atoms()) {
+            for (IBond tmpBond : tmpAtom.bonds()) {
+                switch (tmpBond.getOrder()) {
+                    case SINGLE -> {
+                        tmpBondTypesBooleanArray[0] = true;
+                    }
+                    case DOUBLE -> {
+                        tmpBondTypesBooleanArray[1] = true;
+                    }
+                    case TRIPLE -> {
+                        tmpBondTypesBooleanArray[2] = true;
+                    }
+                    case QUADRUPLE -> {
+                        tmpBondTypesBooleanArray[3] = true;
+                    }
+                    case QUINTUPLE -> {
+                        tmpBondTypesBooleanArray[4] = true;
+                    }
+                    case SEXTUPLE -> {
+                        tmpBondTypesBooleanArray[5] = true;
+                    }
+                    case UNSET -> {
+                        tmpBondTypesBooleanArray[6] = true;
+                    }
+                    default -> {}   //TODO
+                }
+            }
+        }
+        return tmpBondTypesBooleanArray;
+    }
+
+    public static boolean hasCorrectValencies(IAtomContainer anAtomContainer, ValenceListContainer aValenceListContainer) {     //TODO: switch "correct" to "known"?
         for (IAtom tmpAtom :
                 anAtomContainer.atoms()) {
             if (!ChemicalStructureCurationUtils.hasCorrectValencies(tmpAtom, aValenceListContainer)) {

@@ -7,16 +7,12 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class Main {
 
@@ -43,9 +39,10 @@ public class Main {
                     "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_first200kSMILES.txt",    //with \t and 1
                     "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB.smi",    //with \t and 1
                     "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_canonical_2022_12_16.smi",   //with " " and 0
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_200k_absoluteSMILES_2022_12_16.smi"   //with " " and 0
+                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_first_400k_absoluteSMILES_2022_12_16.smi",   //with " " and 0
+                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_last_500k_absoluteSMILES_2022_12_16.smi",    //with " " and 0
             };
-            File tmpSmilesFile = new File(tmpFilePaths[4]);
+            File tmpSmilesFile = new File(tmpFilePaths[3]);
             FileReader tmpFileReader = new FileReader(tmpSmilesFile);
             BufferedReader tmpBufferedReader = new BufferedReader(tmpFileReader);
             String tmpLine;
@@ -58,6 +55,7 @@ public class Main {
                     IAtomContainer tmpAtomContainer = tmpSmilesParser.parseSmiles(tmpSmilesString);
                     tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
                 } catch (InvalidSmilesException e) {
+                    System.out.println(tmpLine);
                     tmpUnparseableSmilesCount++;
                 }
             }
@@ -66,8 +64,9 @@ public class Main {
             tmpBufferedReader.close();
             //
             //ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);
-            ChemicalStructureCurationPipeline.preprocessAtomContainerSet(tmpAtomContainerSet);
-            ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);
+            //ChemicalStructureCurationPipeline.preprocessAtomContainerSet(tmpAtomContainerSet);
+            //ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);
+            ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet);
         } /*catch (InvalidSmilesException e) {
             throw new RuntimeException(e);
         }*/ catch (FileNotFoundException e) {
