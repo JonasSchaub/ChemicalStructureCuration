@@ -6,25 +6,33 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import java.util.BitSet;
+import java.util.LinkedList;
+import java.util.Objects;
 
 public class ChemicalStructureCurationPipeline {
 
     public static void preprocessAtomContainer(IAtomContainer anAtomContainer) {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null");
+        //
         try {
             ChemicalStructureCurationUtils.addImplicitHydrogens(anAtomContainer);
-        } catch (CDKException anException) {    //TODO: add NullPointerException
+        } catch (CDKException anException) {
             //TODO
         }
     }
 
     public static void preprocessAtomContainerSet(IAtomContainerSet anAtomContainerSet) {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null");
+        //
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             ChemicalStructureCurationPipeline.preprocessAtomContainer(tmpAtomContainer);
         }
     }
 
-    public static void checkForCorrectValencies(IAtomContainerSet anAtomContainerSet) {
+    public static void checkForCorrectValencies(IAtomContainerSet anAtomContainerSet, LinkedList<String> anIdentifierList) {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null");
+        //
         ValenceListContainer tmpValencyContainer = new ValenceListContainer();
         BitSet tmpCorrectValenciesBitSet = new BitSet();
         int tmpNumberOfFailedValencyChecks = 0;
@@ -47,12 +55,13 @@ public class ChemicalStructureCurationPipeline {
         System.out.println();
         SmilesGenerator tmpSmilesGenerator = new SmilesGenerator(SmiFlavor.Unique);
         int tmpStartPoint = 0;
-        for (int i = 0; i < 5; i++) {
+        //for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             if (i >= tmpNumberOfFailedValencyChecks)
                 break;
             int tmpIndex = tmpCorrectValenciesBitSet.nextClearBit(tmpStartPoint);
             try {
-                System.out.println(tmpSmilesGenerator.create(anAtomContainerSet.getAtomContainer(tmpIndex)));
+                System.out.printf("%s\t%s\n", anIdentifierList.get(tmpIndex), tmpSmilesGenerator.create(anAtomContainerSet.getAtomContainer(tmpIndex)));
             } catch (CDKException e) {
             }
             tmpStartPoint = tmpIndex + 1;

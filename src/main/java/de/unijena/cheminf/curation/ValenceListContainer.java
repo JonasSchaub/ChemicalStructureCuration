@@ -14,7 +14,7 @@ public class ValenceListContainer {
 
     public ValenceListContainer() {     //TODO: throw IOException ?
         this.VALENCE_LIST_POINTER_MATRIX = new int[112][2];
-        this.VALENCE_LIST = new ArrayList<>();
+        this.VALENCE_LIST = new ArrayList<>(981);
 
         try {
             File tmpValenceListFile = new File("src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt");

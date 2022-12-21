@@ -26,79 +26,41 @@
 package de.unijena.cheminf.curation;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainerSet;
+import org.openscience.cdk.config.Elements;
 import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  */
 public class ChemicalStructureCurationUtilsTest {
 
-    public static IAtomContainerSet importedAtomContainerSet;
-
     ChemicalStructureCurationUtilsTest() {
-    }
-
-    @BeforeAll
-    public static void importAtomContainerSet() {
-        try {
-            SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
-            ChemicalStructureCurationUtilsTest.importedAtomContainerSet = new AtomContainerSet();
-            String[] tmpFilePaths = new String[]{
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUTfirstSMILES.smi",    //with \t and 1
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_first200kSMILES.txt",    //with \t and 1
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB.smi",    //with \t and 1
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_canonical_2022_12_16.smi",   //with " " and 0
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_first_400k_absoluteSMILES_2022_12_16.smi",   //with " " and 0
-                    "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_last_500k_absoluteSMILES_2022_12_16.smi",    //with " " and 0
-            };
-            File tmpSmilesFile = new File(tmpFilePaths[0]);
-            FileReader tmpFileReader = new FileReader(tmpSmilesFile);
-            BufferedReader tmpBufferedReader = new BufferedReader(tmpFileReader);
-            String tmpLine;
-            String tmpSmilesString;
-            int tmpUnparseableSmilesCount = 0;
-            while ((tmpLine = tmpBufferedReader.readLine()) != null) {
-                tmpSmilesString = tmpLine.split("\t", 2)[1];
-                //tmpSmilesString = tmpLine.split(" ", 2)[0];
-                try {
-                    IAtomContainer tmpAtomContainer = tmpSmilesParser.parseSmiles(tmpSmilesString);
-                    ChemicalStructureCurationUtilsTest.importedAtomContainerSet.addAtomContainer(tmpAtomContainer);
-                } catch (InvalidSmilesException e) {
-                    System.out.println(tmpLine);
-                    tmpUnparseableSmilesCount++;
-                }
-            }
-            System.out.println("tmpUnparseableSmilesCount = " + tmpUnparseableSmilesCount);
-            tmpFileReader.close();
-            tmpBufferedReader.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
     public void checkForBondTypes1Test() {
+        Importer tmpImporter = new Importer(0); //file: "COCONUTfirstSMILES.smi"
+        IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
+        //
         boolean[] tmpBondTypesArrayExpected;
         boolean[] tmpBondTypesArray;
-        tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};  //for COCONUTfirstSMILES.smi
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(ChemicalStructureCurationUtilsTest.importedAtomContainerSet);
+        tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};  //for "COCONUTfirstSMILES.smi"
+        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet);
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
         //
-        tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};  //for COCONUTfirstSMILES.smi line index 0 - 2
+        tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};  //for "COCONUTfirstSMILES.smi" line index 0 - 2
         IAtomContainerSet tmpSubset = new AtomContainerSet();
         for (int i = 0; i < 2; i++) {
-            tmpSubset.addAtomContainer(ChemicalStructureCurationUtilsTest.importedAtomContainerSet.getAtomContainer(i));
+            tmpSubset.addAtomContainer(tmpAtomContainerSet.getAtomContainer(i));
         }
         tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpSubset);
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
@@ -106,19 +68,60 @@ public class ChemicalStructureCurationUtilsTest {
 
     @Test
     public void checkForBondTypes2Test() {
+        Importer tmpImporter = new Importer(0); //file: "COCONUTfirstSMILES.smi"
+        IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
+        //
         boolean[] tmpBondTypesArrayExpected;
         boolean[] tmpBondTypesArray;
-        tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};   //for COCONUTfirstSMILES.smi line index 0
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(ChemicalStructureCurationUtilsTest.importedAtomContainerSet.getAtomContainer(0));
+        tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};   //for "COCONUTfirstSMILES.smi" line index 0
+        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet.getAtomContainer(0));
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
         //
-        tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};    //for COCONUTfirstSMILES.smi line index 12
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(ChemicalStructureCurationUtilsTest.importedAtomContainerSet.getAtomContainer(12));
+        tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};    //for "COCONUTfirstSMILES.smi" line index 12
+        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet.getAtomContainer(12));
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
     }
 
     @Test
-    private void checkMoleculeTest() {
+    public void countByAtomicNumberTest() {
+        Importer tmpImporter = new Importer(2); //file: "COCONUTfirstSMILES.smi"
+        IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
+        //
+        List<IAtom> tmpAllAtomsList = new ArrayList<>();
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            if (tmpAtomContainer == null) {
+                System.out.println("AtomContainer is null");
+            } else if (tmpAtomContainer.getAtomCount() == 0) {
+                System.out.println("AtomCount is zero");
+            } else {
+                for (IAtom tmpAtom :
+                        tmpAtomContainer.atoms()) {
+                    tmpAllAtomsList.add(tmpAtom);
+                }
+            }
+        }
+        int[] tmpAtomicNumberFrequencyArray1 = ChemicalStructureCurationUtils.countByAtomicNumber(tmpAllAtomsList);
+        System.out.println("Frequency of each atomic number:");
+        int tmpValue;
+        for (int i = 0; i < 112; i++) {
+            if ((tmpValue = tmpAtomicNumberFrequencyArray1[i]) > 0) {
+                System.out.println(Elements.ofNumber(i + 1).symbol() + "\t" + (i + 1) + "\t" + tmpValue);
+            }
+        }
+        //
+        List<IAtom> tmpIncorrectValenciesAtomsList = ChemicalStructureCurationUtils.getAtomsWithIncorrectValencies(tmpAtomContainerSet);
+        int[] tmpAtomicNumberFrequencyArray2 = ChemicalStructureCurationUtils.countByAtomicNumber(tmpIncorrectValenciesAtomsList);
+        System.out.println("Frequency of each atomic number:");
+        for (int i = 0; i < 112; i++) {
+            if ((tmpValue = tmpAtomicNumberFrequencyArray2[i]) > 0) {
+                System.out.println(Elements.ofNumber(i + 1).symbol() + "\t" + (i + 1) + "\t" + tmpValue);
+            }
+        }
+    }
+
+    @Test
+    public void checkMoleculeTest() {   //TODO: remove
         SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         try {
             IAtomContainer tmpMolecule = tmpSmilesParser.parseSmiles("OC=1C=C(OC)C=2C(O)=C3C(=C(C2C1)C=4C=5C=C(OC)C=C(OC)C5C(O)=C6C4C(O)C(OC6)C)C(O)C(OC3)C");
