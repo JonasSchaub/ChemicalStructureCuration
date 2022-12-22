@@ -6,7 +6,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,78 +14,170 @@ import java.util.LinkedList;
 
 public class Importer {
 
-    private final String[] filePaths;
+    private static final String FILE_DIRECTORY_PATH = "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\";
 
-    private final IAtomContainerSet importedAtomContainerSet;
+    private static final String[] FILE_NAMES_STRING_ARRAY = new String[]{
+            "COCONUTfirstSMILES.smi",                               //with \t and 1
+            "COCONUT_DB_first200kSMILES.txt",                       //with \t and 1
+            "COCONUT_DB.smi",                                       //with \t and 1
+            "COCONUT_DB_canonical_2022_12_16.smi",                  //with " " and 0
+            "COCONUT_DB_first_400k_absoluteSMILES_2022_12_16.smi",  //with " " and 0
+            "COCONUT_DB_last_500k_absoluteSMILES_2022_12_16.smi",   //with " " and 0
+    };
 
-    private final LinkedList<String> importedIdentifiersList;
+    /**
+     * Buffer size (64 kByte = 65536, 256 kByte = 262144, 512 kByte = 524288, 1 MByte = 1048576 Byte)
+     */
+    private static final int BUFFER_SIZE = 65536;
 
-    public Importer(int anIndexOfPath) throws IllegalArgumentException {
-        this.filePaths = new String[]{
-                "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUTfirstSMILES.smi",    //with \t and 1
-                "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_first200kSMILES.txt",    //with \t and 1
-                "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB.smi",    //with \t and 1
-                "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_canonical_2022_12_16.smi",   //with " " and 0
-                "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_first_400k_absoluteSMILES_2022_12_16.smi",   //with " " and 0
-                "C:\\Users\\Behr\\Documents\\MORTAR_Test_files\\COCONUT_DB_last_500k_absoluteSMILES_2022_12_16.smi",    //with " " and 0
-        };
-        this.importedAtomContainerSet = new AtomContainerSet();
-        this.importedIdentifiersList = new LinkedList<>();
-        //
-        this.importDataSet(anIndexOfPath);
-    }
+    private static final String[] separatorsStringArray = {"\t", " "};
 
-    private void importDataSet(int anIndexOfPath) throws IllegalArgumentException {
-        if (anIndexOfPath >= this.filePaths.length)
-            throw new IllegalArgumentException();
+    private final BufferedReader bufferedReader;
+
+    private final int separatorIndex;
+
+    private final int smilesStringIndex;
+
+    private final LinkedList<String> unparseableLinesList;
+
+    /**
+     * Constructor. TODO
+     *
+     * @param anIndexOfPath
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
+    public Importer(int anIndexOfPath) throws IllegalArgumentException, IOException {
+        if (anIndexOfPath >= Importer.FILE_NAMES_STRING_ARRAY.length) {
+            throw new IllegalArgumentException("Given index of path does not fit to the number of deposited paths");
+        }
+        String tmpFilePath = Importer.FILE_DIRECTORY_PATH + FILE_NAMES_STRING_ARRAY[anIndexOfPath];
+        File tmpSmilesFile = new File(tmpFilePath);
+        if (anIndexOfPath <= 2) {
+            this.separatorIndex = 0;
+            this.smilesStringIndex = 1;
+        } else {
+            this.separatorIndex = 1;
+            this.smilesStringIndex = 0;
+        }
+        this.unparseableLinesList = new LinkedList<>();
         try {
-            SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
-            File tmpSmilesFile = new File(this.filePaths[anIndexOfPath]);
-            FileReader tmpFileReader = new FileReader(tmpSmilesFile);
-            BufferedReader tmpBufferedReader = new BufferedReader(tmpFileReader);
-            String[] tmpSplittedLine;
-            String tmpLine;
-            String tmpSmilesString;
-            String tmpIdentifierString;
-            int tmpUnparseableSmilesCount = 0;
-            int tmpCounter = 0;
-            while ((tmpLine = tmpBufferedReader.readLine()) != null) {
-                if ((tmpCounter % 20000) == 0) {
-                    System.out.println(tmpCounter);
-                }
-                if (anIndexOfPath <= 2) {
-                    tmpSplittedLine = tmpLine.split("\t", 2);
-                    tmpSmilesString = tmpSplittedLine[1];
-                    tmpIdentifierString = tmpSplittedLine[0];
-                } else {
-                    tmpSplittedLine = tmpLine.split(" ", 2);
-                    tmpSmilesString = tmpSplittedLine[0];
-                    tmpIdentifierString = tmpSplittedLine[1];
-                }
-                try {
-                    IAtomContainer tmpAtomContainer = tmpSmilesParser.parseSmiles(tmpSmilesString);
-                    this.importedAtomContainerSet.addAtomContainer(tmpAtomContainer);
-                    this.importedIdentifiersList.add(tmpIdentifierString);
-                } catch (InvalidSmilesException e) {
-                    System.out.println(tmpLine);
-                    tmpUnparseableSmilesCount++;
-                }
-                tmpCounter++;
-            }
-            System.out.println("tmpUnparseableSmilesCount = " + tmpUnparseableSmilesCount);
-            tmpFileReader.close();
-            tmpBufferedReader.close();
-        } catch (IOException e) {   //TODO
-            throw new RuntimeException(e);
+            this.bufferedReader = new BufferedReader(new FileReader(tmpSmilesFile), Importer.BUFFER_SIZE);
+            this.skipLine(1);
+            this.bufferedReader.mark(Importer.BUFFER_SIZE);
+            //
+        } catch (IOException anIOException) {
+            //TODO
+            throw anIOException;
         }
     }
 
-    public IAtomContainerSet getImportedAtomContainerSet() {
-        return this.importedAtomContainerSet;
+    public IAtomContainerSet importHoleDataSet() throws IllegalArgumentException {
+        try {
+            this.resetBufferedReader();
+        } catch (IOException anIOException) {
+            //TODO
+            return null;
+        }
+        IAtomContainerSet tmpAtomContainerSet = new AtomContainerSet();
+        try {
+            SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+            IAtomContainer tmpAtomContainer;
+            int tmpCounter = 0;
+            while (true) {
+                if ((tmpAtomContainer = this.readNextLine(tmpSmilesParser)) == null) {
+                    break;
+                } else {
+                    tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
+                    tmpCounter++;
+                }
+                if ((tmpCounter % 20000) == 0) {
+                    System.out.println(tmpCounter);
+                }
+            }
+        } catch (IOException e) {   //TODO
+            throw new RuntimeException(e);
+        }
+        return tmpAtomContainerSet;
     }
 
-    public LinkedList<String> getImportedIdentifiersList() {
-        return this.importedIdentifiersList;
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    public IAtomContainer readNextLine() throws IOException {
+        IAtomContainer tmpAtomContainer;
+        try {
+            SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+            tmpAtomContainer = this.readNextLine(tmpSmilesParser);
+        } catch (IOException e) {   //TODO
+            throw new RuntimeException(e);
+        }
+        return tmpAtomContainer;
+    }
+
+    /**
+     *
+     * @param aNumberOfLines
+     * @throws IOException
+     */
+    public void skipLine(int aNumberOfLines) throws IOException {
+        for (int i = 0; i < aNumberOfLines; i++) {
+            this.bufferedReader.readLine();
+        }
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void resetBufferedReader() throws IOException {
+        this.unparseableLinesList.clear();
+        this.bufferedReader.reset();
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void closeBufferedReader() throws IOException {
+        this.bufferedReader.close();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getUnparseableSmilesCount() {
+        return this.unparseableLinesList.size();
+    }
+
+    /**
+     *
+     * @param aSmilesParser
+     * @return
+     * @throws IOException
+     */
+    private IAtomContainer readNextLine(SmilesParser aSmilesParser) throws IOException {
+        IAtomContainer tmpAtomContainer = null;
+        try {
+            String tmpLine;
+            String[] tmpSplittedLine;
+            if ((tmpLine  = this.bufferedReader.readLine()) != null) {
+                tmpSplittedLine = tmpLine.split(Importer.separatorsStringArray[this.separatorIndex], 2);
+                try {
+                    tmpAtomContainer = aSmilesParser.parseSmiles(tmpSplittedLine[this.smilesStringIndex]);
+                    tmpAtomContainer.setProperty("SMILES", tmpSplittedLine[this.smilesStringIndex]);
+                    tmpAtomContainer.setProperty("ID", tmpSplittedLine[this.smilesStringIndex - 1]);
+                } catch (InvalidSmilesException e) {
+                    this.unparseableLinesList.add(tmpLine);
+                }
+            }
+        } catch (IOException anIOException) {   //TODO
+            throw anIOException;
+        }
+        return tmpAtomContainer;
     }
 
 }

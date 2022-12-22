@@ -25,7 +25,6 @@
 
 package de.unijena.cheminf.curation;
 
-import org.openscience.cdk.AtomType;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -328,7 +327,7 @@ public class ChemicalStructureCurationUtils {
         return tmpAtomsWithIncorrectValenciesList;
     }
 
-    public static List<int[]> getAllValenciesOfAtomType(int anAtomicNumber, List<IAtom> anAtomList) {
+    public static List<int[]> getAllValenciesOfAtomType(List<IAtom> anAtomList, int anAtomicNumber) {
         //TODO: checks
         List<int[]> tmpListOfValencies = new ArrayList<>();
         boolean tmpAlreadyPresent;
@@ -393,11 +392,6 @@ public class ChemicalStructureCurationUtils {
     public static int[] countByAtomicNumber(List<IAtom> anAtomList) {
         //TODO: checks
         int[] tmpAtomicNumberFrequencyArray = new int[112]; //length of valency list?!
-        for (int i = 0; i < 112; i++) {
-            if (tmpAtomicNumberFrequencyArray[i] != 0) {    //TODO: remove!
-                System.out.println("You need to initialize the integers, stupid!");
-            }
-        }
         for (IAtom tmpAtom :
                 anAtomList) {
             if (tmpAtom.getAtomicNumber() == 0) {

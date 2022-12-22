@@ -30,16 +30,16 @@ public class Main {
             ChemicalStructureCurationUtils.hasCorrectValencies(tmpMolecule, tmpValenceListContainer);*/
             //
             Importer tmpImporter = new Importer(3);
-            IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
+            IAtomContainerSet tmpAtomContainerSet = tmpImporter.importHoleDataSet();
             //
             //ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);
             //ChemicalStructureCurationPipeline.preprocessAtomContainerSet(tmpAtomContainerSet);
-            ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet, tmpImporter.getImportedIdentifiersList());
+            //ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet, tmpImporter.getImportedIdentifiersList());
             //ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet);
             //Main.countByAtomicNumberTest(tmpAtomContainerSet);
             //Main.getAllValenciesOfAtomTypeTest(tmpAtomContainerSet);
         } catch (Exception e) {
-            throw e;
+            //throw e;
         } /*catch (InvalidSmilesException e) {
             throw new RuntimeException(e);
         }*/
@@ -149,7 +149,7 @@ public class Main {
         List<int[]> tmpListOfValencies;
         //
         tmpAtomicNumberToExtract = 6;
-        tmpListOfValencies = ChemicalStructureCurationUtils.getAllValenciesOfAtomType(tmpAtomicNumberToExtract, tmpIncorrectValenciesAtomsList);
+        tmpListOfValencies = ChemicalStructureCurationUtils.getAllValenciesOfAtomType(tmpIncorrectValenciesAtomsList, tmpAtomicNumberToExtract);
         for (int[] tmpValenceArray :
                 tmpListOfValencies) {
             System.out.println(Arrays.toString(tmpValenceArray));
@@ -157,7 +157,7 @@ public class Main {
         System.out.println();
         //
         tmpAtomicNumberToExtract = 7;
-        tmpListOfValencies = ChemicalStructureCurationUtils.getAllValenciesOfAtomType(tmpAtomicNumberToExtract, tmpIncorrectValenciesAtomsList);
+        tmpListOfValencies = ChemicalStructureCurationUtils.getAllValenciesOfAtomType(tmpIncorrectValenciesAtomsList, tmpAtomicNumberToExtract);
         for (int[] tmpValenceArray :
                 tmpListOfValencies) {
             System.out.println(Arrays.toString(tmpValenceArray));
