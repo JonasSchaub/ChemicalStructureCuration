@@ -61,7 +61,7 @@ public class ChemicalStructureCurationPipelineTest {
 
     @Test
     private void checkForBondTypesTest() {
-        ChemicalStructureCurationUtils.checkForBondTypes(ChemicalStructureCurationPipelineTest.importedAtomContainerSet);
+        ChemicalStructureCurationUtils.hasBondTypes(ChemicalStructureCurationPipelineTest.importedAtomContainerSet);
         Assertions.assertEquals(true, true);
     }
 

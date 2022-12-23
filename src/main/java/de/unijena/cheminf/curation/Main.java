@@ -31,6 +31,8 @@ public class Main {
             //
             Importer tmpImporter = new Importer(3);
             IAtomContainerSet tmpAtomContainerSet = tmpImporter.importHoleDataSet();
+            System.out.println("UnparseableSmilesCount: " + tmpImporter.getUnparseableSmilesCount());
+            tmpImporter.closeBufferedReader();
             //
             //ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);
             //ChemicalStructureCurationPipeline.preprocessAtomContainerSet(tmpAtomContainerSet);
@@ -39,6 +41,8 @@ public class Main {
             //Main.countByAtomicNumberTest(tmpAtomContainerSet);
             //Main.getAllValenciesOfAtomTypeTest(tmpAtomContainerSet);
         } catch (Exception e) {
+            System.out.println("An exception occurred!");
+            System.out.println(e.toString());
             //throw e;
         } /*catch (InvalidSmilesException e) {
             throw new RuntimeException(e);

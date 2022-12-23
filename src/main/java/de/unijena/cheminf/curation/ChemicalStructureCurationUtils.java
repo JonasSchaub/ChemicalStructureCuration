@@ -31,7 +31,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +91,8 @@ public class ChemicalStructureCurationUtils {
         }
     }
 
-    public static boolean[] checkForBondTypes(IAtomContainerSet anAtomContainerSet) {
+    //<editor-fold desc="hasBondTypes" defaultstate="collapsed">
+    public static boolean[] hasBondTypes(IAtomContainerSet anAtomContainerSet) {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null");
         //
         boolean[] tmpBondTypesBooleanArray = new boolean[7];
@@ -102,51 +102,130 @@ public class ChemicalStructureCurationUtils {
             if (tmpAtomContainer == null) {
                 continue;
             }
-            tmpMoleculeBondTypesBooleanArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainer);
+            tmpMoleculeBondTypesBooleanArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainer);
             for (int i = 0; i < 7; i++) {
                 tmpBondTypesBooleanArray[i] = tmpBondTypesBooleanArray[i] || tmpMoleculeBondTypesBooleanArray[i];
             }
         }
-        System.out.println("SINGLE - DOUBLE - TRIPLE - QUADRUPLE - QUINTUPLE - SEXTUPLE - UNSET");
+        System.out.println("UNSET - SINGLE - DOUBLE - TRIPLE - QUADRUPLE - QUINTUPLE - SEXTUPLE");
         System.out.println(Arrays.toString(tmpBondTypesBooleanArray));
         return tmpBondTypesBooleanArray;
     }
 
-    public static boolean[] checkForBondTypes(IAtomContainer aMolecule) {
-        Objects.requireNonNull(aMolecule, "aMolecule (instance of IAtomContainer) is null");
+    public static boolean[] hasBondTypes(IAtomContainer anAtomContainer) {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null");
+        //
+        return ChemicalStructureCurationUtils.hasBondTypes(anAtomContainer.bonds());
+    }
+
+    public static boolean[] hasBondTypes(IAtom anAtom) {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null");
+        //
+        return ChemicalStructureCurationUtils.hasBondTypes(anAtom.bonds());
+    }
+
+    public static boolean[] hasBondTypes(Iterable<IBond> anIterableOfBonds) {
+        Objects.requireNonNull(anIterableOfBonds, "anIterableOfBonds (instance of Iterable<IBond>) is null");
         //
         boolean[] tmpBondTypesBooleanArray = new boolean[7];
-        for (IAtom tmpAtom : aMolecule.atoms()) {
-            for (IBond tmpBond : tmpAtom.bonds()) {
-                switch (tmpBond.getOrder()) {
-                    case SINGLE -> {
-                        tmpBondTypesBooleanArray[0] = true;
-                    }
-                    case DOUBLE -> {
-                        tmpBondTypesBooleanArray[1] = true;
-                    }
-                    case TRIPLE -> {
-                        tmpBondTypesBooleanArray[2] = true;
-                    }
-                    case QUADRUPLE -> {
-                        tmpBondTypesBooleanArray[3] = true;
-                    }
-                    case QUINTUPLE -> {
-                        tmpBondTypesBooleanArray[4] = true;
-                    }
-                    case SEXTUPLE -> {
-                        tmpBondTypesBooleanArray[5] = true;
-                    }
-                    case UNSET -> {
-                        tmpBondTypesBooleanArray[6] = true;
-                    }
-                    default -> {}   //TODO
+        for (IBond tmpBond : anIterableOfBonds) {
+            switch (tmpBond.getOrder()) {
+                case UNSET -> {
+                    tmpBondTypesBooleanArray[0] = true;
                 }
+                case SINGLE -> {
+                    tmpBondTypesBooleanArray[1] = true;
+                }
+                case DOUBLE -> {
+                    tmpBondTypesBooleanArray[2] = true;
+                }
+                case TRIPLE -> {
+                    tmpBondTypesBooleanArray[3] = true;
+                }
+                case QUADRUPLE -> {
+                    tmpBondTypesBooleanArray[4] = true;
+                }
+                case QUINTUPLE -> {
+                    tmpBondTypesBooleanArray[5] = true;
+                }
+                case SEXTUPLE -> {
+                    tmpBondTypesBooleanArray[6] = true;
+                }
+                default -> {}   //TODO
             }
         }
         return tmpBondTypesBooleanArray;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="countBondTypes" defaultstate="collapsed">
+    public static int[] countBondTypes(IAtomContainerSet anAtomContainerSet) {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null");
+        //
+        int[] tmpBondTypesCountArray = new int[7];
+        int[] tmpMoleculeBondTypesCountArray;
+        for (IAtomContainer tmpAtomContainer :
+                anAtomContainerSet.atomContainers()) {
+            if (tmpAtomContainer == null) {
+                continue;
+            }
+            tmpMoleculeBondTypesCountArray = ChemicalStructureCurationUtils.countBondTypes(tmpAtomContainer);
+            for (int i = 0; i < 7; i++) {
+                tmpBondTypesCountArray[i] += tmpMoleculeBondTypesCountArray[i];
+            }
+        }
+        System.out.println("UNSET - SINGLE - DOUBLE - TRIPLE - QUADRUPLE - QUINTUPLE - SEXTUPLE");
+        System.out.println(Arrays.toString(tmpBondTypesCountArray));
+        return tmpBondTypesCountArray;
+    }
+
+    public static int[] countBondTypes(IAtomContainer anAtomContainer) {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null");
+        //
+        return ChemicalStructureCurationUtils.countBondTypes(anAtomContainer.bonds());
+    }
+
+    public static int[] countBondTypes(IAtom anAtom) {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null");
+        //
+        return ChemicalStructureCurationUtils.countBondTypes(anAtom.bonds());
+    }
+
+    public static int[] countBondTypes(Iterable<IBond> anIterableOfBonds) {
+        Objects.requireNonNull(anIterableOfBonds, "anIterableOfBonds (instance of Iterable<IBond>) is null");
+        //
+        int[] tmpBondTypesCountArray = new int[7];
+        for (IBond tmpBond : anIterableOfBonds) {
+            switch (tmpBond.getOrder()) {
+                case UNSET -> {
+                    tmpBondTypesCountArray[0] += 1;
+                }
+                case SINGLE -> {
+                    tmpBondTypesCountArray[1] += 1;
+                }
+                case DOUBLE -> {
+                    tmpBondTypesCountArray[2] += 1;
+                }
+                case TRIPLE -> {
+                    tmpBondTypesCountArray[3] += 1;
+                }
+                case QUADRUPLE -> {
+                    tmpBondTypesCountArray[4] += 1;
+                }
+                case QUINTUPLE -> {
+                    tmpBondTypesCountArray[5] += 1;
+                }
+                case SEXTUPLE -> {
+                    tmpBondTypesCountArray[6] += 1;
+                }
+                default -> {}   //TODO
+            }
+        }
+        return tmpBondTypesCountArray;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="hasCorrectValencies" defaultstate="collapsed">
     public static boolean hasCorrectValencies(IAtomContainer anAtomContainer) {     //TODO: switch "correct" to "known"?
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null");
         //
@@ -239,7 +318,9 @@ public class ChemicalStructureCurationUtils {
         //System.out.println("No match found:\treturning false");
         return false;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getAtomsWithIncorrectValencies" defaultstate="collapsed">
     public static List<IAtom> getAtomsWithIncorrectValencies(IAtomContainerSet anAtomContainerSet) {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null");
         //
@@ -276,6 +357,7 @@ public class ChemicalStructureCurationUtils {
             int tmpAtomicNumber = tmpAtom.getAtomicNumber();
             if (tmpAtomicNumber == 0) {
                 //TODO: what to do if the atomic number is not specified / 0
+                System.out.println("An atomic number is zero");
             }
             int tmpImplicitHydrogensCount = tmpAtom.getImplicitHydrogenCount();
             int tmpSigmaBondsCount = 0;
@@ -326,6 +408,7 @@ public class ChemicalStructureCurationUtils {
         }
         return tmpAtomsWithIncorrectValenciesList;
     }
+    //</editor-fold>
 
     public static List<int[]> getAllValenciesOfAtomType(List<IAtom> anAtomList, int anAtomicNumber) {
         //TODO: checks

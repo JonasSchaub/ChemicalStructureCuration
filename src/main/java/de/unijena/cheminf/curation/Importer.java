@@ -38,10 +38,13 @@ public class Importer {
 
     private final int smilesStringIndex;
 
+    private final int identifierStringIndex;
+
     private final LinkedList<String> unparseableLinesList;
 
     /**
      * Constructor. TODO
+     * The buff
      *
      * @param anIndexOfPath
      * @throws IllegalArgumentException
@@ -56,15 +59,17 @@ public class Importer {
         if (anIndexOfPath <= 2) {
             this.separatorIndex = 0;
             this.smilesStringIndex = 1;
+            this.identifierStringIndex = 0;
         } else {
             this.separatorIndex = 1;
             this.smilesStringIndex = 0;
+            this.identifierStringIndex = 1;
         }
         this.unparseableLinesList = new LinkedList<>();
         try {
             this.bufferedReader = new BufferedReader(new FileReader(tmpSmilesFile), Importer.BUFFER_SIZE);
             this.skipLine(1);
-            this.bufferedReader.mark(Importer.BUFFER_SIZE);
+            this.bufferedReader.mark(Importer.BUFFER_SIZE); //TODO: set a buffer size!?
             //
         } catch (IOException anIOException) {
             //TODO
@@ -138,7 +143,7 @@ public class Importer {
     }
 
     /**
-     *
+     * TODO: is this method needed? / have any relevance?
      * @throws IOException
      */
     public void closeBufferedReader() throws IOException {
@@ -169,7 +174,7 @@ public class Importer {
                 try {
                     tmpAtomContainer = aSmilesParser.parseSmiles(tmpSplittedLine[this.smilesStringIndex]);
                     tmpAtomContainer.setProperty("SMILES", tmpSplittedLine[this.smilesStringIndex]);
-                    tmpAtomContainer.setProperty("ID", tmpSplittedLine[this.smilesStringIndex - 1]);
+                    tmpAtomContainer.setProperty("ID", tmpSplittedLine[this.identifierStringIndex]);
                 } catch (InvalidSmilesException e) {
                     this.unparseableLinesList.add(tmpLine);
                 }

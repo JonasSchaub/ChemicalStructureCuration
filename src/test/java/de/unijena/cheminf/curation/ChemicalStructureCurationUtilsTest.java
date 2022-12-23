@@ -54,7 +54,7 @@ public class ChemicalStructureCurationUtilsTest {
         boolean[] tmpBondTypesArrayExpected;
         boolean[] tmpBondTypesArray;
         tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};  //for "COCONUTfirstSMILES.smi"
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet);
+        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet);
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
         //
         tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};  //for "COCONUTfirstSMILES.smi" line index 0 - 2
@@ -62,7 +62,7 @@ public class ChemicalStructureCurationUtilsTest {
         for (int i = 0; i < 2; i++) {
             tmpSubset.addAtomContainer(tmpAtomContainerSet.getAtomContainer(i));
         }
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpSubset);
+        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpSubset);
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
     }
 
@@ -74,11 +74,11 @@ public class ChemicalStructureCurationUtilsTest {
         boolean[] tmpBondTypesArrayExpected;
         boolean[] tmpBondTypesArray;
         tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};   //for "COCONUTfirstSMILES.smi" line index 0
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet.getAtomContainer(0));
+        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet.getAtomContainer(0));
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
         //
         tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};    //for "COCONUTfirstSMILES.smi" line index 12
-        tmpBondTypesArray = ChemicalStructureCurationUtils.checkForBondTypes(tmpAtomContainerSet.getAtomContainer(12));
+        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet.getAtomContainer(12));
         Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
     }
 
