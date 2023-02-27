@@ -25,8 +25,6 @@
 
 package de.unijena.cheminf.curation;
 
-import static org.junit.Assert.*;
-
 /**
  *
  */
