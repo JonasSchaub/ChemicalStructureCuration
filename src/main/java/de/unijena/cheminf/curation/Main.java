@@ -32,6 +32,8 @@ public class Main {
             Importer tmpImporter = new Importer(3);
             IAtomContainerSet tmpAtomContainerSet = tmpImporter.importHoleDataSet();
             System.out.println("UnparseableSmilesCount: " + tmpImporter.getUnparseableSmilesCount());
+            System.out.println();
+            ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);
             tmpImporter.closeBufferedReader();
             //
             //ChemicalStructureCurationPipeline.checkForCorrectValencies(tmpAtomContainerSet);

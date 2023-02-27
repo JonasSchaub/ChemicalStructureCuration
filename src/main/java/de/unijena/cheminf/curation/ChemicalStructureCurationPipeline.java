@@ -30,12 +30,13 @@ public class ChemicalStructureCurationPipeline {
         }
     }
 
-    public static void checkForCorrectValencies(IAtomContainerSet anAtomContainerSet, LinkedList<String> anIdentifierList) {
+    public static void checkForCorrectValencies(IAtomContainerSet anAtomContainerSet) {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null");
         //
         ValenceListContainer tmpValencyContainer = new ValenceListContainer();
         BitSet tmpCorrectValenciesBitSet = new BitSet();
-        int tmpNumberOfFailedValencyChecks = 0;
+        int tmpNumberOfFailedValenceChecks = 0;
+        int tmpIntervalFailedValenceChecksCount = 0;
         int tmpIterator = 0;
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
@@ -43,27 +44,42 @@ public class ChemicalStructureCurationPipeline {
                 tmpCorrectValenciesBitSet.set(tmpIterator);
             } else {
                 //false is default
-                tmpNumberOfFailedValencyChecks++;
+                tmpNumberOfFailedValenceChecks++;
+                tmpIntervalFailedValenceChecksCount++;
             }
             tmpIterator++;
+            /*if (tmpIterator % 10000 == 0) {
+                System.out.println(tmpIntervalFailedValenceChecksCount);
+                tmpIntervalFailedValenceChecksCount = 0;
+            }*/
         }
+        //System.out.println(tmpIntervalFailedValenceChecksCount);
         //System.out.println("BitArray of valency check:");
         //System.out.println(Arrays.toString(tmpCorrectValenciesArray));
         System.out.println();
-        System.out.println(tmpNumberOfFailedValencyChecks + "/" + anAtomContainerSet.getAtomContainerCount() + " Molecules failed the valency check!");
+        System.out.println(tmpNumberOfFailedValenceChecks + "/" + anAtomContainerSet.getAtomContainerCount() + " Molecules failed the valency check!");
         //System.out.println(!tmpValencyCheckFailed ? "No molecule failed valency check!" : "A molecule failed the valency check!");
         System.out.println();
         SmilesGenerator tmpSmilesGenerator = new SmilesGenerator(SmiFlavor.Unique);
         int tmpStartPoint = 0;
+        String tmpIdentifierString;
+        String tmpSmilesString;
         //for (int i = 0; i < 5; i++) {
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-            if (i >= tmpNumberOfFailedValencyChecks)
+            if (i >= tmpNumberOfFailedValenceChecks)
                 break;
             int tmpIndex = tmpCorrectValenciesBitSet.nextClearBit(tmpStartPoint);
+            tmpIdentifierString = anAtomContainerSet.getAtomContainer(tmpIndex).getProperty("ID");
+            tmpSmilesString = anAtomContainerSet.getAtomContainer(tmpIndex).getProperty("SMILES");
+            //System.out.printf("%s\t%s\n", tmpIdentifierString, tmpSmilesString);
+            //System.out.printf("%d\t%s\t%s\n", i, tmpIdentifierString, tmpSmilesString);
+            /*
             try {
+
                 System.out.printf("%s\t%s\n", anIdentifierList.get(tmpIndex), tmpSmilesGenerator.create(anAtomContainerSet.getAtomContainer(tmpIndex)));
             } catch (CDKException e) {
             }
+             */
             tmpStartPoint = tmpIndex + 1;
         }
     }

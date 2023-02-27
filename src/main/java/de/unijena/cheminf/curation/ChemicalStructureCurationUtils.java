@@ -314,7 +314,9 @@ public class ChemicalStructureCurationUtils {
             }*/
             //System.out.println("No match:\t" + Arrays.toString(aValenceListContainer.VALENCE_LIST.get(tmpValenceListPointer + i)));
         }
-        System.out.printf("Atom [" + anAtom.getSymbol() + "]: " + "[%d, %d, %d, %d, %d ]\n",anAtom.getAtomicNumber(), tmpFormalCharge, tmpPiBondsCount, tmpSigmaBondsCount, tmpImplicitHydrogensCount);
+        //System.out.printf("Atom [" + anAtom.getSymbol() + "]: " + "[%d, %d, %d, %d, %d ]\n",anAtom.getAtomicNumber(), tmpFormalCharge, tmpPiBondsCount, tmpSigmaBondsCount, tmpImplicitHydrogensCount);
+        System.out.print(anAtom.getContainer().getProperty("ID").toString());
+        System.out.printf("\t[%d, %d, %d, %d, %d ]\n",anAtom.getAtomicNumber(), tmpFormalCharge, tmpPiBondsCount, tmpSigmaBondsCount, tmpImplicitHydrogensCount);
         //System.out.println("No match found:\treturning false");
         return false;
     }

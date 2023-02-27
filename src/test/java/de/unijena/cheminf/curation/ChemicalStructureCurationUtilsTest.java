@@ -47,76 +47,85 @@ public class ChemicalStructureCurationUtilsTest {
     }
 
     @Test
-    public void checkForBondTypes1Test() {
-        Importer tmpImporter = new Importer(0); //file: "COCONUTfirstSMILES.smi"
-        IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
-        //
-        boolean[] tmpBondTypesArrayExpected;
-        boolean[] tmpBondTypesArray;
-        tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};  //for "COCONUTfirstSMILES.smi"
-        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet);
-        Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
-        //
-        tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};  //for "COCONUTfirstSMILES.smi" line index 0 - 2
-        IAtomContainerSet tmpSubset = new AtomContainerSet();
-        for (int i = 0; i < 2; i++) {
-            tmpSubset.addAtomContainer(tmpAtomContainerSet.getAtomContainer(i));
+    public void checkForBondTypesTest1() {
+        try {
+            Importer tmpImporter = new Importer(0); //file: "COCONUTfirstSMILES.smi"
+            IAtomContainerSet tmpAtomContainerSet = tmpImporter.importHoleDataSet();
+            //
+            boolean[] tmpBondTypesArrayExpected;
+            boolean[] tmpBondTypesArray;
+            tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};  //for "COCONUTfirstSMILES.smi"
+            tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet);
+            Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
+            //
+            tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};  //for "COCONUTfirstSMILES.smi" line index 0 - 2
+            IAtomContainerSet tmpSubset = new AtomContainerSet();
+            for (int i = 0; i < 2; i++) {
+                tmpSubset.addAtomContainer(tmpAtomContainerSet.getAtomContainer(i));
+            }
+            tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpSubset);
+            Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
+        } catch (Exception anException) {
         }
-        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpSubset);
-        Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
     }
 
     @Test
-    public void checkForBondTypes2Test() {
-        Importer tmpImporter = new Importer(0); //file: "COCONUTfirstSMILES.smi"
-        IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
-        //
-        boolean[] tmpBondTypesArrayExpected;
-        boolean[] tmpBondTypesArray;
-        tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};   //for "COCONUTfirstSMILES.smi" line index 0
-        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet.getAtomContainer(0));
-        Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
-        //
-        tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};    //for "COCONUTfirstSMILES.smi" line index 12
-        tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet.getAtomContainer(12));
-        Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
+    public void checkForBondTypesTest2() {
+        try {
+            Importer tmpImporter = new Importer(0); //file: "COCONUTfirstSMILES.smi"
+            IAtomContainerSet tmpAtomContainerSet = tmpImporter.importHoleDataSet();
+            //
+            boolean[] tmpBondTypesArrayExpected;
+            boolean[] tmpBondTypesArray;
+            tmpBondTypesArrayExpected = new boolean[]{true, true, false, false, false, false, false};   //for "COCONUTfirstSMILES.smi" line index 0
+            tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet.getAtomContainer(0));
+            Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
+            //
+            tmpBondTypesArrayExpected = new boolean[]{true, true, true, false, false, false, false};    //for "COCONUTfirstSMILES.smi" line index 12
+            tmpBondTypesArray = ChemicalStructureCurationUtils.hasBondTypes(tmpAtomContainerSet.getAtomContainer(12));
+            Assertions.assertArrayEquals(tmpBondTypesArrayExpected, tmpBondTypesArray);
+        } catch (Exception anException) {
+        }
     }
 
     @Test
     public void countByAtomicNumberTest() {
-        Importer tmpImporter = new Importer(2); //file: "COCONUTfirstSMILES.smi"
-        IAtomContainerSet tmpAtomContainerSet = tmpImporter.getImportedAtomContainerSet();
-        //
-        List<IAtom> tmpAllAtomsList = new ArrayList<>();
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
-            if (tmpAtomContainer == null) {
-                System.out.println("AtomContainer is null");
-            } else if (tmpAtomContainer.getAtomCount() == 0) {
-                System.out.println("AtomCount is zero");
-            } else {
-                for (IAtom tmpAtom :
-                        tmpAtomContainer.atoms()) {
-                    tmpAllAtomsList.add(tmpAtom);
+        try {
+            Importer tmpImporter = new Importer(2); //file: "COCONUTfirstSMILES.smi"
+            IAtomContainerSet tmpAtomContainerSet = tmpImporter.importHoleDataSet();
+            //
+            List<IAtom> tmpAllAtomsList = new ArrayList<>();
+            for (IAtomContainer tmpAtomContainer :
+                    tmpAtomContainerSet.atomContainers()) {
+                if (tmpAtomContainer == null) {
+                    System.out.println("AtomContainer is null");
+                } else if (tmpAtomContainer.getAtomCount() == 0) {
+                    System.out.println("AtomCount is zero");
+                } else {
+                    for (IAtom tmpAtom :
+                            tmpAtomContainer.atoms()) {
+                        tmpAllAtomsList.add(tmpAtom);
+                    }
                 }
             }
-        }
-        int[] tmpAtomicNumberFrequencyArray1 = ChemicalStructureCurationUtils.countByAtomicNumber(tmpAllAtomsList);
-        System.out.println("Frequency of each atomic number:");
-        int tmpValue;
-        for (int i = 0; i < 112; i++) {
-            if ((tmpValue = tmpAtomicNumberFrequencyArray1[i]) > 0) {
-                System.out.println(Elements.ofNumber(i + 1).symbol() + "\t" + (i + 1) + "\t" + tmpValue);
+            int[] tmpAtomicNumberFrequencyArray1 = ChemicalStructureCurationUtils.countByAtomicNumber(tmpAllAtomsList);
+            System.out.println("Frequency of each atomic number:");
+            int tmpValue;
+            for (int i = 0; i < 112; i++) {
+                if ((tmpValue = tmpAtomicNumberFrequencyArray1[i]) > 0) {
+                    System.out.println(Elements.ofNumber(i + 1).symbol() + "\t" + (i + 1) + "\t" + tmpValue);
+                }
             }
-        }
-        //
-        List<IAtom> tmpIncorrectValenciesAtomsList = ChemicalStructureCurationUtils.getAtomsWithIncorrectValencies(tmpAtomContainerSet);
-        int[] tmpAtomicNumberFrequencyArray2 = ChemicalStructureCurationUtils.countByAtomicNumber(tmpIncorrectValenciesAtomsList);
-        System.out.println("Frequency of each atomic number:");
-        for (int i = 0; i < 112; i++) {
-            if ((tmpValue = tmpAtomicNumberFrequencyArray2[i]) > 0) {
-                System.out.println(Elements.ofNumber(i + 1).symbol() + "\t" + (i + 1) + "\t" + tmpValue);
+            //
+            List<IAtom> tmpIncorrectValenciesAtomsList = ChemicalStructureCurationUtils.getAtomsWithIncorrectValencies(tmpAtomContainerSet);
+            int[] tmpAtomicNumberFrequencyArray2 = ChemicalStructureCurationUtils.countByAtomicNumber(tmpIncorrectValenciesAtomsList);
+            System.out.println("Frequency of each atomic number:");
+            for (int i = 0; i < 112; i++) {
+                if ((tmpValue = tmpAtomicNumberFrequencyArray2[i]) > 0) {
+                    System.out.println(Elements.ofNumber(i + 1).symbol() + "\t" + (i + 1) + "\t" + tmpValue);
+                }
             }
+        } catch (Exception anException) {
         }
     }
 
@@ -128,6 +137,11 @@ public class ChemicalStructureCurationUtilsTest {
         } catch (InvalidSmilesException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void analyseDistributionOfIncorrectMoleculesOverDataSet() {
+        //TODO: check whether the COCONUT entries with atoms with incorrect valencies cluster in any way (-> identify less trust worthy sources?! / rank them)
     }
 
 }

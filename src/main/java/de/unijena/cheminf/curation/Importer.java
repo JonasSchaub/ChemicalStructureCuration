@@ -42,6 +42,8 @@ public class Importer {
 
     private final LinkedList<String> unparseableLinesList;
 
+    private boolean endOfFileReached;
+
     /**
      * Constructor. TODO
      * The buff
@@ -66,9 +68,10 @@ public class Importer {
             this.identifierStringIndex = 1;
         }
         this.unparseableLinesList = new LinkedList<>();
+        this.endOfFileReached = false;
         try {
             this.bufferedReader = new BufferedReader(new FileReader(tmpSmilesFile), Importer.BUFFER_SIZE);
-            this.skipLine(1);
+            //this.skipLine(1);
             this.bufferedReader.mark(Importer.BUFFER_SIZE); //TODO: set a buffer size!?
             //
         } catch (IOException anIOException) {
@@ -90,12 +93,13 @@ public class Importer {
             IAtomContainer tmpAtomContainer;
             int tmpCounter = 0;
             while (true) {
-                if ((tmpAtomContainer = this.readNextLine(tmpSmilesParser)) == null) {
+                tmpAtomContainer = this.readNextLine(tmpSmilesParser);
+                if (this.endOfFileReached) {
                     break;
-                } else {
+                } else if (tmpAtomContainer != null) {
                     tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
-                    tmpCounter++;
                 }
+                tmpCounter++;
                 if ((tmpCounter % 20000) == 0) {
                     System.out.println(tmpCounter);
                 }
@@ -178,6 +182,8 @@ public class Importer {
                 } catch (InvalidSmilesException e) {
                     this.unparseableLinesList.add(tmpLine);
                 }
+            } else {
+                this.endOfFileReached = true;
             }
         } catch (IOException anIOException) {   //TODO
             throw anIOException;
