@@ -25,13 +25,29 @@
 
 package de.unijena.cheminf.curation;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class FilterUtilsTest {
 
     @Test
-    public void countAtomsTest() {
+    public void countAtoms_consideringImplicitHydrogensTest_12atoms() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        //
+        boolean tmpConsiderImplicitHydrogens = true;
+        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(12, tmpAtomCount);
+    }
 
+    @Test
+    public void countAtoms_notConsideringImplicitHydrogensTest_6atoms() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        //
+        boolean tmpConsiderImplicitHydrogens = false;
+        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(6, tmpAtomCount);
     }
 
 }

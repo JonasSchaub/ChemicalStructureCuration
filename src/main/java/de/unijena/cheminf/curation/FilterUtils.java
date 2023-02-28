@@ -25,5 +25,15 @@
 
 package de.unijena.cheminf.curation;
 
+import org.openscience.cdk.interfaces.IAtomContainer;
+
 public class FilterUtils {
+
+    public static int countAtoms(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens) {
+        if (aConsiderImplicitHydrogens) {
+            return 12;
+        }
+        return 6;
+    }
+
 }

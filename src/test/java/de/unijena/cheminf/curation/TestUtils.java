@@ -32,6 +32,8 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 
+import java.util.Objects;
+
 public class TestUtils {
 
     /**
@@ -39,9 +41,13 @@ public class TestUtils {
      *
      * @param aSmilesStrings Strings containing SMILES codes
      * @return Set of AtomContainers resulting out of parsing the SMILES strings
+     * @throws NullPointerException if one of the given strings is null
      * @throws InvalidSmilesException if one of the given SMILES strings is not parsable
      */
-    public static IAtomContainerSet parseSmilesString(String... aSmilesStrings) throws InvalidSmilesException {
+    public static IAtomContainerSet parseSmilesStrings(String... aSmilesStrings) throws NullPointerException, InvalidSmilesException {
+        for (String tmpString : aSmilesStrings) {
+            Objects.requireNonNull(tmpString, "element of aSmilesStrings (instance of String) is null");
+        }
         SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer tmpAtomContainer;
         IAtomContainerSet tmpACSet = new AtomContainerSet();
@@ -51,6 +57,20 @@ public class TestUtils {
             tmpACSet.addAtomContainer(tmpAtomContainer);
         }
         return tmpACSet;
+    }
+
+    /**
+     * Parses a given SMILES string.
+     *
+     * @param aSmilesString String containing a SMILES code
+     * @return AtomContainer of the parsed SMILES string
+     * @throws NullPointerException if the given string is null
+     * @throws InvalidSmilesException if the given SMILES string can not be parsed
+     */
+    public static IAtomContainer parseSmilesString(String aSmilesString) throws NullPointerException, InvalidSmilesException {
+        Objects.requireNonNull(aSmilesString, "aSmilesString (instance of String) is null");
+        SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        return tmpSmilesParser.parseSmiles(aSmilesString);
     }
 
 }

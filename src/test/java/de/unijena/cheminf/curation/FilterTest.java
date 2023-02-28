@@ -41,7 +41,7 @@ public class FilterTest {
      */
     @Test
     public void assignIdToAtomContainersTest_singleAC() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesString("");
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -57,7 +57,7 @@ public class FilterTest {
      */
     @Test
     public void assignIdToAtomContainersTest_multipleACs() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesString("", "", "");
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -107,7 +107,7 @@ public class FilterTest {
      */
     @Test
     public void filterMethodTest_noFilterSelected_checkIfAllElementsArePreserved() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesString("", "", "");
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -126,7 +126,7 @@ public class FilterTest {
      */
     @Test
     public void filterMethodTest_checkIfAllACsOfFilteredACSetHaveIDsAttached() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesString("", "", "");
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -145,7 +145,7 @@ public class FilterTest {
      */
     @Test
     public void filterMethodTest_noFilterSelected_checkIfAllElementsPreservedTheirCorrectID() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesString("", "", "");
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -174,7 +174,12 @@ public class FilterTest {
     }
 
     @Test
-    public void filterMethodTest_onMaxAtomCount50_singleAC() throws InvalidSmilesException {
+    public void filterMethodTest_filterOnMaxAtomCount50_singleAcWith12Atoms() throws InvalidSmilesException {
+
+    }
+
+    @Test
+    public void filterMethodTest_filterOnMaxAtomCount50_singleAcWithMoreAtoms() throws InvalidSmilesException {
 
     }
 
