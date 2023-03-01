@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
+ * Copyright (c) 2023 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.util.Objects;
 
+/**
+ *
+ */
 public class Filter {
 
     public static final String MOL_ID_PROPERTY_NAME = "MolID";
@@ -56,16 +59,34 @@ public class Filter {
     /**
      * Assigns an identifier to every atom container of the given atom container set.
      *
-     * @param anAtomContainerSet AtomContainerSet
+     * @param anAtomContainerSet IAtomContainerSet
      * @throws NullPointerException
      */
-    protected void assignIdToAtomContainers(IAtomContainerSet anAtomContainerSet) {     //TODO: could be static
+    protected void assignIdToAtomContainers(IAtomContainerSet anAtomContainerSet) {     //TODO: could be static; could be placed in FilterUtils (as protected method)
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null");
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             //TODO: check whether the property is already set? they might not be unique
             //TODO: assign them to the original AtomContainer instance or to a copy?
             anAtomContainerSet.getAtomContainer(i).setProperty(Filter.MOL_ID_PROPERTY_NAME, i);
         }
+    }
+
+    //TODO: could / should be placed in a Utils class
+    /**
+     * TODO
+     * @param aAtomContainerSet
+     * @return
+     */
+    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet aAtomContainerSet) {
+        int[] tmpMolIDArray = new int[aAtomContainerSet.getAtomContainerCount()];
+        for (int i = 0; i < tmpMolIDArray.length; i++) {
+            tmpMolIDArray[i] = aAtomContainerSet.getAtomContainer(i).getProperty(Filter.MOL_ID_PROPERTY_NAME);
+        }
+        return tmpMolIDArray;
+    }
+
+    public Filter withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogen) {
+        throw new NotImplementedException();
     }
 
 }

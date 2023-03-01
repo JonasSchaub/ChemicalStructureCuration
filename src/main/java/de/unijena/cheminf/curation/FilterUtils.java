@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
+ * Copyright (c) 2023 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,66 @@
 
 package de.unijena.cheminf.curation;
 
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+import java.util.Objects;
+
+/**
+ *
+ */
 public class FilterUtils {
 
-    public static int countAtoms(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens) {
-        if (aConsiderImplicitHydrogens) {
-            return 12;
+    /**
+     * Returns the number of atoms that regard to a given atom container. Based on the boolean parameter, implicit
+     * hydrogen are considered or not.
+     *
+     * @param anAtomContainer IAtomContainer instance to investigate
+     * @param aConsiderImplicitHydrogen Boolean value whether implicit hydrogen should be considered
+     * @return Integer number of the number of atoms
+     */
+    public static int countAtoms(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogen) {
+        int tmpAtomCount = anAtomContainer.getAtomCount();
+        if (aConsiderImplicitHydrogen) {
+            tmpAtomCount += FilterUtils.countImplicitHydrogen(anAtomContainer);
         }
-        return 6;
+        return tmpAtomCount;
     }
 
+    /**
+     * Returns the number of implicit hydrogen present in the given atom container.
+     *
+     * @param anAtomContainer IAtomContainer instance to investigate
+     * @return Integer number of implicit hydrogen
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     */
+    public static int countImplicitHydrogen(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null");
+        int tmpHydrogenCount = 0;
+        for (IAtom tmpAtom :
+                anAtomContainer.atoms()) {
+            tmpHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+        }
+        return tmpHydrogenCount;
+    }
+
+    /**
+     * Checks whether the atom count regarding to a given atom container exceeds or equals the given threshold. Based
+     * on the boolean parameter, implicit hydrogen are considered or not.
+     *
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param aThreshold Integer value of the atom count threshold
+     * @param aConsiderImplicitHydrogen Boolean value whether to consider implicit hydrogen
+     * @return Boolean value whether the given atom container exceeds or equals the given threshold
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if the given threshold is less than zero
+     */
+    public static boolean exceedsOrEqualsAtomCount(IAtomContainer anAtomContainer, int aThreshold, boolean aConsiderImplicitHydrogen) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null");
+        if (aThreshold < 0) {
+            throw new IllegalArgumentException("aThreshold (Integer value) is < than 0");
+        }
+        int tmpAtomCount = FilterUtils.countAtoms(anAtomContainer, aConsiderImplicitHydrogen);
+        return tmpAtomCount >= aThreshold;
+    }
 }
