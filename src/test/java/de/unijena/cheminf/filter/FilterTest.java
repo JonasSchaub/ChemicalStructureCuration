@@ -23,11 +23,11 @@
  *
  */
 
-package de.unijena.cheminf.curation;
+package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -86,7 +86,7 @@ public class FilterTest {
         );
     }
 
-    /*@Test   //TODO: check every single AC for not being null? I did not even find a way to create that situation
+    /*@Test   //TODO: check every single AC for not being null? I did not even find a way to create / cause that situation
     public void assignIdToAtomContainersTest_throwNullPointerExceptionIfOneOfTheACsIsNull() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = this.parseSmilesString("", "", "");
         //IAtomContainer tmpAtomContainer = null;
@@ -190,7 +190,7 @@ public class FilterTest {
         Filter tmpFilter = new Filter();
         IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
         for (IAtomContainer tmpAtomContainer : tmpFilteredACSet.atomContainers()) {
-            Assertions.assertEquals(Integer.class, tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME).getClass());
+            Assertions.assertInstanceOf(Integer.class, tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME));
             Assertions.assertTrue((Integer) tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME) >= 0);
         }
     }
@@ -231,13 +231,154 @@ public class FilterTest {
         );
     }
 
+    @Test
+    public void publicFilterConstructorTest_instancesHaveListOfSelectedFiltersAndListOfFilterParametersInitializedInConstructor() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertNotNull(tmpFilter.listOfSelectedFilters);
+        Assertions.assertNotNull(tmpFilter.listOfFilterParameters);
+    }
+
+    @Test
+    public void publicFilterConstructorTest_instancesListOfSelectedFiltersIsEmpty() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertTrue(tmpFilter.listOfSelectedFilters.isEmpty());
+    }
+
+    @Test
+    public void publicFilterConstructorTest_instancesListOfFilterParametersIsEmpty() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertTrue(tmpFilter.listOfFilterParameters.isEmpty());
+    }
+
+    @Test
+    public void protectedFilterConstructorTest_newFilterContainsSameListOfSelectedFiltersAndListOfFilterParametersAsOriginal() {
+        Filter tmpOriginalFilter = new Filter();
+        Filter tmpFilterCopy = new Filter(tmpOriginalFilter);
+        Assertions.assertSame(tmpOriginalFilter.listOfSelectedFilters, tmpFilterCopy.listOfSelectedFilters);
+        Assertions.assertSame(tmpOriginalFilter.listOfFilterParameters, tmpFilterCopy.listOfFilterParameters);
+    }
+
+    @Test
+    public void getListOfSelectedFiltersMethodTest_returnsListOfSelectedFilters() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertSame(tmpFilter.listOfSelectedFilters, tmpFilter.getListOfSelectedFilters());
+    }
+
+    @Test //TODO: can I test the stored data type (without anything being stored in the list yet)?
+    public void listOfSelectedFiltersClassVarTest_storesConstantsOfEnumFilterTypes() {
+        Filter tmpFilter = new Filter();
+        tmpFilter.listOfSelectedFilters.add(Filter.FilterTypes.NONE);
+        Assertions.assertInstanceOf(Filter.FilterTypes.class, tmpFilter.listOfSelectedFilters.getFirst());
+    }
+
+    @Test
+    public void getListOfFilterParametersMethodTest_returnsListOfFilterParameters() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertSame(tmpFilter.listOfFilterParameters, tmpFilter.getListOfFilterParameters());
+    }
+
+    @Test //TODO: can I test the stored data type (without anything being stored in the list yet)?
+    public void listOfFilterParametersClassVarTest_storesIntegers() {
+        Filter tmpFilter = new Filter();
+        tmpFilter.listOfFilterParameters.add(0);
+        Assertions.assertInstanceOf(Integer.class, tmpFilter.listOfFilterParameters.getFirst());
+    }
+
+    /**
+     * Tests whether the instance returned by the .withFilter() method of the class Filter is not null.
+     */
+    @Test
+    public void withFilterMethodTest_returnsNotNull() {
+        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.NONE;
+        int tmpIntegerParameter = 0;
+        Assertions.assertNotNull(new Filter().withFilter(tmpFilterType, tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the return value of the .withFilter() method of class Filter is an instance of Filter.
+     */
+    @Test
+    public void withFilterMethodTest_returnsFilterInstance() {
+        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.NONE;
+        int tmpIntegerParameter = 0;
+        Assertions.assertInstanceOf(Filter.class, new Filter().withFilter(tmpFilterType, tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withFilter() method of the class
+     * Filter is the same as the one of the original Filter instance.
+     */
+    @Test
+    public void withFilterMethodTest_returnedFilterContainsSameListOfSelectedFiltersAsOriginal() {
+        Filter tmpOriginalFilter = new Filter();
+        Filter tmpReturnedFilter = tmpOriginalFilter.withFilter(Filter.FilterTypes.NONE, 0);
+        Assertions.assertSame(tmpOriginalFilter.listOfSelectedFilters, tmpReturnedFilter.listOfSelectedFilters);
+    }
+
+    @Test
+    public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByOne() {
+        Filter tmpOriginalFilter = new Filter();
+        int tmpListInitialSize = tmpOriginalFilter.listOfSelectedFilters.size();
+        Filter tmpReturnedFilter = tmpOriginalFilter.withFilter(Filter.FilterTypes.NONE, 0);
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilter.listOfSelectedFilters.size());
+    }
+
+    @Test
+    public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterType() {
+        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.NONE;
+        Filter tmpReturnedFilter = new Filter().withFilter(tmpFilterType, 0);
+        Assertions.assertSame(tmpFilterType, tmpReturnedFilter.listOfSelectedFilters.getLast());
+    }
+
+    /**
+     * Tests whether the listOfFilterParameters of the Filter instance returned by the .withFilter() method of the class
+     * Filter is the same as the one of the original Filter instance.
+     */
+    @Test
+    public void withFilterMethodTest_returnedFilterContainsSameListOfFilterParametersAsOriginal() {
+        Filter tmpOriginalFilter = new Filter();
+        Filter tmpReturnedFilter = tmpOriginalFilter.withFilter(Filter.FilterTypes.NONE, 0);
+        Assertions.assertSame(tmpOriginalFilter.listOfFilterParameters, tmpReturnedFilter.listOfFilterParameters);
+    }
+
+    @Test
+    public void withFilterMethodTest_checksIfListOfFilterParametersWasExtendedByOne() {
+        Filter tmpOriginalFilter = new Filter();
+        int tmpListInitialSize = tmpOriginalFilter.listOfFilterParameters.size();
+        Filter tmpReturnedFilter = tmpOriginalFilter.withFilter(Filter.FilterTypes.NONE, 0);
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilter.listOfFilterParameters.size());
+    }
+
+    @Test
+    public void withFilterMethodTest_checksIfListOfFilterParametersWasExtendedByGivenIntegerParameter() {
+        int tmpIntegerParameter = 0;
+        Filter tmpReturnedFilter = new Filter().withFilter(Filter.FilterTypes.NONE, tmpIntegerParameter);
+        Assertions.assertSame(tmpIntegerParameter, tmpReturnedFilter.listOfFilterParameters.getLast());
+    }
+
+    @Test
+    public void withFilterMethodTest_throwsNullPointerExceptionIfGivenFilterTypeIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new Filter().withFilter(null, 0);
+                }
+        );
+    }
+
+    /*@Test   //TODO: update to new data structure (if there is so)
+    public void getListOfSelectedFiltersMethodTest_returnsLinkedListOfFilterTypes() {
+        Filter tmpFilter = new Filter().withMaxAtomCountFilter(0, true);
+        LinkedList<Filter.FilterTypes> tmpListOfSelectedFilters = tmpFilter.getListOfSelectedFilters();
+    }*/
+
     /**
      * This should be the final form for using a filter on an atom container set. TODO: red phase
      *
      * @throws InvalidSmilesException
      */
     /*@Test
-    public void filterMethodTest_filterOnMaxAtomCount10_singleAcWith9Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_singleAcWith9Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("CCO");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -251,7 +392,7 @@ public class FilterTest {
     }*/
 
     /*@Test
-    public void filterMethodTest_filterOnMaxAtomCount10_singleAcWith12Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //

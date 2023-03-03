@@ -23,13 +23,14 @@
  *
  */
 
-package de.unijena.cheminf.curation;
+package de.unijena.cheminf.filter;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
+import java.util.LinkedList;
 import java.util.Objects;
 
 /**
@@ -39,17 +40,37 @@ public class Filter {
 
     public static final String MOL_ID_PROPERTY_NAME = "MolID";
 
+    protected final LinkedList<Filter.FilterTypes> listOfSelectedFilters;
+
+    public final LinkedList<Integer> listOfFilterParameters;
+
+    /**
+     * Constructor.
+     */
     public Filter() {
-        //
+        this.listOfSelectedFilters = new LinkedList<>();
+        this.listOfFilterParameters = new LinkedList<>();
+    }
+
+    /**
+     * Protected Constructor.
+     * For generating a copy of the original Filter instance.
+     *
+     * @param anOriginalFilter Filter instance to copy
+     */
+    protected Filter(Filter anOriginalFilter) {
+        this.listOfSelectedFilters = anOriginalFilter.listOfSelectedFilters;
+        this.listOfFilterParameters = anOriginalFilter.listOfFilterParameters;
     }
 
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null");
         this.assignIdToAtomContainers(anAtomContainerSet);
-        IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
+        final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             //apply filters
+            //TODO: setProperty FILTERED_BY_FILTER to the index of the filter in the listOfSelectedFilters list
             tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
         }
         //
@@ -78,15 +99,37 @@ public class Filter {
      * @return
      */
     public int[] getArrayOfAssignedMolIDs(IAtomContainerSet aAtomContainerSet) {
-        int[] tmpMolIDArray = new int[aAtomContainerSet.getAtomContainerCount()];
+        final int[] tmpMolIDArray = new int[aAtomContainerSet.getAtomContainerCount()];
         for (int i = 0; i < tmpMolIDArray.length; i++) {
             tmpMolIDArray[i] = aAtomContainerSet.getAtomContainer(i).getProperty(Filter.MOL_ID_PROPERTY_NAME);
         }
         return tmpMolIDArray;
     }
 
-    public Filter withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogen) {
+    protected Filter withFilter(FilterTypes aFilterType, int anIntegerParameter) {
+        Objects.requireNonNull(aFilterType, "aFilterType (constant of Filter.FilterTypes) is null");
+        final Filter tmpFilterCopy = new Filter(this);
+        tmpFilterCopy.listOfSelectedFilters.add(aFilterType);
+        tmpFilterCopy.listOfFilterParameters.add(anIntegerParameter);
+        return tmpFilterCopy;
+    }
+
+    public LinkedList<Filter.FilterTypes> getListOfSelectedFilters() {
+        return this.listOfSelectedFilters;
+    }
+
+    public LinkedList<Integer> getListOfFilterParameters() {
+        return this.listOfFilterParameters;
+    }
+
+    public Object withMaxAtomCountFilter(int i, boolean b) {
         throw new NotImplementedException();
     }
 
+    /**
+     * Enum of filter types.
+     */
+    public enum FilterTypes {
+        NONE
+    }
 }

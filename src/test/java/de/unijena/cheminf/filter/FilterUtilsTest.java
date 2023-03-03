@@ -23,8 +23,9 @@
  *
  */
 
-package de.unijena.cheminf.curation;
+package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
@@ -136,9 +137,9 @@ public class FilterUtilsTest {
     public void exceedsOrEqualsAtomCountTest_10AtomsThreshold_12AtomsConsideringImplicitHs() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        int tmpAtomCountThreshold = 10;
+        int tmpAtomCountThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogen = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThreshold, tmpConsiderImplicitHydrogen);
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
         Assertions.assertTrue(tmpResult);
     }
 
@@ -146,9 +147,9 @@ public class FilterUtilsTest {
     public void exceedsOrEqualsAtomCountTest_15AtomsThreshold_12AtomsConsideringImplicitHs() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        int tmpAtomCountThreshold = 15;
+        int tmpAtomCountThresholdValue = 15;
         boolean tmpConsiderImplicitHydrogen = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThreshold, tmpConsiderImplicitHydrogen);
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
         Assertions.assertFalse(tmpResult);
     }
 
@@ -156,9 +157,9 @@ public class FilterUtilsTest {
     public void exceedsOrEqualsAtomCountTest_12AtomsThreshold_12AtomsConsideringImplicitHs() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        int tmpAtomCountThreshold = 12;
+        int tmpAtomCountThresholdValue = 12;
         boolean tmpConsiderImplicitHydrogen = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThreshold, tmpConsiderImplicitHydrogen);
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
         Assertions.assertTrue(tmpResult);
     }
 
@@ -166,9 +167,9 @@ public class FilterUtilsTest {
     public void exceedsOrEqualsAtomCountTest_10AtomsThreshold_6AtomsNotConsideringImplicitHs() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        int tmpAtomCountThreshold = 10;
+        int tmpAtomCountThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogen = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThreshold, tmpConsiderImplicitHydrogen);
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
         Assertions.assertFalse(tmpResult);
     }
 
@@ -176,9 +177,9 @@ public class FilterUtilsTest {
     public void exceedsOrEqualsAtomCountTest_4AtomsThreshold_6AtomsNotConsideringImplicitHs() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        int tmpAtomCountThreshold = 4;
+        int tmpAtomCountThresholdValue = 4;
         boolean tmpConsiderImplicitHydrogen = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThreshold, tmpConsiderImplicitHydrogen);
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
         Assertions.assertTrue(tmpResult);
     }
 

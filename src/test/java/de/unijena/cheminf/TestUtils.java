@@ -23,7 +23,7 @@
  *
  */
 
-package de.unijena.cheminf.curation;
+package de.unijena.cheminf;
 
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
