@@ -59,7 +59,7 @@ public class FilterUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int countImplicitHydrogen(IAtomContainer anAtomContainer) throws NullPointerException {   //TODO: Hydrogen-s ?
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null");
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
         int tmpHydrogenCount = 0;
         for (IAtom tmpAtom :
                 anAtomContainer.atoms()) {
@@ -81,9 +81,9 @@ public class FilterUtils {
      */
     public static boolean exceedsOrEqualsAtomCount(IAtomContainer anAtomContainer, int aThresholdValue,
                                                    boolean aConsiderImplicitHydrogen) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null");
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
         if (aThresholdValue < 0) {
-            throw new IllegalArgumentException("aThresholdValue (Integer value) is < than 0");
+            throw new IllegalArgumentException("aThresholdValue (Integer value) is < than 0.");
         }
         int tmpAtomCount = FilterUtils.countAtoms(anAtomContainer, aConsiderImplicitHydrogen);
         return tmpAtomCount >= aThresholdValue;

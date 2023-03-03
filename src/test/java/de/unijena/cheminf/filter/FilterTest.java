@@ -315,6 +315,10 @@ public class FilterTest {
         Assertions.assertSame(tmpOriginalFilter.listOfSelectedFilters, tmpReturnedFilter.listOfSelectedFilters);
     }
 
+    /**
+     * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withFilter() method of the class
+     * Filter was extended by one entry.
+     */
     @Test
     public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByOne() {
         Filter tmpOriginalFilter = new Filter();
@@ -323,6 +327,10 @@ public class FilterTest {
         Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilter.listOfSelectedFilters.size());
     }
 
+    /**
+     * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withFilter() method of the class
+     * Filter was extended by the given filter type.
+     */
     @Test
     public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterType() {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.NONE;
@@ -341,6 +349,10 @@ public class FilterTest {
         Assertions.assertSame(tmpOriginalFilter.listOfFilterParameters, tmpReturnedFilter.listOfFilterParameters);
     }
 
+    /**
+     * Tests whether the listOfFilterParameters of the Filter instance returned by the .withFilter() method of the class
+     * Filter was extended by one entry.
+     */
     @Test
     public void withFilterMethodTest_checksIfListOfFilterParametersWasExtendedByOne() {
         Filter tmpOriginalFilter = new Filter();
@@ -349,13 +361,22 @@ public class FilterTest {
         Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilter.listOfFilterParameters.size());
     }
 
+    /**
+     * Tests whether the listOfFilterParameters of the Filter instance returned by the .withFilter() method of the class
+     * Filter was extended by the given integer parameter.
+     */
     @Test
     public void withFilterMethodTest_checksIfListOfFilterParametersWasExtendedByGivenIntegerParameter() {
         int tmpIntegerParameter = 0;
         Filter tmpReturnedFilter = new Filter().withFilter(Filter.FilterTypes.NONE, tmpIntegerParameter);
         Assertions.assertSame(tmpIntegerParameter, tmpReturnedFilter.listOfFilterParameters.getLast());
+        Assertions.assertEquals(tmpIntegerParameter, tmpReturnedFilter.listOfFilterParameters.getLast());
     }
 
+    /**
+     * Tests whether the .withFilter() method of the class Filter throws a NullPointerException if the given
+     * Filter.FilterType is null.
+     */
     @Test
     public void withFilterMethodTest_throwsNullPointerExceptionIfGivenFilterTypeIsNull() {
         Assertions.assertThrows(
@@ -365,12 +386,6 @@ public class FilterTest {
                 }
         );
     }
-
-    /*@Test   //TODO: update to new data structure (if there is so)
-    public void getListOfSelectedFiltersMethodTest_returnsLinkedListOfFilterTypes() {
-        Filter tmpFilter = new Filter().withMaxAtomCountFilter(0, true);
-        LinkedList<Filter.FilterTypes> tmpListOfSelectedFilters = tmpFilter.getListOfSelectedFilters();
-    }*/
 
     /**
      * This should be the final form for using a filter on an atom container set. TODO: red phase

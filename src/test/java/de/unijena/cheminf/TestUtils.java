@@ -49,7 +49,7 @@ public class TestUtils {
      */
     public static IAtomContainerSet parseSmilesStrings(String... aSmilesStrings) throws NullPointerException, InvalidSmilesException {
         for (String tmpString : aSmilesStrings) {
-            Objects.requireNonNull(tmpString, "element of aSmilesStrings (instance of String) is null");
+            Objects.requireNonNull(tmpString, "element of aSmilesStrings (instance of String) is null.");
         }
         SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer tmpAtomContainer;
@@ -71,7 +71,7 @@ public class TestUtils {
      * @throws InvalidSmilesException if the given SMILES string can not be parsed
      */
     public static IAtomContainer parseSmilesString(String aSmilesString) throws NullPointerException, InvalidSmilesException {
-        Objects.requireNonNull(aSmilesString, "aSmilesString (instance of String) is null");
+        Objects.requireNonNull(aSmilesString, "aSmilesString (instance of String) is null.");
         SmilesParser tmpSmilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         return tmpSmilesParser.parseSmiles(aSmilesString);
     }
