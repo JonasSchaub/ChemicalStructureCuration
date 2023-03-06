@@ -42,6 +42,8 @@ public class Filter {
 
     public static final String FILTER_ID_PROPERTY_NAME = "FilterID";
 
+    public static final int MOL_ID_ERROR_VALUE = -1;
+
     public static final int NOT_FILTERED = -1;
 
     protected final LinkedList<FilterTypes> listOfSelectedFilters;
@@ -71,7 +73,8 @@ public class Filter {
     }
 
     /**
-     *
+     * TODO
+     * TODO: name that every atom container gets a MolID assigned (for better traceability)
      * @param anAtomContainerSet
      * @return
      */
@@ -181,7 +184,7 @@ public class Filter {
      * @param anAtomContainerSet IAtomContainerSet
      * @throws NullPointerException
      */
-    protected void assignIdToAtomContainers(IAtomContainerSet anAtomContainerSet) {     //TODO: could be static; could be placed in FilterUtils (as protected method)
+    protected void assignIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {     //TODO: could be static; could be placed in FilterUtils (as protected method)
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null");
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             //TODO: check whether the property is already set? they might not be unique
@@ -191,14 +194,25 @@ public class Filter {
     }
 
     /** TODO: could / should be placed in a Utils class
+     * Returns an array of the MolIDs assigned to the atom containers in the given atom container set. If an atom
+     * container given to this method has no MolID, the corresponding entry in the returned array is set to -1.
      * TODO
-     * @param aAtomContainerSet
+     *
+     * @param anAtomContainerSet
      * @return
+     * @throws NullPointerException if the given instance of IAtomContainerSet is null
      */
-    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet aAtomContainerSet) {    //TODO: deal with AC or MolID being null
-        final int[] tmpMolIDArray = new int[aAtomContainerSet.getAtomContainerCount()];
+    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException {    //TODO: deal with AC or MolID being null
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        final int[] tmpMolIDArray = new int[anAtomContainerSet.getAtomContainerCount()];
+        IAtomContainer tmpAtomContainer;
         for (int i = 0; i < tmpMolIDArray.length; i++) {
-            tmpMolIDArray[i] = aAtomContainerSet.getAtomContainer(i).getProperty(Filter.MOL_ID_PROPERTY_NAME);
+            tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
+            if (tmpAtomContainer == null || tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME) == null) {
+                tmpMolIDArray[i] = Filter.MOL_ID_ERROR_VALUE;
+            } else {
+                tmpMolIDArray[i] = tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME);
+            }
         }
         return tmpMolIDArray;
     }

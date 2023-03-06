@@ -28,6 +28,7 @@ package de.unijena.cheminf.filter;
 import de.unijena.cheminf.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -136,9 +137,12 @@ public class FilterTest {
         );
     }*/
 
-    /**
-     * TODO
-     * @throws InvalidSmilesException
+    /** TODO: separate this into three separate tests?
+     * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length one if an
+     * atom container set with a single atom container is given and whether the one entry is an integer value and
+     * whether it equals the MolID assigned to the one atom container.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void getArrayOfAssignedMolIDsTest_1AC() throws InvalidSmilesException {
@@ -149,12 +153,16 @@ public class FilterTest {
         tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
         int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
         Assertions.assertEquals(1, tmpMolIDArray.length);
+        Assertions.assertInstanceOf(Integer.class, tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME));
         Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME), tmpMolIDArray[0]);
     }
 
     /**
-     * TODO
-     * @throws InvalidSmilesException
+     * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
+     * atom container set of three atom containers is given and whether the values contained by the array equal the
+     * consistently numbered MolIDs of the three atom containers.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void getArrayOfAssignedMolIDsTest_3ACs_consistentNumbering() throws InvalidSmilesException {
@@ -171,8 +179,11 @@ public class FilterTest {
     }
 
     /**
-     * TODO
-     * @throws InvalidSmilesException
+     * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
+     * atom container set of three atom containers is given and whether the values contained by the array equal the
+     * inconsistently numbered MolIDs of the three atom containers.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void getArrayOfAssignedMolIDsTest_3ACs_manuallySetInconsistentMolIDs() throws InvalidSmilesException {   //TODO
@@ -188,6 +199,47 @@ public class FilterTest {
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(i).getProperty(Filter.MOL_ID_PROPERTY_NAME), tmpMolIDArray[i]);
         }
+    }
+
+    @Test
+    public void getArrayOfAssignedMolIDsTest_setsErrorValueWhereMolIDIsNotSet() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+        //
+        Filter tmpFilter = new Filter();
+        int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+        Assertions.assertEquals(1, tmpMolIDArray.length);
+        Assertions.assertEquals(Filter.MOL_ID_ERROR_VALUE, tmpMolIDArray[0]);
+    }
+
+    /*@Test //TODO: I found no way to cause this situation
+    public void getArrayOfAssignedMolIDsTest_setsErrorValueWhereAnAtomContainerIsNull() {
+        IAtomContainerSet tmpAtomContainerSet = new AtomContainerSet();
+        tmpAtomContainerSet.addAtomContainer(null);
+        //
+        Filter tmpFilter = new Filter();
+        int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+        Assertions.assertEquals(1, tmpMolIDArray.length);
+        Assertions.assertEquals(Filter.MOL_ID_ERROR_VALUE, tmpMolIDArray[0]);
+    }*/
+
+    /*@Test   //TODO
+    public void getArrayOfAssignedMolIDsTest_TODO() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+        tmpAtomContainerSet.replaceAtomContainer(0, null);
+        tmpAtomContainerSet.getAtomContainer(1).setProperty(Filter.MOL_ID_PROPERTY_NAME, 3);
+        //no MolID set for atom container three
+        Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
+    }*/
+
+    @Test
+    public void getArrayOfAssignedMolIDsTest_throwNullPointerExceptionIfGivenAtomContainerSetIsNull() {
+        new Filter().getArrayOfAssignedMolIDs(null);
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new Filter().getArrayOfAssignedMolIDs(null);
+                }
+        );
     }
 
     /**
@@ -448,6 +500,146 @@ public class FilterTest {
         );
     }
 
+    /**
+     * Tests whether the list of selected filters is extended by two entries if the .withFilter() method of the class
+     * Filter is called twice.
+     */
+    @Test
+    public void withFilterMethodTest_combiningTwoFilters_twoFiltersAreAddedToListOfSelectedFilters() {
+        Filter tmpFilter = new Filter();
+        int tmpInitialListSize = tmpFilter.getListOfSelectedFilters().size();
+        //Assertions.assertEquals(0, tmpFilter.getListOfSelectedFilters().size());
+        Filter.FilterTypes tmpAnyFilterType = Filter.FilterTypes.NONE;
+        int tmpAnyIntegerValue = 0;
+        tmpFilter = tmpFilter.withFilter(tmpAnyFilterType, tmpAnyIntegerValue).withFilter(tmpAnyFilterType, tmpAnyIntegerValue);
+        Assertions.assertEquals(tmpInitialListSize + 2, tmpFilter.getListOfSelectedFilters().size());
+    }
+
+    /**
+     * Tests whether the list of selected filters is extended by the two specific filters if the .withFilter() method
+     * of the class Filter is called twice.
+     */
+    @Test
+    public void withFilterMethodTest_combiningTwoFilters_bothSpecificFiltersAreAddedToListOfSelectedFiltersInCorrectOrder() {
+        Filter tmpFilter = new Filter();
+        Filter.FilterTypes tmpFilterType1 = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
+        Filter.FilterTypes tmpFilterType2 = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
+        int tmpAnyIntegerValue = 0;
+        tmpFilter = tmpFilter.withFilter(tmpFilterType1, tmpAnyIntegerValue).withFilter(tmpFilterType2, tmpAnyIntegerValue);
+        Assertions.assertEquals(tmpFilterType1, tmpFilter.getListOfSelectedFilters().get(0));
+        Assertions.assertEquals(tmpFilterType2, tmpFilter.getListOfSelectedFilters().get(1));
+    }
+
+    /**
+     * Tests whether the list of selected filters is extended by five entries if the .withFilter() method of the class
+     * Filter is called five times.
+     */
+    @Test
+    public void withFilterMethodTest_combiningMultipleFilters_5_fiveFiltersAreAddedToListOfSelectedFilters() {
+        Filter tmpFilter = new Filter();
+        int tmpInitialListSize = tmpFilter.getListOfSelectedFilters().size();
+        //Assertions.assertEquals(0, tmpFilter.getListOfSelectedFilters().size());
+        Filter.FilterTypes tmpAnyFilterType = Filter.FilterTypes.NONE;
+        int tmpAnyIntegerValue = 0;
+        int tmpAddedFiltersCount = 5;
+        for (int i = 0; i < tmpAddedFiltersCount; i++) {
+            tmpFilter = tmpFilter.withFilter(tmpAnyFilterType, tmpAnyIntegerValue);
+        }
+        Assertions.assertEquals(tmpInitialListSize + tmpAddedFiltersCount, tmpFilter.getListOfSelectedFilters().size());
+    }
+
+    /**
+     * Tests whether the list of selected filters is extended by the five specific filters if the .withFilter() method
+     * of the class Filter is called five times.
+     */
+    @Test
+    public void withFilterMethodTest_combiningMultipleFilters_5_fiveSpecificFiltersAreAddedToListOfSelectedFiltersInCorrectOrder() {
+        Filter tmpFilter = new Filter();
+        Filter.FilterTypes[] tmpFilterTypesArray = new Filter.FilterTypes[5];
+        tmpFilterTypesArray[0] = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
+        tmpFilterTypesArray[1] = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
+        tmpFilterTypesArray[2] = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
+        tmpFilterTypesArray[3] = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
+        tmpFilterTypesArray[4] = Filter.FilterTypes.NONE;
+        int tmpAnyIntegerValue = 0;
+        for (Filter.FilterTypes tmpFilterType :
+                tmpFilterTypesArray) {
+            tmpFilter = tmpFilter.withFilter(tmpFilterType, tmpAnyIntegerValue);
+        }
+        for (int i = 0; i < 5; i++) {
+            Assertions.assertEquals(tmpFilterTypesArray[i], tmpFilter.getListOfSelectedFilters().get(i));
+        }
+    }
+
+    /**
+     * Tests whether the list of filter parameters is extended by two entries if the .withFilter() method of the class
+     * Filter is called twice.
+     */
+    @Test
+    public void withFilterMethodTest_combiningTwoFilters_twoIntegerValuesAreAddedToListOfFilterParameters() {
+        Filter tmpFilter = new Filter();
+        int tmpInitialListSize = tmpFilter.getListOfSelectedFilters().size();
+        //Assertions.assertEquals(0, tmpFilter.getListOfFilterParameters().size());
+        Filter.FilterTypes tmpAnyFilterType = Filter.FilterTypes.NONE;
+        int tmpAnyIntegerValue = 0;
+        tmpFilter = tmpFilter.withFilter(tmpAnyFilterType, tmpAnyIntegerValue).withFilter(tmpAnyFilterType, tmpAnyIntegerValue);
+        Assertions.assertEquals(tmpInitialListSize + 2, tmpFilter.getListOfFilterParameters().size());
+    }
+
+    /**
+     * Tests whether the list of filter parameters is extended by the two specific integer values if the .withFilter()
+     * method of the class Filter is called twice.
+     */
+    @Test
+    public void withFilterMethodTest_combiningTwoFilters_bothSpecificIntegerValuesAreAddedToListOfFilterParametersInCorrectOrder() {
+        Filter tmpFilter = new Filter();
+        Filter.FilterTypes tmpAnyFilterType = Filter.FilterTypes.NONE;
+        int tmpIntegerValue1 = 0;
+        int tmpIntegerValue2 = 1;
+        tmpFilter = tmpFilter.withFilter(tmpAnyFilterType, tmpIntegerValue1).withFilter(tmpAnyFilterType, tmpIntegerValue2);
+        Assertions.assertEquals(tmpIntegerValue1, tmpFilter.getListOfFilterParameters().get(0));
+        Assertions.assertEquals(tmpIntegerValue2, tmpFilter.getListOfFilterParameters().get(1));
+    }
+
+    /**
+     * Tests whether the list of filter parameters is extended by five entries if the .withFilter() method of the class
+     * Filter is called five times.
+     */
+    @Test
+    public void withFilterMethodTest_combiningMultipleFilters_5_fiveIntegerValuesAreAddedToListOfFilterParameters() {
+        Filter tmpFilter = new Filter();
+        int tmpInitialListSize = tmpFilter.getListOfSelectedFilters().size();
+        //Assertions.assertEquals(0, tmpFilter.getListOfFilterParameters().size());
+        Filter.FilterTypes tmpAnyFilterType = Filter.FilterTypes.NONE;
+        int tmpAnyIntegerValue = 0;
+        int tmpAddedFiltersCount = 5;
+        for (int i = 0; i < tmpAddedFiltersCount; i++) {
+            tmpFilter = tmpFilter.withFilter(tmpAnyFilterType, tmpAnyIntegerValue);
+        }
+        Assertions.assertEquals(tmpInitialListSize + tmpAddedFiltersCount, tmpFilter.getListOfFilterParameters().size());
+    }
+
+    /**
+     * Tests whether the list of filter parameters is extended by the five specific integer values if the .withFilter()
+     * method of the class Filter is called five times.
+     */
+    @Test
+    public void withFilterMethodTest_combiningMultipleFilters_5_fiveSpecificIntegerValuesAreAddedToListOfSelectedFiltersInCorrectOrder() {
+        Filter tmpFilter = new Filter();
+        Filter.FilterTypes tmpAnyFilterType = Filter.FilterTypes.NONE;
+        int[] tmpIntegerValues = new int[5];
+        for (int i = 0; i < 5; i++) {
+            tmpIntegerValues[i] = i;
+        }
+        for (int tmpIntegerValue :
+                tmpIntegerValues) {
+            tmpFilter = tmpFilter.withFilter(tmpAnyFilterType, tmpIntegerValue);
+        }
+        for (int i = 0; i < 5; i++) {
+            Assertions.assertEquals(tmpIntegerValues[i], tmpFilter.getListOfFilterParameters().get(i));
+        }
+    }
+
     @Test
     public void filterMethodTest_returnsNotNull() {
         Assertions.assertNotNull(new Filter().filter(new AtomContainerSet()));
@@ -504,6 +696,12 @@ public class FilterTest {
         );
     }
 
+    /**
+     * Tests whether applying the filter NONE results in no atom container of the set being filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException
+     */
     @Test
     public void filterMethodTest_withFilterNONE_sameAtomContainerCountBeforeAsAfter() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
@@ -523,8 +721,9 @@ public class FilterTest {
     }
 
     /**
-     * This should be the final form for using a filter on an atom container set. TODO: red phase
-     * Tests whether 
+     * Tests whether applying the max atom count filter brings the correct result. Here the given atom container should
+     * not be filtered.
+     * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException
      */
@@ -619,8 +818,6 @@ public class FilterTest {
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new int[]{0, 2}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
-
-    //TODO: test for combining two filters
 
     /**
      * This should be the final form for using a filter on an atom container set. TODO: red phase
@@ -718,6 +915,10 @@ public class FilterTest {
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new int[]{0, 1}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
+
+    //TODO: test for combining two filters
+    //@Test
+    //public void filterMethodTest_withMaxAtomCountFilterConsiderImplHs_withFilterNONE_combiningTwoFilters()
 
     /*@Test
     public void filterOnMaxAtomCount() throws InvalidSmilesException {  //TODO: wip; adjourned
