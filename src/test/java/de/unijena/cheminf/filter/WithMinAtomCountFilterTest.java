@@ -10,10 +10,6 @@ public class WithMinAtomCountFilterTest {
 
     //TODO: test everything with boolean aConsiderImplicitHydrogens = false?
 
-    //TODO: filter specific tests
-
-    //TODO: parameter verification
-
     /**
      * Tests whether the instance returned by the .withMinAtomCountFilter() method of the class Filter is not null.
      */
@@ -63,7 +59,7 @@ public class WithMinAtomCountFilterTest {
      */
     @Test
     public void withMinAtomCountFilterMethodTest_considerImplicitHydrogens_checksIfListOfSelectedFiltersWasExtendedBySpecificFilterType() {
-        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_CONSIDER_IMPLICIT_HYDROGENS;
+        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
         boolean tmpConsiderImplicitHydrogens = true;
         Filter tmpReturnedFilter = new Filter().withMinAtomCountFilter(0, tmpConsiderImplicitHydrogens);
         Assertions.assertSame(tmpFilterType, tmpReturnedFilter.listOfSelectedFilters.getLast());
@@ -75,7 +71,7 @@ public class WithMinAtomCountFilterTest {
      */
     @Test
     public void withMinAtomCountFilterMethodTest_notConsiderImplicitHydrogens_checksIfListOfSelectedFiltersWasExtendedBySpecificFilterType() {
-        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_NOT_CONSIDER_IMPLICIT_HYDROGENS;
+        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
         boolean tmpConsiderImplicitHydrogens = false;
         Filter tmpReturnedFilter = new Filter().withMinAtomCountFilter(0, tmpConsiderImplicitHydrogens);
         Assertions.assertSame(tmpFilterType, tmpReturnedFilter.listOfSelectedFilters.getLast());

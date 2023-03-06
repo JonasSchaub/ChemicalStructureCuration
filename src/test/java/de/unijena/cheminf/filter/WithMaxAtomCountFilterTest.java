@@ -20,6 +20,20 @@ public class WithMaxAtomCountFilterTest {
         Assertions.assertNotNull(new Filter().withMaxAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
+    /*@Test     //e.g. for testing everything for both boolean parameter values
+    public void withMaxAtomCountFilterMethodTest_considerImplicitHydrogens_returnsNotNull() {
+        this.withMaxAtomCountFilterMethodTest_returnsNotNull(true);
+    }
+    @Test
+    public void withMaxAtomCountFilterMethodTest_notConsiderImplicitHydrogens_returnsNotNull() {
+        this.withMaxAtomCountFilterMethodTest_returnsNotNull(false);
+    }
+    private void withMaxAtomCountFilterMethodTest_returnsNotNull(boolean aConsiderImplicitHydrogens) {
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = aConsiderImplicitHydrogens;
+        Assertions.assertNotNull(new Filter().withMaxAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+    }*/
+
     /**
      * Tests whether the return value of the .withMaxAtomCountFilter() method of class Filter is an instance of Filter.
      */

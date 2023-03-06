@@ -40,10 +40,15 @@ public class Filter {
 
     public static final String MOL_ID_PROPERTY_NAME = "MolID";
 
+    public static final String FILTER_ID_PROPERTY_NAME = "FilterID";
+
+    public static final int NOT_FILTERED = -1;
+
     protected final LinkedList<FilterTypes> listOfSelectedFilters;
 
     //TODO: possibly change data type to an Interface IFilterParameterStorage so that each filter can have its specific set of parameters (not only one integer)
     //TODO: / use a generic class
+    //so far only filters with one single parameter of type int are possible
     public final LinkedList<Integer> listOfFilterParameters;
 
     /**
@@ -65,15 +70,30 @@ public class Filter {
         this.listOfFilterParameters = anOriginalFilter.listOfFilterParameters;
     }
 
+    /**
+     *
+     * @param anAtomContainerSet
+     * @return
+     */
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null.");
         this.assignIdToAtomContainers(anAtomContainerSet);
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
+        boolean tmpAtomContainerGetsFiltered;
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             //apply filters
+            if (this.listOfFilterParameters.size() > 0) {
+                tmpAtomContainerGetsFiltered = this.checkIfFilterApplys(tmpAtomContainer, this.listOfSelectedFilters.get(0), this.listOfFilterParameters.get(0));
+            } else {
+                tmpAtomContainerGetsFiltered = false;
+            }
+            if (!tmpAtomContainerGetsFiltered) {
+                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+            }
+            //
             //TODO: setProperty FILTERED_BY_FILTER to the index of the filter in the listOfSelectedFilters list
-            tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+            //tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, Filter.NOT_FILTERED);
         }
         //
         return tmpFilteredACSet;
@@ -113,9 +133,9 @@ public class Filter {
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
         if (aConsiderImplicitHydrogens) {
-            return this.withFilter(FilterTypes.MIN_ATOM_COUNT_CONSIDER_IMPLICIT_HYDROGENS, aMinAtomCount);
+            return this.withFilter(FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS, aMinAtomCount);
         } else {
-            return this.withFilter(FilterTypes.MIN_ATOM_COUNT_NOT_CONSIDER_IMPLICIT_HYDROGENS, aMinAtomCount);
+            return this.withFilter(FilterTypes.MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS, aMinAtomCount);
         }
     }
 
@@ -136,23 +156,23 @@ public class Filter {
      * @param anIntegerParameter Integer value which is a parameter to the given filter algorithm
      * @return true if the given filter applies on the atom container
      */
-    protected boolean checkIfFilterApplies(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) {
+    protected boolean checkIfFilterApplys(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         Objects.requireNonNull(aFilterType, "aFilterType (Filter.FilterTypes constant) is null.");
-        switch (aFilterType) {
-            case MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS:
-                return true;
-            case MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS:
-                return true;
-            case MIN_ATOM_COUNT_CONSIDER_IMPLICIT_HYDROGENS:
-                return true;
-            case MIN_ATOM_COUNT_NOT_CONSIDER_IMPLICIT_HYDROGENS:
-                return true;
-            case NONE:
-                return false;
-            default:
-                throw new NotImplementedException("There is no filter routine deposited for the given filter type."); //may I do this?
-        }
+        return switch (aFilterType) {
+            case MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS ->
+                    FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter + 1, true);
+            case MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS ->
+                    FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter + 1, false);
+            case MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS ->
+                    !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter, true);
+            case MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS ->
+                    !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter, false);
+            case NONE ->
+                    false;
+            default ->
+                    throw new NotImplementedException("There is no filter routine deposited for the given filter type."); //may I do this?
+        };
     }
 
     /**
@@ -207,8 +227,8 @@ public class Filter {
     public enum FilterTypes {
         MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS,
         MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS,
-        MIN_ATOM_COUNT_CONSIDER_IMPLICIT_HYDROGENS,
-        MIN_ATOM_COUNT_NOT_CONSIDER_IMPLICIT_HYDROGENS,
+        MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS,
+        MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS,
         NONE
     }
 }

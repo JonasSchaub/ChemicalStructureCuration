@@ -68,7 +68,7 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of pyruvate correct
+     * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of glycine correct
      * not considering implicit hydrogen.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
@@ -83,7 +83,7 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of pyruvate correct
+     * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of glycine correct
      * considering implicit hydrogen.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
