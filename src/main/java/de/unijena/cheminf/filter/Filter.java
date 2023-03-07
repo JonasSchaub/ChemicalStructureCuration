@@ -34,13 +34,13 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 /**
- *
+ * Filter on based on a molecular descriptor. Auf Basis eines einzelnen Moleküls
  */
 public class Filter {
 
-    public static final String MOL_ID_PROPERTY_NAME = "MolID";
+    public static final String MOL_ID_PROPERTY_NAME = "Filter.MolID";
 
-    public static final String FILTER_ID_PROPERTY_NAME = "FilterID";
+    public static final String FILTER_ID_PROPERTY_NAME = "Filter.FilterID";
 
     public static final int MOL_ID_ERROR_VALUE = -1;
 
@@ -51,7 +51,7 @@ public class Filter {
     //TODO: possibly change data type to an Interface IFilterParameterStorage so that each filter can have its specific set of parameters (not only one integer)
     //TODO: / use a generic class
     //so far only filters with one single parameter of type int are possible
-    public final LinkedList<Integer> listOfFilterParameters;
+    protected final LinkedList<Integer> listOfFilterParameters; //TODO: List of Objects[] ?
 
     /**
      * Constructor.
@@ -80,7 +80,7 @@ public class Filter {
      */
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null.");
-        this.assignIdToAtomContainers(anAtomContainerSet);
+        this.assignMolIdToAtomContainers(anAtomContainerSet);
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         //boolean tmpAtomContainerGetsFiltered;
         int tmpIndexOfAppliedFilter;
@@ -90,7 +90,7 @@ public class Filter {
             tmpIndexOfAppliedFilter = Filter.NOT_FILTERED;
             //apply filters
             for (int i = 0; i < this.listOfSelectedFilters.size(); i++) {
-                if (this.checkIfFilterApplys(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
+                if (this.checkWhetherFilterApplies(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
                     //tmpAtomContainerGetsFiltered = true;
                     tmpIndexOfAppliedFilter = i;
                     break;
@@ -158,7 +158,7 @@ public class Filter {
     }
 
     /**
-     * Checks if a specific filter applies on a given atom container.
+     * Checks whether a specific filter applies on a given atom container.
      * Returns true, if the atom container needs to be filtered / sorted out.
      *
      * @param anAtomContainer IAtomContainer instance to be checked
@@ -166,7 +166,7 @@ public class Filter {
      * @param anIntegerParameter Integer value which is a parameter to the given filter algorithm
      * @return true if the given filter applies on the atom container
      */
-    protected boolean checkIfFilterApplys(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) {
+    protected boolean checkWhetherFilterApplies(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) {  //TODO: adopt name; question that is answered
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         Objects.requireNonNull(aFilterType, "aFilterType (Filter.FilterTypes constant) is null.");
         return switch (aFilterType) {
@@ -180,8 +180,9 @@ public class Filter {
                     !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter, false);
             case NONE ->
                     false;
-            default ->
+            default -> //TODO: NotImplementedException or UnsupportedOperationException?!
                     throw new NotImplementedException("There is no filter routine deposited for the given filter type."); //may I do this?
+                    //throw new UnsupportedOperationException("There is no filter routine deposited for the given filter type.");
         };
     }
 
@@ -191,7 +192,7 @@ public class Filter {
      * @param anAtomContainerSet IAtomContainerSet
      * @throws NullPointerException
      */
-    protected void assignIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {     //TODO: could be static; could be placed in FilterUtils (as protected method)
+    protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {     //TODO: could be static; could be placed in FilterUtils (as protected method)
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null");
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             //TODO: check whether the property is already set? they might not be unique
@@ -222,6 +223,28 @@ public class Filter {
             }
         }
         return tmpMolIDArray;
+    }
+
+    /**
+     * Returns the MolID assigned to the given atom container. A MolID is assigned to every atom container of an atom
+     * container set that was given to or returned by the .filter() method of this class. This method may not be used
+     * for any atom container that does not meet this criterion.
+     *
+     * @param anAtomContainer IAtomContainer instance the MolID should be returned of
+     * @return MolID (integer value) of the given AtomContainer
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if the given IAtomContainer instance is null or if the MolID assigned to it is
+     * not of data type Integer
+     */
+    public int getAssignedMolID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        if (anAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME) == null) {
+            throw new IllegalArgumentException("The given AtomContainer instance has no MolID assigned.");
+        }
+        if (anAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME).getClass() != Integer.class) {
+            throw new IllegalArgumentException("The MolID assigned to the given AtomContainer instance is not of data type Integer.");
+        }
+        return anAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME);
     }
 
     /**

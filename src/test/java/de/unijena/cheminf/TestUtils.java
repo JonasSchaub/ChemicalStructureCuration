@@ -76,4 +76,6 @@ public class TestUtils {
         return tmpSmilesParser.parseSmiles(aSmilesString);
     }
 
+    //TODO: method that returns an AtomContainerSet with a given number of empty AtomContainers
+
 }

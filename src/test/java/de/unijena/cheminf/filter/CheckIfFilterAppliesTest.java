@@ -17,7 +17,7 @@ public class CheckIfFilterAppliesTest {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.NONE;
         int tmpIntegerParameter = 0;
-        Assertions.assertInstanceOf(Boolean.class, new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpIntegerParameter));
+        Assertions.assertInstanceOf(Boolean.class, new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpIntegerParameter));
     }
 
     /**
@@ -29,7 +29,7 @@ public class CheckIfFilterAppliesTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new Filter().checkIfFilterApplys(null, Filter.FilterTypes.NONE, 0);
+                    new Filter().checkWhetherFilterApplies(null, Filter.FilterTypes.NONE, 0);
                 }
         );
     }
@@ -43,7 +43,7 @@ public class CheckIfFilterAppliesTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new Filter().checkIfFilterApplys(new AtomContainer(), null, 0);
+                    new Filter().checkWhetherFilterApplies(new AtomContainer(), null, 0);
                 }
         );
     }
@@ -58,7 +58,7 @@ public class CheckIfFilterAppliesTest {
     public void checkIfFilterAppliesMethodTest_filterTypeNONE_returnsFalse() {
         IAtomContainer tmpAnyAtomContainer = new AtomContainer();
         int tmpAnyIntegerValue = 0;
-        Assertions.assertFalse(new Filter().checkIfFilterApplys(tmpAnyAtomContainer, Filter.FilterTypes.NONE, tmpAnyIntegerValue));
+        Assertions.assertFalse(new Filter().checkWhetherFilterApplies(tmpAnyAtomContainer, Filter.FilterTypes.NONE, tmpAnyIntegerValue));
     }
 
     /**
@@ -75,7 +75,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMaxAtomCount = 10;
         //
-        Assertions.assertTrue(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
+        Assertions.assertTrue(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMaxAtomCount = 12;
         //
-        Assertions.assertFalse(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
+        Assertions.assertFalse(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMaxAtomCount = 4;
         //
-        Assertions.assertTrue(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
+        Assertions.assertTrue(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMaxAtomCount = 6;
         //
-        Assertions.assertFalse(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
+        Assertions.assertFalse(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMaxAtomCount));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMinAtomCount = 14;
         //
-        Assertions.assertTrue(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
+        Assertions.assertTrue(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMinAtomCount = 12;
         //
-        Assertions.assertFalse(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
+        Assertions.assertFalse(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMinAtomCount = 8;
         //
-        Assertions.assertTrue(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
+        Assertions.assertTrue(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class CheckIfFilterAppliesTest {
         Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
         int tmpMinAtomCount = 6;
         //
-        Assertions.assertFalse(new Filter().checkIfFilterApplys(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
+        Assertions.assertFalse(new Filter().checkWhetherFilterApplies(tmpAtomContainer, tmpFilterType, tmpMinAtomCount));
     }
 
 }

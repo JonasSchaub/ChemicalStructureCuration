@@ -28,10 +28,13 @@ package de.unijena.cheminf.filter;
 import de.unijena.cheminf.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+
+import java.util.LinkedList;
 
 /**
  *
@@ -39,88 +42,88 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 public class FilterTest {
 
     /**
-     * Tests whether the method .assignIdTiAtomContainers() of the class Filter assigns an MolID to a single atom
+     * Tests whether the method .assignMolIdToAtomContainers() of the class Filter assigns an MolID to a single atom
      * container contained in a given atom container set. The ID should be set as property to the atom container.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignIdToAtomContainersTest_singleAC_propertyMolIDIsNotNull() throws InvalidSmilesException {
+    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsNotNull() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
-        tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME));
     }
 
     /**
-     * Tests whether the atom container property assigned by the method .assignIdTiAtomContainers() of the class Filter
-     * is of type Integer.
+     * Tests whether the atom container property assigned by the method .assignMolIdToAtomContainers() of the class
+     * Filter is of type Integer.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignIdToAtomContainersTest_singleAC_propertyMolIDIsOfTypeInteger() throws InvalidSmilesException {
+    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfTypeInteger() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
-        tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         Assertions.assertInstanceOf(Integer.class, tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME));
     }
 
     /**
-     * Tests whether the method .assignIdTiAtomContainers() of the class Filter assigns an MolID of expected value to a
-     * single atom container contained in a given atom container set.
+     * Tests whether the method .assignMolIdToAtomContainers() of the class Filter assigns an MolID of expected value
+     * to a single atom container contained in a given atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignIdToAtomContainersTest_singleAC_propertyMolIDIsOfExpectedValue() throws InvalidSmilesException {
+    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfExpectedValue() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
-        tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         Assertions.assertEquals(0, (Integer) tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME));
     }
 
     /**
-     * Tests whether the method .assignIdTiAtomContainers() of the class Filter assigns MolIDs of expected values to
+     * Tests whether the method .assignMolIdToAtomContainers() of the class Filter assigns MolIDs of expected values to
      * multiple atom containers contained by a given atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignIdToAtomContainersTest_multipleACs_propertyMolIDIsOfExpectedValueRespectively() throws InvalidSmilesException {
+    public void assignMolIdToAtomContainersTest_multipleACs_propertyMolIDIsOfExpectedValueRespectively() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
-        tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         for (int i = 0; i < 3; i++) {
             Assertions.assertEquals(i, (Integer) tmpAtomContainerSet.getAtomContainer(i).getProperty(Filter.MOL_ID_PROPERTY_NAME));
         }
     }
 
     /**
-     * Tests whether a NullPointerException is thrown if the atom container set given to the .assignIdToAtomContainers()
-     * method of the class Filter is null.
+     * Tests whether a NullPointerException is thrown if the atom container set given to the
+     * .assignMolIdToAtomContainers() method of the class Filter is null.
      */
     @Test
-    public void assignIdToAtomContainersTest_throwNullPointerExceptionIfGivenParamIsNull() {
+    public void assignMolIdToAtomContainersTest_throwNullPointerExceptionIfGivenParamIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     Filter tmpFilter = new Filter();
-                    tmpFilter.assignIdToAtomContainers(null);
+                    tmpFilter.assignMolIdToAtomContainers(null);
                 }
         );
     }
 
     /*@Test   //TODO: check every single AC for not being null? I did not even find a way to create / cause that situation
-    public void assignIdToAtomContainersTest_throwNullPointerExceptionIfOneOfTheACsIsNull() throws InvalidSmilesException {
+    public void assignMolIdToAtomContainersTest_throwNullPointerExceptionIfOneOfTheACsIsNull() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = this.parseSmilesString("", "", "");
         //IAtomContainer tmpAtomContainer = null;
         //tmpAtomContainerSet.replaceAtomContainer(1, tmpAtomContainer);
@@ -131,15 +134,132 @@ public class FilterTest {
                 NullPointerException.class,
                 () -> {
                     Filter tmpFilter = new Filter();
-                    tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+                    tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
                 }
         );
     }*/
 
-    /** TODO: separate this into three separate tests?
+    /**
+     * Tests whether the value returned by the .getAssignedMolID() method of class Filter is of type Integer.
+     */
+    @Test
+    public void getAssignedMolIDTest_returnsInt() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        tmpAtomContainer.setProperty(Filter.MOL_ID_PROPERTY_NAME, 0);
+        Filter tmpFilter = new Filter();
+        Assertions.assertInstanceOf(Integer.class, tmpFilter.getAssignedMolID(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the integer value returned by the .getAssignedMolID() method of class Filter has the value of the
+     * given atom containers MolID (atom container property "Filter.MolID").
+     */
+    @Test
+    public void getAssignedMolIDTest_returnedIntEqualsAtomContainersMolID_MolID0() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpMolID = 0;
+        tmpAtomContainer.setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpMolID);
+        //
+        Filter tmpFilter = new Filter();
+        Assertions.assertEquals(tmpMolID, tmpFilter.getAssignedMolID(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the integer value returned by the .getAssignedMolID() method of class Filter has the value of the
+     * given atom containers MolID (atom container property "Filter.MolID").
+     */
+    @Test
+    public void getAssignedMolIDTest_returnedIntEqualsAtomContainersMolID_MolID1() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpMolID = 1;
+        tmpAtomContainer.setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpMolID);
+        //
+        Filter tmpFilter = new Filter();
+        Assertions.assertEquals(tmpMolID, tmpFilter.getAssignedMolID(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether a NullPointerException is thrown if the atom container given to the .getAssignedMolID() method of
+     * class Filter is null.
+     */
+    @Test
+    public void getAssignedMolIDTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new Filter().getAssignedMolID(null);
+                }
+        );
+    }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown if the MolID (atom container property "Filter.MolID") of the
+     * atom container given to the .getAssignedMolID() method of class Filter is null.
+     */
+    @Test
+    public void getAssignedMolIDTest_throwsIllegalArgumentExceptionIfGivenAtomContainersMolIDIsNull() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    new Filter().getAssignedMolID(new AtomContainer());
+                }
+        );
+    }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown if the MolID (atom container property "Filter.MolID") of the
+     * atom container given to the .getAssignedMolID() method of class Filter is not an integer value.
+     */
+    @Test
+    public void getAssignedMolIDTest_throwsIllegalArgumentExceptionIfGivenAtomContainersMolIDIsNotOfDataTypeInt() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    tmpAtomContainer.setProperty(Filter.MOL_ID_PROPERTY_NAME, new Object());
+                    new Filter().getAssignedMolID(tmpAtomContainer);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the return value of the .getArrayOfAssignedMolIDs() method of class Filter is not null.
+     */
+    @Test
+    public void getArrayOfAssignedMolIDsTest_returnsNotNull() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertNotNull(tmpFilter.getArrayOfAssignedMolIDs(new AtomContainerSet()));
+    }
+
+    /**
+     * Tests whether the return value of the .getArrayOfAssignedMolIDs() method of class Filter is an integer array.
+     */
+    @Test
+    public void getArrayOfAssignedMolIDsTest_returnsArrayOfIntegers() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertInstanceOf(int[].class, tmpFilter.getArrayOfAssignedMolIDs(new AtomContainerSet()));
+    }
+
+    /**
      * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length one if an
-     * atom container set with a single atom container is given and whether the one entry is an integer value and
-     * whether it equals the MolID assigned to the one atom container.
+     * atom container set with a single atom container is given.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void getArrayOfAssignedMolIDsTest_returnsArrayOfLengthOneIf1ACIsGiven() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+        Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
+        //
+        Filter tmpFilter = new Filter();
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        Assertions.assertEquals(1, tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet).length);
+    }
+
+    /**
+     * Tests whether the one integer value contained by the array which is returned by the .getArrayOfAssignedMolIDs()
+     * method of class Filter equals the MolID (atom container property "Filter.MolID") assigned to the single atom
+     * container contained by the atom container set given to the method.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
@@ -149,12 +269,13 @@ public class FilterTest {
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
-        tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-        Assertions.assertEquals(1, tmpMolIDArray.length);
-        Assertions.assertInstanceOf(Integer.class, tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME));
         Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(0).getProperty(Filter.MOL_ID_PROPERTY_NAME), tmpMolIDArray[0]);
     }
+
+    //TODO: adopt following methods
+    //TODO: use the .getAssignedMolID() method in .getArrayOfAssignedMolIDs()
 
     /**
      * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
@@ -169,7 +290,7 @@ public class FilterTest {
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
-        tmpFilter.assignIdToAtomContainers(tmpAtomContainerSet);
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
         Assertions.assertEquals(3, tmpMolIDArray.length);
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -200,7 +321,7 @@ public class FilterTest {
         }
     }
 
-    /**
+    /** //TODO: set an error value where no MolID exists or throw an exception?
      * TODO
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
