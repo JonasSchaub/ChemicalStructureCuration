@@ -82,21 +82,28 @@ public class Filter {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of AtomContainerSet) is null.");
         this.assignIdToAtomContainers(anAtomContainerSet);
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
-        boolean tmpAtomContainerGetsFiltered;
+        //boolean tmpAtomContainerGetsFiltered;
+        int tmpIndexOfAppliedFilter;
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
+            //tmpAtomContainerGetsFiltered = false;
+            tmpIndexOfAppliedFilter = Filter.NOT_FILTERED;
             //apply filters
-            if (this.listOfFilterParameters.size() > 0) {
-                tmpAtomContainerGetsFiltered = this.checkIfFilterApplys(tmpAtomContainer, this.listOfSelectedFilters.get(0), this.listOfFilterParameters.get(0));
-            } else {
-                tmpAtomContainerGetsFiltered = false;
+            for (int i = 0; i < this.listOfSelectedFilters.size(); i++) {
+                if (this.checkIfFilterApplys(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
+                    //tmpAtomContainerGetsFiltered = true;
+                    tmpIndexOfAppliedFilter = i;
+                    break;
+                }
             }
-            if (!tmpAtomContainerGetsFiltered) {
+            //if (!tmpAtomContainerGetsFiltered) {
+            if (tmpIndexOfAppliedFilter == Filter.NOT_FILTERED) {
                 tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
             }
             //
             //TODO: setProperty FILTERED_BY_FILTER to the index of the filter in the listOfSelectedFilters list
             //tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, Filter.NOT_FILTERED);
+            tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
         }
         //
         return tmpFilteredACSet;
