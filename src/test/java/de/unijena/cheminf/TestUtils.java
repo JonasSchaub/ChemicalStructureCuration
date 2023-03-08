@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf;
 
+import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -40,7 +41,7 @@ import java.util.Objects;
 public class TestUtils {
 
     /**
-     * Parses a set of given SMILES strings.
+     * Parses a set of given SMILES strings into a set of atom containers.
      *
      * @param aSmilesStrings Strings containing SMILES codes
      * @return Set of AtomContainers resulting out of parsing the SMILES strings
@@ -63,7 +64,7 @@ public class TestUtils {
     }
 
     /**
-     * Parses a given SMILES string.
+     * Parses a given SMILES string into an atom container.
      *
      * @param aSmilesString String containing a SMILES code
      * @return AtomContainer of the parsed SMILES string
@@ -77,5 +78,23 @@ public class TestUtils {
     }
 
     //TODO: method that returns an AtomContainerSet with a given number of empty AtomContainers
+
+    /**
+     * Returns an atom container set containing a given number of empty atom containers.
+     *
+     * @param aNumberOfAtomContainers Integer value of the number of atom containers
+     * @return AtomContainerSet containing the given number of empty atom containers
+     * @throws IllegalArgumentException if the given integer number is less than zero
+     */
+    public static IAtomContainerSet getSetOfEmptyAtomContainers(int aNumberOfAtomContainers) throws IllegalArgumentException {
+        if (aNumberOfAtomContainers < 0) {
+            throw new IllegalArgumentException("aNumberOfAtomContainers (integer value) is less than zero.");
+        }
+        IAtomContainerSet tmpAtomContainerSet = new AtomContainerSet();
+        for (int i = 0; i < aNumberOfAtomContainers; i++) {
+            tmpAtomContainerSet.addAtomContainer(new AtomContainer());
+        }
+        return tmpAtomContainerSet;
+    }
 
 }

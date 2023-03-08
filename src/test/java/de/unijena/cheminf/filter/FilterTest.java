@@ -34,8 +34,6 @@ import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
-import java.util.LinkedList;
-
 /**
  *
  */
@@ -44,12 +42,10 @@ public class FilterTest {
     /**
      * Tests whether the method .assignMolIdToAtomContainers() of the class Filter assigns an MolID to a single atom
      * container contained in a given atom container set. The ID should be set as property to the atom container.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsNotNull() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsNotNull() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -60,12 +56,10 @@ public class FilterTest {
     /**
      * Tests whether the atom container property assigned by the method .assignMolIdToAtomContainers() of the class
      * Filter is of type Integer.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfTypeInteger() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfTypeInteger() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -76,12 +70,10 @@ public class FilterTest {
     /**
      * Tests whether the method .assignMolIdToAtomContainers() of the class Filter assigns an MolID of expected value
      * to a single atom container contained in a given atom container set.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfExpectedValue() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfExpectedValue() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -92,12 +84,10 @@ public class FilterTest {
     /**
      * Tests whether the method .assignMolIdToAtomContainers() of the class Filter assigns MolIDs of expected values to
      * multiple atom containers contained by a given atom container set.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void assignMolIdToAtomContainersTest_multipleACs_propertyMolIDIsOfExpectedValueRespectively() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void assignMolIdToAtomContainersTest_multipleACs_propertyMolIDIsOfExpectedValueRespectively() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -123,8 +113,8 @@ public class FilterTest {
     }
 
     /*@Test   //TODO: check every single AC for not being null? I did not even find a way to create / cause that situation
-    public void assignMolIdToAtomContainersTest_throwNullPointerExceptionIfOneOfTheACsIsNull() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = this.parseSmilesString("", "", "");
+    public void assignMolIdToAtomContainersTest_throwNullPointerExceptionIfOneOfTheACsIsNull() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         //IAtomContainer tmpAtomContainer = null;
         //tmpAtomContainerSet.replaceAtomContainer(1, tmpAtomContainer);
         //tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
@@ -243,12 +233,10 @@ public class FilterTest {
     /**
      * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length one if an
      * atom container set with a single atom container is given.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_returnsArrayOfLengthOneIf1ACIsGiven() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+    public void getArrayOfAssignedMolIDsTest_returnsArrayOfLengthOneIfGiven1AC() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -257,15 +245,13 @@ public class FilterTest {
     }
 
     /**
-     * Tests whether the one integer value contained by the array which is returned by the .getArrayOfAssignedMolIDs()
-     * method of class Filter equals the MolID (atom container property "Filter.MolID") assigned to the single atom
-     * container contained by the atom container set given to the method.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * Tests whether one integer value contained by the array returned by the .getArrayOfAssignedMolIDs() method of
+     * class Filter equals the MolID (atom container property "Filter.MolID") assigned to the single atom container
+     * contained by the given atom container set.
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_1AC() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+    public void getArrayOfAssignedMolIDsTest_returnedValueEqualsMolIDOfGivenAtomContainer() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -277,37 +263,47 @@ public class FilterTest {
     //TODO: adopt following methods
     //TODO: use the .getAssignedMolID() method in .getArrayOfAssignedMolIDs()
 
-    /**
+    /** TODO
      * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
      * atom container set of three atom containers is given and whether the values contained by the array equal the
      * consistently numbered MolIDs of the three atom containers.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_3ACs_consistentNumbering() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void getArrayOfAssignedMolIDsTest_returnsArrayOfLengthThreeIfGiven3ACs() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
+        //
+        Filter tmpFilter = new Filter();
+        tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        Assertions.assertEquals(3, tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet).length);
+    }
+
+    /** TODO
+     * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
+     * atom container set of three atom containers is given and whether the values contained by the array equal the
+     * consistently numbered MolIDs of the three atom containers.
+     */
+    @Test
+    public void getArrayOfAssignedMolIDsTest_returnedValuesEqualsMolIDsOfGivenACs_3ACs_consistentNumbering() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
         tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
         int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-        Assertions.assertEquals(3, tmpMolIDArray.length);
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(i).getProperty(Filter.MOL_ID_PROPERTY_NAME), tmpMolIDArray[i]);
         }
     }
 
-    /**
+    /** TODO?
      * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
      * atom container set of three atom containers is given and whether the values contained by the array equal the
      * inconsistently numbered MolIDs of the three atom containers.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_3ACs_manuallySetInconsistentMolIDs() throws InvalidSmilesException {   //TODO
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void getArrayOfAssignedMolIDsTest_returnedValuesEqualsMolIDsOfGivenACs_3ACs_manuallySetInconsistentMolIDs() {   //TODO
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.MOL_ID_PROPERTY_NAME, 9);
         tmpAtomContainerSet.getAtomContainer(1).setProperty(Filter.MOL_ID_PROPERTY_NAME, 3);
         tmpAtomContainerSet.getAtomContainer(2).setProperty(Filter.MOL_ID_PROPERTY_NAME, 7);
@@ -323,11 +319,10 @@ public class FilterTest {
 
     /** //TODO: set an error value where no MolID exists or throw an exception?
      * TODO
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_setsErrorValueWhereMolIDIsNotSet() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("");
+    public void getArrayOfAssignedMolIDsTest_setsErrorValueWhereMolIDIsNotSet() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         //
         Filter tmpFilter = new Filter();
         int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
@@ -348,20 +343,19 @@ public class FilterTest {
 
     /**
      * TODO
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_ACsWithMolIDAndWithoutCombined_2With_1Without() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void getArrayOfAssignedMolIDsTest_ACsWithMolIDAndWithoutCombined_2With_1Without() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
-        int tmpAnyMolID1 = 4;
-        int tmpAnyMolID2 = 3;
-        tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpAnyMolID1);
-        tmpAtomContainerSet.getAtomContainer(2).setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpAnyMolID2);
+        int tmpAnyMolIDForAC_0 = 4;
+        int tmpAnyMolIDForAC_2 = 3;
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpAnyMolIDForAC_0);
+        tmpAtomContainerSet.getAtomContainer(2).setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpAnyMolIDForAC_2);
         int[] tmpMolIDArray = new Filter().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
         Assertions.assertEquals(3, tmpMolIDArray.length);
-        Assertions.assertArrayEquals(new int[]{tmpAnyMolID1, Filter.MOL_ID_ERROR_VALUE, tmpAnyMolID2}, tmpMolIDArray);
+        Assertions.assertArrayEquals(new int[]{tmpAnyMolIDForAC_0, Filter.MOL_ID_ERROR_VALUE, tmpAnyMolIDForAC_2}, tmpMolIDArray);
     }
 
     /**
@@ -381,12 +375,10 @@ public class FilterTest {
     /**
      * Tests whether all the atom containers of the atom container set given to the .filter() method of the class Filter
      * are preserved if no filter is applied.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_noFilterSelected_checkIfAllElementsArePreserved() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_noFilterSelected_checkIfAllElementsArePreserved() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -400,12 +392,10 @@ public class FilterTest {
     /**
      * Tests whether all the atom containers of the atom container set returned by the .filter() method of the class
      * Filter have a valid ID attached. The ID should be attached as property and should be greater or equal to zero.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_checkIfAllACsOfFilteredACSetHaveIDsAttached() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_checkIfAllACsOfFilteredACSetHaveIDsAttached() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -419,12 +409,10 @@ public class FilterTest {
     /**
      * Tests whether the atom containers preserved by the .filter() method of the class Filter preserved its respective
      * ID.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_noFilterSelected_checkIfAllElementsPreservedTheirCorrectID() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_noFilterSelected_checkIfAllElementsPreservedTheirCorrectID() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         Filter tmpFilter = new Filter();
@@ -796,23 +784,20 @@ public class FilterTest {
     /**
      * Tests whether the atom container set returned by the .filter() method of class Filter contains equal or less
      * atom containers than the atom container set given to the method.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_returnedAtomContainerSetContainsEqualOrLessAtomContainersThanTheGivenACS() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_returnedAtomContainerSetContainsEqualOrLessAtomContainersThanTheGivenACS() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().filter(tmpAtomContainerSet);
         Assertions.assertTrue(tmpAtomContainerSet.getAtomContainerCount() >= tmpFilteredAtomContainerSet.getAtomContainerCount());
     }
 
     /**
      * TODO
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDSet() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDSet() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().filter(tmpAtomContainerSet);
         for (IAtomContainer tmpAtomContainer :
                 tmpFilteredAtomContainerSet.atomContainers()) {
@@ -822,11 +807,10 @@ public class FilterTest {
 
     /**
      * TODO
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_everyMolIDInFilteredAtomContainerSetIsPresentInTheGivenACS() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_everyMolIDInFilteredAtomContainerSetIsPresentInTheGivenACS() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().filter(tmpAtomContainerSet);
         boolean tmpMolIdIsPresent;
         for (int tmpFilteredSetMolID :
@@ -860,12 +844,10 @@ public class FilterTest {
     /**
      * Tests whether applying the filter NONE results in no atom container of the set being filtered.
      * This should be the final form for applying a filter on an atom container set.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withFilterNONE_sameAtomContainerCountBeforeAsAfter() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_withFilterNONE_sameAtomContainerCountBeforeAsAfter() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpAnyIntegerValue = 0;
         IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().withFilter(Filter.FilterTypes.NONE, tmpAnyIntegerValue).filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpAtomContainerSet.getAtomContainerCount(), tmpFilteredAtomContainerSet.getAtomContainerCount());
@@ -873,11 +855,10 @@ public class FilterTest {
 
     /**
      * TODO
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withFilterNONE_everyACOfTheOriginalSetIsContainedInTheFilteredSet() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_withFilterNONE_everyACOfTheOriginalSetIsContainedInTheFilteredSet() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpAnyIntegerValue = 0;
         IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().withFilter(Filter.FilterTypes.NONE, tmpAnyIntegerValue).filter(tmpAtomContainerSet);
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -1100,7 +1081,8 @@ public class FilterTest {
     }
 
     @Test
-    public void filterMethodTest_combiningThreeFilters_withMaxAtomCountFilterConsImplHs_12_withMinAtomCountFilterConsImplHs_9_withMaxAtomCountFilterNotConsImplHs_5() throws InvalidSmilesException {
+    public void filterMethodTest_combiningThreeFilters_withMaxAtomCountFilterConsImplHs_12_withMinAtomCountFilterConsImplHs_9_withMaxAtomCountFilterNotConsImplHs_5()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //10 (5)
                 "c1ccccc1", //12 (6) - filtered
@@ -1119,7 +1101,8 @@ public class FilterTest {
     }
 
     @Test
-    public void filterMethodTest_combiningFourFilters_withMaxAtomCountFilterConsImplHs_12_withMinAtomCountFilterConsImplHs_9_withMaxAtomCountFilterNotConsImplHs_5_withMinAtomCountFilterNotConsImplHs_5() throws InvalidSmilesException {
+    public void filterMethodTest_combiningFourFilters_withMaxAtomCountFilterConsImplHs_12_withMinAtomCountFilterConsImplHs_9_withMaxAtomCountFilterNotConsImplHs_5_withMinAtomCountFilterNotConsImplHs_5()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //10 (5)
                 "c1ccccc1", //12 (6) - filtered
@@ -1189,8 +1172,8 @@ public class FilterTest {
 
     //TODO: following are tests of the FilterID (a tool for tracking / tracing the filter process)
     @Test
-    public void filterMethodTest_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDAfterFiltering() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDAfterFiltering() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         new Filter().filter(tmpAtomContainerSet);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
@@ -1199,8 +1182,8 @@ public class FilterTest {
     }
 
     @Test
-    public void filterMethodTest_noFilter_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDSetToNotFilteredValue() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_noFilter_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDSetToNotFilteredValue() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         new Filter().filter(tmpAtomContainerSet);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
@@ -1209,8 +1192,8 @@ public class FilterTest {
     }
 
     @Test   //TODO: probably remove
-    public void filterMethodTest_withFilterNONE_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDSetToNotFilteredValue() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("", "", "");
+    public void filterMethodTest_withFilterNONE_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDSetToNotFilteredValue() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpAnyIntegerValue = 0;
         new Filter().withFilter(Filter.FilterTypes.NONE, tmpAnyIntegerValue).filter(tmpAtomContainerSet);
         for (IAtomContainer tmpAtomContainer :
@@ -1220,19 +1203,22 @@ public class FilterTest {
     }
 
     /*@Test
-    public void filterMethodTest_FilterIDsOfAtomContainersNoFilterAppliedOnAreOfNotFilteredValue() throws InvalidSmilesException {
+    public void filterMethodTest_FilterIDsOfAtomContainersNoFilterAppliedOnAreOfNotFilteredValue() {
         //TODO
     }*/
 
     /*@Test
-    public void filterMethodTest_FilterIDsOfAtomContainersAFilterAppliedOnAreUnequalToNotFilteredValue() throws InvalidSmilesException {
+    public void filterMethodTest_FilterIDsOfAtomContainersAFilterAppliedOnAreUnequalToNotFilteredValue() {
         //TODO
     }*/
 
     /*@Test
-    public void filterMethodTest_FilterIDsOfAtomContainersAFilterAppliedOnAreGreaterOrEqualToZero() throws InvalidSmilesException {
+    public void filterMethodTest_FilterIDsOfAtomContainersAFilterAppliedOnAreGreaterOrEqualToZero() {
         //TODO
     }*/
-    //TODO: further tests and implementing of FilterID
+    //TODO: further tests and implementation of FilterID
+
+    /*@Test
+    public void get*/
 
 }

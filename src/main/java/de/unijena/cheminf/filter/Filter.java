@@ -90,7 +90,7 @@ public class Filter {
             tmpIndexOfAppliedFilter = Filter.NOT_FILTERED;
             //apply filters
             for (int i = 0; i < this.listOfSelectedFilters.size(); i++) {
-                if (this.checkWhetherFilterApplies(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
+                if (this.getsFiltered(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
                     //tmpAtomContainerGetsFiltered = true;
                     tmpIndexOfAppliedFilter = i;
                     break;
@@ -159,14 +159,15 @@ public class Filter {
 
     /**
      * Checks whether a specific filter applies on a given atom container.
-     * Returns true, if the atom container needs to be filtered / sorted out.
+     * Returns true, if the atom container gets filtered.
      *
      * @param anAtomContainer IAtomContainer instance to be checked
-     * @param aFilterType FilterTypes constant which stands for the filter algorithm that is to be applied
-     * @param anIntegerParameter Integer value which is a parameter to the given filter algorithm
+     * @param aFilterType FilterTypes constant of the filter that should be applied
+     * @param anIntegerParameter Integer value which is the parameter to the given filter algorithm
      * @return true if the given filter applies on the atom container
+     * @throws NullPointerException if the given atom container or filter instance is null
      */
-    protected boolean checkWhetherFilterApplies(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) {  //TODO: adopt name; question that is answered
+    protected boolean getsFiltered(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) throws NullPointerException {  //TODO: adopt name; question that is answered
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         Objects.requireNonNull(aFilterType, "aFilterType (Filter.FilterTypes constant) is null.");
         return switch (aFilterType) {
@@ -201,25 +202,28 @@ public class Filter {
         }
     }
 
-    /** TODO: could / should be placed in a Utils class
-     * Returns an array of the MolIDs assigned to the atom containers in the given atom container set. If an atom
-     * container given to this method has no MolID, the corresponding entry in the returned array is set to -1.
-     * TODO
+    /**
+     * Returns the MolIDs assigned to the atom containers in the given atom container set as integer array. A MolID is
+     * assigned to every atom container of an atom container set that was given to or returned by the .filter() method
+     * of this class. This method may only be used for atom container sets that meet this criterion.
+     * For atom containers that have no MolID set or an MolID that is not of type integer, the corresponding entry in
+     * the returned array is set to an error value (-1).
      *
-     * @param anAtomContainerSet
-     * @return
-     * @throws NullPointerException if the given instance of IAtomContainerSet is null
+     * @param anAtomContainerSet IAtomContainerSet instance the MolID array should be returned of
+     * @return Integer array of the atom containers MolIDs
+     * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it is null
      */
-    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException {    //TODO: deal with AC or MolID being null
+    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final int[] tmpMolIDArray = new int[anAtomContainerSet.getAtomContainerCount()];
-        IAtomContainer tmpAtomContainer;
         for (int i = 0; i < tmpMolIDArray.length; i++) {
-            tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
-            if (tmpAtomContainer == null || tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME) == null) {
-                tmpMolIDArray[i] = Filter.MOL_ID_ERROR_VALUE;
-            } else {
-                tmpMolIDArray[i] = tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME);
+            try {
+                tmpMolIDArray[i] = this.getAssignedMolID(anAtomContainerSet.getAtomContainer(i));
+            } catch (NullPointerException aNullPointerException) {
+                throw new NullPointerException("AtomContainer " + i + " of the given AtomContainerSet is null.");
+            } catch (IllegalArgumentException anIllegalArgumentException) {
+                tmpMolIDArray[i] = Filter.MOL_ID_ERROR_VALUE;   //TODO: throw exceptions instead?
+                //throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID assigned or the MolID is not of type Integer.");
             }
         }
         return tmpMolIDArray;
