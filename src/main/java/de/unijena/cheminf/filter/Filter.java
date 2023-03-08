@@ -188,8 +188,8 @@ public class Filter {
         };
     }
 
-    /**
-     * Assigns an identifier to every atom container of the given atom container set.
+    /** TODO
+     * Assigns a unique identifier in form of a MolID to every atom container of the given atom container set.
      *
      * @param anAtomContainerSet IAtomContainerSet
      * @throws NullPointerException
@@ -212,7 +212,8 @@ public class Filter {
      *
      * @param anAtomContainerSet IAtomContainerSet instance the MolID array should be returned of
      * @return Integer array of the atom containers MolIDs
-     * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it is null
+     * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it
+     * is null
      */
     public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
@@ -224,7 +225,7 @@ public class Filter {
                 throw new NullPointerException("AtomContainer " + i + " of the given AtomContainerSet is null.");
             } catch (IllegalArgumentException anIllegalArgumentException) {
                 tmpMolIDArray[i] = Filter.MOL_ID_ERROR_VALUE;   //TODO: throw exceptions instead?
-                //throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID assigned or the MolID is not of type Integer.");
+                //throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID assigned or the MolID is not of data type Integer.");
             }
         }
         return tmpMolIDArray;
@@ -238,8 +239,8 @@ public class Filter {
      * @param anAtomContainer IAtomContainer instance the MolID should be returned of
      * @return MolID (integer value) of the given AtomContainer
      * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given IAtomContainer instance is null or if the MolID assigned to it is
-     * not of data type Integer
+     * @throws IllegalArgumentException if the given IAtomContainer instance has no MolID assigned or the MolID is not
+     * of data type Integer
      */
     public int getAssignedMolID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
@@ -247,9 +248,63 @@ public class Filter {
             throw new IllegalArgumentException("The given AtomContainer instance has no MolID assigned.");
         }
         if (anAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME).getClass() != Integer.class) {
-            throw new IllegalArgumentException("The MolID assigned to the given AtomContainer instance is not of data type Integer.");
+            throw new IllegalArgumentException("The MolID assigned to the given AtomContainer instance is not of " +
+                    "data type Integer.");
         }
         return anAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME);
+    }
+
+    /**
+     * Returns the FilterIDs assigned to the atom containers in the given atom container set as integer array. A
+     * FilterID is assigned to every atom container of an atom container set that was given to or returned by the
+     * .filter() method of this class. This method may only be used for atom container sets that meet this criterion.
+     * For atom containers that have no FilterID set or an FilterID that is not of type integer, the corresponding
+     * entry in the returned array is set to an error value (-1).
+     *
+     * @param anAtomContainerSet IAtomContainerSet instance the FilterID array should be returned of
+     * @return Integer array of the atom containers FilterIDs
+     * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it
+     * is null
+     * @throws IllegalArgumentException if an AtomContainer contained by the given IAtomContainerSet instance has no
+     * FilterID assigned or the FilterID is not of data type Integer
+     */
+    public int[] getArrayOfAssignedFilterIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        final int[] tmpFilterIDArray = new int[anAtomContainerSet.getAtomContainerCount()];
+        for (int i = 0; i < tmpFilterIDArray.length; i++) {
+            try {
+                tmpFilterIDArray[i] = this.getAssignedFilterID(anAtomContainerSet.getAtomContainer(i));
+            } catch (NullPointerException aNullPointerException) {
+                throw new NullPointerException("AtomContainer " + i + " of the given AtomContainerSet is null.");
+            } catch (IllegalArgumentException anIllegalArgumentException) {
+                throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no" +
+                        "FilterID assigned or the FilterID is not of data type Integer.");
+            }
+        }
+        return tmpFilterIDArray;
+    }
+
+    /**
+     * Returns the FilterID assigned to the given atom container. A FilterID is assigned to every atom container of an
+     * atom container set that was given to or returned by the .filter() method of this class. This method may not be
+     * used for any atom container that does not meet this criterion.
+     *
+     * @param anAtomContainer IAtomContainer instance the FilterID should be returned of
+     * @return FilterID (integer value) of the given AtomContainer
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if the given IAtomContainer instance has no FilterID assigned or the FilterID
+     * is not of data type Integer
+     */
+    public int getAssignedFilterID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        if (anAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME) == null) {
+            throw new IllegalArgumentException("The given AtomContainer instance has no FilterID assigned.");
+        }
+        if (anAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME).getClass() != Integer.class) {
+            throw new IllegalArgumentException("The FilterID assigned to the given AtomContainer instance is not of " +
+                    "data type Integer.");
+        }
+        return anAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME);
     }
 
     /**
@@ -270,7 +325,7 @@ public class Filter {
         return this.listOfFilterParameters;
     }
 
-    /**
+    /** TODO: comment enum constants
      * Enum of filter types.
      */
     public enum FilterTypes {

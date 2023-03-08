@@ -263,10 +263,9 @@ public class FilterTest {
     //TODO: adopt following methods
     //TODO: use the .getAssignedMolID() method in .getArrayOfAssignedMolIDs()
 
-    /** TODO
-     * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if an
-     * atom container set of three atom containers is given and whether the values contained by the array equal the
-     * consistently numbered MolIDs of the three atom containers.
+    /**
+     * Tests whether the .getArrayOfAssignedMolIDs() method of the class Filter returns an array of length three if
+     * given an atom container set of three atom containers.
      */
     @Test
     public void getArrayOfAssignedMolIDsTest_returnsArrayOfLengthThreeIfGiven3ACs() {
@@ -793,7 +792,8 @@ public class FilterTest {
     }
 
     /**
-     * TODO
+     * Tests whether every atom container returned by the .filter() method of class Filter has an MolID (atom container
+     * property "Filter.MolID") assigned.
      */
     @Test
     public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDSet() {
@@ -806,7 +806,58 @@ public class FilterTest {
     }
 
     /**
-     * TODO
+     * Tests whether the MolIDs (atom container property "Filter.MolID") assigned to every atom container returned by
+     * the .filter() method of class Filter are of data type Integer.
+     */
+    @Test
+    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDOfTypeInteger() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpFilteredAtomContainerSet.atomContainers()) {
+            Assertions.assertNotNull(tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME));
+        }
+    }
+
+    /**
+     * Tests whether every atom container of the atom container set given to the .filter() method of class Filter has
+     * an MolID (atom container property "Filter.MolID") assigned afterwards.
+     */
+    @Test
+    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDSetAfterwards() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertNull(tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME));
+        }
+        new Filter().filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertNotNull(tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME));
+        }
+    }
+
+    /**
+     * Tests whether the MolIDs (atom container property "Filter.MolID") assigned to every atom container of the atom
+     * container set given to the .filter() method of class Filter are of data type Integer.
+     */
+    @Test
+    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDOfTypeIntegerAfterwards() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertNull(tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME));
+        }
+        IAtomContainerSet tmpFilteredAtomContainerSet = new Filter().filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpFilteredAtomContainerSet.atomContainers()) {
+            Assertions.assertInstanceOf(Integer.class, tmpAtomContainer.getProperty(Filter.MOL_ID_PROPERTY_NAME));
+        }
+    }
+
+    /**
+     * Tests whether every atom container of the atom container set returned by the .filter() method of class Filter is
+     * present in the set given to it.
      */
     @Test
     public void filterMethodTest_everyMolIDInFilteredAtomContainerSetIsPresentInTheGivenACS() {
@@ -854,7 +905,9 @@ public class FilterTest {
     }
 
     /**
-     * TODO
+     * Tests whether applying the filter NONE results in an atom container set containing the same atom container
+     * instances in the same order as the original atom container set.
+     * This should be the final form for applying a filter on an atom container set.
      */
     @Test
     public void filterMethodTest_withFilterNONE_everyACOfTheOriginalSetIsContainedInTheFilteredSet() {
@@ -867,8 +920,8 @@ public class FilterTest {
     }
 
     /**
-     * Tests whether applying the max atom count filter brings the correct result. Here the given atom container should
-     * not be filtered.
+     * Tests whether applying the max atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are considered. Here the given atom container should not be filtered.
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
@@ -888,6 +941,13 @@ public class FilterTest {
         Assertions.assertArrayEquals(new int[]{0}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
 
+    /**
+     * Tests whether applying the max atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are considered. Here the given atom container should be filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
@@ -901,6 +961,13 @@ public class FilterTest {
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
 
+    /**
+     * Tests whether applying the max atom count filter on multiple atom containers gives the correct result if implicit
+     * hydrogen are considered. Here atom container 0 should be filtered, 1 and 2 not.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_3ACs_AC1Filtered() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
@@ -919,6 +986,13 @@ public class FilterTest {
         Assertions.assertArrayEquals(new int[]{1, 2}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
 
+    /**
+     * Tests whether applying the max atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are not considered. Here the given atom container should not be filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMaxAtomCountFilter_6_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
@@ -934,6 +1008,13 @@ public class FilterTest {
         Assertions.assertArrayEquals(new int[]{0}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
 
+    /**
+     * Tests whether applying the max atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are not considered. Here the given atom container should be filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMaxAtomCountFilter_4_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
@@ -947,6 +1028,13 @@ public class FilterTest {
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
 
+    /**
+     * Tests whether applying the max atom count filter on multiple atom containers gives the correct result if implicit
+     * hydrogen are not considered. Here atom container 1 should be filtered, 0 and 2 not.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMaxAtomCountFilter_5_notConsiderImplHs_3ACs_AC2Filtered() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
@@ -966,7 +1054,9 @@ public class FilterTest {
     }
 
     /**
-     * This should be the final form for using a filter on an atom container set. TODO
+     * Tests whether applying the min atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are considered. Here the given atom container should not be filtered.
+     * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
@@ -985,6 +1075,13 @@ public class FilterTest {
         Assertions.assertArrayEquals(new int[]{0}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
 
+    /**
+     * Tests whether applying the min atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are considered. Here the given atom container should be filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMinAtomCountFilter_14_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
@@ -998,6 +1095,13 @@ public class FilterTest {
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
 
+    /**
+     * Tests whether applying the min atom count filter on multiple atom containers gives the correct result if implicit
+     * hydrogen are considered. Here atom container 1 should be filtered, 0 and 2 not.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMinAtomCountFilter_10_considerImplHs_3ACs_AC2Filtered() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
@@ -1016,6 +1120,13 @@ public class FilterTest {
         Assertions.assertArrayEquals(new int[]{0, 2}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
 
+    /**
+     * Tests whether applying the min atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are not considered. Here the given atom container should not be filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMinAtomCountFilter_4_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
@@ -1031,6 +1142,13 @@ public class FilterTest {
         Assertions.assertArrayEquals(new int[]{0}, tmpFilter.getArrayOfAssignedMolIDs(tmpFilteredACSet));
     }
 
+    /**
+     * Tests whether applying the min atom count filter on a single atom container gives the correct result if implicit
+     * hydrogen are not considered. Here the given atom container should be filtered.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMinAtomCountFilter_6_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
@@ -1044,6 +1162,13 @@ public class FilterTest {
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
 
+    /**
+     * Tests whether applying the min atom count filter on multiple atom containers gives the correct result if implicit
+     * hydrogen are not considered. Here atom container 2 should be filtered, 0 and 1 not.
+     * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
     @Test
     public void filterMethodTest_withMinAtomCountFilter_5_notConsiderImplHs_3ACs_AC3Filtered() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
@@ -1218,7 +1343,221 @@ public class FilterTest {
     }*/
     //TODO: further tests and implementation of FilterID
 
-    /*@Test
-    public void get*/
+    /**
+     * Tests whether the value returned by the .getAssignedFilterID() method of class Filter is of type Integer.
+     */
+    @Test
+    public void getAssignedFilterID_returnsIntegerValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpAnyFilterID = 0;
+        tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        Assertions.assertInstanceOf(Integer.class, new Filter().getAssignedFilterID(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the integer value returned by the .getAssignedFilterID() method of class Filter has the value of
+     * the given atom containers FilterID (atom container property "Filter.FilterID").
+     */
+    @Test
+    public void getAssignedFilterID_returnedValueEqualsFilterIDOfGivenAC_0() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpAnyFilterID = 0;
+        tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        Assertions.assertEquals(tmpAnyFilterID, new Filter().getAssignedFilterID(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the integer value returned by the .getAssignedFilterID() method of class Filter has the value of
+     * the given atom containers FilterID (atom container property "Filter.FilterID").
+     */
+    @Test
+    public void getAssignedFilterID_returnedValueEqualsFilterIDOfGivenAC_1() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpAnyFilterID = 1;
+        tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        Assertions.assertEquals(tmpAnyFilterID, new Filter().getAssignedFilterID(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether a NullPointerException is thrown if the atom container given to the .getAssignedFilterID() method
+     * of class Filter is null.
+     */
+    @Test
+    public void getAssignedFilterID_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new Filter().getAssignedFilterID(null);
+                }
+        );
+    }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown if the FilterID (atom container property "Filter.FilterID")
+     * of the atom container given to the .getAssignedFilterID() method of class Filter is null.
+     */
+    @Test
+    public void getAssignedFilterID_throwsIllegalArgumentExceptionIfGivenACsFilterIDIsNull() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    new Filter().getAssignedFilterID(new AtomContainer());
+                }
+        );
+    }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown if the FilterID (atom container property "Filter.FilterID")
+     * of the atom container given to the .getAssignedFilterID() method of class Filter is not an integer value.
+     */
+    @Test
+    public void getAssignedFilterID_throwsIllegalArgumentExceptionIfGivenACsFilterIDIsNotOfTypeInteger() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, new Object());
+                    new Filter().getAssignedFilterID(tmpAtomContainer);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the return value of the .getArrayOfAssignedFilterIDs() method of class Filter is not null.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnsNotNull() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertNotNull(tmpFilter.getArrayOfAssignedFilterIDs(new AtomContainerSet()));
+    }
+
+    /**
+     * Tests whether the return value of the .getArrayOfAssignedFilterIDs() method of class Filter is an integer array.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnsArrayOfIntegers() {
+        Filter tmpFilter = new Filter();
+        Assertions.assertInstanceOf(int[].class, tmpFilter.getArrayOfAssignedFilterIDs(new AtomContainerSet()));
+    }
+
+    /**
+     * Tests whether the .getArrayOfAssignedFilterIDs() method of the class Filter returns an array of length one if an
+     * atom container set with a single atom container is given.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnsArrayOfLengthOneIfGiven1AC() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+        int tmpAnyFilterID = 0;
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        //
+        Filter tmpFilter = new Filter();
+        Assertions.assertEquals(1, tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet).length);
+    }
+
+    /**
+     * Tests whether the integer value contained by the array returned by the .getArrayOfAssignedFilterIDs() method of
+     * class Filter equals the FilterID (atom container property "Filter.FilterID") assigned to the single atom
+     * container contained by the given atom container set.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnedValueEqualsFilterIDOfGivenAtomContainer_FilterID0() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+        int tmpFilterID = 0;
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpFilterID);
+        //
+        Filter tmpFilter = new Filter();
+        int[] tmpFilterIDArray = tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+        Assertions.assertEquals(tmpFilterID, tmpFilterIDArray[0]);
+    }
+
+    /**
+     * Tests whether one integer value contained by the array returned by the .getArrayOfAssignedFilterIDs() method of
+     * class Filter equals the FilterID (atom container property "Filter.FilterID") assigned to the single atom
+     * container contained by the given atom container set.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnedValueEqualsFilterIDOfGivenAtomContainer_FilterID1() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+        int tmpFilterID = 1;
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpFilterID);
+        //
+        Filter tmpFilter = new Filter();
+        int[] tmpFilterIDArray = tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+        Assertions.assertEquals(tmpFilterID, tmpFilterIDArray[0]);
+    }
+
+    /**
+     * Tests whether the .getArrayOfAssignedFilterIDs() method of the class Filter returns an array of length three if
+     * given an atom container set of three atom containers.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnsArrayOfLengthThreeIfGiven3ACs() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, 0);
+        }
+        //
+        Filter tmpFilter = new Filter();
+        Assertions.assertEquals(3, tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet).length);
+    }
+
+    /**
+     * Tests whether the three integer values contained by the array returned by the .getArrayOfAssignedFilterIDs()
+     * method of class Filter equal the FilterIDs (atom container property "Filter.FilterID") assigned to the three
+     * atom containers contained by the given atom container set. Here, the three FilterIDs are of a uniform value.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnedValuesEqualsMolIDsOfGivenACs_3ACs_all0() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        int tmpFilterID = 0;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpFilterID);
+        }
+        //
+        Filter tmpFilter = new Filter();
+        int[] tmpFilterIDArray = tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+        for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
+            Assertions.assertEquals(tmpFilterID, tmpFilterIDArray[i]);
+        }
+    }
+
+    /**
+     * Tests whether the three integer values contained by the array returned by the .getArrayOfAssignedFilterIDs()
+     * method of class Filter equal the FilterIDs (atom container property "Filter.FilterID") assigned to the three
+     * atom containers contained by the given atom container set. Here, the three FilterIDs are of different values.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_returnedValuesEqualsMolIDsOfGivenACs_3ACs_differentIDs() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        int[] tmpFilterIDArray = new int[]{4, 0, 2};
+        for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
+            tmpAtomContainerSet.getAtomContainer(i).setProperty(Filter.FILTER_ID_PROPERTY_NAME, tmpFilterIDArray[i]);
+        }
+        //
+        Filter tmpFilter = new Filter();
+        Assertions.assertArrayEquals(tmpFilterIDArray, tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet));
+    }
+
+    //TODO: test for no FilterID
+    //TODO: test for FilterID is no Integer
+
+    //TODO: any further test methods for .getArrayOfAssignedFilterIDs()?
+    //TODO: test FilterIDs in combination with .filter()
+
+    /**
+     * Tests whether a NullPointerException is thrown if the atom container set given to the
+     * .getArrayOfAssignedFilterIDs() method of the class Filter is null.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDsTest_throwNullPointerExceptionIfGivenAtomContainerSetIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new Filter().getArrayOfAssignedFilterIDs(null);
+                }
+        );
+    }
 
 }
