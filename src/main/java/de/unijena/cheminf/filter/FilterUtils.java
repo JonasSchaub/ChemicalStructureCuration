@@ -31,7 +31,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import java.util.Objects;
 
 /**
- *
+ * Class of utils for filtering sets of atom containers based on molecular descriptors.
  */
 public class FilterUtils {
 

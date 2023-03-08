@@ -36,7 +36,7 @@ import org.openscience.cdk.smiles.SmilesParser;
 import java.util.Objects;
 
 /**
- *
+ * Collection of utils for different test classes.
  */
 public class TestUtils {
 

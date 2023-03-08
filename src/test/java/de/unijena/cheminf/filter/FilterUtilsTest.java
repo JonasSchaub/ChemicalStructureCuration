@@ -33,7 +33,7 @@ import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
- *
+ * Test class for methods of class FilterUtils.
  */
 public class FilterUtilsTest {
 

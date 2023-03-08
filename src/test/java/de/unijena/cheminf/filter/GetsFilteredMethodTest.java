@@ -7,6 +7,9 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ * Test class for .getsFiltered() method of class Filter.
+ */
 public class GetsFilteredMethodTest {
 
     /**
@@ -64,7 +67,7 @@ public class GetsFilteredMethodTest {
      */
     /*@Test
     public void getsFilteredMethodTest_default_TODO() {
-        //default case: throws NotImplementedException
+        //default case: throws NotImplementedException (/ UnsupportedOperationException)
     }*/
 
     /**

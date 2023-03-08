@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- *
+ * Test class for the .withMinAtomCountFilter() method of class Filter.
  */
 public class WithMinAtomCountFilterTest {
 

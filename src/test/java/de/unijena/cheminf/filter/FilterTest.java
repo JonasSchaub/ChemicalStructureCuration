@@ -35,7 +35,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
- *
+ * Test class for the core methods and functions of class Filter.
  */
 public class FilterTest {
 

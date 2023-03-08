@@ -34,7 +34,9 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 /**
- * Filter on based on a molecular descriptor. Auf Basis eines einzelnen Moleküls
+ * Filter class for filtering sets of atom containers based on molecular descriptors.  TODO: is this one sentence enough?
+ * Only contains filters that are based on molecular descriptors and can be applied for each atom container separately
+ * (without knowledge of the other atom containers - as it would be necessary e.g. for filtering duplicates).
  */
 public class Filter {
 
@@ -62,10 +64,9 @@ public class Filter {
     }
 
     /**
-     * Protected Constructor.
-     * For generating a copy of the original Filter instance.
+     * Protected Constructor. Generates a copy of the original Filter instance maintaining all its fields.
      *
-     * @param anOriginalFilter Filter instance to copy
+     * @param anOriginalFilter Filter instance to generate the copy of
      */
     protected Filter(Filter anOriginalFilter) {
         this.listOfSelectedFilters = anOriginalFilter.listOfSelectedFilters;
