@@ -34,6 +34,8 @@ import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
+import java.util.InvalidPropertiesFormatException;
+
 /**
  * Test class for the core methods and functions of class Filter.
  */
@@ -128,6 +130,70 @@ public class FilterTest {
                 }
         );
     }*/
+
+    /**
+     * Tests whether the .hasMolIdAssigned() method of class FilterPipeline returns a boolean value.
+     */
+    @Test
+    public void hasMolIdAssigned_returnsBooleanValue() throws InvalidPropertiesFormatException {
+        Filter tmpFilter = new Filter();
+        Assertions.assertInstanceOf(Boolean.class, tmpFilter.hasMolIdAssigned(new AtomContainer()));
+    }
+
+    /**
+     * Tests whether the .hasMolIdAssigned() method of class FilterPipeline returns true if the given atom container
+     * has an MolID (atom container property Filter.MolID) of type integer assigned.
+     */
+    @Test
+    public void hasMolIdAssigned_returnsTrueIfAGivenAtomContainerHasAnIntegerTypeMolIdAssigned() throws InvalidPropertiesFormatException {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpAnyMolID = 0;
+        tmpAtomContainer.setProperty(Filter.MOL_ID_PROPERTY_NAME, tmpAnyMolID);
+        Filter tmpFilter = new Filter();
+        Assertions.assertTrue(tmpFilter.hasMolIdAssigned(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the .hasMolIdAssigned() method of class FilterPipeline returns false if the given atom container
+     * has no MolID (atom container property Filter.MolID) assigned.
+     */
+    @Test
+    public void hasMolIdAssigned_returnsFalseIfAGivenAtomContainerHasNoMolIdAssigned() throws InvalidPropertiesFormatException {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        Filter tmpFilter = new Filter();
+        Assertions.assertFalse(tmpFilter.hasMolIdAssigned(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the .hasMolIdAssigned() method of class FilterPipeline throws an InvalidPropertiesFormatException
+     * if the given atom container has an MolID (atom container property Filter.MolID) assigned that is no integer
+     * value.
+     */
+    @Test
+    public void hasMolIdAssigned_throwsWhatIfGivenAtomContainersMolIdIsNotAnInteger() {
+        Assertions.assertThrows(
+                InvalidPropertiesFormatException.class, //TODO: change type of exception?
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    tmpAtomContainer.setProperty(Filter.MOL_ID_PROPERTY_NAME, new Object());
+                    new Filter().hasMolIdAssigned(tmpAtomContainer);
+                }
+        );
+    }
+
+    /**
+     * Tests whether a NullPointerException is thrown if the atom container instance given to the .hasMolIdAssigned()
+     * method of class FilterPipeline is null.
+     */
+    @Test
+    public void hasMolIdAssigned_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new Filter().hasMolIdAssigned(null);
+                }
+        );
+    }
 
     /**
      * Tests whether the value returned by the .getAssignedMolID() method of class Filter is of type Integer.
@@ -1295,54 +1361,6 @@ public class FilterTest {
         }
     }*/
 
-    //TODO: following are tests of the FilterID (a tool for tracking / tracing the filter process)
-    @Test
-    public void filterMethodTest_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDAfterFiltering() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        new Filter().filter(tmpAtomContainerSet);
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertNotNull(tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
-        }
-    }
-
-    @Test
-    public void filterMethodTest_noFilter_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDSetToNotFilteredValue() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        new Filter().filter(tmpAtomContainerSet);
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertEquals(Filter.NOT_FILTERED, (Integer) tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
-        }
-    }
-
-    @Test   //TODO: probably remove
-    public void filterMethodTest_withFilterNONE_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDSetToNotFilteredValue() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        int tmpAnyIntegerValue = 0;
-        new Filter().withFilter(Filter.FilterTypes.NONE, tmpAnyIntegerValue).filter(tmpAtomContainerSet);
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertEquals(Filter.NOT_FILTERED, (Integer) tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
-        }
-    }
-
-    /*@Test
-    public void filterMethodTest_FilterIDsOfAtomContainersNoFilterAppliedOnAreOfNotFilteredValue() {
-        //TODO
-    }*/
-
-    /*@Test
-    public void filterMethodTest_FilterIDsOfAtomContainersAFilterAppliedOnAreUnequalToNotFilteredValue() {
-        //TODO
-    }*/
-
-    /*@Test
-    public void filterMethodTest_FilterIDsOfAtomContainersAFilterAppliedOnAreGreaterOrEqualToZero() {
-        //TODO
-    }*/
-    //TODO: further tests and implementation of FilterID
-
     /**
      * Tests whether the value returned by the .getAssignedFilterID() method of class Filter is of type Integer.
      */
@@ -1540,12 +1558,6 @@ public class FilterTest {
         Assertions.assertArrayEquals(tmpFilterIDArray, tmpFilter.getArrayOfAssignedFilterIDs(tmpAtomContainerSet));
     }
 
-    //TODO: test for no FilterID
-    //TODO: test for FilterID is no Integer
-
-    //TODO: any further test methods for .getArrayOfAssignedFilterIDs()?
-    //TODO: test FilterIDs in combination with .filter()
-
     /**
      * Tests whether a NullPointerException is thrown if the atom container set given to the
      * .getArrayOfAssignedFilterIDs() method of the class Filter is null.
@@ -1559,5 +1571,108 @@ public class FilterTest {
                 }
         );
     }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown if the FilterID (atom container property "Filter.FilterID")
+     * of an atom container of the atom container set given to the .getArrayOfAssignedFilterIDs() method of class Filter
+     * is null.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDs_throwsIllegalArgumentExceptionIfAGivenACsFilterIDIsNull() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+                    new Filter().getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+                }
+        );
+    }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown if the FilterID (atom container property "Filter.FilterID")
+     * of an atom container of the atom container set given to the .getArrayOfAssignedFilterIDs() method of class Filter
+     * is not an integer value.
+     */
+    @Test
+    public void getArrayOfAssignedFilterIDs_throwsIllegalArgumentExceptionIfAGivenACsFilterIDIsNotOfTypeInteger() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+                    tmpAtomContainerSet.getAtomContainer(0).setProperty(Filter.FILTER_ID_PROPERTY_NAME, new Object());
+                    new Filter().getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+                }
+        );
+    }
+
+    //TODO: any further test methods for .getArrayOfAssignedFilterIDs()?
+
+    //TODO: following are tests of the FilterID (a tool for tracking / tracing the filter process)
+    @Test
+    public void filterMethodTest_everyAtomContainerInTheOriginalSetHasIntegerPropertyFilterIDAfterFiltering() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        new Filter().filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertNotNull(tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
+        }
+    }
+
+    @Test
+    public void filterMethodTest_everyAtomContainerInTheFilteredACSetHasIntegerPropertyFilterIDSetToNotFilteredValue_noFilter() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        IAtomContainerSet tmpFilteredACSet = new Filter().filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpFilteredACSet.atomContainers()) {
+            Assertions.assertEquals(Filter.NOT_FILTERED_VALUE, (Integer) tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
+        }
+    }
+
+    @Test
+    public void filterMethodTest_everyAtomContainerInTheFilteredACSetHasIntegerPropertyFilterIDSetToNotFilteredValue_withFilterNONE() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        int tmpAnyIntegerValue = 0;
+        Filter tmpFilter = new Filter().withFilter(Filter.FilterTypes.NONE, tmpAnyIntegerValue);
+        IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpFilteredACSet.atomContainers()) {
+            Assertions.assertEquals(Filter.NOT_FILTERED_VALUE, (Integer) tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
+        }
+    }
+
+    @Test   //TODO: wip
+    public void filterMethodTest_everyAtomContainerInTheFilteredACSetHasIntegerPropertyFilterIDSetToNotFilteredValue_withMaxAtomCountFilter() {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+        int tmpAnyIntegerValue = 10;
+        Filter tmpFilter = new Filter().withMaxAtomCountFilter(tmpAnyIntegerValue, true);
+        IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpFilteredACSet.atomContainers()) {
+            Assertions.assertEquals(Filter.NOT_FILTERED_VALUE, (Integer) tmpAtomContainer.getProperty(Filter.FILTER_ID_PROPERTY_NAME));
+        }
+    }
+
+    /*@Test //TODO: wip
+    public void filterMethodTest_filterIDsOfAtomContainersNoFilterAppliedOnAreOfNotFilteredValue_withMaxAtomCountFilter() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CCO",      //9
+                "c1ccccc1", //12
+                "NCC(=O)O"  //10
+        );
+        Filter tmpFilter = new Filter().withMaxAtomCountFilter(10, true);
+
+        Assertions.assertEquals(Filter.NOT_FILTERED_VALUE, tmp);
+    }*/
+
+    /*@Test
+    public void filterMethodTest_filterIDsOfAtomContainersAFilterAppliedOnAreUnequalToNotFilteredValue() {
+        //TODO
+    }*/
+
+    /*@Test
+    public void filterMethodTest_filterIDsOfAtomContainersAFilterAppliedOnAreGreaterOrEqualToZero() {
+        //TODO
+    }*/
+    //TODO: further tests and implementation of FilterID
 
 }
