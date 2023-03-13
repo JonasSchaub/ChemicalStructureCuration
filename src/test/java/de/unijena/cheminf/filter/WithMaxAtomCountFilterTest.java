@@ -4,20 +4,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test class for the .withMaxAtomCountFilter() method of class Filter.
+ * Test class for the .withMaxAtomCountFilter() method of class FilterPipeline.
  */
 public class WithMaxAtomCountFilterTest {
 
     //TODO: test everything with boolean aConsiderImplicitHydrogens = false?
 
     /**
-     * Tests whether the instance returned by the .withMaxAtomCountFilter() method of the class Filter is not null.
+     * Tests whether the instance returned by the .withMaxAtomCountFilter() method of the class FilterPipeline is not
+     * null.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_returnsNotNull() {
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertNotNull(new Filter().withMaxAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        Assertions.assertNotNull(new FilterPipeline().withMaxAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /*@Test     //e.g. for testing everything for both boolean parameter values
@@ -35,100 +36,101 @@ public class WithMaxAtomCountFilterTest {
     }*/
 
     /**
-     * Tests whether the return value of the .withMaxAtomCountFilter() method of class Filter is an instance of Filter.
+     * Tests whether the return value of the .withMaxAtomCountFilter() method of class FilterPipeline is an instance of
+     * FilterPipeline.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_returnsFilterInstance() {
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertInstanceOf(Filter.class, new Filter().withMaxAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        Assertions.assertInstanceOf(FilterPipeline.class, new FilterPipeline().withMaxAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /**
      * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter is the same as the one of the original Filter instance.
+     * of the class FilterPipeline is the same as the one of the original FilterPipeline instance.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_returnedFilterContainsSameListOfSelectedFiltersAsOriginal() {
-        Filter tmpOriginalFilter = new Filter();
-        Filter tmpReturnedFilter = tmpOriginalFilter.withMaxAtomCountFilter(10, true);
-        Assertions.assertSame(tmpOriginalFilter.listOfSelectedFilters, tmpReturnedFilter.listOfSelectedFilters);
+        FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
+        FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withMaxAtomCountFilter(10, true);
+        Assertions.assertSame(tmpOriginalFilterPipeline.listOfSelectedFilters, tmpReturnedFilterPipeline.listOfSelectedFilters);
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter was extended by one entry.
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxAtomCountFilter()
+     * method of the class FilterPipeline was extended by one entry.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByOne() {
-        Filter tmpOriginalFilter = new Filter();
-        int tmpListInitialSize = tmpOriginalFilter.listOfSelectedFilters.size();
-        Filter tmpReturnedFilter = tmpOriginalFilter.withMaxAtomCountFilter(10, true);
-        Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilter.listOfSelectedFilters.size());
+        FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
+        int tmpListInitialSize = tmpOriginalFilterPipeline.listOfSelectedFilters.size();
+        FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withMaxAtomCountFilter(10, true);
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilterPipeline.listOfSelectedFilters.size());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter was extended by the specific filter type.
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxAtomCountFilter()
+     * method of the class FilterPipeline was extended by the specific filter type.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_considerImplicitHydrogens_checksIfListOfSelectedFiltersWasExtendedBySpecificFilterType() {
-        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
+        FilterPipeline.FilterTypes tmpFilterType = FilterPipeline.FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpReturnedFilter = new Filter().withMaxAtomCountFilter(10, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpFilterType, tmpReturnedFilter.listOfSelectedFilters.getLast());
+        FilterPipeline tmpReturnedFilterPipeline = new FilterPipeline().withMaxAtomCountFilter(10, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpFilterType, tmpReturnedFilterPipeline.listOfSelectedFilters.getLast());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter was extended by the specific filter type.
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxAtomCountFilter()
+     * method of the class FilterPipeline was extended by the specific filter type.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_notConsiderImplicitHydrogens_checksIfListOfSelectedFiltersWasExtendedBySpecificFilterType() {
-        Filter.FilterTypes tmpFilterType = Filter.FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
+        FilterPipeline.FilterTypes tmpFilterType = FilterPipeline.FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpReturnedFilter = new Filter().withMaxAtomCountFilter(10, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpFilterType, tmpReturnedFilter.listOfSelectedFilters.getLast());
+        FilterPipeline tmpReturnedFilterPipeline = new FilterPipeline().withMaxAtomCountFilter(10, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpFilterType, tmpReturnedFilterPipeline.listOfSelectedFilters.getLast());
     }
 
     /**
-     * Tests whether the listOfFilterParameters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter is the same as the one of the original Filter instance.
+     * Tests whether the listOfFilterParameters of the FilterPipeline instance returned by the .withMaxAtomCountFilter()
+     * method of the class FilterPipeline is the same as the one of the original Filter instance.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_returnedFilterContainsSameListOfFilterParametersAsOriginal() {
-        Filter tmpOriginalFilter = new Filter();
-        Filter tmpReturnedFilter = tmpOriginalFilter.withMaxAtomCountFilter(10, true);
-        Assertions.assertSame(tmpOriginalFilter.listOfFilterParameters, tmpReturnedFilter.listOfFilterParameters);
+        FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
+        FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withMaxAtomCountFilter(10, true);
+        Assertions.assertSame(tmpOriginalFilterPipeline.listOfFilterParameters, tmpReturnedFilterPipeline.listOfFilterParameters);
     }
 
     /**
-     * Tests whether the listOfFilterParameters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter was extended by one entry.
+     * Tests whether the listOfFilterParameters of the FilterPipeline instance returned by the .withMaxAtomCountFilter()
+     * method of the class FilterPipeline was extended by one entry.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_checksIfListOfFilterParametersWasExtendedByOne() {
-        Filter tmpOriginalFilter = new Filter();
-        int tmpListInitialSize = tmpOriginalFilter.listOfFilterParameters.size();
-        Filter tmpReturnedFilter = tmpOriginalFilter.withMaxAtomCountFilter(10, true);
-        Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilter.listOfFilterParameters.size());
+        FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
+        int tmpListInitialSize = tmpOriginalFilterPipeline.listOfFilterParameters.size();
+        FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withMaxAtomCountFilter(10, true);
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpReturnedFilterPipeline.listOfFilterParameters.size());
     }
 
     /**
-     * Tests whether the listOfFilterParameters of the Filter instance returned by the .withMaxAtomCountFilter() method
-     * of the class Filter was extended by the given integer parameter.
+     * Tests whether the listOfFilterParameters of the FilterPipeline instance returned by the .withMaxAtomCountFilter()
+     * method of the class FilterPipeline was extended by the given integer parameter.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_checksIfListOfFilterParametersWasExtendedByGivenIntegerParameter() {
         int tmpMaxAtomCount = 10;
-        Filter tmpReturnedFilter = new Filter().withMaxAtomCountFilter(tmpMaxAtomCount, true);
-        Assertions.assertSame(tmpMaxAtomCount, tmpReturnedFilter.listOfFilterParameters.getLast());
-        Assertions.assertEquals(tmpMaxAtomCount, tmpReturnedFilter.listOfFilterParameters.getLast());
+        FilterPipeline tmpReturnedFilterPipeline = new FilterPipeline().withMaxAtomCountFilter(tmpMaxAtomCount, true);
+        Assertions.assertSame(tmpMaxAtomCount, tmpReturnedFilterPipeline.listOfFilterParameters.getLast());
+        Assertions.assertEquals(tmpMaxAtomCount, tmpReturnedFilterPipeline.listOfFilterParameters.getLast());
     }
 
     /**
-     * Tests whether the .withMaxAtomCountFilter() method of the class Filter throws an IllegalArgumentException if the
-     * given integer parameter is of a negative value.
+     * Tests whether the .withMaxAtomCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
+     * if the given integer parameter is of a negative value.
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMaxAtomCountIsNegative() {    //TODO: do so?
@@ -136,7 +138,7 @@ public class WithMaxAtomCountFilterTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpNegativeMaxAtomCount = -1;
-                    new Filter().withMaxAtomCountFilter(tmpNegativeMaxAtomCount, true);
+                    new FilterPipeline().withMaxAtomCountFilter(tmpNegativeMaxAtomCount, true);
                 }
         );
     }
