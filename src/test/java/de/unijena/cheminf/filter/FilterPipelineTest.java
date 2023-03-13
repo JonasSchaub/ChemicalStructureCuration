@@ -538,17 +538,17 @@ public class FilterPipelineTest {
         Assertions.assertTrue(tmpFilterPipeline.listOfFilterParameters.isEmpty());
     }
 
-    /**
+    /** TODO: remove (?!)
      * Tests whether the protected constructor of the class FilterPipeline returns a copy of the original FilterPipeline
      * instance holding the same instances of listOfSelectedFilters and listOfFilterParameters as the copied original.
      */
-    @Test
+    /*@Test
     public void protectedFilterConstructorTest_newFilterContainsSameListOfSelectedFiltersAndListOfFilterParametersAsOriginal() {
         FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
         FilterPipeline tmpFilterPipelineCopy = new FilterPipeline(tmpOriginalFilterPipeline);
         Assertions.assertSame(tmpOriginalFilterPipeline.listOfSelectedFilters, tmpFilterPipelineCopy.listOfSelectedFilters);
         Assertions.assertSame(tmpOriginalFilterPipeline.listOfFilterParameters, tmpFilterPipelineCopy.listOfFilterParameters);
-    }
+    }*/
 
     /**
      * Tests whether the .getListOfSelectedFilters() method of the class FilterPipeline returns the instances field
@@ -605,10 +605,21 @@ public class FilterPipelineTest {
      * FilterPipeline.
      */
     @Test
-    public void withFilterMethodTest_returnsFilterInstance() {
+    public void withFilterMethodTest_returnsFilterPipelineInstance() {
         FilterPipeline.FilterTypes tmpFilterType = FilterPipeline.FilterTypes.NONE;
         int tmpIntegerParameter = 0;
         Assertions.assertInstanceOf(FilterPipeline.class, new FilterPipeline().withFilter(tmpFilterType, tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the FilterPipeline instance returned by the .withFilter() method of the class FilterPipeline is
+     * the same as the original FilterPipeline instance (the instance the method was called from).
+     */
+    @Test
+    public void withFilterMethodTest_returnedFilterPipelineInstanceIsTheSameAsTheOriginal() {
+        FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
+        FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withFilter(FilterPipeline.FilterTypes.NONE, 0);
+        Assertions.assertSame(tmpOriginalFilterPipeline, tmpReturnedFilterPipeline);
     }
 
     /**
@@ -616,11 +627,12 @@ public class FilterPipelineTest {
      * the class FilterPipeline is the same as the one of the original FilterPipeline instance.
      */
     @Test
-    public void withFilterMethodTest_returnedFilterContainsSameListOfSelectedFiltersAsOriginal() {
+    public void withFilterMethodTest_returnedFilterPipelineContainsSameListOfSelectedFiltersAsOriginal() {
         FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
         FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withFilter(FilterPipeline.FilterTypes.NONE, 0);
         Assertions.assertSame(tmpOriginalFilterPipeline.listOfSelectedFilters, tmpReturnedFilterPipeline.listOfSelectedFilters);
     }
+
 
     /**
      * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withFilter() method of
@@ -650,7 +662,7 @@ public class FilterPipelineTest {
      * the class FilterPipeline is the same as the one of the original FilterPipeline instance.
      */
     @Test
-    public void withFilterMethodTest_returnedFilterContainsSameListOfFilterParametersAsOriginal() {
+    public void withFilterMethodTest_returnedFilterPipelineContainsSameListOfFilterParametersAsOriginal() {
         FilterPipeline tmpOriginalFilterPipeline = new FilterPipeline();
         FilterPipeline tmpReturnedFilterPipeline = tmpOriginalFilterPipeline.withFilter(FilterPipeline.FilterTypes.NONE, 0);
         Assertions.assertSame(tmpOriginalFilterPipeline.listOfFilterParameters, tmpReturnedFilterPipeline.listOfFilterParameters);

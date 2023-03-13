@@ -76,7 +76,7 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
         this.listOfFilterParameters = new LinkedList<>();
     }
 
-    /**
+    /** TODO: remove (?!)
      * Protected Constructor. Generates a copy of the original Filter instance maintaining all its fields.
      *
      * @param anOriginalFilterPipeline Filter instance to generate the copy of
@@ -97,37 +97,29 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         this.assignMolIdToAtomContainers(anAtomContainerSet);
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
-        //boolean tmpAtomContainerGetsFiltered;
         int tmpIndexOfAppliedFilter;
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
-            //tmpAtomContainerGetsFiltered = false;
             tmpIndexOfAppliedFilter = FilterPipeline.NOT_FILTERED_VALUE;
             //apply filters
             for (int i = 0; i < this.listOfSelectedFilters.size(); i++) {
                 if (this.getsFiltered(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
-                    //tmpAtomContainerGetsFiltered = true;
                     tmpIndexOfAppliedFilter = i;
                     break;
                 }
             }
-            //if (!tmpAtomContainerGetsFiltered) {
             if (tmpIndexOfAppliedFilter == FilterPipeline.NOT_FILTERED_VALUE) {
                 tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
             }
-            //
-            //TODO: setProperty FILTERED_BY_FILTER to the index of the filter in the listOfSelectedFilters list
-            //tmpAtomContainer.setProperty(Filter.FILTER_ID_PROPERTY_NAME, Filter.NOT_FILTERED);
             tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
         }
-        //
         return tmpFilteredACSet;
     }
 
     /**
      * TODO
      * @param aMaxAtomCount
-     * @param aConsiderImplicitHydrogens
+     * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
      * @return
      * @throws IllegalArgumentException
      */
@@ -149,7 +141,7 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
     /**
      * TODO
      * @param aMinAtomCount
-     * @param aConsiderImplicitHydrogens
+     * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
      * @return
      * @throws IllegalArgumentException
      */
@@ -166,10 +158,12 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
 
     protected FilterPipeline withFilter(FilterTypes aFilterType, int anIntegerParameter) throws NullPointerException {
         Objects.requireNonNull(aFilterType, "aFilterType (Filter.FilterTypes constant) is null.");
-        final FilterPipeline tmpFilterPipelineCopy = new FilterPipeline(this);
-        tmpFilterPipelineCopy.listOfSelectedFilters.add(aFilterType);
-        tmpFilterPipelineCopy.listOfFilterParameters.add(anIntegerParameter);
-        return tmpFilterPipelineCopy;
+        this.listOfSelectedFilters.add(aFilterType);
+        this.listOfFilterParameters.add(anIntegerParameter);
+        //final FilterPipeline tmpFilterPipelineCopy = new FilterPipeline(this);
+        //tmpFilterPipelineCopy.listOfSelectedFilters.add(aFilterType);
+        //tmpFilterPipelineCopy.listOfFilterParameters.add(anIntegerParameter);
+        return this;
     }
 
     /**
