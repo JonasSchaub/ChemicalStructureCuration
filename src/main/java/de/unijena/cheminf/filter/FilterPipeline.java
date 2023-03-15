@@ -42,16 +42,8 @@ public class FilterPipeline {
 
     /*
     TODO: remove parameter tests of filters out of FilterPipeline methods?
-
-    TODO: use an error value for MolID or throw exceptions instead?
-    throw Exception
-    TODO: methods for asking whether an AtomContainer has a MolID / FilterID?
-    not needed
-    TODO: for me it would be very interesting to have something like a "negative filter" -> get those, who did not pass the pipeline
-    does not fit to the concept of a filter
     //
-    TODO: remove .withFilter() method?
-    TODO: remove .getsFiltered() method?
+    TODO: remove / adopt tests for .getsFiltered() method
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
@@ -71,16 +63,14 @@ public class FilterPipeline {
      */
     public static final String FILTER_ID_PROPERTY_NAME = "FilterPipeline.FilterID";
 
-    //TODO: remove this constant? (if exceptions get thrown instead)
-    public static final int MOL_ID_ERROR_VALUE = -1;
-
     /**
      * Default value for the filter ID of an atom container that has not been filtered during a filtering process.
      */
     public static final int NOT_FILTERED_VALUE = -1;
 
     /**
-     * TODO
+     * Linked list of the IFilter instances added to the pipeline. Filters can be added via the filter specific
+     * convenience methods or using the .withFilter() method of this class.
      */
     protected final LinkedList<IFilter> listOfSelectedFilters;
 
@@ -205,7 +195,7 @@ public class FilterPipeline {
      * @param anAtomContainerSet IAtomContainerSet
      * @throws NullPointerException
      */
-    protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {     //TODO: could be static; could be placed in FilterUtils (as protected method)
+    protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             //TODO: check whether the property is already set? they might not be unique
@@ -217,16 +207,17 @@ public class FilterPipeline {
     /**
      * Returns the MolIDs assigned to the atom containers in the given atom container set as integer array. A MolID is
      * assigned to every atom container of an atom container set that was given to or returned by the .filter() method
-     * of this class. This method may only be used for atom container sets that meet this criterion.
-     * For atom containers that have no MolID set or an MolID that is not of type integer, the corresponding entry in
-     * the returned array is set to an error value (-1).
+     * of this class. This method may only be used for atom container sets that meet this criterion. Otherwise, an
+     * IllegalArgumentException gets thrown.
      *
      * @param anAtomContainerSet IAtomContainerSet instance the MolID array should be returned of
      * @return Integer array of the atom containers MolIDs
      * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it
      * is null
+     * @throws IllegalArgumentException if an AtomContainer of the given IAtomContainerSet instance has no MolID
+     * assigned or the MolID is not of data type Integer
      */
-    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final int[] tmpMolIDArray = new int[anAtomContainerSet.getAtomContainerCount()];
         for (int i = 0; i < tmpMolIDArray.length; i++) {
@@ -235,8 +226,7 @@ public class FilterPipeline {
             } catch (NullPointerException aNullPointerException) {
                 throw new NullPointerException("AtomContainer " + i + " of the given IAtomContainerSet instance is null.");
             } catch (IllegalArgumentException anIllegalArgumentException) {
-                tmpMolIDArray[i] = FilterPipeline.MOL_ID_ERROR_VALUE;   //TODO: throw exceptions instead?
-                //throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID assigned or the MolID is not of data type Integer.");
+                throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID assigned or the MolID is not of data type Integer.");
             }
         }
         return tmpMolIDArray;
@@ -321,7 +311,7 @@ public class FilterPipeline {
     /**
      * Returns the list of selected filters.
      *
-     * @return LinkedList<IFilter></IFilter>    TODO: it auto filled this (?!)
+     * @return LinkedList<IFilter></IFilter>    TODO: this was auto filled; what does the "/" stand for?
      */
     public LinkedList<IFilter> getListOfSelectedFilters() {
         return this.listOfSelectedFilters;
