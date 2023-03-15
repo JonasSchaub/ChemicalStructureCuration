@@ -29,13 +29,32 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
 
-public class MinAtomCountFilter implements IFilter {
+/**
+ * Min atom count filter for filtering atom containers based on a minimum atom count.
+ */
+public class MinAtomCountFilter extends Filter {
 
+    /**
+     * Integer value of the min atom count threshold.
+     */
     private final int minAtomCount; //TODO: should the parameters be adjustable?
 
+    /**
+     * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
+     * count.
+     */
     private final boolean considerImplicitHydrogens;
 
-    public MinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) {
+    /**
+     * Constructor of the MinAtomCountFilter class. Atom containers that equal the given min atom count do not get
+     * filtered.
+     *
+     * @param aMinAtomCount Integer value for the min atom count
+     * @param aConsiderImplicitHydrogens Boolean value whether implicit hydrogen atoms should be considered when
+     *                                  calculating an atom containers atom count
+     * @throws IllegalArgumentException if the given min atom count is less than zero
+     */
+    public MinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
@@ -43,11 +62,32 @@ public class MinAtomCountFilter implements IFilter {
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //TODO: comment
         return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.minAtomCount, this.considerImplicitHydrogens);
+    }
+
+    /**
+     * Returns the min atom count.
+     *
+     * @return Integer value
+     */
+    public int getMinAtomCount() {
+        return this.minAtomCount;
+    }
+
+    /**
+     * Returns whether implicit hydrogen atoms do get considered.
+     *
+     * @return Boolean value
+     */
+    public boolean isConsiderImplicitHydrogens() {
+        return this.considerImplicitHydrogens;
     }
 
 }

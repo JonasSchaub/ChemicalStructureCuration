@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf;
 
-import de.unijena.cheminf.filter.IFilter;
+import de.unijena.cheminf.filter.Filter;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -99,24 +99,24 @@ public class TestUtils {
     }
 
     /** TODO: might be removed
-     * Returns an IFilter instance whose .getsFiltered() method always returns a default value.
+     * Returns a Filter instance whose .getsFiltered() method always returns a default value.
      *
-     * @return IFilter instance
+     * @return instance of Filter
      */
-    public static IFilter getAllTrueOrFalseFilter() {
+    public static Filter getAllTrueOrFalseFilter() {
         boolean tmpDefaultValue = false;
         return TestUtils.getAllTrueOrFalseFilter(tmpDefaultValue);
     }
 
     /**
-     * Returns an IFilter instance whose .getsFiltered() method always returns the boolean value given to this method.
+     * Returns a Filter instance whose .getsFiltered() method always returns the boolean value given to this method.
      *
      * @param aGetsFilteredReturnValue Boolean value to be returned by the .getsFiltered() method of the returned
-     *                                 IFilter instance
-     * @return IFilter instance
+     *                                 Filter instance
+     * @return instance of Filter
      */
-    public static IFilter getAllTrueOrFalseFilter(boolean aGetsFilteredReturnValue) {
-        return new IFilter() {
+    public static Filter getAllTrueOrFalseFilter(boolean aGetsFilteredReturnValue) {
+        return new Filter() {
             /**
              * Returns a boolean value independent of the given atom container.
              *

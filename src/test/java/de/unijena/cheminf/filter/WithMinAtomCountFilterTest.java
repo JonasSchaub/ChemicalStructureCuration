@@ -51,7 +51,7 @@ public class WithMinAtomCountFilterTest {   //TODO: check if everything is up to
     @Test
     public void withMinAtomCountFilterMethodTest_checksIfListOfSelectedFiltersIsTheSameAndWasExtendedByOne() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        LinkedList<IFilter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
+        LinkedList<Filter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
         int tmpListInitialSize = tmpListOfSelectedFilters.size();
         tmpFilterPipeline.withMinAtomCountFilter(10, true);
         Assertions.assertSame(tmpListOfSelectedFilters, tmpFilterPipeline.getListOfSelectedFilters());

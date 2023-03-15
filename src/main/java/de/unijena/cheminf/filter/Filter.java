@@ -25,14 +25,42 @@
 
 package de.unijena.cheminf.filter;
 
+import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+
+import java.util.Objects;
 
 /**
- * TODO
+ * Abstract class Filter.
  */
-public interface IFilter {
+public abstract class Filter {
 
-    //TODO: boolean needsInfoOfOtherACs
+    /*
+    TODO: flag filtered / not filtered ACs?
+    TODO: boolean needsInfoOfOtherACs? (for duplicates filter)
+    TODO: add countOfFilteredACs
+     */
+
+    /**
+     * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
+     *
+     * @param anAtomContainerSet set of atom containers to be filtered
+     * @return atom container set of all atom containers that passed the filter
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     */
+    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
+        for (IAtomContainer tmpAtomContainer :
+                anAtomContainerSet.atomContainers()) {
+            //apply filter
+            if (!this.getsFiltered(tmpAtomContainer)) {
+                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+            }
+        }
+        return tmpFilteredACSet;
+    }
 
     /**
      * Checks whether the filter applies on a given IAtomContainer instance.
@@ -42,6 +70,6 @@ public interface IFilter {
      * @return true if the filter applies on the given atom container
      * @throws NullPointerException if the given IAtomContainer instance is null
      */
-    boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    protected abstract boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
 
 }

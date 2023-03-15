@@ -69,10 +69,10 @@ public class FilterPipeline {
     public static final int NOT_FILTERED_VALUE = -1;
 
     /**
-     * Linked list of the IFilter instances added to the pipeline. Filters can be added via the filter specific
-     * convenience methods or using the .withFilter() method of this class.
+     * Linked list of the Filter instances that were added to this filter pipeline. Filters can be added via the filter
+     * specific convenience methods or using the .withFilter() method of this class.
      */
-    protected final LinkedList<IFilter> listOfSelectedFilters;
+    protected final LinkedList<Filter> listOfSelectedFilters;
 
     /**
      * Constructor.
@@ -155,7 +155,7 @@ public class FilterPipeline {
         if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
-        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
+        Filter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -171,7 +171,7 @@ public class FilterPipeline {
         if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
-        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
+        Filter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;    //TODO: use the .withFilter() method here?
     }
@@ -179,12 +179,12 @@ public class FilterPipeline {
     /**
      * For manually adding a filter to the pipeline.
      *
-     * @param aFilterToAdd IFilter instance to add to the pipeline
+     * @param aFilterToAdd the Filter instance that is to be added to the pipeline
      * @return the FilterPipeline instance itself
-     * @throws NullPointerException if the given IFilter instance is null
+     * @throws NullPointerException if the given Filter instance is null
      */
-    public FilterPipeline withFilter(IFilter aFilterToAdd) throws NullPointerException {
-        Objects.requireNonNull(aFilterToAdd, "aFilterToAdd (instance of IFilter) is null.");
+    public FilterPipeline withFilter(Filter aFilterToAdd) throws NullPointerException {
+        Objects.requireNonNull(aFilterToAdd, "aFilterToAdd (instance of Filter) is null.");
         this.getListOfSelectedFilters().add(aFilterToAdd);
         return this;
     }
@@ -311,9 +311,9 @@ public class FilterPipeline {
     /**
      * Returns the list of selected filters.
      *
-     * @return LinkedList<IFilter></IFilter>    TODO: this was auto filled; what does the "/" stand for?
+     * @return LinkedList<Filter></Filter>    TODO: this was auto filled; what does the "/" stand for?
      */
-    public LinkedList<IFilter> getListOfSelectedFilters() {
+    public LinkedList<Filter> getListOfSelectedFilters() {
         return this.listOfSelectedFilters;
     }
 

@@ -40,7 +40,6 @@ public class FilterPipelineTest {
 
     /*
     open TODOs:
-    TODO: test-methods for getListOfSelectedFilters()
      */
 
     /**
@@ -158,13 +157,13 @@ public class FilterPipelineTest {
     }
 
     /**
-     * Tests whether the class field listOfSelectedFilters stores IFilter instances.
+     * Tests whether the class field listOfSelectedFilters stores Filter instances.
      */
     @Test //TODO: can I test the stored data type (without anything being stored in the list yet)?
-    public void listOfSelectedFiltersClassVarTest_storesIFilterInstances() {
+    public void listOfSelectedFiltersClassVarTest_storesFilterInstances() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         tmpFilterPipeline.listOfSelectedFilters.add(new MaxAtomCountFilter(0, true));
-        Assertions.assertInstanceOf(IFilter.class, tmpFilterPipeline.listOfSelectedFilters.getFirst());
+        Assertions.assertInstanceOf(Filter.class, tmpFilterPipeline.listOfSelectedFilters.getFirst());
     }
 
     /**
