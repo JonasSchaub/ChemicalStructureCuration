@@ -1,0 +1,53 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package de.unijena.cheminf.filter;
+
+import org.openscience.cdk.interfaces.IAtomContainer;
+
+import java.util.Objects;
+
+public class MinAtomCountFilter implements IFilter {
+
+    private final int minAtomCount; //TODO: should the parameters be adjustable?
+
+    private final boolean considerImplicitHydrogens;
+
+    public MinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) {
+        if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+            throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
+        }
+        this.minAtomCount = aMinAtomCount;
+        this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+    }
+
+    @Override
+    public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        //TODO: comment
+        return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.minAtomCount, this.considerImplicitHydrogens);
+    }
+
+}

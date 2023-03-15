@@ -25,12 +25,11 @@
 
 package de.unijena.cheminf.filter;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
-import java.util.InvalidPropertiesFormatException;
+import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -39,19 +38,38 @@ import java.util.Objects;
  * Only contains filters that are based on molecular descriptors and can be applied for each atom container separately
  * (without knowledge of the other atom containers - as it would be necessary e.g. for filtering duplicates).
  */
-public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all occurrences (test classes and methods)
+public class FilterPipeline {
+
+    /*
+    TODO: remove parameter tests of filters out of FilterPipeline methods?
+
+    TODO: use an error value for MolID or throw exceptions instead?
+    throw Exception
+    TODO: methods for asking whether an AtomContainer has a MolID / FilterID?
+    not needed
+    TODO: for me it would be very interesting to have something like a "negative filter" -> get those, who did not pass the pipeline
+    does not fit to the concept of a filter
+    //
+    TODO: remove .withFilter() method?
+    TODO: remove .getsFiltered() method?
+    //
+    TODO (optional):
+    - method to deep copy / clone a FilterPipeline?
+    - find a shorter name for FilterID and MolID property (?)
+    - methods for clearing MolIDs / FilterIDs of atom containers?
+     */
 
     /**
      * String of the name of the atom container property for uniquely identifying an atom container during the filtering
      * process.
      */
-    public static final String MOL_ID_PROPERTY_NAME = "FilterPipeline.MolID";   //TODO: rename to "FilterPipeline.MolID" / "FilterP. ..." / ?!
+    public static final String MOL_ID_PROPERTY_NAME = "FilterPipeline.MolID";
 
     /**
      * String of the name of the atom container property for tracking / tracing the filtering process by saving the
      * index of the filter an atom container got filtered by.
      */
-    public static final String FILTER_ID_PROPERTY_NAME = "FilterPipeline.FilterID"; //TODO: rename to "FilterPipeline.FilterID" / "FilterP. ..." / ?!
+    public static final String FILTER_ID_PROPERTY_NAME = "FilterPipeline.FilterID";
 
     //TODO: remove this constant? (if exceptions get thrown instead)
     public static final int MOL_ID_ERROR_VALUE = -1;
@@ -61,29 +79,25 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
      */
     public static final int NOT_FILTERED_VALUE = -1;
 
-    protected final LinkedList<FilterTypes> listOfSelectedFilters;
-
-    //TODO: possibly change data type to an Interface IFilterParameterStorage so that each filter can have its specific set of parameters (not only one integer)
-    //TODO: / use a generic class
-    //so far only filters with one single parameter of type int are possible
-    protected final LinkedList<Integer> listOfFilterParameters; //TODO: List of Objects[] ?
+    /**
+     * TODO
+     */
+    protected final LinkedList<IFilter> listOfSelectedFilters;
 
     /**
      * Constructor.
      */
     public FilterPipeline() {
         this.listOfSelectedFilters = new LinkedList<>();
-        this.listOfFilterParameters = new LinkedList<>();
     }
 
-    /** TODO: remove (?!)
+    /** TODO: remove this constructor (?!)
      * Protected Constructor. Generates a copy of the original Filter instance maintaining all its fields.
      *
      * @param anOriginalFilterPipeline Filter instance to generate the copy of
      */
     protected FilterPipeline(FilterPipeline anOriginalFilterPipeline) {
         this.listOfSelectedFilters = anOriginalFilterPipeline.listOfSelectedFilters;
-        this.listOfFilterParameters = anOriginalFilterPipeline.listOfFilterParameters;
     }
 
     /**
@@ -96,14 +110,37 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         this.assignMolIdToAtomContainers(anAtomContainerSet);
+        final BitSet tmpGotFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        IAtomContainer tmpAtomContainer;
+
+        for (int tmpIndexOfFilter = 0; tmpIndexOfFilter < this.listOfSelectedFilters.size(); tmpIndexOfFilter++) {
+            for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
+                if (!tmpGotFilteredBitSet.get(i)) {
+                    tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
+                    if (this.listOfSelectedFilters.get(tmpIndexOfFilter).getsFiltered(tmpAtomContainer)) {
+                        tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfFilter);
+                        tmpGotFilteredBitSet.set(i);
+                    }
+                }
+            }
+        }
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
+        for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
+            tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
+            if (!tmpGotFilteredBitSet.get(i)) {
+                tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, FilterPipeline.NOT_FILTERED_VALUE);
+                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+            }
+        }
+
+        /*final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         int tmpIndexOfAppliedFilter;
         for (IAtomContainer tmpAtomContainer :
-                anAtomContainerSet.atomContainers()) {
+                anAtomContainerSet.atomContainers()) {  //TODO: switch order/position of loops
             tmpIndexOfAppliedFilter = FilterPipeline.NOT_FILTERED_VALUE;
             //apply filters
             for (int i = 0; i < this.listOfSelectedFilters.size(); i++) {
-                if (this.getsFiltered(tmpAtomContainer, this.listOfSelectedFilters.get(i), this.listOfFilterParameters.get(i))) {
+                if (this.listOfSelectedFilters.get(i).getsFiltered(tmpAtomContainer)) {
                     tmpIndexOfAppliedFilter = i;
                     break;
                 }
@@ -112,7 +149,8 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
                 tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
             }
             tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
-        }
+        }*/
+
         return tmpFilteredACSet;
     }
 
@@ -127,15 +165,9 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
         if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
-        if (aConsiderImplicitHydrogens) {
-            return this.withFilter(FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS, aMaxAtomCount);
-        } else {
-            return this.withFilter(FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS, aMaxAtomCount);
-        }
-        /*FilterTypes tmpFilterType = aConsiderImplicitHydrogens ?
-                FilterTypes.MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS :
-                FilterTypes.MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS;
-        return this.withFilter(tmpFilterType, aMaxAtomCount);*/
+        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
     }
 
     /**
@@ -146,54 +178,25 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
      * @throws IllegalArgumentException
      */
     public FilterPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+        if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
-        if (aConsiderImplicitHydrogens) {
-            return this.withFilter(FilterTypes.MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS, aMinAtomCount);
-        } else {
-            return this.withFilter(FilterTypes.MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS, aMinAtomCount);
-        }
-    }
-
-    protected FilterPipeline withFilter(FilterTypes aFilterType, int anIntegerParameter) throws NullPointerException {
-        Objects.requireNonNull(aFilterType, "aFilterType (Filter.FilterTypes constant) is null.");
-        this.listOfSelectedFilters.add(aFilterType);
-        this.listOfFilterParameters.add(anIntegerParameter);
-        //final FilterPipeline tmpFilterPipelineCopy = new FilterPipeline(this);
-        //tmpFilterPipelineCopy.listOfSelectedFilters.add(aFilterType);
-        //tmpFilterPipelineCopy.listOfFilterParameters.add(anIntegerParameter);
-        return this;
+        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;    //TODO: use the .withFilter() method here?
     }
 
     /**
-     * Checks whether a specific filter applies on a given atom container.
-     * Returns true, if the atom container gets filtered.
+     * For manually adding a filter to the pipeline.
      *
-     * @param anAtomContainer IAtomContainer instance to be checked
-     * @param aFilterType FilterTypes constant of the filter that should be applied
-     * @param anIntegerParameter Integer value which is the parameter to the given filter algorithm
-     * @return true if the given filter applies on the atom container
-     * @throws NullPointerException if the given atom container or filter instance is null
+     * @param aFilterToAdd IFilter instance to add to the pipeline
+     * @return the FilterPipeline instance itself
+     * @throws NullPointerException if the given IFilter instance is null
      */
-    protected boolean getsFiltered(IAtomContainer anAtomContainer, FilterTypes aFilterType, int anIntegerParameter) throws NullPointerException {  //TODO: adopt name; question that is answered
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(aFilterType, "aFilterType (Filter.FilterTypes constant) is null.");
-        return switch (aFilterType) {
-            case MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS ->
-                    FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter + 1, true);
-            case MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS ->
-                    FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter + 1, false);
-            case MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS ->
-                    !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter, true);
-            case MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS ->
-                    !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, anIntegerParameter, false);
-            case NONE ->
-                    false;
-            default -> //TODO: NotImplementedException or UnsupportedOperationException?!
-                    throw new NotImplementedException("There is no filter routine deposited for the given filter type."); //may I do this?
-                    //throw new UnsupportedOperationException("There is no filter routine deposited for the given filter type.");
-        };
+    public FilterPipeline withFilter(IFilter aFilterToAdd) throws NullPointerException {
+        Objects.requireNonNull(aFilterToAdd, "aFilterToAdd (instance of IFilter) is null.");
+        this.getListOfSelectedFilters().add(aFilterToAdd);
+        return this;
     }
 
     /** TODO
@@ -209,19 +212,6 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
             //TODO: assign them to the original AtomContainer instance or to a copy?
             anAtomContainerSet.getAtomContainer(i).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, i);
         }
-    }
-
-    //TODO: if this method of interest? If so, implement method with AtomContainerSets as well as both methods for FilterIDs.
-    public boolean hasMolIdAssigned(IAtomContainer anAtomContainer) throws InvalidPropertiesFormatException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        if (anAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME) != null) {
-            if (anAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME).getClass() != Integer.class) {
-                throw new InvalidPropertiesFormatException("The given IAtomContainer instance has a MolID " +
-                        "(AtomContainer property \"FilterPipeline.MolID\") assigned that is not of type Integer.");
-            }
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -331,30 +321,10 @@ public class FilterPipeline {   //TODO: rename to FilterPipeline; consider all o
     /**
      * Returns the list of selected filters.
      *
-     * @return LinkedList<FilterTypes>
+     * @return LinkedList<IFilter></IFilter>    TODO: it auto filled this (?!)
      */
-    public LinkedList<FilterTypes> getListOfSelectedFilters() {
+    public LinkedList<IFilter> getListOfSelectedFilters() {
         return this.listOfSelectedFilters;
-    }
-
-    /**
-     * Returns the list of filter parameters.
-     *
-     * @return LinkedList<Integer>
-     */
-    public LinkedList<Integer> getListOfFilterParameters() {
-        return this.listOfFilterParameters;
-    }
-
-    /** TODO: comment enum constants
-     * Enum of filter types.
-     */
-    public enum FilterTypes {
-        MAX_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS,
-        MAX_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS,
-        MIN_ATOM_COUNT_FILTER_CONSIDER_IMPLICIT_HYDROGENS,
-        MIN_ATOM_COUNT_FILTER_NOT_CONSIDER_IMPLICIT_HYDROGENS,
-        NONE
     }
 
 }

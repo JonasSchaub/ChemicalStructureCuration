@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf;
 
+import de.unijena.cheminf.filter.IFilter;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -95,6 +96,40 @@ public class TestUtils {
             tmpAtomContainerSet.addAtomContainer(new AtomContainer());
         }
         return tmpAtomContainerSet;
+    }
+
+    /** TODO: might be removed
+     * Returns an IFilter instance whose .getsFiltered() method always returns a default value.
+     *
+     * @return IFilter instance
+     */
+    public static IFilter getAllTrueOrFalseFilter() {
+        boolean tmpDefaultValue = false;
+        return TestUtils.getAllTrueOrFalseFilter(tmpDefaultValue);
+    }
+
+    /**
+     * Returns an IFilter instance whose .getsFiltered() method always returns the boolean value given to this method.
+     *
+     * @param aGetsFilteredReturnValue Boolean value to be returned by the .getsFiltered() method of the returned
+     *                                 IFilter instance
+     * @return IFilter instance
+     */
+    public static IFilter getAllTrueOrFalseFilter(boolean aGetsFilteredReturnValue) {
+        return new IFilter() {
+            /**
+             * Returns a boolean value independent of the given atom container.
+             *
+             * @param anAtomContainer IAtomContainer instance to be checked
+             * @return Boolean value
+             * @throws NullPointerException if the given IAtomContainer instance is null
+             */
+            @Override
+            public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+                Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+                return aGetsFilteredReturnValue;
+            }
+        };
     }
 
 }
