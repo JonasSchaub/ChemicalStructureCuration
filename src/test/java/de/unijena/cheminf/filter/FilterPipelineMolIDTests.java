@@ -318,45 +318,71 @@ public class FilterPipelineMolIDTests {
         }
     }
 
-    /** //TODO: set an error value where no MolID exists or throw an exception?
-     * TODO
+    /**
+     * Tests whether the .getArrayOfAssignerMolIDs() method of class FilterPipeline throws an IllegalArgumentException
+     * if a given atom container lacks a MolID.
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_setsErrorValueWhereMolIDIsNotSet() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-        //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        int[] tmpMolIDArray = tmpFilterPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-        Assertions.assertEquals(1, tmpMolIDArray.length);
-        Assertions.assertEquals(FilterPipeline.MOL_ID_ERROR_VALUE, tmpMolIDArray[0]);
+    public void getArrayOfAssignedMolIDsTest_throwsIllegalArgumentExceptionIfAnAtomContainerLacksAMolID() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+                    new FilterPipeline().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                }
+        );
     }
 
-    /*@Test //TODO: I found no way to cause this situation
-    public void getArrayOfAssignedMolIDsTest_setsErrorValueWhereAnAtomContainerIsNull() {
-        IAtomContainerSet tmpAtomContainerSet = new AtomContainerSet();
-        tmpAtomContainerSet.addAtomContainer(null);
-        //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        int[] tmpMolIDArray = tmpFilter.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-        Assertions.assertEquals(1, tmpMolIDArray.length);
-        Assertions.assertEquals(Filter.MOL_ID_ERROR_VALUE, tmpMolIDArray[0]);
-    }*/
-
     /**
-     * TODO
+     * Tests whether the .getArrayOfAssignerMolIDs() method of class FilterPipeline throws an IllegalArgumentException
+     * if a given atom container has a MolID that is no integer value.
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_ACsWithMolIDAndWithoutCombined_2With_1Without() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
-        //
-        int tmpAnyMolIDForAC_0 = 4;
-        int tmpAnyMolIDForAC_2 = 3;
-        tmpAtomContainerSet.getAtomContainer(0).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, tmpAnyMolIDForAC_0);
-        tmpAtomContainerSet.getAtomContainer(2).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, tmpAnyMolIDForAC_2);
-        int[] tmpMolIDArray = new FilterPipeline().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-        Assertions.assertEquals(3, tmpMolIDArray.length);
-        Assertions.assertArrayEquals(new int[]{tmpAnyMolIDForAC_0, FilterPipeline.MOL_ID_ERROR_VALUE, tmpAnyMolIDForAC_2}, tmpMolIDArray);
+    public void getArrayOfAssignedMolIDsTest_throwsIllegalArgumentExceptionIfAnAtomContainerHasAMolIdThatIsNoIntegerValue() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+                    tmpAtomContainerSet.getAtomContainer(0).setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, new Object());
+                    new FilterPipeline().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .getArrayOfAssignerMolIDs() method of class FilterPipeline throws an IllegalArgumentException
+     * if one of multiple given atom containers lacks a MolID.
+     */
+    @Test
+    public void getArrayOfAssignedMolIDsTest_multipleACs_oneWithNoMolID_throwsIllegalArgumentException() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+                    FilterPipeline tmpFilterPipeline = new FilterPipeline();
+                    tmpFilterPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+                    tmpAtomContainerSet.getAtomContainer(2).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, null);
+                    tmpFilterPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .getArrayOfAssignerMolIDs() method of class FilterPipeline throws an IllegalArgumentException
+     * if one of multiple given atom containers has a MolID that is no integer value.
+     */
+    @Test
+    public void getArrayOfAssignedMolIDsTest_multipleACs_oneWithNotIntegerValueMolID_throwsIllegalArgumentException() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
+                    FilterPipeline tmpFilterPipeline = new FilterPipeline();
+                    tmpFilterPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+                    tmpAtomContainerSet.getAtomContainer(1).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, new Object());
+                    tmpFilterPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                }
+        );
     }
 
     /**
