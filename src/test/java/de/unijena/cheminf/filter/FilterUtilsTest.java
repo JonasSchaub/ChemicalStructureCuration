@@ -39,152 +39,224 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of benzene correct
-     * considering implicit hydrogen.
+     * considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_consideringImplicitHydrogen_12atoms() throws InvalidSmilesException {
+    public void countAtomsTest_consideringImplicitHydrogens_12atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        boolean tmpConsiderImplicitHydrogen = true;
-        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = true;
+        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
         Assertions.assertEquals(12, tmpAtomCount);
     }
 
     /**
      * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of benzene correct
-     * not considering implicit hydrogen.
+     * not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_notConsideringImplicitHydrogen_6atoms() throws InvalidSmilesException {
+    public void countAtomsTest_notConsideringImplicitHydrogens_6atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        boolean tmpConsiderImplicitHydrogen = false;
-        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = false;
+        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
         Assertions.assertEquals(6, tmpAtomCount);
     }
 
     /**
      * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of glycine correct
-     * not considering implicit hydrogen.
+     * not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_notConsideringImplicitHydrogen_5atoms() throws InvalidSmilesException {
+    public void countAtomsTest_notConsideringImplicitHydrogens_5atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
         //
-        boolean tmpConsiderImplicitHydrogen = false;
-        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = false;
+        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
         Assertions.assertEquals(5, tmpAtomCount);
     }
 
     /**
      * Tests whether the .countAtoms() method of the class FilterUtils counts the number of atoms of glycine correct
-     * considering implicit hydrogen.
+     * considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_consideringImplicitHydrogen_10atoms() throws InvalidSmilesException {
+    public void countAtomsTest_consideringImplicitHydrogens_10atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
         //
-        boolean tmpConsiderImplicitHydrogen = true;
-        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = true;
+        int tmpAtomCount = FilterUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
         Assertions.assertEquals(10, tmpAtomCount);
     }
 
     /**
-     * Tests whether the .countImplicitHydrogen() method of the class FilterUtils returns 6 when given an AtomContainer
-     * with 6 implicit hydrogen.
-     *
-     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     * Tests whether the .countAtoms() method of the class FilterUtils throws a NullPointerException if the given
+     * IAtomContainer instance is null.
      */
     @Test
-    public void countImplicitHydrogenTest_6Hydrogen() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
-        //
-        Assertions.assertEquals(6, FilterUtils.countImplicitHydrogen(tmpAtomContainer));
-    }
-
-    /**
-     * Tests whether the .countImplicitHydrogen() method of the class FilterUtils returns 6 when given an AtomContainer
-     * with 6 implicit hydrogen.
-     *
-     * @throws InvalidSmilesException if the SMILES string could not be parsed
-     */
-    @Test
-    public void countImplicitHydrogenTest_5Hydrogen() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
-        //
-        Assertions.assertEquals(5, FilterUtils.countImplicitHydrogen(tmpAtomContainer));
-    }
-
-    @Test   //TODO: has never been failed
-    public void countImplicitHydrogenTest_throwExceptionInCaseOfInvalidParameters_atomContainerIsNull() {
+    public void countAtomsTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    FilterUtils.countImplicitHydrogen(null);
+                    FilterUtils.countAtoms(null, true);
                 }
         );
     }
 
+    /**
+     * Tests whether the .countImplicitHydrogens() method of the class FilterUtils returns 6 when given an AtomContainer
+     * with 6 implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
     @Test
-    public void exceedsOrEqualsAtomCountTest_10AtomsThreshold_12AtomsConsideringImplicitHs() throws InvalidSmilesException {
+    public void countImplicitHydrogensTest_6Hydrogen() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        //
+        Assertions.assertEquals(6, FilterUtils.countImplicitHydrogens(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the .countImplicitHydrogens() method of the class FilterUtils returns 6 when given an AtomContainer
+     * with 6 implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countImplicitHydrogensTest_5Hydrogen() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
+        //
+        Assertions.assertEquals(5, FilterUtils.countImplicitHydrogens(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the .countImplicitHydrogens() method of the class FilterUtils throws a NullPointerException if the
+     * given IAtomContainer instance is null.
+     */
+    @Test
+    public void countImplicitHydrogensTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    FilterUtils.countImplicitHydrogens(null);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns a boolean value.
+     */
+    @Test
+    public void exceedsOrEqualsAtomCountTest_returnsBooleanValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpAtomCountThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertInstanceOf(
+                Boolean.class,
+                FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens)
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
+     * exceeds the given threshold considering implicit hydrogen atoms.
+     */
+    @Test
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_10AtomsThresholdConsideringImplicitHs_12Atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogen = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(
+                tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens
+        );
         Assertions.assertTrue(tmpResult);
     }
 
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns false if given atom container
+     * does not exceed the given threshold considering implicit hydrogen atoms.
+     */
     @Test
-    public void exceedsOrEqualsAtomCountTest_15AtomsThreshold_12AtomsConsideringImplicitHs() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsFalse_15AtomsThresholdConsideringImplicitHs_12Atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 15;
-        boolean tmpConsiderImplicitHydrogen = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpResult);
     }
 
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
+     * equals the given threshold considering implicit hydrogen atoms.
+     */
     @Test
-    public void exceedsOrEqualsAtomCountTest_12AtomsThreshold_12AtomsConsideringImplicitHs() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_12AtomsThresholdConsideringImplicitHs_12Atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 12;
-        boolean tmpConsiderImplicitHydrogen = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpResult);
     }
 
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
+     * exceeds the given threshold not considering implicit hydrogen atoms.
+     */
     @Test
-    public void exceedsOrEqualsAtomCountTest_10AtomsThreshold_6AtomsNotConsideringImplicitHs() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
-        //
-        int tmpAtomCountThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogen = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
-        Assertions.assertFalse(tmpResult);
-    }
-
-    @Test
-    public void exceedsOrEqualsAtomCountTest_4AtomsThreshold_6AtomsNotConsideringImplicitHs() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_4AtomsThresholdNotConsideringImplicitHs_6Atoms() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 4;
-        boolean tmpConsiderImplicitHydrogen = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderImplicitHydrogens = false;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpResult);
     }
 
-    @Test   //TODO: has never been red (due to check in countAtoms()); I added the parameter check anyways
-    public void exceedsOrEqualsAtomCountTest_throwExceptionInCaseOfInvalidParameters_atomContainerIsNull() {
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
+     * does not exceed the given threshold not considering implicit hydrogen atoms.
+     */
+    @Test
+    public void exceedsOrEqualsAtomCountTest_returnsFalse_10AtomsThresholdNotConsideringImplicitHs_6Atoms() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        //
+        int tmpAtomCountThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = false;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertFalse(tmpResult);
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
+     * equals the given threshold not considering implicit hydrogen atoms.
+     */
+    @Test
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_6AtomsThresholdNotConsideringImplicitHs_6Atoms() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        //
+        int tmpAtomCountThresholdValue = 6;
+        boolean tmpConsiderImplicitHydrogens = false;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertTrue(tmpResult);
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils throws a NullPointerException if the
+     * given IAtomContainer instance is null.
+     */
+    @Test
+    public void exceedsOrEqualsAtomCountTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -193,8 +265,12 @@ public class FilterUtilsTest {
         );
     }
 
+    /**
+     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils throws an IllegalArgumentException if
+     * the given threshold (integer value) is of a negative value.
+     */
     @Test
-    public void exceedsOrEqualsAtomCountTest_throwExceptionInCaseOfInvalidParameters_thresholdIsNegative() {
+    public void exceedsOrEqualsAtomCountTest_throwsIllegalArgumentExceptionIfGivenThresholdValueIsNegative() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
