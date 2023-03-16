@@ -91,11 +91,16 @@ public class FilterPipeline {
     }
 
     /**
-     * TODO
-     * TODO: name that every atom container gets a MolID assigned (for better traceability)
-     * @param anAtomContainerSet
-     * @return
-     * @throws NullPointerException
+     * Applies the filter pipeline on the given set of atom containers and returns the set of those who passed all
+     * filters. To uniquely identify the atom containers during the filtering process, each atom container gets a
+     * unique MolID ("FilterPipeline.MolID") in form of an integer type property assigned. In order to trace by which
+     * filter an atom container got filtered by, every atom container gets the index of the filter in the list of
+     * selected filters assigned as FilterID (integer property "FilterPipeline.FilterID"). Atom containers that do
+     * not get filtered get a FilterID of negative one.
+     *
+     * @param anAtomContainerSet set of atom containers to be filtered
+     * @return atom container set of all atom containers that passed the filter pipeline
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
@@ -145,11 +150,13 @@ public class FilterPipeline {
     }
 
     /**
-     * TODO
-     * @param aMaxAtomCount
+     * Adds a max atom count filter with the given parameters to the filter pipeline. Implicit hydrogen atoms may or
+     * may not be considered; atom containers that equal the given max atom count do not get filtered.
+     *
+     * @param aMaxAtomCount integer value of the max atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
-     * @return
-     * @throws IllegalArgumentException
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given max atom count is less than zero
      */
     public FilterPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
@@ -162,10 +169,10 @@ public class FilterPipeline {
 
     /**
      * TODO
-     * @param aMinAtomCount
+     * @param aMinAtomCount integer value of the min atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
-     * @return
-     * @throws IllegalArgumentException
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given min atom count is less than zero
      */
     public FilterPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
@@ -177,7 +184,9 @@ public class FilterPipeline {
     }
 
     /**
-     * For manually adding a filter to the pipeline.
+     * Adds the given filter to the filter pipeline. This method may be used to manually add a Filter instance to the
+     * filter pipeline for which no convenience method - in the form of .with...Filter() - is available. This allows
+     * the usage of subsequently implemented filters.
      *
      * @param aFilterToAdd the Filter instance that is to be added to the pipeline
      * @return the FilterPipeline instance itself
@@ -189,11 +198,12 @@ public class FilterPipeline {
         return this;
     }
 
-    /** TODO
-     * Assigns a unique identifier in form of a MolID to every atom container of the given atom container set.
+    /**
+     * Assigns a unique identifier in form of a MolID to every atom container of the given atom container set. For this
+     * purpose, each atom container is assigned an integer property of name "FilterPipeline.MolID".
      *
-     * @param anAtomContainerSet IAtomContainerSet
-     * @throws NullPointerException
+     * @param anAtomContainerSet IAtomContainerSet to whose atom containers MolIDs should be assigned
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
     protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
@@ -226,7 +236,8 @@ public class FilterPipeline {
             } catch (NullPointerException aNullPointerException) {
                 throw new NullPointerException("AtomContainer " + i + " of the given IAtomContainerSet instance is null.");
             } catch (IllegalArgumentException anIllegalArgumentException) {
-                throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID assigned or the MolID is not of data type Integer.");
+                throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID " +
+                        "assigned or the MolID is not of data type Integer.");
             }
         }
         return tmpMolIDArray;

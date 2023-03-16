@@ -37,7 +37,7 @@ public class MaxAtomCountFilter extends Filter {
     /**
      * Integer value of the max atom count threshold.
      */
-    protected final int maxAtomCount; //TODO: should the parameters be adjustable?
+    protected final int maxAtomCount;
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
@@ -46,16 +46,15 @@ public class MaxAtomCountFilter extends Filter {
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor of the MaxAtomCountFilter class. Atom containers that equal the given max atom count do not get
-     * filtered.
+     * Constructor of the MaxAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
+     * containers that equal the given max atom count do not get filtered.
      *
-     * @param aMaxAtomCount Integer value for the max atom count
-     * @param aConsiderImplicitHydrogens Boolean value whether implicit hydrogen atoms should be considered when
+     * @param aMaxAtomCount integer value of the max atom count to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                  calculating an atom containers atom count
      * @throws IllegalArgumentException if the given max atom count is less than zero
      */
     public MaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        //TODO: parameter tests?!
         if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
@@ -65,17 +64,17 @@ public class MaxAtomCountFilter extends Filter {
 
     /**
      * {@inheritDoc}
+     * Atom containers that equal the max atom count do not get filtered.
      */
     @Override
     public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        //TODO: comment
+        //
         return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.maxAtomCount + 1, this.considerImplicitHydrogens);
     }
 
     /**
      * Returns the max atom count.
-     * Atom containers that equal the max atom count do not get filtered.
      *
      * @return Integer value
      */

@@ -37,7 +37,7 @@ public class MinAtomCountFilter extends Filter {
     /**
      * Integer value of the min atom count threshold.
      */
-    private final int minAtomCount; //TODO: should the parameters be adjustable?
+    private final int minAtomCount;
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
@@ -46,11 +46,11 @@ public class MinAtomCountFilter extends Filter {
     private final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor of the MinAtomCountFilter class. Atom containers that equal the given min atom count do not get
-     * filtered.
+     * Constructor of the MinAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
+     * containers that equal the given min atom count do not get filtered.
      *
-     * @param aMinAtomCount Integer value for the min atom count
-     * @param aConsiderImplicitHydrogens Boolean value whether implicit hydrogen atoms should be considered when
+     * @param aMinAtomCount integer value of the min atom count to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                  calculating an atom containers atom count
      * @throws IllegalArgumentException if the given min atom count is less than zero
      */
@@ -64,11 +64,12 @@ public class MinAtomCountFilter extends Filter {
 
     /**
      * {@inheritDoc}
+     * Atom containers that equal the min atom count do not get filtered.
      */
     @Override
     public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        //TODO: comment
+        //
         return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.minAtomCount, this.considerImplicitHydrogens);
     }
 
