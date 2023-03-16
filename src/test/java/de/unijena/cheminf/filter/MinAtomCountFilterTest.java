@@ -212,7 +212,7 @@ public class MinAtomCountFilterTest {
     }
 
     /**
-     * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
+     * Tests whether the .filter() method throws a NullPointerException if the given IAtomContainerSet instance is null.
      */
     @Test
     public void filterMethodTest_throwsNullPointerExceptionIfGivenIAtomContainerSetIsNull() {

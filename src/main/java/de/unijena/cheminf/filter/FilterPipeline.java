@@ -42,7 +42,9 @@ public class FilterPipeline {
 
     /*
     TODO: remove parameter tests of filters out of FilterPipeline methods?
+    TODO: use the .withFilter() method in the .with...Filter() convenience methods?
     //
+    TODO: implement test methods for .withMaxBondCountFilter() and .withMinBondCountFilter() methods
     TODO: remove / adopt tests for .getsFiltered() method
     //
     TODO (optional):
@@ -168,7 +170,9 @@ public class FilterPipeline {
     }
 
     /**
-     * TODO
+     * Adds a min atom count filter with the given parameters to the filter pipeline. Implicit hydrogen atoms may or
+     * may not be considered; atom containers that equal the given min atom count do not get filtered.
+     *
      * @param aMinAtomCount integer value of the min atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
      * @return the FilterPipeline instance itself
@@ -180,7 +184,43 @@ public class FilterPipeline {
         }
         Filter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
-        return this;    //TODO: use the .withFilter() method here?
+        return this;
+    }
+
+    /**
+     * Adds a max bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
+     * may or may not be considered; atom containers that equal the given max bond count do not get filtered.
+     *
+     * @param aMaxBondCount integer value of the max bond count to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given max bond count is less than zero
+     */
+    public FilterPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (aMaxBondCount < 0) {    //TODO: would not harm the code but makes no sense
+            throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
+        }
+        Filter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a max bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
+     * may or may not be considered; atom containers that equal the given min bond count do not get filtered.
+     *
+     * @param aMinBondCount integer value of the min bond count to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given min bond count is less than zero
+     */
+    public FilterPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (aMinBondCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
+            throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
+        }
+        Filter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
     }
 
     /**
