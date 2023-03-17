@@ -34,6 +34,10 @@ import java.util.Objects;
  */
 public class MaxAtomCountFilter extends Filter {
 
+    /*
+    TODO: rename maxAtomCount to maxAtomCountThreshold?
+     */
+
     /**
      * Integer value of the max atom count threshold.
      */

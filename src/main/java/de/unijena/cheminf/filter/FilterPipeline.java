@@ -46,6 +46,7 @@ public class FilterPipeline {
     //
     TODO: implement test methods for .withMaxBondCountFilter() and .withMinBondCountFilter() methods
     TODO: remove / adopt tests for .getsFiltered() method
+    TODO: test whether the MolID always equals the index of the atom container in the given AC set
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
