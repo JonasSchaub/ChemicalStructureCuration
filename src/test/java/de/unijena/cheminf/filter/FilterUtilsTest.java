@@ -29,9 +29,11 @@ import de.unijena.cheminf.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
+import org.openscience.cdk.Bond;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 
 /**
  * Test class for methods of class FilterUtils.
@@ -574,6 +576,205 @@ public class FilterUtilsTest {
                 IllegalArgumentException.class,
                 () -> {
                     FilterUtils.exceedsOrEqualsBondCount(new AtomContainer(), -1, true);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns an integer value.
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsIntegerValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertInstanceOf(Integer.class, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
+     * with bond order single not considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_singleBond_notConsideringImplHs_twoTests() throws InvalidSmilesException {
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        boolean tmpConsiderImplicitHydrogens = false;
+        //
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
+        int tmpSingleBondCount = 3;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");
+        tmpSingleBondCount = 1;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
+     * with bond order single considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_singleBond_consideringImplHs_twoTests() throws InvalidSmilesException {
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        boolean tmpConsiderImplicitHydrogens = true;
+        //
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
+        int tmpSingleBondCount = 8;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");
+        tmpSingleBondCount = 7;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
+     * with bond order double.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_doubleBond_twoTests() throws InvalidSmilesException {
+        IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
+        boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        //
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
+        int tmpDoubleBondCount = 1;
+        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("C=CC=CC=CC(=O)O");
+        tmpDoubleBondCount = 4;
+        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
+     * with bond order triple.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_trippleBond_twoTests() throws InvalidSmilesException {
+        IBond.Order tmpBondOrder = IBond.Order.TRIPLE;
+        boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        //
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("N#CC#N");
+        int tmpTripleBondCount = 2;
+        Assertions.assertEquals(tmpTripleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("O=C(O)C=CCC#CC#CCC#C");
+        tmpTripleBondCount = 3;
+        Assertions.assertEquals(tmpTripleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
+     * with unset bond order.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_unsetBond_twoTests() throws InvalidSmilesException {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        //
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        IBond tmpBond = new Bond();
+        tmpBond.setOrder(IBond.Order.UNSET);
+        tmpAtomContainer.addBond(tmpBond);
+        int tmpUnsetBondsCount = 1;
+        Assertions.assertEquals(tmpUnsetBondsCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)C");
+        tmpUnsetBondsCount = 3;
+        for (int i = 0; i < tmpUnsetBondsCount; i++) {
+            tmpAtomContainer.addBond(tmpBond);
+        }
+        Assertions.assertEquals(tmpUnsetBondsCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
+     * with no bond order (bond order is null).
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_bondOrderNull_twoTests() throws InvalidSmilesException {
+        IBond.Order tmpBondOrder = null;
+        boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        //
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        IBond tmpBond = new Bond();
+        //tmpBond.setOrder(null);
+        tmpAtomContainer.addBond(tmpBond);
+        int tmpUndefinedBondsCount = 1;
+        Assertions.assertEquals(tmpUndefinedBondsCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)C");
+        tmpUndefinedBondsCount = 3;
+        for (int i = 0; i < tmpUndefinedBondsCount; i++) {
+            tmpAtomContainer.addBond(tmpBond);
+        }
+        Assertions.assertEquals(tmpUndefinedBondsCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests how the .countBondsOfSpecificOrder() method of class FilterUtils reacts to aromatic systems not considering bonds to
+     * implicit hydrogen atoms; benzene: 3 single, 3 double bonds; naphthalene: 6 single, 5 double bonds.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_aromaticSystem_shareOfSingleAndDoubleBonds_notConsiderImplHs_twoTests() throws InvalidSmilesException {
+        boolean tmpConsiderImplicitHydrogens = false;
+        //
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        int tmpSingleBondCount = 3;
+        int tmpDoubleBondCount = 3;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("c1cccc2ccccc12");
+        tmpSingleBondCount = 6;
+        tmpDoubleBondCount = 5;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests how the .countBondsOfSpecificOrder() method of class FilterUtils reacts to aromatic systems considering bonds to
+     * implicit hydrogen atoms; benzene: 3 single, 3 double bonds; naphthalene: 5 single, 5 double bonds.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_aromaticSystem_shareOfSingleAndDoubleBonds_considerImplHs_twoTests() throws InvalidSmilesException {
+        boolean tmpConsiderImplicitHydrogens = true;
+        //
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        int tmpSingleBondCount = 9;
+        int tmpDoubleBondCount = 3;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        tmpAtomContainer = TestUtils.parseSmilesString("c1cccc2ccccc12");
+        tmpSingleBondCount = 14;
+        tmpDoubleBondCount = 5;
+        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils throws a NullPointerException if the given
+     * IAtomContainer instance is null.
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = null;
+                    IBond.Order tmpBondOrder = IBond.Order.UNSET;
+                    boolean tmpConsiderImplicitHydrogens = true;
+                    Assertions.assertInstanceOf(Integer.class, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer,
+                            tmpBondOrder, tmpConsiderImplicitHydrogens));
                 }
         );
     }

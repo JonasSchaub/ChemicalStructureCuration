@@ -25,7 +25,6 @@
 
 package de.unijena.cheminf.filter;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -38,8 +37,8 @@ import java.util.Objects;
 public class FilterUtils {
 
     /**
-     * Returns the number of atoms that regard to a given atom container. Based on the boolean parameter, implicit
-     * hydrogen atoms are taken into account or not.
+     * Returns the number of atoms present in a given atom container. Based on the boolean parameter, implicit hydrogen
+     * atoms are taken into account or not.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aConsiderImplicitHydrogens Boolean value whether implicit hydrogen atoms should be considered
@@ -94,8 +93,8 @@ public class FilterUtils {
     }
 
     /**
-     * Returns the number of bonds that are present in the given atom container. Based on the boolean parameter,
-     * bonds to implicit hydrogen atoms are taken into account or not.
+     * Returns the number of bonds present in the given atom container. Based on the boolean parameter, bonds to
+     * implicit hydrogen atoms are taken into account or not.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
@@ -133,16 +132,31 @@ public class FilterUtils {
     }
 
     /**
-     * TODO
-     * @param anAtomContainer
-     * @param aBondType
-     * @param aConsiderImplicitHydrogens
-     * @return
+     * Counts the number of bonds of a specific bond order present in the given atom container. Based on the boolean
+     * parameter, bonds to implicit hydrogen atoms are taken into account or not. The method also counts bonds with an
+     * bond order of IBond.Order.UNSET or null.
+     *
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param aBondOrder Constant of IBond.Order to specify the bond order of the bonds to be counted; null or
+     *                   IBond.Order.UNSET are allowed
+     * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms; this is
+     *                                  only relevant when counting single bonds
+     * @return Integer number of bonds of the specific bond order in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int countBondType(IAtomContainer anAtomContainer, IBond.Order aBondType, boolean aConsiderImplicitHydrogens) throws NullPointerException {
-        //TODO: param checks
-        throw new NotImplementedException();
+    public static int countBondsOfSpecificBondOrder(IAtomContainer anAtomContainer, IBond.Order aBondOrder, boolean aConsiderImplicitHydrogens) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        int tmpBondTypeCount = 0;
+        for (IBond tmpBond :
+                anAtomContainer.bonds()) {
+            if (tmpBond.getOrder() == aBondOrder) {
+                tmpBondTypeCount++;
+            }
+        }
+        if (aBondOrder == IBond.Order.SINGLE && aConsiderImplicitHydrogens) {
+            tmpBondTypeCount += FilterUtils.countImplicitHydrogens(anAtomContainer);
+        }
+        return tmpBondTypeCount;
     }
 
     /*public static int countHeavyAtoms(IAtomContainer anAtomContainer) { //TODO
