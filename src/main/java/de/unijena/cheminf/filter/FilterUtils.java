@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.filter;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -111,8 +112,8 @@ public class FilterUtils {
     }
 
     /**
-     * Checks whether the bond count of a given atom container exceeds or equals the given threshold. Based on the
-     * boolean parameter, bonds to implicit hydrogen atoms are taken into account or not.
+     * Checks whether the bond count of a given atom container exceeds or equals the given threshold value. Based on
+     * the boolean parameter, bonds to implicit hydrogen atoms are taken into account or not.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the bond count threshold
@@ -133,14 +134,14 @@ public class FilterUtils {
 
     /**
      * Counts the number of bonds of a specific bond order present in the given atom container. Based on the boolean
-     * parameter, bonds to implicit hydrogen atoms are taken into account or not. The method also counts bonds with an
+     * parameter, bonds to implicit hydrogen atoms are taken into account or not. The method also counts bonds with a
      * bond order of IBond.Order.UNSET or null.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aBondOrder Constant of IBond.Order to specify the bond order of the bonds to be counted; null or
      *                   IBond.Order.UNSET are allowed
      * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms; this is
-     *                                  only relevant when counting single bonds
+     *                                  only relevant when counting bonds of the order one / single
      * @return Integer number of bonds of the specific bond order in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
@@ -157,6 +158,31 @@ public class FilterUtils {
             tmpBondTypeCount += FilterUtils.countImplicitHydrogens(anAtomContainer);
         }
         return tmpBondTypeCount;
+    }
+
+    /**
+     * Checks whether the count of bonds of a specific bond order of a given atom container exceeds or equals the given
+     * threshold value. Based on the boolean parameter, bonds to implicit hydrogen atoms are taken into account or not
+     * when counting bonds of the order one / single. The given bond order may be IBond.Order.UNSET or null.
+     *
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param aBondOrder Constant of IBond.Order to specify the bond order of the bonds to be counted; null or
+     *                  IBond.Order.UNSET are allowed
+     * @param aThresholdValue Integer value of the bond count threshold
+     * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms; this is
+     *                                  only relevant when counting bonds of the order one / single
+     * @return Boolean value whether the given atom container exceeds or equals the given threshold
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if the given threshold value is less than zero
+     */
+    public static boolean exceedsOrEqualsBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer, IBond.Order aBondOrder, int aThresholdValue,
+                                                   boolean aConsiderImplicitHydrogens) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        if (aThresholdValue < 0) {
+            throw new IllegalArgumentException("aThresholdValue (Integer value) is < than 0.");
+        }
+        final int tmpBondCount = FilterUtils.countBondsOfSpecificBondOrder(anAtomContainer, aBondOrder, aConsiderImplicitHydrogens);
+        return tmpBondCount >= aThresholdValue;
     }
 
     /*public static int countHeavyAtoms(IAtomContainer anAtomContainer) { //TODO

@@ -456,15 +456,13 @@ public class FilterUtilsTest {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpBondCountThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(
-                Boolean.class,
-                FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens)
-        );
+        Assertions.assertInstanceOf(Boolean.class, FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer,
+                tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
     }
 
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns true if given atom container
-     * exceeds the given threshold considering implicit hydrogen atoms.
+     * exceeds the given threshold considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -479,7 +477,7 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns false if given atom container
-     * does not exceed the given threshold considering implicit hydrogen atoms.
+     * does not exceed the given threshold considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -494,7 +492,7 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns true if given atom container
-     * equals the given threshold considering implicit hydrogen atoms.
+     * equals the given threshold considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -509,7 +507,7 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns true if given atom container
-     * exceeds the given threshold not considering implicit hydrogen atoms.
+     * exceeds the given threshold not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -524,7 +522,7 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns false if given atom container
-     * does not exceed the given threshold not considering implicit hydrogen atoms.
+     * does not exceed the given threshold not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -539,7 +537,7 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns true if given atom container
-     * equals the given threshold not considering implicit hydrogen atoms.
+     * equals the given threshold not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -592,8 +590,8 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
-     * with bond order single not considering bonds to implicit hydrogen atoms.
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when
+     * counting bonds with bond order single not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -611,8 +609,8 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
-     * with bond order single considering bonds to implicit hydrogen atoms.
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when
+     * counting bonds with bond order single considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -630,8 +628,8 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
-     * with bond order double.
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when
+     * counting bonds with bond order double.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -649,8 +647,8 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
-     * with bond order triple.
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when
+     * counting bonds with bond order triple.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -668,8 +666,35 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when counting bonds
-     * with unset bond order.
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when
+     * counting bonds with bond orders quadruple, quintuple and sextuple.
+     */
+    @Test
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_bondOrdersHigherThanTriple() {
+        boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        IBond.Order[] tmpBondOrderArray = new IBond.Order[]{
+                IBond.Order.QUADRUPLE,
+                IBond.Order.QUINTUPLE,
+                IBond.Order.SEXTUPLE
+        };
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        IBond tmpBond;
+        int tmpSpecificBondCount;
+        //
+        for (IBond.Order tmpBondOrder : tmpBondOrderArray) {
+            tmpSpecificBondCount = 0;
+            Assertions.assertEquals(tmpSpecificBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+            tmpBond = new Bond();
+            tmpBond.setOrder(tmpBondOrder);
+            tmpAtomContainer.addBond(tmpBond);
+            tmpSpecificBondCount = 1;
+            Assertions.assertEquals(tmpSpecificBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        }
+    }
+
+    /**
+     * Tests whether the .countBondsOfSpecificOrder() method of class FilterUtils returns the correct result when
+     * counting bonds with unset bond order.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -775,6 +800,162 @@ public class FilterUtilsTest {
                     boolean tmpConsiderImplicitHydrogens = true;
                     Assertions.assertInstanceOf(Integer.class, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer,
                             tmpBondOrder, tmpConsiderImplicitHydrogens));
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns a boolean
+     * value.
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsBooleanValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpBondCountThresholdValue = 10;
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertInstanceOf(
+                Boolean.class,
+                FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(tmpAtomContainer, tmpBondOrder,
+                        tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens)
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns true if
+     * the given atom container exceeds the given threshold for bonds of bond order single considering and not
+     * considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_singleBonds_thresholdExceeded() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 (2)
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        //
+        boolean tmpConsiderImplicitHydrogens = true;
+        int tmpBondCountThresholdValue = 5;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+        ));
+        tmpConsiderImplicitHydrogens = false;
+        tmpBondCountThresholdValue = 1;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+        ));
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns false if
+     * the given atom container does not exceed the given threshold for bonds of bond order single considering and not
+     * considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsFalse_singleBonds_thresholdNotExceeded() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 (2)
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        //
+        boolean tmpConsiderImplicitHydrogens = true;
+        int tmpBondCountThresholdValue = 10;
+        Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+        ));
+        tmpConsiderImplicitHydrogens = false;
+        tmpBondCountThresholdValue = 4;
+        Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+        ));
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns true if
+     * the given atom container equals the given threshold for bonds of bond order single considering and not
+     * considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_singleBonds_thresholdEqualed() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 (2)
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        //
+        boolean tmpConsiderImplicitHydrogens = true;
+        int tmpBondCountThresholdValue = 8;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+        ));
+        tmpConsiderImplicitHydrogens = false;
+        tmpBondCountThresholdValue = 2;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+        ));
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns the
+     * correct results if being tested with different bond orders.
+     * Bond orders of value double, triple, quadruple, quintuple, sextuple, unset and null are being tested.
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_threshold5_considerImplHs_8Bonds() {
+        IBond.Order[] tmpBondOrderArray = new IBond.Order[]{
+                IBond.Order.DOUBLE,
+                IBond.Order.TRIPLE,
+                IBond.Order.QUADRUPLE,
+                IBond.Order.QUINTUPLE,
+                IBond.Order.SEXTUPLE,
+                IBond.Order.UNSET,
+                null
+        };
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        IBond tmpBond = new Bond();
+        tmpAtomContainer.addBond(tmpBond);
+        int tmpThresholdValue;
+        boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        //
+        for (IBond.Order tmpBondOrder : tmpBondOrderArray) {
+            tmpBond.setOrder(tmpBondOrder);
+            tmpThresholdValue = 0;  //exceeded
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens
+            ));
+            tmpThresholdValue = 1;  //equaled
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens
+            ));
+            tmpThresholdValue = 2;  //not exceeded
+            Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens
+            ));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils throws a
+     * NullPointerException if the given IAtomContainer instance is null.
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(null, null, 10, true);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils throws an
+     * IllegalArgumentException if the given threshold value is of a negative value.
+     */
+    @Test
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_throwsIllegalArgumentExceptionIfGivenThresholdValueIsNegative() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(new AtomContainer(), null, -1, true);
                 }
         );
     }
