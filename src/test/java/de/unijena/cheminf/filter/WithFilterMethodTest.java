@@ -13,7 +13,7 @@ public class WithFilterMethodTest {
      */
     @Test
     public void withFilterMethodTest_returnsNotNull() {
-        Filter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         Assertions.assertNotNull(new FilterPipeline().withFilter(tmpEmptyFilter));
     }
 
@@ -23,7 +23,7 @@ public class WithFilterMethodTest {
      */
     @Test
     public void withFilterMethodTest_returnsFilterPipelineInstance() {
-        Filter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         Assertions.assertInstanceOf(FilterPipeline.class, new FilterPipeline().withFilter(tmpEmptyFilter));
     }
 
@@ -33,7 +33,7 @@ public class WithFilterMethodTest {
      */
     @Test
     public void withFilterMethodTest_returnedFilterPipelineInstanceIsSameAsTheOneTheMethodIsCalledFrom() {
-        Filter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withFilter(tmpEmptyFilter));
     }
@@ -45,9 +45,9 @@ public class WithFilterMethodTest {
     @Test
     public void withFilterMethodTest_checksIfListOfSelectedFiltersIsTheSameAndWasExtendedByOne() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        LinkedList<Filter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
+        LinkedList<IFilter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
         int tmpListInitialSize = tmpListOfSelectedFilters.size();
-        Filter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         tmpFilterPipeline.withFilter(tmpEmptyFilter);
         Assertions.assertSame(tmpListOfSelectedFilters, tmpFilterPipeline.getListOfSelectedFilters());
         Assertions.assertEquals(tmpListInitialSize + 1, tmpFilterPipeline.getListOfSelectedFilters().size());
@@ -55,30 +55,33 @@ public class WithFilterMethodTest {
 
     /**
      * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withFilter() method of
-     * the class FilterPipeline was extended by the given Filter instance.
+     * the class FilterPipeline was extended by the given IFilter instance.
      */
     @Test
-    public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterInstance() {
-        Filter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+    public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterInstance_test1() {
+        IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         FilterPipeline tmpFilterPipeline = new FilterPipeline().withFilter(tmpEmptyFilter);
+        Assertions.assertInstanceOf(IFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
         Assertions.assertSame(tmpEmptyFilter, tmpFilterPipeline.getListOfSelectedFilters().getLast());
     }
 
     /**
      * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withFilter() method of
-     * the class FilterPipeline was extended by the given Filter instance.
+     * the class FilterPipeline was extended by the given IFilter instance.
      */
     @Test
     public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterInstance_test2() {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withFilter(new MinAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens));
-        Assertions.assertInstanceOf(MinAtomCountFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+        IFilter tmpNewFilter = new MinAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withFilter(tmpNewFilter);
+        Assertions.assertInstanceOf(IFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+        Assertions.assertSame(tmpNewFilter, tmpFilterPipeline.getListOfSelectedFilters().getLast());
     }
 
     /**
      * Tests whether the .withFilter() method of the class FilterPipeline throws a NullPointerException if the given
-     * Filter instance is null.
+     * IFilter instance is null.
      */
     @Test
     public void withFilterMethodTest_throwsNullPointerExceptionIfGivenFilterInstanceIsNull() {    //TODO: do so?
@@ -104,41 +107,41 @@ public class WithFilterMethodTest {
     }
 
     /**
-     * Tests whether the list of selected filters is extended by the two specific Filter instances in the correct order
+     * Tests whether the list of selected filters is extended by the two specific IFilter instances in the correct order
      * if the .withFilter() method of the class FilterPipeline is called twice.
      */
     @Test
-    public void withFilterMethodTest_combiningTwoFilters_bothSpecificFiltersAreAddedToListOfSelectedFiltersInCorrectOrder() {
+    public void withFilterMethodTest_combiningTwoFilters_bothSpecificIFilterInstancesAreAddedToListOfSelectedFiltersInCorrectOrder() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Filter tmpFilter1 = TestUtils.getAllTrueOrFalseFilter();
-        Filter tmpFilter2 = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpFilter1 = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpFilter2 = TestUtils.getAllTrueOrFalseFilter();
         tmpFilterPipeline.withFilter(tmpFilter1).withFilter(tmpFilter2);
-        Assertions.assertEquals(tmpFilter1, tmpFilterPipeline.getListOfSelectedFilters().get(0));
-        Assertions.assertEquals(tmpFilter2, tmpFilterPipeline.getListOfSelectedFilters().get(1));
+        Assertions.assertSame(tmpFilter1, tmpFilterPipeline.getListOfSelectedFilters().get(0));
+        Assertions.assertSame(tmpFilter2, tmpFilterPipeline.getListOfSelectedFilters().get(1));
     }
 
     /**
-     * Tests whether the list of selected filters is extended by the respective count of entries if the .withFilter()
+     * Tests whether the list of selected filters is extended by the respective number of entries if the .withFilter()
      * method of the class FilterPipeline is called multiple.
      */
     @Test
     public void withFilterMethodTest_combiningMultipleFilters_5_listOfSelectedFiltersIsExtendedByGivenFilterCount() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         int tmpInitialListSize = tmpFilterPipeline.getListOfSelectedFilters().size();
-        Filter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+        IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         tmpFilterPipeline.withFilter(tmpEmptyFilter).withFilter(tmpEmptyFilter).withFilter(tmpEmptyFilter)
                 .withFilter(tmpEmptyFilter).withFilter(tmpEmptyFilter);
         Assertions.assertEquals(tmpInitialListSize + 5, tmpFilterPipeline.getListOfSelectedFilters().size());
     }
 
     /**
-     * Tests whether the list of selected filters is extended by the specific Filter instances in the correct order
+     * Tests whether the list of selected filters is extended by the specific IFilter instances in the correct order
      * if the .withFilter() method of the class FilterPipeline is called multiple times.
      */
     @Test
-    public void withFilterMethodTest_combiningMultipleFilters_5_listOfSelectedFiltersIsExtendedBySpecificFiltersInCorrectOrder() {
+    public void withFilterMethodTest_combiningMultipleFilters_5_listOfSelectedFiltersIsExtendedBySpecificIFiltersInCorrectOrder() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Filter[] tmpFilterArray = new Filter[5];
+        IFilter[] tmpFilterArray = new IFilter[5];
         for (int i = 0; i < tmpFilterArray.length; i++) {
             tmpFilterArray[i] = TestUtils.getAllTrueOrFalseFilter();
             tmpFilterPipeline.withFilter(tmpFilterArray[i] = TestUtils.getAllTrueOrFalseFilter());

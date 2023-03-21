@@ -27,6 +27,7 @@ package de.unijena.cheminf;
 
 import de.unijena.cheminf.filter.Filter;
 import de.unijena.cheminf.filter.FilterPipeline;
+import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
@@ -138,7 +139,7 @@ public class TestUtils {
      * Tests whether the .filter() method of class FilterPipeline filters a given atom container set with a specific
      * filter as expected.
      *
-     * @param aFilter Filter instance the .filter() method of class FilterPipeline should be tested with
+     * @param aFilter IFilter instance the .filter() method of class FilterPipeline should be tested with
      * @param anAtomContainerSet IAtomContainerSet instance to do the test with
      * @param anIsFilteredBooleanArray array that contains a boolean value for every atom container of the given atom
      *                                 container set and specifies whether it is meant to be filtered by the given
@@ -148,7 +149,7 @@ public class TestUtils {
      * containers in the given atom container set
      */
     public static void filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
-            Filter aFilter, IAtomContainerSet anAtomContainerSet, boolean[] anIsFilteredBooleanArray
+            IFilter aFilter, IAtomContainerSet anAtomContainerSet, boolean[] anIsFilteredBooleanArray
     ) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aFilter, "aFilter (instance of Filter) is null.");
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");

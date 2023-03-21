@@ -73,10 +73,10 @@ public class FilterPipeline {
     public static final int NOT_FILTERED_VALUE = -1;
 
     /**
-     * Linked list of the Filter instances that were added to this filter pipeline. Filters can be added via the filter
+     * Linked list of the IFilter instances that were added to this filter pipeline. Filters can be added via the filter
      * specific convenience methods or using the .withFilter() method of this class.
      */
-    protected final LinkedList<Filter> listOfSelectedFilters;
+    protected final LinkedList<IFilter> listOfSelectedFilters;
 
     /**
      * Constructor.
@@ -88,7 +88,7 @@ public class FilterPipeline {
     /** TODO: remove this constructor (?!)
      * Protected Constructor. Generates a copy of the original Filter instance maintaining all its fields.
      *
-     * @param anOriginalFilterPipeline Filter instance to generate the copy of
+     * @param anOriginalFilterPipeline FilterPipeline instance to generate the copy of
      */
     protected FilterPipeline(FilterPipeline anOriginalFilterPipeline) {
         this.listOfSelectedFilters = anOriginalFilterPipeline.listOfSelectedFilters;
@@ -166,7 +166,7 @@ public class FilterPipeline {
         if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
-        Filter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -184,7 +184,7 @@ public class FilterPipeline {
         if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
-        Filter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -202,7 +202,7 @@ public class FilterPipeline {
         if (aMaxBondCount < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
         }
-        Filter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -220,7 +220,7 @@ public class FilterPipeline {
         if (aMinBondCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
-        Filter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -243,7 +243,7 @@ public class FilterPipeline {
         if (aMaxSpecificBondCount < 0) {
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
         }
-        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -266,7 +266,7 @@ public class FilterPipeline {
         if (aMinSpecificBondCount < 0) {
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
-        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }
@@ -276,13 +276,13 @@ public class FilterPipeline {
      * filter pipeline for which no convenience method - in the form of .with...Filter() - is available. This allows
      * the usage of subsequently implemented filters.
      *
-     * @param aFilterToAdd the Filter instance that is to be added to the pipeline
+     * @param aFilterToAdd the IFilter instance that is to be added to the pipeline
      * @return the FilterPipeline instance itself
      * @throws NullPointerException if the given Filter instance is null
      */
-    public FilterPipeline withFilter(Filter aFilterToAdd) throws NullPointerException {
+    public FilterPipeline withFilter(IFilter aFilterToAdd) throws NullPointerException {
         Objects.requireNonNull(aFilterToAdd, "aFilterToAdd (instance of Filter) is null.");
-        this.getListOfSelectedFilters().add(aFilterToAdd);
+        this.listOfSelectedFilters.add(aFilterToAdd);
         return this;
     }
 
@@ -410,9 +410,9 @@ public class FilterPipeline {
     /**
      * Returns the list of selected filters.
      *
-     * @return LinkedList<Filter></Filter>    TODO: this was auto filled; what does the "/" stand for?
+     * @return LinkedList of IFilter instances
      */
-    public LinkedList<Filter> getListOfSelectedFilters() {
+    public LinkedList<IFilter> getListOfSelectedFilters() {
         return this.listOfSelectedFilters;
     }
 

@@ -76,7 +76,7 @@ public class WithMaxAtomCountFilterTest {
     @Test
     public void withMaxAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersIsTheSameAndWasExtendedByOne() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        LinkedList<Filter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
+        LinkedList<IFilter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
         int tmpListInitialSize = tmpListOfSelectedFilters.size();
         tmpFilterPipeline.withMaxAtomCountFilter(10, true);
         Assertions.assertSame(tmpListOfSelectedFilters, tmpFilterPipeline.getListOfSelectedFilters());

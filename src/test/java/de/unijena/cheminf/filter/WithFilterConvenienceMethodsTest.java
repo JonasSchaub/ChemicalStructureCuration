@@ -141,7 +141,7 @@ public class WithFilterConvenienceMethodsTest {
         //
         int tmpMaxBondCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -168,7 +168,7 @@ public class WithFilterConvenienceMethodsTest {
         //
         int tmpMaxBondCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -459,7 +459,7 @@ public class WithFilterConvenienceMethodsTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMaxSpecificBondCount = 7;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -486,7 +486,7 @@ public class WithFilterConvenienceMethodsTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMaxSpecificBondCount = 1;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -513,7 +513,7 @@ public class WithFilterConvenienceMethodsTest {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         int tmpMaxSpecificBondCount = 1;
         boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
-        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -646,7 +646,7 @@ public class WithFilterConvenienceMethodsTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMinSpecificBondCount = 7;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -673,7 +673,7 @@ public class WithFilterConvenienceMethodsTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMinSpecificBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -700,7 +700,7 @@ public class WithFilterConvenienceMethodsTest {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         int tmpMinSpecificBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
-        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
