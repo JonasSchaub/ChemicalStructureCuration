@@ -69,32 +69,41 @@ public class FilterPipelineMolIDTests {
     }
 
     /**
-     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns an MolID of expected
-     * value to a single atom container contained in a given atom container set.
+     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns a MolID of to a
+     * single atom container that equals its index in the atom container set passed to the method.
      */
     @Test
-    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfExpectedValue() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
+    public void assignMolIdToAtomContainersTest_propertyMolIDEqualsTheACsIndexInTheACSet_singleAC() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        IAtomContainerSet tmpAtomContainerSet = new AtomContainerSet();
+        tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         tmpFilterPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        Assertions.assertEquals(0, (Integer) tmpAtomContainerSet.getAtomContainer(0).getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME));
+        Assertions.assertSame(
+                tmpAtomContainer,
+                tmpAtomContainerSet.getAtomContainer(tmpAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME))
+        );
     }
 
     /**
-     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns MolIDs of expected
-     * values to multiple atom containers contained by a given atom container set.
+     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns a MolID of to each
+     * atom container in the atom container set passed to the method that equals its index in the atom container set.
      */
     @Test
-    public void assignMolIdToAtomContainersTest_multipleACs_propertyMolIDIsOfExpectedValueRespectively() {
+    public void assignMolIdToAtomContainersTest_multipleACs_propertyMolIDEqualsTheACsIndexInTheACSet() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         tmpFilterPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        for (int i = 0; i < 3; i++) {
-            Assertions.assertEquals(i, (Integer) tmpAtomContainerSet.getAtomContainer(i).getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME));
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertSame(
+                    tmpAtomContainer,
+                    tmpAtomContainerSet.getAtomContainer(tmpAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME))
+            );
         }
     }
 

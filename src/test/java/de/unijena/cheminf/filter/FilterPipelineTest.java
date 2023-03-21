@@ -113,13 +113,43 @@ public class FilterPipelineTest {
     }
 
     /**
-     * Tests the parameter-less, public constructor of the class FilterPipeline whether it initialises the
+     * Tests the parameter-less, public constructor of the class FilterPipeline whether it initializes
      * listOfSelectedFilters.
-     * TODO: add further / future class variables
      */
     @Test
-    public void publicFilterConstructorTest_instancesHaveListOfSelectedFiltersInitializedInConstructor() {
+    public void publicFilterConstructorTest_noParameter_listOfSelectedFiltersInitialized() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        Assertions.assertNotNull(tmpFilterPipeline.listOfSelectedFilters);
+    }
+
+    /**
+     * Tests the parameter-less, public constructor of the class FilterPipeline whether the initialized
+     * listOfSelectedFilters is empty.
+     */
+    @Test
+    public void publicFilterConstructorTest_noParameter_instancesListOfSelectedFiltersIsEmpty() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        Assertions.assertTrue(tmpFilterPipeline.listOfSelectedFilters.isEmpty());
+    }
+
+    /**
+     * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets optionalIDPropertyName
+     * to null.
+     */
+    @Test
+    public void publicFilterConstructorTest_noParameter_optionalIDPropertyNameIsNull() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        Assertions.assertNull(tmpFilterPipeline.optionalIDPropertyName);
+    }
+
+    /**
+     * Tests public constructor of the class FilterPipeline with String parameter whether it initializes
+     * listOfSelectedFilters.
+     */
+    @Test
+    public void publicFilterConstructorTest_withStringParameter_listOfSelectedFiltersInitialized() {
+        String tmpPropertyNameString = "SomeString";
+        FilterPipeline tmpFilterPipeline = new FilterPipeline(tmpPropertyNameString);
         Assertions.assertNotNull(tmpFilterPipeline.listOfSelectedFilters);
     }
 
@@ -127,9 +157,21 @@ public class FilterPipelineTest {
      * Tests whether the initialised list of selected filters is empty.
      */
     @Test
-    public void publicFilterConstructorTest_instancesListOfSelectedFiltersIsEmpty() {
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+    public void publicFilterConstructorTest_withStringParameter_instancesListOfSelectedFiltersIsEmpty() {
+        String tmpPropertyNameString = "SomeString";
+        FilterPipeline tmpFilterPipeline = new FilterPipeline(tmpPropertyNameString);
         Assertions.assertTrue(tmpFilterPipeline.listOfSelectedFilters.isEmpty());
+    }
+
+    /**
+     * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets the field
+     * optionalIDPropertyName to the given String.
+     */
+    @Test
+    public void publicFilterConstructorTest_withStringParameter_optionalIDPropertyNameIsSameAsGivenString() {
+        String tmpPropertyNameString = "SomeString";
+        FilterPipeline tmpFilterPipeline = new FilterPipeline(tmpPropertyNameString);
+        Assertions.assertSame(tmpPropertyNameString, tmpFilterPipeline.optionalIDPropertyName);
     }
 
     /** TODO: remove (?!)

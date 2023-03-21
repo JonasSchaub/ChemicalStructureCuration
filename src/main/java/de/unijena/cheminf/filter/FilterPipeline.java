@@ -47,7 +47,6 @@ public class FilterPipeline {
     //
     TODO: implement test methods for .withMaxBondCountFilter() and .withMinBondCountFilter() methods
     TODO: remove / adopt tests for .getsFiltered() method
-    TODO: test whether the MolID always equals the index of the atom container in the given AC set
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
@@ -79,9 +78,32 @@ public class FilterPipeline {
     protected final LinkedList<IFilter> listOfSelectedFilters;
 
     /**
-     * Constructor.
+     * Name string of the atom container property optionally used at the reporting of a filtering process.
+     */
+    protected final String optionalIDPropertyName;
+
+    /** TODO: realize what is written in the comment
+     * Constructor. At reporting of filtering processes, the MolID (assigned to each atom container during filtering
+     * process) is used for a unique identification of each atom container.
      */
     public FilterPipeline() {
+        this((String) null);
+    }
+
+    /** TODO: realize what is written in the comment
+     * Constructor. At reporting of filtering processes, the atom container property with the given name (String
+     * parameter) is used for a unique identification of each atom container in addition to the MolID, an identifier
+     * assigned to each atom container during filtering process.
+     *
+     * @param aNameOfAtomContainerProperty Name string of the atom container property to be used at reporting of a
+     *                                     filtering process; if null is given,
+     * @throws IllegalArgumentException if the given property name string is blank
+     */
+    public FilterPipeline(String aNameOfAtomContainerProperty) throws IllegalArgumentException {
+        if (aNameOfAtomContainerProperty != null && aNameOfAtomContainerProperty.isBlank()) {
+            throw new IllegalArgumentException("The given String aNameOfAtomContainerProperty is blank.");
+        }
+        this.optionalIDPropertyName = aNameOfAtomContainerProperty;
         this.listOfSelectedFilters = new LinkedList<>();
     }
 
@@ -91,6 +113,7 @@ public class FilterPipeline {
      * @param anOriginalFilterPipeline FilterPipeline instance to generate the copy of
      */
     protected FilterPipeline(FilterPipeline anOriginalFilterPipeline) {
+        this.optionalIDPropertyName = anOriginalFilterPipeline.optionalIDPropertyName;
         this.listOfSelectedFilters = anOriginalFilterPipeline.listOfSelectedFilters;
     }
 
@@ -288,7 +311,8 @@ public class FilterPipeline {
 
     /**
      * Assigns a unique identifier in form of a MolID to every atom container of the given atom container set. For this
-     * purpose, each atom container is assigned an integer property of name "FilterPipeline.MolID".
+     * purpose, each atom container is assigned an integer property of name "FilterPipeline.MolID". The assigned MolID
+     * equals the index of the atom container in the given atom container set.
      *
      * @param anAtomContainerSet IAtomContainerSet to whose atom containers MolIDs should be assigned
      * @throws NullPointerException if the given IAtomContainerSet instance is null
@@ -296,8 +320,6 @@ public class FilterPipeline {
     protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-            //TODO: check whether the property is already set? they might not be unique
-            //TODO: assign them to the original AtomContainer instance or to a copy?
             anAtomContainerSet.getAtomContainer(i).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, i);
         }
     }
