@@ -32,9 +32,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import java.util.Objects;
 
 /**
- * Abstract class Filter.
+ * Abstract class Filter - implements IFilter.
  */
-public abstract class Filter {
+public abstract class Filter implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?
@@ -61,15 +61,5 @@ public abstract class Filter {
         }
         return tmpFilteredACSet;
     }
-
-    /**
-     * Checks whether the filter applies on a given IAtomContainer instance.
-     * Returns true, if the given atom container gets filtered.
-     *
-     * @param anAtomContainer IAtomContainer instance to be checked
-     * @return true if the filter applies on the given atom container
-     * @throws NullPointerException if the given IAtomContainer instance is null
-     */
-    protected abstract boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
 
 }
