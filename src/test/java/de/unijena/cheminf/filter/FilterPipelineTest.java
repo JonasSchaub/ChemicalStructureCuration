@@ -207,6 +207,16 @@ public class FilterPipelineTest {
     }
 
     /**
+     * Tests whether the .getOptionalIDPropertyName() method of the class FilterPipeline returns the instances field
+     * optionalIDPropertyName.
+     */
+    @Test
+    public void getOptionalIDPropertyNameMethodTest_returnsClassFieldOptionalIDPropertyName() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        Assertions.assertSame(tmpFilterPipeline.optionalIDPropertyName, tmpFilterPipeline.getOptionalIDPropertyName());
+    }
+
+    /**
      * Tests whether the return value of the .filter() method of class FilterPipeline is not null.
      */
     @Test

@@ -45,8 +45,9 @@ public class FilterPipeline {
     TODO: remove parameter tests of filters out of FilterPipeline methods?
     TODO: use the .withFilter() method in the .with...Filter() convenience methods?
     //
-    TODO: implement test methods for .withMaxBondCountFilter() and .withMinBondCountFilter() methods
     TODO: remove / adopt tests for .getsFiltered() method
+    TODO: doc comments and test methods for new class fields
+    TODO: getters for new class fields
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
@@ -81,6 +82,21 @@ public class FilterPipeline {
      * Name string of the atom container property optionally used at the reporting of a filtering process.
      */
     protected final String optionalIDPropertyName;
+
+    /**
+     * TODO
+     */
+    protected int latestFilteringProcess_numberOfGivenACs;
+
+    /**
+     * TODO
+     */
+    protected int latestFilteringProcess_numberOfReturnedACs;
+
+    /**
+     * TODO
+     */
+    protected int[] latestFilteringProcess_numberOfACsFilteredByEachFilter;
 
     /** TODO: realize what is written in the comment
      * Constructor. At reporting of filtering processes, the MolID (assigned to each atom container during filtering
@@ -131,17 +147,20 @@ public class FilterPipeline {
      */
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        this.latestFilteringProcess_numberOfGivenACs = anAtomContainerSet.getAtomContainerCount();
+        this.latestFilteringProcess_numberOfACsFilteredByEachFilter = new int[this.listOfSelectedFilters.size()];
         this.assignMolIdToAtomContainers(anAtomContainerSet);
-        final BitSet tmpGotFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
         IAtomContainer tmpAtomContainer;
 
         for (int tmpIndexOfFilter = 0; tmpIndexOfFilter < this.listOfSelectedFilters.size(); tmpIndexOfFilter++) {
             for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-                if (!tmpGotFilteredBitSet.get(i)) {
+                if (!tmpIsFilteredBitSet.get(i)) {
                     tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
                     if (this.listOfSelectedFilters.get(tmpIndexOfFilter).getsFiltered(tmpAtomContainer)) {
                         tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfFilter);
-                        tmpGotFilteredBitSet.set(i);
+                        tmpIsFilteredBitSet.set(i);
+                        this.latestFilteringProcess_numberOfACsFilteredByEachFilter[tmpIndexOfFilter]++;
                     }
                 }
             }
@@ -149,7 +168,7 @@ public class FilterPipeline {
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
-            if (!tmpGotFilteredBitSet.get(i)) {
+            if (!tmpIsFilteredBitSet.get(i)) {
                 tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, FilterPipeline.NOT_FILTERED_VALUE);
                 tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
             }
@@ -172,6 +191,8 @@ public class FilterPipeline {
             }
             tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
         }*/
+
+        this.latestFilteringProcess_numberOfReturnedACs = tmpFilteredACSet.getAtomContainerCount();
 
         return tmpFilteredACSet;
     }
@@ -436,6 +457,16 @@ public class FilterPipeline {
      */
     public LinkedList<IFilter> getListOfSelectedFilters() {
         return this.listOfSelectedFilters;
+    }
+
+    /**
+     * Returns the optional name string of the atom container property containing an identifier. This field is
+     * specified in the constructor.
+     *
+     * @return String optionalIDPropertyName
+     */
+    public String getOptionalIDPropertyName() {
+        return optionalIDPropertyName;
     }
 
 }
