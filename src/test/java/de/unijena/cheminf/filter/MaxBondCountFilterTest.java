@@ -63,7 +63,8 @@ public class MaxBondCountFilterTest {
     }
 
     /**
-     * Tests whether the public constructor initializes all class fields with the given parameters.
+     * Tests whether the public constructor throws an IllegalArgumentException if the given max bond count is of a
+     * negative value.
      */
     @Test
     public void publicConstructorTest_throwsIllegalArgumentExceptionIfMaxBondCountIsNegative() {
@@ -225,6 +226,28 @@ public class MaxBondCountFilterTest {
                     tmpMaxBondCountFilter.filter(null);
                 }
         );
+    }
+
+    /**
+     * Tests the getter of maxBondCount whether it returns maxBondCount.
+     */
+    @Test
+    public void getMaxBondCountMethodTest_returnsMaxBondCount() {
+        int tmpMaxBondCount = 5;
+        boolean tmpConsiderImplicitHydrogens = true;
+        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMaxBondCountFilter.maxBondCount, tmpMaxBondCountFilter.getMaxBondCount());
+    }
+
+    /**
+     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
+     */
+    @Test
+    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
+        int tmpMaxBondCount = 5;
+        boolean tmpConsiderImplicitHydrogens = true;
+        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMaxBondCountFilter.considerImplicitHydrogens, tmpMaxBondCountFilter.isConsiderImplicitHydrogens());
     }
 
 }

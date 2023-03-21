@@ -63,7 +63,8 @@ public class MinAtomCountFilterTest {
     }
 
     /**
-     * Tests whether the public constructor initializes all class fields with the given parameters.
+     * Tests whether the public constructor throws an IllegalArgumentException if the given min atom count is of a
+     * negative value.
      */
     @Test
     public void publicConstructorTest_throwsIllegalArgumentExceptionIfMinAtomCountIsNegative() {
@@ -225,6 +226,28 @@ public class MinAtomCountFilterTest {
                     tmpMinAtomCountFilter.filter(null);
                 }
         );
+    }
+
+    /**
+     * Tests the getter of minAtomCount whether it returns minAtomCount.
+     */
+    @Test
+    public void getMinAtomCountMethodTest_returnsMaxAtomCount() {
+        int tmpMinAtomCount = 5;
+        boolean tmpConsiderImplicitHydrogens = true;
+        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMinAtomCountFilter.minAtomCount, tmpMinAtomCountFilter.getMinAtomCount());
+    }
+
+    /**
+     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
+     */
+    @Test
+    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
+        int tmpMinAtomCount = 5;
+        boolean tmpConsiderImplicitHydrogens = true;
+        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMinAtomCountFilter.considerImplicitHydrogens, tmpMinAtomCountFilter.isConsiderImplicitHydrogens());
     }
 
 }

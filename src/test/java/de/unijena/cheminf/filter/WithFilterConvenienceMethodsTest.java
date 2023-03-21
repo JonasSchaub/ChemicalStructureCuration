@@ -30,15 +30,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 
 public class WithFilterConvenienceMethodsTest {
 
     /*
     TODO: add tests for every new filter class
+    //
+    TODO: place tests of filter method else where / in a separate class?
      */
 
     /**
-     * Tests whether the value returned by the .withMaxBondCountFilter() method of the class FilterPipeline is an
+     * Tests whether the value returned by the .withMaxBondCountFilter() method of the class FilterPipeline is a
      * FilterPipeline instance.
      */
     @Test
@@ -46,7 +49,7 @@ public class WithFilterConvenienceMethodsTest {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMaxBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMaxBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /**
@@ -134,24 +137,15 @@ public class WithFilterConvenienceMethodsTest {
                 "C=CC=C",   // 9 (3)
                 "CCO"       // 8 (2)
         );
-        boolean[] tmpGotFilteredArray = new boolean[]{false, true, true, false, false, false};
+        boolean[] tmpIsFilteredArray = new boolean[]{false, true, true, false, false, false};
         //
         int tmpMaxBondCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpFilterPipeline.filter(tmpAtomContainerSet);
-        int tmpIndexInFilteredSet = 0;
-        int tmpFilterID;
-        for (int i = 0; i < tmpGotFilteredArray.length; i++) {
-            tmpFilterID = tmpAtomContainerSet.getAtomContainer(i).getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME);
-            if (!tmpGotFilteredArray[i]) {
-                Assertions.assertEquals(FilterPipeline.NOT_FILTERED_VALUE, tmpFilterID);
-                Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
-                tmpIndexInFilteredSet++;
-                continue;
-            }
-            Assertions.assertTrue(tmpFilterID != FilterPipeline.NOT_FILTERED_VALUE);
-        }
+        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
     }
 
     /**
@@ -170,24 +164,15 @@ public class WithFilterConvenienceMethodsTest {
                 "C=CC=C",   // 9 (3)
                 "CCO"       // 8 (2)
         );
-        boolean[] tmpGotFilteredArray = new boolean[]{true, false, true, true, false, false};
+        boolean[] tmpIsFilteredArray = new boolean[]{true, false, true, true, false, false};
         //
         int tmpMaxBondCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpFilterPipeline.filter(tmpAtomContainerSet);
-        int tmpIndexInFilteredSet = 0;
-        int tmpFilterID;
-        for (int i = 0; i < tmpGotFilteredArray.length; i++) {
-            tmpFilterID = tmpAtomContainerSet.getAtomContainer(i).getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME);
-            if (!tmpGotFilteredArray[i]) {
-                Assertions.assertEquals(FilterPipeline.NOT_FILTERED_VALUE, tmpFilterID);
-                Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
-                tmpIndexInFilteredSet++;
-                continue;
-            }
-            Assertions.assertTrue(tmpFilterID != FilterPipeline.NOT_FILTERED_VALUE);
-        }
+        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
     }
 
     /**
@@ -199,7 +184,7 @@ public class WithFilterConvenienceMethodsTest {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMinBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMinBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /**
@@ -341,6 +326,385 @@ public class WithFilterConvenienceMethodsTest {
             }
             Assertions.assertTrue(tmpFilterID != FilterPipeline.NOT_FILTERED_VALUE);
         }
+    }
+
+    /**
+     * Tests whether the value returned by the .withMaxBondsOfSpecificBondOrderFilter() method of the class
+     * FilterPipeline is an FilterPipeline instance.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstance() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = true;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMaxBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter
+        ));
+    }
+
+    /**
+     * Tests whether the instance returned by the .withMaxBondsOfSpecificBondOrderFilter() method of the class
+     * FilterPipeline is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = true;
+        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMaxBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter
+        ));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the
+     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline was extended by an instance of
+     * MaxBondsOfSpecificBondOrderFilter.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxBondsOfSpecificBondOrderFilter() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder,
+                tmpIntegerParameter, tmpConsiderImplicitHydrogens);
+        Assertions.assertInstanceOf(MaxBondsOfSpecificBondOrderFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given bond order of
+     * interest.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMaxBondsOfSpecificBondOrderFilterHasGivenBondOrderSet_twoTests() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getBondOrderOfInterest());
+        tmpBondOrder = IBond.Order.DOUBLE;
+        tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getBondOrderOfInterest());
+    }
+
+    /**
+     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given max specific bond
+     * count threshold value.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMaxBondsOfSpecificBondOrderFilterHasGivenThresholdSet_twoTests() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxSpecificBondCount());
+        tmpThresholdValue = 20;
+        tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxSpecificBondCount());
+    }
+
+    /**
+     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline has the given boolean value set.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMaxBondsOfSpecificBondOrderFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertTrue(((MaxBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isConsiderImplicitHydrogens());
+        tmpConsiderImplicitHydrogens = false;
+        tmpFilterPipeline = new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertFalse(((MaxBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isConsiderImplicitHydrogens());
+    }
+
+    /**
+     * Tests whether the .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMaxBondCountIsNegative() {    //TODO: do so?
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IBond.Order tmpBondOrder = IBond.Order.UNSET;
+                    int tmpNegativeMaxBondCount = -1;
+                    new FilterPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpNegativeMaxBondCount, true);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * MaxBondsOfSpecificBondOrderFilter with bond order single and considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1", // 9 (3) - filtered
+                "CC(=O)O",  // 6 (2)
+                "O",        // 2 (0)
+                "CCO",      // 8 (2) - filtered
+                "C=CC=C"    // 7 (1)
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{true, false, false, true, false};
+        //
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        int tmpMaxSpecificBondCount = 7;
+        boolean tmpConsiderImplicitHydrogens = true;
+        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * MaxBondsOfSpecificBondOrderFilter with bond order single and not considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMaxBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1", // 9 (3) - filtered
+                "CC(=O)O",  // 6 (2) - filtered
+                "O",        // 2 (0)
+                "CCO",      // 8 (2) - filtered
+                "C=CC=C"    // 7 (1)
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{true, true, false, true, false};
+        //
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        int tmpMaxSpecificBondCount = 1;
+        boolean tmpConsiderImplicitHydrogens = false;
+        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * MaxBondsOfSpecificBondOrderFilter with bond order double; test is exemplary for filtering on other bond orders.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",  // 1
+                "c1ccccc1", // 3 - filtered
+                "NCC(=O)O", // 1
+                "CCO",      // 0
+                "C=CC=C"    // 2 - filtered
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{false, true, false, false, true};
+        //
+        IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
+        int tmpMaxSpecificBondCount = 1;
+        boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
+        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the value returned by the .withMinBondsOfSpecificBondOrderFilter() method of the class
+     * FilterPipeline is an FilterPipeline instance.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstance() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = true;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter));
+    }
+
+    /**
+     * Tests whether the instance returned by the .withMinBondsOfSpecificBondOrderFilter() method of the class
+     * FilterPipeline is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = true;
+        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the
+     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline was extended by an instance of
+     * MinBondsOfSpecificBondOrderFilter.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinBondsOfSpecificBondOrderFilter() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpConsiderImplicitHydrogens);
+        Assertions.assertInstanceOf(MinBondsOfSpecificBondOrderFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given bond order of
+     * interest.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMinBondsOfSpecificBondOrderFilterHasGivenBondOrderSet_twoTests() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getBondOrderOfInterest());
+        tmpBondOrder = IBond.Order.DOUBLE;
+        tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getBondOrderOfInterest());
+    }
+
+    /**
+     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given min specific bond
+     * count threshold value.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMinBondsOfSpecificBondOrderFilterHasGivenThresholdSet_twoTests() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinSpecificBondCount());
+        tmpThresholdValue = 20;
+        tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinSpecificBondCount());
+    }
+
+    /**
+     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline has the given boolean value set.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMinBondsOfSpecificBondOrderFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertTrue(((MinBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isConsiderImplicitHydrogens());
+        tmpConsiderImplicitHydrogens = false;
+        tmpFilterPipeline = new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertFalse(((MinBondsOfSpecificBondOrderFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isConsiderImplicitHydrogens());
+    }
+
+    /**
+     * Tests whether the .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMinBondCountIsNegative() {    //TODO: do so?
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IBond.Order tmpBondOrder = IBond.Order.UNSET;
+                    int tmpNegativeMinBondCount = -1;
+                    new FilterPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpNegativeMinBondCount, true);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * MinBondsOfSpecificBondOrderFilter with bond order single and considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1", // 9 (3)
+                "CC(=O)O",  // 6 (2) - filtered
+                "O",        // 2 (0) - filtered
+                "CCO",      // 8 (2)
+                "C=CC=C"    // 7 (1)
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{false, true, true, false, false};
+        //
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        int tmpMinSpecificBondCount = 7;
+        boolean tmpConsiderImplicitHydrogens = true;
+        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * MinBondsOfSpecificBondOrderFilter with bond order single and not considering bonds to implicit hydrogen atoms.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMinBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1", // 9 (3)
+                "CC(=O)O",  // 6 (2)
+                "O",        // 2 (0) - filtered
+                "CCO",      // 8 (2)
+                "C=CC=C"    // 7 (1) - filtered
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{false, false, true, false, true};
+        //
+        IBond.Order tmpBondOrder = IBond.Order.SINGLE;
+        int tmpMinSpecificBondCount = 2;
+        boolean tmpConsiderImplicitHydrogens = false;
+        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * MinBondsOfSpecificBondOrderFilter with bond order double; test is exemplary for filtering on other bond orders.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",  // 1 - filtered
+                "c1ccccc1", // 3
+                "NCC(=O)O", // 1 - filtered
+                "CCO",      // 0 - filtered
+                "C=CC=C"    // 2
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{true, false, true, true, false};
+        //
+        IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
+        int tmpMinSpecificBondCount = 2;
+        boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
+        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
     }
 
 }

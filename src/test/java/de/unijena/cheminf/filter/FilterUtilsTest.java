@@ -753,15 +753,15 @@ public class FilterUtilsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
-        int tmpSingleBondCount = 3;
-        int tmpDoubleBondCount = 3;
-        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        int tmpExpectedSingleBondCount = 3;
+        int tmpExpectedDoubleBondCount = 3;
+        Assertions.assertEquals(tmpExpectedSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
         tmpAtomContainer = TestUtils.parseSmilesString("c1cccc2ccccc12");
-        tmpSingleBondCount = 6;
-        tmpDoubleBondCount = 5;
-        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        tmpExpectedSingleBondCount = 6;
+        tmpExpectedDoubleBondCount = 5;
+        Assertions.assertEquals(tmpExpectedSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
     }
 
     /**
@@ -775,15 +775,15 @@ public class FilterUtilsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
-        int tmpSingleBondCount = 9;
-        int tmpDoubleBondCount = 3;
-        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        int tmpExpectedSingleBondCount = 9;
+        int tmpExpectedDoubleBondCount = 3;
+        Assertions.assertEquals(tmpExpectedSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
         tmpAtomContainer = TestUtils.parseSmilesString("c1cccc2ccccc12");
-        tmpSingleBondCount = 14;
-        tmpDoubleBondCount = 5;
-        Assertions.assertEquals(tmpSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        tmpExpectedSingleBondCount = 14;
+        tmpExpectedDoubleBondCount = 5;
+        Assertions.assertEquals(tmpExpectedSingleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, FilterUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
     }
 
     /**

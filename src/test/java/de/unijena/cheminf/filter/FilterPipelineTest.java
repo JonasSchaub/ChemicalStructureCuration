@@ -121,8 +121,6 @@ public class FilterPipelineTest {
     public void publicFilterConstructorTest_instancesHaveListOfSelectedFiltersInitializedInConstructor() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         Assertions.assertNotNull(tmpFilterPipeline.listOfSelectedFilters);
-        //Assertions.assertNotNull(tmpFilterPipeline.listOfSelectedFilters);
-        //Assertions.assertNotNull(tmpFilterPipeline.listOfFilterParameters);
     }
 
     /**

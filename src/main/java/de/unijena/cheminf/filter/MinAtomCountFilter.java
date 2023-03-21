@@ -37,13 +37,13 @@ public class MinAtomCountFilter extends Filter {
     /**
      * Integer value of the min atom count threshold.
      */
-    private final int minAtomCount;
+    protected final int minAtomCount;
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
      * count.
      */
-    private final boolean considerImplicitHydrogens;
+    protected final boolean considerImplicitHydrogens;
 
     /**
      * Constructor of the MinAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom

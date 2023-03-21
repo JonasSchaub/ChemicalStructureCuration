@@ -28,6 +28,7 @@ package de.unijena.cheminf.filter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 
 import java.util.BitSet;
 import java.util.LinkedList;
@@ -207,7 +208,7 @@ public class FilterPipeline {
     }
 
     /**
-     * Adds a max bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
+     * Adds a min bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
      * may or may not be considered; atom containers that equal the given min bond count do not get filtered.
      *
      * @param aMinBondCount integer value of the min bond count to filter by
@@ -220,6 +221,52 @@ public class FilterPipeline {
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
         Filter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a max bonds of specific bond order filter with the given parameters to the filter pipeline. Bonds to
+     * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single; atom containers
+     * that equal the given max specific bond count do not get filtered.
+     *
+     * @param aBondOrder bond order of bonds to count and filter on
+     * @param aMaxSpecificBondCount  integer value of the max specific bond count to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
+     *                                   only relevant when counting bonds of the order one / single
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given max specific bond count is less than zero
+     */
+    public FilterPipeline withMaxBondsOfSpecificBondOrderFilter(
+            IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
+    ) throws IllegalArgumentException {
+        if (aMaxSpecificBondCount < 0) {
+            throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
+        }
+        Filter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a min bonds of specific bond order filter with the given parameters to the filter pipeline. Bonds to
+     * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single; atom containers
+     * that equal the given min specific bond count do not get filtered.
+     *
+     * @param aBondOrder bond order of bonds to count and filter on
+     * @param aMinSpecificBondCount  integer value of the min specific bond count to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
+     *                                   only relevant when counting bonds of the order one / single
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given min specific bond count is less than zero
+     */
+    public FilterPipeline withMinBondsOfSpecificBondOrderFilter(
+            IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens
+    ) throws IllegalArgumentException {
+        if (aMinSpecificBondCount < 0) {
+            throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
+        }
+        Filter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }

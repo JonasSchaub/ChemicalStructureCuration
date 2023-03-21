@@ -38,8 +38,6 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
  */
 public class MinBondCountFilterTest {
 
-    //TODO: MinAtom to MinBond !!!
-
     /**
      * Tests whether the public constructor initializes all class fields with the given parameters; test 1.
      */
@@ -65,7 +63,8 @@ public class MinBondCountFilterTest {
     }
 
     /**
-     * Tests whether the public constructor initializes all class fields with the given parameters.
+     * Tests whether the public constructor throws an IllegalArgumentException if the given min bond count is of a
+     * negative value.
      */
     @Test
     public void publicConstructorTest_throwsIllegalArgumentExceptionIfMinBondCountIsNegative() {
@@ -227,6 +226,28 @@ public class MinBondCountFilterTest {
                     tmpMinBondCountFilter.filter(null);
                 }
         );
+    }
+
+    /**
+     * Tests the getter of minBondCount whether it returns minBondCount.
+     */
+    @Test
+    public void getMinBondCountMethodTest_returnsMaxBondCount() {
+        int tmpMinBondCount = 5;
+        boolean tmpConsiderImplicitHydrogens = true;
+        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMinBondCountFilter.minBondCount, tmpMinBondCountFilter.getMinBondCount());
+    }
+
+    /**
+     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
+     */
+    @Test
+    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
+        int tmpMinBondCount = 5;
+        boolean tmpConsiderImplicitHydrogens = true;
+        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMinBondCountFilter.considerImplicitHydrogens, tmpMinBondCountFilter.isConsiderImplicitHydrogens());
     }
 
 }

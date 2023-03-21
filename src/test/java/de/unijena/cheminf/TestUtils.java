@@ -26,6 +26,8 @@
 package de.unijena.cheminf;
 
 import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterPipeline;
+import org.junit.jupiter.api.Assertions;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -130,6 +132,46 @@ public class TestUtils {
                 return aGetsFilteredReturnValue;
             }
         };
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline filters a given atom container set with a specific
+     * filter as expected.
+     *
+     * @param aFilter Filter instance the .filter() method of class FilterPipeline should be tested with
+     * @param anAtomContainerSet IAtomContainerSet instance to do the test with
+     * @param anIsFilteredBooleanArray array that contains a boolean value for every atom container of the given atom
+     *                                 container set and specifies whether it is meant to be filtered by the given
+     *                                 filter
+     * @throws NullPointerException if one of the given parameters is null
+     * @throws IllegalArgumentException if the length of the given boolean array does not equal the count of atom
+     * containers in the given atom container set
+     */
+    public static void filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+            Filter aFilter, IAtomContainerSet anAtomContainerSet, boolean[] anIsFilteredBooleanArray
+    ) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aFilter, "aFilter (instance of Filter) is null.");
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        Objects.requireNonNull(anIsFilteredBooleanArray, "anIsFilteredBooleanArray (instance of boolean[]) is null.");
+        if (anAtomContainerSet.getAtomContainerCount() != anIsFilteredBooleanArray.length) {
+            throw new IllegalArgumentException("The length of anIsFilteredBooleanArray (boolean[]) does not equal the " +
+                    "count of atom containers in anAtomContainerSet (instance of IAtomContainerSet).");
+        }
+        //
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withFilter(aFilter);
+        IAtomContainerSet tmpFilteredACSet = tmpFilterPipeline.filter(anAtomContainerSet);
+        int tmpIndexInFilteredSet = 0;
+        int tmpFilterID;
+        for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
+            tmpFilterID = anAtomContainerSet.getAtomContainer(i).getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME);
+            if (!anIsFilteredBooleanArray[i]) {
+                Assertions.assertEquals(FilterPipeline.NOT_FILTERED_VALUE, tmpFilterID);
+                Assertions.assertSame(anAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
+                tmpIndexInFilteredSet++;
+                continue;
+            }
+            Assertions.assertTrue(tmpFilterID != FilterPipeline.NOT_FILTERED_VALUE);
+        }
     }
 
 }
