@@ -25,10 +25,10 @@
 
 package de.unijena.cheminf.filter;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IElement;
 
 import java.util.Objects;
 
@@ -59,17 +59,29 @@ public class FilterUtils {
      * Returns the number of implicit hydrogen atoms present in the given atom container.
      *
      * @param anAtomContainer IAtomContainer instance to check
-     * @return Integer number of implicit hydrogen atoms in the given atom container
+     * @return Integer value of the count of implicit hydrogen atoms
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int countImplicitHydrogens(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
-        int tmpHydrogenCount = 0;
+        int tmpImplicitHydrogensCount = 0;
         for (IAtom tmpAtom :
                 anAtomContainer.atoms()) {
-            tmpHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+            tmpImplicitHydrogensCount += tmpAtom.getImplicitHydrogenCount();
         }
-        return tmpHydrogenCount;
+        return tmpImplicitHydrogensCount;
+    }
+
+    /** TODO: not used in any filter so far
+     * Returns the number of explicit hydrogen atoms present in the given atom container.
+     *
+     * @param anAtomContainer IAtomContainer instance to check
+     * @return Integer value of the count of explicit hydrogen atoms
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     */
+    public static int countExplicitHydrogens(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
+        return FilterUtils.countFrequencyOfElements(anAtomContainer, false, IElement.H);
     }
 
     /**
@@ -184,6 +196,68 @@ public class FilterUtils {
         final int tmpBondCount = FilterUtils.countBondsOfSpecificBondOrder(anAtomContainer, aBondOrder, aConsiderImplicitHydrogens);
         return tmpBondCount >= aThresholdValue;
     }
+
+    /** TODO: rename method?
+     * TODO
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param anAtomicNumbers integer values of the atomic numbers of elements to count
+     * @return integer value of the sum of the occurrence frequency of each element an atomic number was given of
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
+     * greater than 118)
+     */
+    public static int countFrequencyOfElements(IAtomContainer anAtomContainer, int... anAtomicNumbers)
+            throws NullPointerException, IllegalArgumentException { //TODO: accept the wildcard? (atomic number = 0)
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");   //TODO: do the tests at both stages?
+        for (int tmpAtomicNumber : anAtomicNumbers) {
+            if (tmpAtomicNumber < 0)
+                throw new IllegalArgumentException("A given atomic number is of negative value.");
+            if (tmpAtomicNumber > 118)
+                throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
+        }
+        return FilterUtils.countFrequencyOfElements(anAtomContainer, true, anAtomicNumbers);
+    }
+
+    /** TODO: rename method?
+     * TODO
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms when counting
+     *                                   hydrogen atoms
+     * @param anAtomicNumbers integer values of the atomic numbers of elements to count
+     * @return integer value of the sum of the occurrence frequency of each element an atomic number was given of
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
+     * greater than 118)
+     */
+    private static int countFrequencyOfElements(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
+            throws NullPointerException, IllegalArgumentException {    //TODO: accept the wildcard? (atomic number = 0)
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        for (int tmpAtomicNumber : anAtomicNumbers) {
+            if (tmpAtomicNumber < 0)
+                throw new IllegalArgumentException("A given atomic number is of negative value.");
+            if (tmpAtomicNumber > 118)
+                throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
+        }
+        int tmpFrequenceOfElements = 0;
+        for (IAtom tmpAtom :
+                anAtomContainer.atoms()) {
+            //TODO: check, whether the IAtom instance has an / a valid atomic number?
+            for (int tmpAtomicNumber : anAtomicNumbers) {
+                if (tmpAtom.getAtomicNumber() == tmpAtomicNumber) {
+                    tmpFrequenceOfElements++;
+                    break;
+                }
+            }
+        }
+        for (int tmpAtomicNumber : anAtomicNumbers) {
+            if (tmpAtomicNumber == IElement.H && aConsiderImplicitHydrogens) {
+                return tmpFrequenceOfElements + FilterUtils.countImplicitHydrogens(anAtomContainer);
+            }
+        }
+        return tmpFrequenceOfElements;
+    }
+
+    //TODO: method containsWildcardElements()
 
     /*public static int countHeavyAtoms(IAtomContainer anAtomContainer) { //TODO
         throw new NotImplementedException();
