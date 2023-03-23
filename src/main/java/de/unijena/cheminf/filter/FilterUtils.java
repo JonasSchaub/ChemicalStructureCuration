@@ -81,7 +81,7 @@ public class FilterUtils {
      */
     public static int countExplicitHydrogens(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
-        return FilterUtils.countFrequencyOfElements(anAtomContainer, false, IElement.H);
+        return FilterUtils.countAtomsOfAtomicNumbers(anAtomContainer, false, IElement.H);
     }
 
     /**
@@ -197,16 +197,20 @@ public class FilterUtils {
         return tmpBondCount >= aThresholdValue;
     }
 
-    /** TODO: rename method?
-     * TODO
-     * @param anAtomContainer IAtomContainer instance to check
-     * @param anAtomicNumbers integer values of the atomic numbers of elements to count
-     * @return integer value of the sum of the occurrence frequency of each element an atomic number was given of
+    //TODO: convenience method/filter that counts the frequency of elements and accepts element symbols (Strings) as params
+
+    /**
+     * Counts the number of atoms in the given IAtomContainer instance with one of the given atomic numbers. When
+     * counting atoms with an atomic number of one, implicit hydrogen atoms are considered.
+     *
+     * @param anAtomContainer IAtomContainer instance to count atoms of
+     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
+     * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
      * greater than 118)
      */
-    public static int countFrequencyOfElements(IAtomContainer anAtomContainer, int... anAtomicNumbers)
+    public static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, int... anAtomicNumbers)
             throws NullPointerException, IllegalArgumentException { //TODO: accept the wildcard? (atomic number = 0)
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");   //TODO: do the tests at both stages?
         for (int tmpAtomicNumber : anAtomicNumbers) {
@@ -215,21 +219,26 @@ public class FilterUtils {
             if (tmpAtomicNumber > 118)
                 throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
         }
-        return FilterUtils.countFrequencyOfElements(anAtomContainer, true, anAtomicNumbers);
+        return FilterUtils.countAtomsOfAtomicNumbers(anAtomContainer, true, anAtomicNumbers);
     }
 
-    /** TODO: rename method?
-     * TODO
-     * @param anAtomContainer IAtomContainer instance to check
+    /**
+     * Counts the number of atoms in the given IAtomContainer instance with one of the given atomic numbers. When
+     * counting atoms with an atomic number of one, implicit hydrogen atoms may or may not be considered.
+     * TODO: implement filter
+     * TODO: convenience method/filter that parses element symbols to atomic numbers (see parseAtomSymbol() method of class Atom)
+     * TODO: what to do if one and the same atomic number is given twice?
+     *
+     * @param anAtomContainer IAtomContainer instance to count atoms of
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms when counting
-     *                                   hydrogen atoms
-     * @param anAtomicNumbers integer values of the atomic numbers of elements to count
-     * @return integer value of the sum of the occurrence frequency of each element an atomic number was given of
+     *                                   atoms with an atomic number of one
+     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
+     * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
      * greater than 118)
      */
-    private static int countFrequencyOfElements(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
+    private static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
             throws NullPointerException, IllegalArgumentException {    //TODO: accept the wildcard? (atomic number = 0)
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         for (int tmpAtomicNumber : anAtomicNumbers) {
@@ -238,24 +247,41 @@ public class FilterUtils {
             if (tmpAtomicNumber > 118)
                 throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
         }
-        int tmpFrequenceOfElements = 0;
+        int tmpAtomsOfAtomicNumbersCount = 0;
         for (IAtom tmpAtom :
                 anAtomContainer.atoms()) {
             //TODO: check, whether the IAtom instance has an / a valid atomic number?
             for (int tmpAtomicNumber : anAtomicNumbers) {
                 if (tmpAtom.getAtomicNumber() == tmpAtomicNumber) {
-                    tmpFrequenceOfElements++;
+                    tmpAtomsOfAtomicNumbersCount++;
                     break;
                 }
             }
         }
         for (int tmpAtomicNumber : anAtomicNumbers) {
             if (tmpAtomicNumber == IElement.H && aConsiderImplicitHydrogens) {
-                return tmpFrequenceOfElements + FilterUtils.countImplicitHydrogens(anAtomContainer);
+                return tmpAtomsOfAtomicNumbersCount + FilterUtils.countImplicitHydrogens(anAtomContainer);
             }
         }
-        return tmpFrequenceOfElements;
+        return tmpAtomsOfAtomicNumbersCount;
     }
+
+    /**
+     * TODO
+     * TODO: implement filter
+     *
+     * @param anAtomContainer
+     * @return
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     */
+    public static int getHeavyAtomsCount(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        int tmpExplicitAtomsCount = anAtomContainer.getAtomCount();
+        int tmpExplicitHydrogensCount = FilterUtils.countExplicitHydrogens(anAtomContainer);
+        return tmpExplicitAtomsCount - tmpExplicitHydrogensCount;
+    }
+
+    //TODO: convenience method/filter that parses element symbols to atomic numbers (see parseAtomSymbol() method of class Atom) ?
 
     //TODO: method containsWildcardElements()
 
@@ -276,5 +302,32 @@ public class FilterUtils {
             throws NullPointerException, IllegalArgumentException {
         throw new NotImplementedException();
     }*/
+
+    //TODO: convenience method to check atom containers for invalid atomic numbers
+
+    /**
+     * Checks whether the atomic number of an IAtom instance is valid. An atomic number is seen as valid if it is a
+     * number between one and 118; zero is considered as valid based on the given boolean parameter. If the atomic
+     * number is null, null is returned.
+     *
+     * @param anAtom IAtom instance to check
+     * @param anIncludeWildcardNumber whether to consider the zero, the wildcard atomic number, as valid
+     * @return boolean value, whether the atomic number of the given atom is seen as valid; null if the atomic number
+     * is null
+     * @throws NullPointerException if the given instance of IAtom is null
+     */
+    public static Boolean hasValidAtomicNumber(IAtom anAtom, boolean anIncludeWildcardNumber) throws NullPointerException {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        if (anAtom.getAtomicNumber() == null) {
+            return null;    //TODO: throw an exception instead?
+        }
+        if (anAtom.getAtomicNumber() <= 0 || anAtom.getAtomicNumber() > 118) {
+            if (anAtom.getAtomicNumber() == 0) {
+                return anIncludeWildcardNumber;
+            }
+            return false;
+        }
+        return true;
+    }
 
 }

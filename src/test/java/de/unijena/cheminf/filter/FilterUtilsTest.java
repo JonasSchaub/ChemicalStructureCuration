@@ -28,9 +28,11 @@ package de.unijena.cheminf.filter;
 import de.unijena.cheminf.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
@@ -1011,39 +1013,39 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils returns an integer value.
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils returns an integer value.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_returnsIntegerValue() {
+    public void countAtomsOfAtomicNumbersMethodTest_returnsIntegerValue() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
-        Assertions.assertInstanceOf(Integer.class, FilterUtils.countFrequencyOfElements(tmpAtomContainer));
+        Assertions.assertInstanceOf(Integer.class, FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer));
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils accepts a varying amount of integer
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils accepts a varying amount of integer
      * value parameters.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_acceptsVaryingAmountOfIntegerParams() {
+    public void countAtomsOfAtomicNumbersMethodTest_acceptsVaryingAmountOfIntegerParams() {
         Assertions.assertDoesNotThrow(() -> {
             IAtomContainer tmpAtomContainer = new AtomContainer();
             int tmpAnIntegerValue = 5;
             int tmpReturnValue;
-            tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer);
-            tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpAnIntegerValue);
-            tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue);
-            tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue, tmpAnIntegerValue);
+            tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer);
+            tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnIntegerValue);
+            tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue);
+            tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue, tmpAnIntegerValue);
         });
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils counts the number of atoms of a single
-     * atom type in a given atom container correctly; here: carbon (atomic number: 6).
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils counts the number of atoms of a single
+     * atomic number in a given atom container correctly; here: carbon (atomic number: 6).
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed    //TODO: check everywhere: the / a SMILES
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_countOfCarbonAtoms() throws InvalidSmilesException {
+    public void countAtomsOfAtomicNumbersMethodTest_countOfCarbonAtoms() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)C(=O)O",  // 3
                 "c1ccccc1", // 6
@@ -1053,20 +1055,20 @@ public class FilterUtilsTest {
                 "O"         // 0
         );
         int tmpCarbonAtomicNumber = IElement.C; //atomic number: 6
-        int[] tmpExpectedElementCountArray = new int[]{3, 6, 5, 2, 4, 0};
+        int[] tmpExpectedAtomsCountArray = new int[]{3, 6, 5, 2, 4, 0};
         //
         IAtomContainer tmpAtomContainer;
-        int tmpCalculatedElementCount;
+        int tmpCalculatedAtomsCount;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            tmpCalculatedElementCount = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpCarbonAtomicNumber);
-            Assertions.assertEquals(tmpExpectedElementCountArray[i], tmpCalculatedElementCount);
+            tmpCalculatedAtomsCount = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpCarbonAtomicNumber);
+            Assertions.assertEquals(tmpExpectedAtomsCountArray[i], tmpCalculatedAtomsCount);
         }
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils counts the number of atoms of a single
-     * atom type in a given atom container correctly; here, exemplary for others:
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils counts the number of atoms of a single
+     * atomic number in a given atom container correctly; here, exemplary for others:
      * - oxygen (atomic number: 8)
      * - nitrogen (atomic number: 7)
      * - sulphur (atomic number: 16).
@@ -1074,7 +1076,7 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_countFrequencyOfDifferentElements_separateTests() throws InvalidSmilesException {
+    public void countAtomsOfAtomicNumbersMethodTest_countAtomsOfDifferentAtomicNumbers_separateTests() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "S1SSSSS1",
                 "O=S(O)(O)=O",
@@ -1084,39 +1086,39 @@ public class FilterUtilsTest {
                 "O"
         );
         //
-        int[] tmpElementsAtomicNumberArray = new int[]{
+        int[] tmpAtomicNumbersArray = new int[]{
                 IElement.O, //atomic number: 8
                 IElement.N, //atomic number: 7
                 IElement.S  //atomic number: 16
         };
         //
-        int[][] tmpElementsExpectedCountsMatrix = new int[tmpElementsAtomicNumberArray.length][tmpAtomContainerSet.getAtomContainerCount()];
-        tmpElementsExpectedCountsMatrix[0] = new int[]{0, 4, 2, 2, 4, 1};
-        tmpElementsExpectedCountsMatrix[1] = new int[]{0, 0, 1, 1, 2, 0};
-        tmpElementsExpectedCountsMatrix[2] = new int[]{6, 1, 0, 1, 2, 0};
+        int[][] tmpExpectedAtomsCountMatrix = new int[tmpAtomicNumbersArray.length][tmpAtomContainerSet.getAtomContainerCount()];
+        tmpExpectedAtomsCountMatrix[0] = new int[]{0, 4, 2, 2, 4, 1};
+        tmpExpectedAtomsCountMatrix[1] = new int[]{0, 0, 1, 1, 2, 0};
+        tmpExpectedAtomsCountMatrix[2] = new int[]{6, 1, 0, 1, 2, 0};
         //
         IAtomContainer tmpAtomContainer;
-        int tmpAtomicNumberOfElement;
-        int tmpCalculatedElementCount;
-        for (int i = 0; i < tmpElementsAtomicNumberArray.length; i++) {     //i = index of element
-            tmpAtomicNumberOfElement = tmpElementsAtomicNumberArray[i];
+        int tmpAtomicNumber;
+        int tmpCalculatedAtomsCount;
+        for (int i = 0; i < tmpAtomicNumbersArray.length; i++) {     //i = index of atomic number
+            tmpAtomicNumber = tmpAtomicNumbersArray[i];
             for (int j = 0; j < tmpAtomContainerSet.getAtomContainerCount(); j++) {     //j = index of atom container
                 tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(j);
-                tmpCalculatedElementCount = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpAtomicNumberOfElement);
-                Assertions.assertEquals(tmpElementsExpectedCountsMatrix[i][j], tmpCalculatedElementCount);
+                tmpCalculatedAtomsCount = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAtomicNumber);
+                Assertions.assertEquals(tmpExpectedAtomsCountMatrix[i][j], tmpCalculatedAtomsCount);
             }
         }
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils counts the number of hydrogen atoms
-     * (atomic number: 1) in a given atom container correctly, returning the sum of explicit and implicit hydrogen
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils counts the number of atoms with an
+     * atomic number of one in a given atom container correctly, returning the sum of explicit and implicit hydrogen
      * atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_countOfHydrogenAtoms_returnsSumOfExplicitAndImplicitHs() throws InvalidSmilesException {
+    public void countAtomsOfAtomicNumbersMethodTest_countOfHydrogenAtoms_returnsSumOfExplicitAndImplicitHs() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "HC(H)(H)H",    // 4 (0)
                 "C",            // 4 (4)
@@ -1126,62 +1128,104 @@ public class FilterUtilsTest {
                 "O"             // 2 (2)
         );
         int tmpHydrogenAtomicNumber = IElement.H; //atomic number: 1
-        int[] tmpExpectedElementCountArray = new int[]{4, 4, 4, 10, 6, 2};
+        int[] tmpExpectedAtomsCountArray = new int[]{4, 4, 4, 10, 6, 2};
         //
         IAtomContainer tmpAtomContainer;
-        int tmpCalculatedElementCount;
+        int tmpCalculatedAtomsCount;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            tmpCalculatedElementCount = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpHydrogenAtomicNumber);
-            Assertions.assertEquals(tmpExpectedElementCountArray[i], tmpCalculatedElementCount);
+            tmpCalculatedAtomsCount = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpHydrogenAtomicNumber);
+            Assertions.assertEquals(tmpExpectedAtomsCountArray[i], tmpCalculatedAtomsCount);
         }
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils throws a NullPointerException if the
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils counts the number of atoms of multiple
+     * given atomic numbers in a given atom container correctly; test with given two, three and five atomic numbers.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void countAtomsOfAtomicNumbersMethodTest_returnsExpectedResultIfGivenMultipleAtomicNumbers() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "S1SSSSS1",                     //S6
+                "O=S(O)(O)=O",                  //SO4H2
+                "NCC(=O)O",                     //NC2O2H5
+                "SCC(N)C(=O)O",                 //NSC3O2H7
+                "S(CC(N)C(=O)O)SCC(N)C(=O)O",   //N2S2C6O4H12
+                "O"                             //H2O
+        );
+        //
+        int[][] tmpAtomicNumbersMatrix = new int[3][];
+        int[][] tmpExpectedAtomsCountMatrix = new int[tmpAtomicNumbersMatrix.length][tmpAtomContainerSet.getAtomContainerCount()];
+        //
+        tmpAtomicNumbersMatrix[0] = new int[]{IElement.C, IElement.O};
+        tmpExpectedAtomsCountMatrix[0] = new int[]{0, 4, 4, 5, 10, 1};
+        //
+        tmpAtomicNumbersMatrix[1] = new int[]{IElement.C, IElement.O, IElement.N};
+        tmpExpectedAtomsCountMatrix[1] = new int[]{0, 4, 5, 6, 12, 1};
+        //
+        tmpAtomicNumbersMatrix[2] = new int[]{IElement.C, IElement.O, IElement.N, IElement.S, IElement.H};
+        tmpExpectedAtomsCountMatrix[2] = new int[]{6, 7, 10, 14, 26, 3};
+        //
+        IAtomContainer tmpAtomContainer;
+        int[] tmpAtomicNumbersArray;
+        int tmpCalculatedAtomsCount;
+        for (int i = 0; i < tmpAtomicNumbersMatrix.length; i++) {     //i = index of atomic number array
+            tmpAtomicNumbersArray = tmpAtomicNumbersMatrix[i];
+            for (int j = 0; j < tmpAtomContainerSet.getAtomContainerCount(); j++) {     //j = index of atom container
+                tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(j);
+                tmpCalculatedAtomsCount = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAtomicNumbersArray);
+                Assertions.assertEquals(tmpExpectedAtomsCountMatrix[i][j], tmpCalculatedAtomsCount);
+            }
+        }
+    }
+
+    /**
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils throws a NullPointerException if the
      * given instance of IAtomContainer is null.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void countAtomsOfAtomicNumbersMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
                     int tmpAnAtomicNumber = 5;
-                    int tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpAnAtomicNumber);
+                    int tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnAtomicNumber);
                 }
         );
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils throws an IllegalArgumentException if
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils throws an IllegalArgumentException if
      * a given integer is of negative value; test 1, single parameter.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsNegative_singleParam() {
+    public void countAtomsOfAtomicNumbersMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsNegative_singleParam() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpNegativeIntegerValue = -1;
-                    int tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpNegativeIntegerValue);
+                    int tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpNegativeIntegerValue);
                 }
         );
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils throws an IllegalArgumentException if
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils throws an IllegalArgumentException if
      * a given integer is of negative value; test 2, multiple parameters.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsNegative_multipleParams() {
+    public void countAtomsOfAtomicNumbersMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsNegative_multipleParams() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpNegativeIntegerValue = -1;
                     int tmpAcceptedValue = 5;
-                    int tmpReturnValue = FilterUtils.countFrequencyOfElements(
+                    int tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(
                             tmpAtomContainer,
                             tmpAcceptedValue,
                             tmpNegativeIntegerValue,
@@ -1192,41 +1236,236 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils throws an IllegalArgumentException if
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils throws an IllegalArgumentException if
      * a given integer value exceeds the greatest currently known atomic number (currently 118); test 1, single
      * parameter.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsGreaterThan118_singleParam() {
+    public void countAtomsOfAtomicNumbersMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsGreaterThan118_singleParam() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpUnknownAtomicNumber = 119;
-                    int tmpReturnValue = FilterUtils.countFrequencyOfElements(tmpAtomContainer, tmpUnknownAtomicNumber);
+                    int tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpUnknownAtomicNumber);
                 }
         );
     }
 
     /**
-     * Tests whether the .countFrequencyOfElements() method of class FilterUtils throws an IllegalArgumentException if
+     * Tests whether the .countAtomsOfAtomicNumbers() method of class FilterUtils throws an IllegalArgumentException if
      * a given integer value exceeds the greatest currently known atomic number (currently 118); test 2, multiple
      * parameters.
      */
     @Test
-    public void countFrequencyOfElementsMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsGreaterThan118_multipleParams() {
+    public void countAtomsOfAtomicNumbersMethodTest_throwsIllegalArgumentExceptionIfGivenIntegerParamIsGreaterThan118_multipleParams() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpUnknownAtomicNumber = 119;
                     int tmpAcceptedValue = 10;
-                    int tmpReturnValue = FilterUtils.countFrequencyOfElements(
+                    int tmpReturnValue = FilterUtils.countAtomsOfAtomicNumbers(
                             tmpAtomContainer,
                             tmpAcceptedValue,
                             tmpAcceptedValue,
                             tmpUnknownAtomicNumber
                     );
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .getHeavyAtomsCount() method of class FilterUtils returns an integer value.
+     */
+    @Test
+    public void getHeavyAtomsCountMethodTest_returnsIntegerValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        Assertions.assertInstanceOf(Integer.class, FilterUtils.getHeavyAtomsCount(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the .getHeavyAtomsCount() method of class FilterUtils returns the count of heavy atoms
+     * (non-hydrogen atoms); multiple tests.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void getHeavyAtomsCountMethodTest_returnsCountOfHeavyAtoms() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1",
+                "NCC(=O)O",
+                "NC(H)C(=O)OH",
+                "C(H)CH",
+                "O",
+                "HOH"
+        );
+        int[] tmpExpectedHeavyAtomsCount = new int[]{6, 5, 5, 2, 1, 1};
+        //
+        for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
+            Assertions.assertEquals(
+                    tmpExpectedHeavyAtomsCount[i],
+                    FilterUtils.getHeavyAtomsCount(tmpAtomContainerSet.getAtomContainer(i))
+            );
+        }
+    }
+
+    /**
+     * Tests whether the .getHeavyAtomsCount() method of class FilterUtils throws a NullPointerException if the given
+     * IAtomContainer instance is null.
+     */
+    @Test
+    public void getHeavyAtomsCountMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = null;
+                    int tmpReturnValue = FilterUtils.getHeavyAtomsCount(tmpAtomContainer);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns an instance of Boolean if given
+     * an atom with an atomic number not null; the boolean param has no impact on this.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsInstanceOfBooleanIfAtomHasAtomicNumber() {
+        IAtom tmpAtom = new Atom(1);
+        boolean tmpIncludeWildcardNumber = true;
+        Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        tmpIncludeWildcardNumber = false;
+        Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns null if given an atom with an
+     * atomic number of null; the boolean param has no impact on this.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsNullIfAtomHasAtomicNumberNull() {
+        IAtom tmpAtom = new Atom(); //has atomic number null
+        boolean tmpIncludeWildcardNumber = true;
+        Assertions.assertNull(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        tmpIncludeWildcardNumber = false;
+        Assertions.assertNull(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns true if the given atom has a valid
+     * atomic number; atomic number = 6; whether the wildcard number 0 is included, has no impact on the result here.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsTrueForAtomicNumber6() {
+        IAtom tmpAtom = new Atom(IElement.C);   //atomic number: 6
+        boolean tmpIncludeWildcardNumber = true;
+        Assertions.assertEquals(true, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        tmpIncludeWildcardNumber = false;
+        Assertions.assertEquals(true, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns true if the given atom has a valid
+     * atomic number; tested atomic numbers: 1, 2, 8, 10, 118; whether the wildcard number 0 is included, has no impact
+     * on the results here.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsTrueForDifferentValidAtomicNumbers() {
+        int[] tmpAtomicNumbersArray = new int[]{
+                IElement.H,     //atomic number: 1
+                IElement.He,    //atomic number: 2
+                IElement.O,     //atomic number: 8
+                IElement.Ne,    //atomic number: 10
+                IElement.Og     //atomic number: 118
+        };
+        IAtom tmpAtom = new Atom();
+        boolean tmpIncludeWildcardNumber;
+        for (int tmpAtomicNumber :
+                tmpAtomicNumbersArray) {
+            tmpAtom.setAtomicNumber(tmpAtomicNumber);
+            tmpIncludeWildcardNumber = true;
+            Assertions.assertEquals(true, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+            tmpIncludeWildcardNumber = false;
+            Assertions.assertEquals(true, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        }
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns false if the given atom has a
+     * negative atomic number; tested atomic numbers: -1, -2, -18, -100; whether the wildcard number 0 is included,
+     * has no impact on the results here.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsFalseForNegativeAtomicNumber() {
+        int[] tmpAtomicNumbersArray = new int[]{
+                -1,
+                -2,
+                -18,
+                -100
+        };
+        IAtom tmpAtom = new Atom();
+        boolean tmpIncludeWildcardNumber;
+        for (int tmpAtomicNumber :
+                tmpAtomicNumbersArray) {
+            tmpAtom.setAtomicNumber(tmpAtomicNumber);
+            tmpIncludeWildcardNumber = true;
+            Assertions.assertEquals(false, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+            tmpIncludeWildcardNumber = false;
+            Assertions.assertEquals(false, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        }
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns false if the given atom has an
+     * atomic number that exceeds 118; tested atomic numbers: 119, 120, 150, 200; whether the wildcard number 0 is
+     * included, has no impact on the results here.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsFalseForAtomicNumbersGreater118() {
+        int[] tmpAtomicNumbersArray = new int[]{
+                119,
+                120,
+                150,
+                200
+        };
+        IAtom tmpAtom = new Atom();
+        boolean tmpIncludeWildcardNumber;
+        for (int tmpAtomicNumber :
+                tmpAtomicNumbersArray) {
+            tmpAtom.setAtomicNumber(tmpAtomicNumber);
+            tmpIncludeWildcardNumber = true;
+            Assertions.assertEquals(false, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+            tmpIncludeWildcardNumber = false;
+            Assertions.assertEquals(false, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        }
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns true if the given atom has an
+     * atomic number of 0 and the wildcard number 0 is included, and returns false if the atomic number is 0 and the
+     * wildcard number 0 is not to be included.
+     */
+    @Test
+    public void hasValidAtomicNumber_returnsTrueOrFalseRespectivelyIfAtomicNumberIsZero() {
+        IAtom tmpAtom = new Atom(IElement.Wildcard);    //atomic number: 0
+        boolean tmpIncludeWildcardNumber = true;
+        Assertions.assertEquals(true, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+        tmpIncludeWildcardNumber = false;
+        Assertions.assertEquals(false, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
+    }
+
+    /**
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils throws a NullPointerException if the given
+     * IAtom instance is null.
+     */
+    @Test
+    public void hasValidAtomicNumber_throwsNullPointerExceptionIfGivenAtomIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtom tmpAtom = null;
+                    boolean tmpIncludeWildcardNumber = true;
+                    Object tmpReturnValue = FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber);
                 }
         );
     }
