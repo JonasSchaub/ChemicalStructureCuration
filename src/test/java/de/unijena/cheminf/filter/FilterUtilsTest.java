@@ -125,7 +125,7 @@ public class FilterUtilsTest {
 
     /**
      * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
-     * does not exceed the given threshold not considering implicit hydrogen atoms.
+     * falls short of the given threshold not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
@@ -179,6 +179,109 @@ public class FilterUtilsTest {
                 IllegalArgumentException.class,
                 () -> {
                     FilterUtils.exceedsOrEqualsAtomCount(new AtomContainer(), -1, true);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils returns a boolean value.
+     */
+    @Test
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsBooleanValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        int tmpSomeThresholdValue = 10;
+        Assertions.assertInstanceOf(
+                Boolean.class,
+                FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpSomeThresholdValue)
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils returns true if an atom container
+     * exceeds the given threshold; tested with multiple atom containers.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsTrueIfAnAtomContainerExceedsTheThreshold() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",
+                "O=C=O",
+                "c1ccccc1"
+        );
+        int tmpThresholdValue = 2;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils returns false if an atom container
+     * falls short of the given threshold; tested with multiple atom containers.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsFalseIfAnAtomContainerFallsShortOfTheThreshold() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",
+                "O=C=O",
+                "c1ccccc1"
+        );
+        int tmpThresholdValue = 7;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertFalse(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils returns true if an atom container
+     * equals the given threshold; tested with multiple atom containers.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsTrueIfAnAtomContainerEqualsTheThreshold() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",
+                "O=C=O",
+                "c1ccccc1"
+        );
+        int[] tmpThresholdValueArray = new int[]{4, 3, 6};
+        IAtomContainer tmpAtomContainer;
+        for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
+            tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValueArray[i]));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils throws a NullPointerException if
+     * the given IAtomContainer instance is null.
+     */
+    @Test
+    public void exceedsOrEqualsHeavyAtomCountTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    FilterUtils.exceedsOrEqualsHeavyAtomCount(null, 10);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils throws an IllegalArgumentException
+     * if the given threshold (integer value) is of a negative value.
+     */
+    @Test
+    public void exceedsOrEqualsHeavyAtomCountTest_throwsIllegalArgumentExceptionIfGivenThresholdValueIsNegative() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpSomeNegativeInteger = -1;
+                    FilterUtils.exceedsOrEqualsHeavyAtomCount(new AtomContainer(), tmpSomeNegativeInteger);
                 }
         );
     }

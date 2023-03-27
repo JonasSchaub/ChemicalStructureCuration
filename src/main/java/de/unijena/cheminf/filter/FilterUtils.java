@@ -46,7 +46,7 @@ public class FilterUtils {
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the atom count threshold
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
-     * @return Boolean value whether the given atom container exceeds or equals the given threshold
+     * @return true, if the atom count of the given atom container equals or exceeds the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is less than zero
      */
@@ -58,6 +58,26 @@ public class FilterUtils {
         }
         final int tmpAtomCount = ChemUtils.countAtoms(anAtomContainer, aConsiderImplicitHydrogens);
         return tmpAtomCount >= aThresholdValue;
+    }
+
+    /**
+     * Checks whether the heavy atom count, the number of non-hydrogen atoms, of the given atom container equals or
+     * exceeds the given threshold value.
+     *
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param aThresholdValue Integer value of the heavy atom count threshold
+     * @return true, if the heavy atom count of the given atom container equals or exceeds the given threshold
+     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws IllegalArgumentException if the given threshold value is less than zero
+     */
+    public static boolean exceedsOrEqualsHeavyAtomCount(IAtomContainer anAtomContainer, int aThresholdValue)
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
+        if (aThresholdValue < 0) {
+            throw new IllegalArgumentException("aThresholdValue (Integer value) is < than 0.");
+        }
+        final int tmpHeavyAtomCount = ChemUtils.getHeavyAtomsCount(anAtomContainer);
+        return tmpHeavyAtomCount >= aThresholdValue;
     }
 
     /**
@@ -145,7 +165,7 @@ public class FilterUtils {
             throw new NullPointerException("An IAtom instance contained by the given atom container is null.");
         }
     }
-    
+
     /**
      * Checks whether the atomic number of an IAtom instance is valid. An atomic number is seen as valid if it is
      * a number between one and 118; the wildcard atomic number zero is considered as valid depending on the given

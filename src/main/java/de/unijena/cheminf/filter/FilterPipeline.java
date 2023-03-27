@@ -204,7 +204,7 @@ public class FilterPipeline {
      * @param aMaxAtomCount integer value of the max atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
      * @return the FilterPipeline instance itself
-     * @throws IllegalArgumentException if the given max atom count is less than zero
+     * @throws IllegalArgumentException if the given max atom count has a negative value
      */
     public FilterPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
@@ -222,7 +222,7 @@ public class FilterPipeline {
      * @param aMinAtomCount integer value of the min atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
      * @return the FilterPipeline instance itself
-     * @throws IllegalArgumentException if the given min atom count is less than zero
+     * @throws IllegalArgumentException if the given min atom count has a negative value
      */
     public FilterPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
@@ -234,13 +234,47 @@ public class FilterPipeline {
     }
 
     /**
+     * Adds a max heavy atom count filter with the given max heavy atom count to the filter pipeline. Atom containers
+     * that equal the given max heavy atom count do not get filtered.
+     *
+     * @param aMaxHeavyAtomCount integer value of the max atom count to filter by
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given max heavy atom count has a negative value
+     */
+    public FilterPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
+        if (aMaxHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+            throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
+        }
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a min heavy atom count filter with the given min heavy atom count to the filter pipeline. Atom containers
+     * that equal the given min heavy atom count do not get filtered.
+     *
+     * @param aMinHeavyAtomCount integer value of the min atom count to filter by
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given min heavy atom count has a negative value
+     */
+    public FilterPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
+        if (aMinHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+            throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
+        }
+        IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
      * Adds a max bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
      * may or may not be considered; atom containers that equal the given max bond count do not get filtered.
      *
      * @param aMaxBondCount integer value of the max bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
      * @return the FilterPipeline instance itself
-     * @throws IllegalArgumentException if the given max bond count is less than zero
+     * @throws IllegalArgumentException if the given max bond count has a negative value
      */
     public FilterPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxBondCount < 0) {    //TODO: would not harm the code but makes no sense
@@ -258,7 +292,7 @@ public class FilterPipeline {
      * @param aMinBondCount integer value of the min bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
      * @return the FilterPipeline instance itself
-     * @throws IllegalArgumentException if the given min bond count is less than zero
+     * @throws IllegalArgumentException if the given min bond count has a negative value
      */
     public FilterPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinBondCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
@@ -279,7 +313,7 @@ public class FilterPipeline {
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
      * @return the FilterPipeline instance itself
-     * @throws IllegalArgumentException if the given max specific bond count is less than zero
+     * @throws IllegalArgumentException if the given max specific bond count has a negative value
      */
     public FilterPipeline withMaxBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
@@ -302,7 +336,7 @@ public class FilterPipeline {
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
      * @return the FilterPipeline instance itself
-     * @throws IllegalArgumentException if the given min specific bond count is less than zero
+     * @throws IllegalArgumentException if the given min specific bond count has a negative value
      */
     public FilterPipeline withMinBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens

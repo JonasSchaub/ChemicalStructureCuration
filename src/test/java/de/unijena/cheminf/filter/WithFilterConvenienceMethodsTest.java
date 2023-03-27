@@ -707,4 +707,232 @@ public class WithFilterConvenienceMethodsTest {
         );
     }
 
+    /**
+     * Tests whether the value returned by the .withMaxHeavyAtomCountFilter() method of the class FilterPipeline is a
+     * FilterPipeline instance.
+     */
+    @Test
+    public void withMaxHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstance() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        int tmpIntegerParameter = 10;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMaxHeavyAtomCountFilter(tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the instance returned by the .withMaxHeavyAtomCountFilter() method of the class FilterPipeline is
+     * the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMaxHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        int tmpIntegerParameter = 10;
+        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMaxHeavyAtomCountFilter(tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxHeavyAtomCountFilter()
+     * method of the class FilterPipeline was extended by an instance of MaxHeavyAtomCountFilter.
+     */
+    @Test
+    public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxHeavyAtomCountFilter() {
+        int tmpIntegerParameter = 10;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxHeavyAtomCountFilter(tmpIntegerParameter);
+        Assertions.assertInstanceOf(MaxHeavyAtomCountFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MaxHeavyAtomCountFilter added to the listOfSelectedFilters by the .withMaxHeavyAtomCountFilter()
+     * method of the class FilterPipeline contains the given max heavy atom count threshold value.
+     */
+    @Test
+    public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherAddedMaxHeavyAtomCountFilterHasGivenThresholdSet_twoTests() {
+        int tmpThresholdValue = 10;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxHeavyAtomCountFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxHeavyAtomCount());
+        tmpThresholdValue = 20;
+        tmpFilterPipeline = new FilterPipeline().withMaxHeavyAtomCountFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxHeavyAtomCount());
+    }
+
+    /**
+     * Tests whether the .withMaxHeavyAtomCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
+     * if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMaxHeavyAtomCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMaxHeavyAtomCountIsNegative() {    //TODO: do so?
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpNegativeMaxHeavyAtomCount = -1;
+                    new FilterPipeline().withMaxHeavyAtomCountFilter(tmpNegativeMaxHeavyAtomCount);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * MaxHeavyAtomCountFilter; test 1.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",  // 4
+                "c1ccccc1", // 6 - filtered
+                "C1CCCC1",  // 5 - filtered
+                "NCC(=O)O", // 5 - filtered
+                "O",        // 1
+                "CCO"       // 3
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{false, true, true, true, false, false};
+        //
+        int tmpMaxHeavyAtomCount = 4;
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * MaxHeavyAtomCountFilter; test 2.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",  // 4 - filtered
+                "c1ccccc1", // 6 - filtered
+                "C1CCCC1",  // 5 - filtered
+                "O",        // 1
+                "NCC(=O)O", // 5 - filtered
+                "CCO"       // 3
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{true, true, true, false, true, false};
+        //
+        int tmpMaxHeavyAtomCount = 3;
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the value returned by the .withMinHeavyAtomCountFilter() method of the class FilterPipeline is a
+     * FilterPipeline instance.
+     */
+    @Test
+    public void withMinHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstance() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        int tmpIntegerParameter = 10;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMinHeavyAtomCountFilter(tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the instance returned by the .withMinHeavyAtomCountFilter() method of the class FilterPipeline is
+     * the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMinHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        int tmpIntegerParameter = 10;
+        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMinHeavyAtomCountFilter(tmpIntegerParameter));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinHeavyAtomCountFilter()
+     * method of the class FilterPipeline was extended by an instance of MinHeavyAtomCountFilter.
+     */
+    @Test
+    public void withMinHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinHeavyAtomCountFilter() {
+        int tmpIntegerParameter = 10;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinHeavyAtomCountFilter(tmpIntegerParameter);
+        Assertions.assertInstanceOf(MinHeavyAtomCountFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MinHeavyAtomCountFilter added to the listOfSelectedFilters by the .withMinHeavyAtomCountFilter()
+     * method of the class FilterPipeline contains the given min heavy atom count threshold value.
+     */
+    @Test
+    public void withMinHeavyAtomCountFilterMethodTest_checksWhetherAddedMinHeavyAtomCountFilterHasGivenThresholdSet_twoTests() {
+        int tmpThresholdValue = 10;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinHeavyAtomCountFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinHeavyAtomCount());
+        tmpThresholdValue = 20;
+        tmpFilterPipeline = new FilterPipeline().withMinHeavyAtomCountFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinHeavyAtomCount());
+    }
+
+    /**
+     * Tests whether the .withMinHeavyAtomCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
+     * if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMinHeavyAtomCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMinHeavyAtomCountIsNegative() {    //TODO: do so?
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpNegativeMinHeavyAtomCount = -1;
+                    new FilterPipeline().withMinHeavyAtomCountFilter(tmpNegativeMinHeavyAtomCount);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * MinHeavyAtomCountFilter; test 1.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",  // 4 - filtered
+                "c1ccccc1", // 6
+                "C1CCCC1",  // 5
+                "NCC(=O)O", // 5
+                "O",        // 1 - filtered
+                "CCO"       // 3 - filtered
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{true, false, false, false, true, true};
+        //
+        int tmpMinHeavyAtomCount = 5;
+        IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * MinHeavyAtomCountFilter; test 2.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CC(=O)O",  // 4
+                "c1ccccc1", // 6
+                "C1CCCC1",  // 5
+                "O",        // 1 - filtered
+                "NCC(=O)O", // 5
+                "CCO"       // 3 - filtered
+        );
+        boolean[] tmpIsFilteredArray = new boolean[]{false, false, false, true, false, true};
+        //
+        int tmpMinHeavyAtomCount = 4;
+        IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
+        //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
 }
