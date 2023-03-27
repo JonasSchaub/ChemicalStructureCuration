@@ -112,13 +112,13 @@ public class TestUtils {
     }
 
     /**
-     * Returns a Filter instance whose .getsFiltered() method always returns the boolean value given to this method.
+     * Returns a Filter instance whose .isFiltered() method always returns the boolean value given to this method.
      *
-     * @param aGetsFilteredReturnValue Boolean value to be returned by the .getsFiltered() method of the returned
-     *                                 Filter instance
+     * @param aIsFilteredReturnValue Boolean value to be returned by the .isFiltered() method of the returned
+     *                               Filter instance
      * @return instance of Filter
      */
-    public static Filter getAllTrueOrFalseFilter(boolean aGetsFilteredReturnValue) {
+    public static Filter getAllTrueOrFalseFilter(boolean aIsFilteredReturnValue) {
         return new Filter() {
             /**
              * Returns a boolean value independent of the given atom container.
@@ -128,9 +128,9 @@ public class TestUtils {
              * @throws NullPointerException if the given IAtomContainer instance is null
              */
             @Override
-            public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+            public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
                 Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-                return aGetsFilteredReturnValue;
+                return aIsFilteredReturnValue;
             }
         };
     }

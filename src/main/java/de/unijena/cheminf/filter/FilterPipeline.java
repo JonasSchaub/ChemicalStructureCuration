@@ -157,7 +157,7 @@ public class FilterPipeline {
             for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
                 if (!tmpIsFilteredBitSet.get(i)) {
                     tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
-                    if (this.listOfSelectedFilters.get(tmpIndexOfFilter).getsFiltered(tmpAtomContainer)) {
+                    if (this.listOfSelectedFilters.get(tmpIndexOfFilter).isFiltered(tmpAtomContainer)) {
                         tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfFilter);
                         tmpIsFilteredBitSet.set(i);
                         this.latestFilteringProcess_numberOfACsFilteredByEachFilter[tmpIndexOfFilter]++;

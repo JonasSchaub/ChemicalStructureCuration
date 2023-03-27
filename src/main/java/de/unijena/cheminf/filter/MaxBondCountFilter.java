@@ -67,7 +67,7 @@ public class MaxBondCountFilter extends Filter {
      * Atom containers that equal the max bond count do not get filtered.
      */
     @Override
-    public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         return FilterUtils.exceedsOrEqualsBondCount(anAtomContainer, this.maxBondCount + 1, this.considerImplicitHydrogens);

@@ -77,7 +77,7 @@ public class MinBondsOfSpecificBondOrderFilter extends Filter {
      * Atom containers that equal the min specific bond count do not get filtered.
      */
     @Override
-    public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         return !FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(anAtomContainer, this.bondOrderOfInterest, this.minSpecificBondCount, this.considerImplicitHydrogens);

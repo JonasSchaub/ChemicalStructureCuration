@@ -16,9 +16,9 @@ public interface IFilter {
      * Returns true, if the given atom container gets filtered.
      *
      * @param anAtomContainer IAtomContainer instance to be checked
-     * @return true if the filter applies on the given atom container
+     * @return true, if the filter applies on the given atom container
      * @throws NullPointerException if the given IAtomContainer instance is null
      */
-    boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
 
 }

@@ -58,7 +58,7 @@ public class MaxHeavyAtomCountFilter extends Filter {
      * Atom containers that equal the max heavy atom count do not get filtered.
      */
     @Override
-    public boolean getsFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         return FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.maxHeavyAtomCount + 1);

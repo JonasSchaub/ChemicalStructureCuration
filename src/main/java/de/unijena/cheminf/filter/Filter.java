@@ -56,7 +56,7 @@ public abstract class Filter implements IFilter {
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             //apply filter
-            if (!this.getsFiltered(tmpAtomContainer)) {
+            if (!this.isFiltered(tmpAtomContainer)) {
                 tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
             }
         }

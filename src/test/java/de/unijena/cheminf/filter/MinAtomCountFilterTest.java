@@ -79,90 +79,90 @@ public class MinAtomCountFilterTest {
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinAtomCountFilter returns a boolean value.
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns a boolean value.
      */
     @Test
-    public void getsFilteredMethodTest_returnsBoolean() {
+    public void isFilteredMethodTest_returnsBoolean() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpMinAtomCount = 0;
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinAtomCountFilter returns false if an AC exceeds the min atom
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns false if an AC exceeds the min atom
      * count considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //9 atoms
         int tmpMinAtomCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinAtomCountFilter returns true if an AC does not exceed the min
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns true if an AC does not exceed the min
      * atom count considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //9 atoms
         int tmpMinAtomCount = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinAtomCountFilter returns false if an AC exceeds the min atom
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns false if an AC exceeds the min atom
      * count not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //3 atoms
         int tmpMinAtomCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinAtomCountFilter returns true if an AC does not exceed the min
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns true if an AC does not exceed the min
      * atom count not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //3 atoms
         int tmpMinAtomCount = 4;
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether the .getsFiltered() method throws a NullPointerException if the given IAtomContainer instance is
+     * Tests whether the .isFiltered() method throws a NullPointerException if the given IAtomContainer instance is
      * null.
      */
     @Test
-    public void getsFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void isFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     int tmpMinAtomCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
                     IFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-                    tmpMinAtomCountFilter.getsFiltered(null);
+                    tmpMinAtomCountFilter.isFiltered(null);
                 }
         );
     }

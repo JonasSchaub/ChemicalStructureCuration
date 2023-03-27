@@ -74,24 +74,24 @@ public class MinHeavyAtomCountFilterTest {
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinHeavyAtomCountFilter returns a boolean value.
+     * Tests whether method .isFiltered() of class MinHeavyAtomCountFilter returns a boolean value.
      */
     @Test
-    public void getsFilteredMethodTest_returnsBoolean() {
+    public void isFilteredMethodTest_returnsBoolean() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpMinHeavyAtomCount = 0;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinHeavyAtomCountFilter returns true if an AC exceeds the
+     * Tests whether method .isFiltered() of class MinHeavyAtomCountFilter returns true if an AC exceeds the
      * min heavy atom count; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsTrueIfGivenAtomContainerExceedsTheMinHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerExceedsTheMinHeavyAtomCount() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms
@@ -101,18 +101,18 @@ public class MinHeavyAtomCountFilterTest {
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
+            Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
         }
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinHeavyAtomCountFilter returns false if an AC falls short of the
+     * Tests whether method .isFiltered() of class MinHeavyAtomCountFilter returns false if an AC falls short of the
      * min heavy atom count; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsFalseIfGivenAtomContainerFallsShortOfTheMinHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalseIfGivenAtomContainerFallsShortOfTheMinHeavyAtomCount() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms
@@ -122,18 +122,18 @@ public class MinHeavyAtomCountFilterTest {
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
+            Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
         }
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MinHeavyAtomCountFilter returns false if an AC equals the min heavy
+     * Tests whether method .isFiltered() of class MinHeavyAtomCountFilter returns false if an AC equals the min heavy
      * atom count; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMinHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMinHeavyAtomCount() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms
@@ -143,22 +143,22 @@ public class MinHeavyAtomCountFilterTest {
         IFilter tmpFilter;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCountArray[i]);
-            Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainerSet.getAtomContainer(i)));
+            Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainerSet.getAtomContainer(i)));
         }
     }
 
     /**
-     * Tests whether the .getsFiltered() method throws a NullPointerException if the given IAtomContainer instance is
+     * Tests whether the .isFiltered() method throws a NullPointerException if the given IAtomContainer instance is
      * null.
      */
     @Test
-    public void getsFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void isFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     int tmpMinHeavyAtomCount = 5;
                     IFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
-                    tmpMinHeavyAtomCountFilter.getsFiltered(null);
+                    tmpMinHeavyAtomCountFilter.isFiltered(null);
                 }
         );
     }

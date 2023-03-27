@@ -79,90 +79,90 @@ public class MaxBondCountFilterTest {
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MaxBondCountFilter returns a boolean value.
+     * Tests whether method .isFiltered() of class MaxBondCountFilter returns a boolean value.
      */
     @Test
-    public void getsFilteredMethodTest_returnsBoolean() {
+    public void isFilteredMethodTest_returnsBoolean() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpMaxBondCount = 0;
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MaxBondCountFilter returns false if an AC does not exceed the max
+     * Tests whether method .isFiltered() of class MaxBondCountFilter returns false if an AC does not exceed the max
      * bond count considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //9 bonds
         int tmpMaxBondCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MaxBondCountFilter returns true if an AC exceeds the max bond
+     * Tests whether method .isFiltered() of class MaxBondCountFilter returns true if an AC exceeds the max bond
      * count considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //9 bonds
         int tmpMaxBondCount = 8;
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MaxBondCountFilter returns false if an AC does not exceed the max
+     * Tests whether method .isFiltered() of class MaxBondCountFilter returns false if an AC does not exceed the max
      * bond count not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //3 bonds
         int tmpMaxBondCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .getsFiltered() of class MaxBondCountFilter returns true if an AC exceeds the max bond
+     * Tests whether method .isFiltered() of class MaxBondCountFilter returns true if an AC exceeds the max bond
      * count not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void getsFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //3 bonds
         int tmpMaxBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
+        Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether the .getsFiltered() method throws a NullPointerException if the given IAtomContainer instance is
+     * Tests whether the .isFiltered() method throws a NullPointerException if the given IAtomContainer instance is
      * null.
      */
     @Test
-    public void getsFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void isFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     int tmpMaxBondCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
                     IFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-                    tmpMaxBondCountFilter.getsFiltered(null);
+                    tmpMaxBondCountFilter.isFiltered(null);
                 }
         );
     }
