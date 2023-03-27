@@ -763,7 +763,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
                     int tmpAnAtomicNumber = 5;
-                    int tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnAtomicNumber);
+                    ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnAtomicNumber);
                 }
         );
     }
@@ -779,7 +779,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpNegativeIntegerValue = -1;
-                    int tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpNegativeIntegerValue);
+                    ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpNegativeIntegerValue);
                 }
         );
     }
@@ -796,7 +796,7 @@ public class ChemUtilsTest {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpNegativeIntegerValue = -1;
                     int tmpAcceptedValue = 5;
-                    int tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(
+                    ChemUtils.countAtomsOfAtomicNumbers(
                             tmpAtomContainer,
                             tmpAcceptedValue,
                             tmpNegativeIntegerValue,
@@ -818,7 +818,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpUnknownAtomicNumber = 119;
-                    int tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpUnknownAtomicNumber);
+                    ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpUnknownAtomicNumber);
                 }
         );
     }
@@ -836,7 +836,7 @@ public class ChemUtilsTest {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpUnknownAtomicNumber = 119;
                     int tmpAcceptedValue = 10;
-                    int tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(
+                    ChemUtils.countAtomsOfAtomicNumbers(
                             tmpAtomContainer,
                             tmpAcceptedValue,
                             tmpAcceptedValue,
@@ -891,7 +891,7 @@ public class ChemUtilsTest {
                 NullPointerException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
-                    int tmpReturnValue = ChemUtils.getHeavyAtomsCount(tmpAtomContainer);
+                    ChemUtils.getHeavyAtomsCount(tmpAtomContainer);
                 }
         );
     }

@@ -26,6 +26,7 @@
 package de.unijena.cheminf.filter;
 
 import de.unijena.cheminf.ChemUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -111,23 +112,55 @@ public class FilterUtils {
 
     //TODO: method containsWildcardElements()
 
-    //TODO: convenience method to check atom containers for invalid atomic numbers
-
+    /**
+     * Checks whether the atomic numbers of all IAtom instances contained by an IAtomContainer instance are valid.
+     * An atomic number is seen as valid if it is a number between one and 118; the wildcard atomic number zero is
+     * considered as valid depending on the given boolean parameter. An IllegalArgumentException is thrown if an atom
+     * of the given IAtomContainer instance has no atomic number set and a NullPointerException if the given
+     * IAtomContainer instance or an IAtom instance is null.
+     *
+     * @param anAtomContainer IAtomContainer to check
+     * @param anIncludeWildcardNumber whether to consider zero, the wildcard atomic number, as valid atomic number
+     * @return true, if the atomic numbers of all atoms of the given atom container are considered as valid
+     * @throws NullPointerException if the given instance of IAtomContainer is null or contains an IAtom instance being
+     * null
+     * @throws IllegalArgumentException if the atomic number of an IAtom instance of the given IAtomContainer instance
+     * is null
+     */
+    public static boolean hasAllValidAtomicNumbers(IAtomContainer anAtomContainer, boolean anIncludeWildcardNumber)
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        try {
+            for (IAtom tmpAtom :
+                    anAtomContainer.atoms()) {
+                if (!FilterUtils.hasValidAtomicNumber(tmpAtom, anIncludeWildcardNumber)) {
+                    return false;   //TODO: run threw all atoms to check whether an atom has no atomic number?
+                }
+            }
+            return true;
+        } catch (IllegalArgumentException anIllegalArgumentException) { //TODO: is the handling of this as you would expect it?
+            throw new IllegalArgumentException("The atomic number of an IAtom instance of the given atom container has " +
+                    "no atomic number.");
+        } catch (NullPointerException aNullPointerException) {
+            throw new NullPointerException("An IAtom instance contained by the given atom container is null.");
+        }
+    }
+    
     /**
      * Checks whether the atomic number of an IAtom instance is valid. An atomic number is seen as valid if it is
-     * a number between one and 118; zero is considered as valid based on the given boolean parameter. An
-     * IllegalArgumentException is thrown if the given IAtom instance has no atomic number set.
+     * a number between one and 118; the wildcard atomic number zero is considered as valid depending on the given
+     * boolean parameter. An IllegalArgumentException is thrown if the given IAtom instance has no atomic number set.
      *
      * @param anAtom IAtom instance to check
-     * @param anIncludeWildcardNumber whether to consider the zero, the wildcard atomic number, as valid
-     * @return true, if the atomic number of the given atom is seen as valid
+     * @param anIncludeWildcardNumber whether to consider zero, the wildcard atomic number, as valid atomic number
+     * @return true, if the atomic number of the given atom is considered as valid
      * @throws NullPointerException if the given instance of IAtom is null
      * @throws IllegalArgumentException if the atomic number of the given IAtom instance is null
      */
     public static boolean hasValidAtomicNumber(IAtom anAtom, boolean anIncludeWildcardNumber) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
         if (anAtom.getAtomicNumber() == null) {
-            throw new IllegalArgumentException("The given IAtom instance has no atomic number set.");
+            throw new IllegalArgumentException("The given IAtom instance has no atomic number.");
             //return null;    //TODO: throw an exception instead?
         }
         if (anAtom.getAtomicNumber() <= 0 || anAtom.getAtomicNumber() > 118) {

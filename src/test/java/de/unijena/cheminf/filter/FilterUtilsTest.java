@@ -472,11 +472,11 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns an instance of Boolean if given
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns a boolean value if given
      * an atom with an atomic number not null; the boolean param has no impact on this.
      */
     @Test
-    public void hasValidAtomicNumber_returnsInstanceOfBooleanIfAtomHasAtomicNumber() {
+    public void hasValidAtomicNumberTest_returnsInstanceOfBooleanIfAtomHasAtomicNumber() {
         IAtom tmpAtom = new Atom(1);
         boolean tmpIncludeWildcardNumber = true;
         Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
@@ -489,7 +489,7 @@ public class FilterUtilsTest {
      * atomic number; atomic number = 6; whether the wildcard number 0 is included, has no impact on the result here.
      */
     @Test
-    public void hasValidAtomicNumber_returnsTrueForAtomicNumber6() {
+    public void hasValidAtomicNumberTest_returnsTrueForAtomicNumber6() {
         IAtom tmpAtom = new Atom(IElement.C);   //atomic number: 6
         boolean tmpIncludeWildcardNumber = true;
         Assertions.assertTrue(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
@@ -503,7 +503,7 @@ public class FilterUtilsTest {
      * on the results here.
      */
     @Test
-    public void hasValidAtomicNumber_returnsTrueForDifferentValidAtomicNumbers() {
+    public void hasValidAtomicNumberTest_returnsTrueForDifferentValidAtomicNumbers() {
         int[] tmpAtomicNumbersArray = new int[]{
                 IElement.H,     //atomic number: 1
                 IElement.He,    //atomic number: 2
@@ -529,7 +529,7 @@ public class FilterUtilsTest {
      * has no impact on the results here.
      */
     @Test
-    public void hasValidAtomicNumber_returnsFalseForNegativeAtomicNumber() {
+    public void hasValidAtomicNumberTest_returnsFalseForNegativeAtomicNumber() {
         int[] tmpAtomicNumbersArray = new int[]{
                 -1,
                 -2,
@@ -554,7 +554,7 @@ public class FilterUtilsTest {
      * included, has no impact on the results here.
      */
     @Test
-    public void hasValidAtomicNumber_returnsFalseForAtomicNumbersGreater118() {
+    public void hasValidAtomicNumberTest_returnsFalseForAtomicNumbersGreater118() {
         int[] tmpAtomicNumbersArray = new int[]{
                 119,
                 120,
@@ -579,7 +579,7 @@ public class FilterUtilsTest {
      * wildcard number 0 is not to be included.
      */
     @Test
-    public void hasValidAtomicNumber_returnsTrueOrFalseRespectivelyIfAtomicNumberIsZero() {
+    public void hasValidAtomicNumberTest_returnsTrueOrFalseRespectivelyIfAtomicNumberIsZero() {
         IAtom tmpAtom = new Atom(IElement.Wildcard);    //atomic number: 0
         boolean tmpIncludeWildcardNumber = true;
         Assertions.assertTrue(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
@@ -592,7 +592,7 @@ public class FilterUtilsTest {
      * IAtom instance is null.
      */
     @Test
-    public void hasValidAtomicNumber_throwsNullPointerExceptionIfGivenAtomIsNull() {
+    public void hasValidAtomicNumberTest_throwsNullPointerExceptionIfGivenAtomIsNull() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -608,7 +608,7 @@ public class FilterUtilsTest {
      * atomic number of the given IAtom instance is null; the boolean param has no impact on this.
      */
     @Test
-    public void hasValidAtomicNumber_returnsNullIfAtomHasAtomicNumberNull() {
+    public void hasValidAtomicNumberTest_returnsNullIfAtomHasAtomicNumberNull() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -623,6 +623,125 @@ public class FilterUtilsTest {
                     IAtom tmpAtom = new Atom(); //has atomic number null
                     boolean tmpIncludeWildcardNumber = false;
                     FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils returns a boolean value.
+     */
+    @Test
+    public void hasAllValidAtomicNumbersTest_returnsBooleanValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        boolean tmpIncludeWildcardNumber = true;    //has no impact
+        Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+    }
+
+    /**
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils returns true if all atoms of the given
+     * atom container have a valid atomic number; whether the wildcard atomic number is included has no impact here.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidAtomicNumbersTest_returnsTrueIfAllAtomicNumbersAreValid() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "NCC(=O)O",
+                "C=CC=C",
+                "C#N"
+        );
+        boolean tmpIncludeWildcardNumber;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpIncludeWildcardNumber = true;    //has no impact here
+            Assertions.assertTrue(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+            tmpIncludeWildcardNumber = false;   //has no impact here
+            Assertions.assertTrue(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+        }
+    }
+
+    /**
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils returns true if all atoms of the given
+     * atom container have a valid atomic number; whether the wildcard atomic number is included has no impact here.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidAtomicNumbersTest_returnsFalseIfAnAtomicNumberIsNegative() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "NCC(=O)O",
+                "C=CC=C",
+                "C#N"
+        );
+        IAtom tmpAtom = new Atom();
+        //AtomContainer 0: additional atom with negative atomic number
+        tmpAtom.setAtomicNumber(-1);
+        tmpAtomContainerSet.getAtomContainer(0).addAtom(tmpAtom);
+        //AtomContainer 1: two additional atoms with negative atomic numbers
+        tmpAtom.setAtomicNumber(-5);
+        tmpAtomContainerSet.getAtomContainer(1).addAtom(tmpAtom);
+        tmpAtom.setAtomicNumber(-10);
+        tmpAtomContainerSet.getAtomContainer(1).addAtom(tmpAtom);
+        //AtomContainer 2: one of the existing atoms with negative atomic number
+        tmpAtomContainerSet.getAtomContainer(2).getAtom(0).setAtomicNumber(-1);
+        //
+        boolean tmpIncludeWildcardNumber;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpIncludeWildcardNumber = true;    //has no impact
+            Assertions.assertFalse(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+            tmpIncludeWildcardNumber = false;   //has no impact
+            Assertions.assertFalse(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+        }
+    }
+
+    /**
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils returns true for an atom container
+     * having atoms with atomic numbers between 0 and 118 (both limits included) if the wildcard number zero should be
+     * included / seen as valid and returns false if not.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidAtomicNumbersTest_testOfIncludeWildcardNumber() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("O=C=O");
+        tmpAtomContainer.getAtom(1).setAtomicNumber(0);
+        boolean tmpIncludeWildcardNumber = true;
+        Assertions.assertTrue(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+        tmpIncludeWildcardNumber = false;
+        Assertions.assertFalse(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
+    }
+
+    /**
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils throws a NullPointerException if the
+     * given IAtomContainer instance is null.
+     */
+    @Test
+    public void hasAllValidAtomicNumbersTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = null;
+                    boolean tmpIncludeWildcardNumber = true;    //has no impact
+                    FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils throws an IllegalArgumentException if
+     * the given IAtomContainer instance contains IAtom instances with their atomic number being null.
+     */
+    @Test
+    public void hasAllValidAtomicNumbersTest_throwsIllegalArgumentExceptionIfAnAtomicNumberIsNull() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    IAtom tmpAtom = new Atom(); //has atomic number null
+                    tmpAtomContainer.addAtom(tmpAtom);
+                    boolean tmpIncludeWildcardNumber = true;    //has no impact
+                    FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber);
                 }
         );
     }

@@ -40,6 +40,7 @@ public abstract class Filter implements IFilter {
     TODO: flag filtered / not filtered ACs?
     TODO: boolean needsInfoOfOtherACs? (for duplicates filter)
     TODO: add countOfFilteredACs
+    TODO: find a more telling name
      */
 
     /**
