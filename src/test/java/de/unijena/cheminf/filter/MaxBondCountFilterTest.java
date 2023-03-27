@@ -46,8 +46,8 @@ public class MaxBondCountFilterTest {
         int tmpMaxBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
         MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.getMaxBondCount());
-        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondCountFilter.isConsiderImplicitHydrogens());
+        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.maxBondCount);
+        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondCountFilter.considerImplicitHydrogens);
     }
 
     /**
@@ -58,8 +58,8 @@ public class MaxBondCountFilterTest {
         int tmpMaxBondCount = 10;
         boolean tmpConsiderImplicitHydrogens = false;
         MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.getMaxBondCount());
-        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondCountFilter.isConsiderImplicitHydrogens());
+        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.maxBondCount);
+        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondCountFilter.considerImplicitHydrogens);
     }
 
     /**
@@ -86,7 +86,7 @@ public class MaxBondCountFilterTest {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpMaxBondCount = 0;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertInstanceOf(Boolean.class, tmpFilter.getsFiltered(tmpAtomContainer));
     }
 
@@ -101,7 +101,7 @@ public class MaxBondCountFilterTest {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //9 bonds
         int tmpMaxBondCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
     }
 
@@ -116,7 +116,7 @@ public class MaxBondCountFilterTest {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //9 bonds
         int tmpMaxBondCount = 8;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
     }
 
@@ -131,7 +131,7 @@ public class MaxBondCountFilterTest {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //3 bonds
         int tmpMaxBondCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.getsFiltered(tmpAtomContainer));
     }
 
@@ -146,7 +146,7 @@ public class MaxBondCountFilterTest {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //3 bonds
         int tmpMaxBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpFilter.getsFiltered(tmpAtomContainer));
     }
 
@@ -158,7 +158,7 @@ public class MaxBondCountFilterTest {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMaxBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Object tmpReturnValue = tmpMaxBondCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -180,7 +180,7 @@ public class MaxBondCountFilterTest {
         //
         int tmpMaxBondCount = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -204,7 +204,7 @@ public class MaxBondCountFilterTest {
         //
         int tmpMaxBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;
-        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -222,7 +222,7 @@ public class MaxBondCountFilterTest {
                 () -> {
                     int tmpMaxBondCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+                    Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
                     tmpMaxBondCountFilter.filter(null);
                 }
         );
