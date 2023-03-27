@@ -215,6 +215,26 @@ public class MinBondsOfSpecificBondOrderFilterTest {
     }
 
     /**
+     * Tests whether the .getsFiltered() method throws a NullPointerException if the given IAtomContainer instance is
+     * null.
+     */
+    @Test
+    public void getsFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IBond.Order tmpBondOrder = IBond.Order.UNSET;
+                    int tmpMinBondsOfSpecificBondOrder = 5;
+                    boolean tmpConsiderImplicitHydrogens = true;
+                    IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                            tmpBondOrder, tmpMinBondsOfSpecificBondOrder, tmpConsiderImplicitHydrogens
+                    );
+                    tmpMinBondsOfSpecificBondOrderFilter.getsFiltered(null);
+                }
+        );
+    }
+
+    /**
      * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
      */
     @Test

@@ -151,6 +151,23 @@ public class MinBondCountFilterTest {
     }
 
     /**
+     * Tests whether the .getsFiltered() method throws a NullPointerException if the given IAtomContainer instance is
+     * null.
+     */
+    @Test
+    public void getsFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    int tmpMinBondCount = 5;
+                    boolean tmpConsiderImplicitHydrogens = true;
+                    IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+                    tmpMinBondCountFilter.getsFiltered(null);
+                }
+        );
+    }
+
+    /**
      * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
      */
     @Test

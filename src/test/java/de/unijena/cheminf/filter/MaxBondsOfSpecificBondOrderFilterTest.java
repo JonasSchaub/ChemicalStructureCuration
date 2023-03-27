@@ -215,6 +215,26 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     }
 
     /**
+     * Tests whether the .getsFiltered() method throws a NullPointerException if the given IAtomContainer instance is
+     * null.
+     */
+    @Test
+    public void getsFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IBond.Order tmpBondOrder = IBond.Order.UNSET;
+                    int tmpMaxBondsOfSpecificBondOrder = 5;
+                    boolean tmpConsiderImplicitHydrogens = true;
+                    IFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
+                            tmpBondOrder, tmpMaxBondsOfSpecificBondOrder, tmpConsiderImplicitHydrogens
+                    );
+                    tmpMaxBondsOfSpecificBondOrderFilter.getsFiltered(null);
+                }
+        );
+    }
+
+    /**
      * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
      */
     @Test
