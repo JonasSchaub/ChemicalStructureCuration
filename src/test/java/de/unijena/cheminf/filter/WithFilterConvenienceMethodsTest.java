@@ -884,7 +884,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
      * MinHeavyAtomCountFilter; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
@@ -910,7 +910,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
      * MinHeavyAtomCountFilter; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
@@ -930,6 +930,224 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinHeavyAtomCount = 4;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         //
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the value returned by the .withHasAllValidAtomicNumbersFilter() method of the class FilterPipeline
+     * is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withHasAllValidAtomicNumbersFilterMethodTest_returnsFilterPipelineInstanceItself() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withHasAllValidAtomicNumbersFilter()
+     * method of the class FilterPipeline was extended by an instance of HasAllValidAtomicNumbersFilter.
+     */
+    @Test
+    public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasAllValidAtomicNumbersFilter() {
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertInstanceOf(HasAllValidAtomicNumbersFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the HasAllValidAtomicNumbersFilter added to the listOfSelectedFilters by the .withHasAllValidAtomicNumbersFilter()
+     * method of the class FilterPipeline has the boolean class field wildcardAtomicNumberIsValid set to the given
+     * boolean value.
+     */
+    @Test
+    public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherAddedHasAllValidAtomicNumbersFilterHasGivenBooleanValueSet_twoTests() {
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
+                ((HasAllValidAtomicNumbersFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isWildcardAtomicNumberIsValid());
+        tmpWildcardAtomicNumberIsValid = false;
+        tmpFilterPipeline = new FilterPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
+                ((HasAllValidAtomicNumbersFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isWildcardAtomicNumberIsValid());
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * HasAllValidAtomicNumbersFilter; test 2; wildcard atomic number is considered as valid.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "C=CC=C",
+                "C",
+                "O=C=O",
+                "c1ccccc1",
+                "CCO"
+        );
+        tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setAtomicNumber(-1);
+        tmpAtomContainerSet.getAtomContainer(2).getAtom(0).setAtomicNumber(119);
+        tmpAtomContainerSet.getAtomContainer(3).getAtom(2).setAtomicNumber(0);
+        tmpAtomContainerSet.getAtomContainer(4).getAtom(1).setAtomicNumber(null);
+        boolean[] tmpIsFilteredArray = new boolean[]{
+                false,  //all valid
+                true,   //atomic number < 0
+                true,   //atomic number > 118
+                false,  //atomic number = 0
+                true    //atomic number is null
+        };
+        //
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        //
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * HasAllValidAtomicNumbersFilter; test 2; wildcard atomic number is considered as invalid.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1",
+                "C=CC=C",
+                "C",
+                "CCO",
+                "O=C=O"
+        );
+        tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setAtomicNumber(-1);
+        tmpAtomContainerSet.getAtomContainer(2).getAtom(0).setAtomicNumber(119);
+        tmpAtomContainerSet.getAtomContainer(3).getAtom(2).setAtomicNumber(0);
+        tmpAtomContainerSet.getAtomContainer(4).getAtom(1).setAtomicNumber(null);
+        boolean[] tmpIsFilteredArray = new boolean[]{
+                false,  //all valid
+                true,   //atomic number < 0
+                true,   //atomic number > 118
+                true,  //atomic number = 0
+                true    //atomic number is null
+        };
+        //
+        boolean tmpWildcardAtomicNumberIsValid = false;
+        //
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the value returned by the .withHasInvalidAtomicNumbersFilter() method of the class FilterPipeline
+     * is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withHasInvalidAtomicNumbersFilterMethodTest_returnsFilterPipelineInstanceItself() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withHasInvalidAtomicNumbersFilter()
+     * method of the class FilterPipeline was extended by an instance of HasInvalidAtomicNumbersFilter.
+     */
+    @Test
+    public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasInvalidAtomicNumbersFilter() {
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertInstanceOf(HasInvalidAtomicNumbersFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the HasInvalidAtomicNumbersFilter added to the listOfSelectedFilters by the .withHasInvalidAtomicNumbersFilter()
+     * method of the class FilterPipeline has the boolean class field wildcardAtomicNumberIsValid set to the given
+     * boolean value.
+     */
+    @Test
+    public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherAddedHasInvalidAtomicNumbersFilterHasGivenBooleanValueSet_twoTests() {
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
+                ((HasInvalidAtomicNumbersFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isWildcardAtomicNumberIsValid());
+        tmpWildcardAtomicNumberIsValid = false;
+        tmpFilterPipeline = new FilterPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
+                ((HasInvalidAtomicNumbersFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isWildcardAtomicNumberIsValid());
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * HasInvalidAtomicNumbersFilter; test 2; wildcard atomic number is considered as valid.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "C=CC=C",
+                "C",
+                "O=C=O",
+                "c1ccccc1",
+                "CCO"
+        );
+        tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setAtomicNumber(-1);
+        tmpAtomContainerSet.getAtomContainer(2).getAtom(0).setAtomicNumber(119);
+        tmpAtomContainerSet.getAtomContainer(3).getAtom(2).setAtomicNumber(0);
+        tmpAtomContainerSet.getAtomContainer(4).getAtom(1).setAtomicNumber(null);
+        boolean[] tmpIsFilteredArray = new boolean[]{
+                true,   //all valid
+                false,  //atomic number < 0
+                false,  //atomic number > 118
+                true,   //atomic number = 0
+                false   //atomic number is null
+        };
+        //
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        //
+        IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+                tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+
+    /**
+     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * HasInvalidAtomicNumbersFilter; test 2; wildcard atomic number is considered as invalid.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void filterMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "c1ccccc1",
+                "C=CC=C",
+                "C",
+                "CCO",
+                "O=C=O"
+        );
+        tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setAtomicNumber(-1);
+        tmpAtomContainerSet.getAtomContainer(2).getAtom(0).setAtomicNumber(119);
+        tmpAtomContainerSet.getAtomContainer(3).getAtom(2).setAtomicNumber(0);
+        tmpAtomContainerSet.getAtomContainer(4).getAtom(1).setAtomicNumber(null);
+        boolean[] tmpIsFilteredArray = new boolean[]{
+                true,   //all valid
+                false,  //atomic number < 0
+                false,  //atomic number > 118
+                false,  //atomic number = 0
+                false   //atomic number is null
+        };
+        //
+        boolean tmpWildcardAtomicNumberIsValid = false;
+        //
+        IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );

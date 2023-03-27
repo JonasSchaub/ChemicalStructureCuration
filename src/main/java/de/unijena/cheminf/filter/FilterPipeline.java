@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.filter;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -345,6 +346,32 @@ public class FilterPipeline {
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a has all valid atomic numbers filter with the given boolean parameter to the filter pipeline.
+     *
+     * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
+     *                                     as a valid atomic number
+     * @return the FilterPipeline instance itself
+     */
+    public FilterPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a has invalid atomic numbers filter with the given boolean parameter to the filter pipeline.
+     *
+     * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
+     *                                     as a valid atomic number
+     * @return the FilterPipeline instance itself
+     */
+    public FilterPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
+        IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }

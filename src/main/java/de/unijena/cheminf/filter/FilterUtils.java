@@ -142,8 +142,7 @@ public class FilterUtils {
      * @param anAtomContainer IAtomContainer to check
      * @param anIncludeWildcardNumber whether to consider zero, the wildcard atomic number, as valid atomic number
      * @return true, if the atomic numbers of all atoms of the given atom container are considered as valid
-     * @throws NullPointerException if the given instance of IAtomContainer is null or contains an IAtom instance being
-     * null
+     * @throws NullPointerException if the given instance of IAtomContainer or an IAtom instance contained by it is null
      * @throws IllegalArgumentException if the atomic number of an IAtom instance of the given IAtomContainer instance
      * is null
      */
@@ -159,8 +158,8 @@ public class FilterUtils {
             }
             return true;
         } catch (IllegalArgumentException anIllegalArgumentException) { //TODO: is the handling of this as you would expect it?
-            throw new IllegalArgumentException("The atomic number of an IAtom instance of the given atom container has " +
-                    "no atomic number.");
+            throw new IllegalArgumentException("The atomic number of an IAtom instance of the given atom container was " +
+                    "null.");
         } catch (NullPointerException aNullPointerException) {
             throw new NullPointerException("An IAtom instance contained by the given atom container is null.");
         }
