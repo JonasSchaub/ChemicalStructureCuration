@@ -198,11 +198,10 @@ public class ChemUtils {
     }
 
     /**
-     * TODO
-     * TODO: implement filter
+     * Counts the number of heavy atoms in the given IAtomContainer instance.
      *
-     * @param anAtomContainer
-     * @return
+     * @param anAtomContainer IAtomContainer instance to count the heavy atoms of
+     * @return integer value of the count of heavy atoms in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int getHeavyAtomsCount(IAtomContainer anAtomContainer) throws NullPointerException {

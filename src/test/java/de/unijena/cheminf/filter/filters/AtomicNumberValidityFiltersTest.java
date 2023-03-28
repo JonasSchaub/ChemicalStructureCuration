@@ -23,9 +23,11 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
+import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;
@@ -35,6 +37,9 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
+/**
+ * Test class of the filters HasAllValidAtomicNumbersFilter and HasInvalidAtomicNumbersFilter.
+ */
 public class AtomicNumberValidityFiltersTest {
 
     /**
@@ -370,7 +375,7 @@ public class AtomicNumberValidityFiltersTest {
                 false,  //all valid
                 true,   //atomic number < 0
                 true,   //atomic number > 118
-                true,  //atomic number = 0
+                true,   //atomic number = 0
                 true    //atomic number is null
         };
         //

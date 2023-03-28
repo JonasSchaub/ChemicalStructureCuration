@@ -23,9 +23,11 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
+import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
@@ -36,9 +38,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
- * Test class of class MaxBondsOfSpecificBondOrderFilter.
+ * Test class of class MinBondsOfSpecificBondOrderFilter.
  */
-public class MaxBondsOfSpecificBondOrderFilterTest {
+public class MinBondsOfSpecificBondOrderFilterTest {
 
     /**
      * Tests whether the public constructor initializes all class fields with the given parameters; test 1.
@@ -46,13 +48,13 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     @Test
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test1() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
+        int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter
-                = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, tmpMaxBondsOfSpecificBondOrderFilter.bondOrderOfInterest);
-        Assertions.assertEquals(tmpMaxSpecificBondCount, tmpMaxBondsOfSpecificBondOrderFilter.maxSpecificBondCount);
-        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondsOfSpecificBondOrderFilter.considerImplicitHydrogens);
+        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter
+                = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpBondOrder, tmpMinBondsOfSpecificBondOrderFilter.bondOrderOfInterest);
+        Assertions.assertEquals(tmpMinSpecificBondCount, tmpMinBondsOfSpecificBondOrderFilter.minSpecificBondCount);
+        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondsOfSpecificBondOrderFilter.considerImplicitHydrogens);
     }
 
     /**
@@ -61,48 +63,48 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     @Test
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test2() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
+        int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter
-                = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, tmpMaxBondsOfSpecificBondOrderFilter.bondOrderOfInterest);
-        Assertions.assertEquals(tmpMaxSpecificBondCount, tmpMaxBondsOfSpecificBondOrderFilter.maxSpecificBondCount);
-        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondsOfSpecificBondOrderFilter.considerImplicitHydrogens);
+        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter
+                = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpBondOrder, tmpMinBondsOfSpecificBondOrderFilter.bondOrderOfInterest);
+        Assertions.assertEquals(tmpMinSpecificBondCount, tmpMinBondsOfSpecificBondOrderFilter.minSpecificBondCount);
+        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondsOfSpecificBondOrderFilter.considerImplicitHydrogens);
     }
 
     /**
-     * Tests whether the public constructor throws an IllegalArgumentException if the given max specific bond count is
+     * Tests whether the public constructor throws an IllegalArgumentException if the given min specific bond count is
      * of a negative value.
      */
     @Test
-    public void publicConstructorTest_throwsIllegalArgumentExceptionIfMaxSpecificBondCountIsNegative() {
+    public void publicConstructorTest_throwsIllegalArgumentExceptionIfMinSpecificBondCountIsNegative() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
-                    int tmpMaxSpecificBondCount = -1;
+                    int tmpMinSpecificBondCount = -1;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+                    new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
                 }
         );
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxBondsOfSpecificBondOrderFilter returns a boolean value.
+     * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns a boolean value.
      */
     @Test
     public void isFilteredMethodTest_returnsBoolean() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 0;
+        int tmpMinSpecificBondCount = 0;
         boolean tmpConsiderImplicitHydrogens = true;
-        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxBondsOfSpecificBondOrderFilter returns false if an AC does not
-     * exceed the max specific bond count for bonds with bond order single considering bonds to implicit hydrogen atoms
+     * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if an AC does not
+     * exceed the min specific bond count for bonds with bond order single considering bonds to implicit hydrogen atoms
      * and whether it returns true if it does exceed.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
@@ -113,22 +115,22 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         boolean tmpConsiderImplicitHydrogens = true;
         //
-        int tmpMaxSpecificBondCount = 9;    //fallen short
-        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        int tmpMinSpecificBondCount = 7;    //exceeded
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
         //
-        tmpMaxSpecificBondCount = 8;    //equaled
-        tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        tmpMinSpecificBondCount = 8;    //equaled
+        tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
         //
-        tmpMaxSpecificBondCount = 7;    //exceeded
-        tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        tmpMinSpecificBondCount = 9;    //fallen short
+        tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxBondsOfSpecificBondOrderFilter returns false if an AC does not
-     * exceed the max specific bond count for bonds with bond order single not considering bonds to implicit hydrogen
+     * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if an AC does not
+     * exceed the min specific bond count for bonds with bond order single not considering bonds to implicit hydrogen
      * atoms and whether it returns true if it does exceed.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
@@ -139,21 +141,21 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         boolean tmpConsiderImplicitHydrogens = false;
         //
-        int tmpMaxSpecificBondCount = 3;    //fallen short
-        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        int tmpMinSpecificBondCount = 1;    //exceeded
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
         //
-        tmpMaxSpecificBondCount = 2;    //equaled
-        tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        tmpMinSpecificBondCount = 2;    //equaled
+        tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
         //
-        tmpMaxSpecificBondCount = 1;    //exceeded
-        tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
+        tmpMinSpecificBondCount = 3;    //fallen short
+        tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxBondsOfSpecificBondOrderFilter returns false if a given atom
+     * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if a given atom
      * container is below or equals the threshold and true if the atom container exceeds the threshold; tests for bond
      * order being double.
      */
@@ -162,22 +164,22 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         int tmpThresholdValue = 1;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
-        IFilter tmpMaxSpecificBondsFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        IFilter tmpMinSpecificBondsFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
         //below threshold
         IAtomContainer tmpAtomContainer = new AtomContainer();
-        Assertions.assertFalse(tmpMaxSpecificBondsFilter.isFiltered(tmpAtomContainer));
+        Assertions.assertTrue(tmpMinSpecificBondsFilter.isFiltered(tmpAtomContainer));
         //threshold equaled
         IBond tmpBond = new Bond();
         tmpBond.setOrder(tmpBondOrder);
         tmpAtomContainer.addBond(tmpBond);
-        Assertions.assertFalse(tmpMaxSpecificBondsFilter.isFiltered(tmpAtomContainer));
+        Assertions.assertFalse(tmpMinSpecificBondsFilter.isFiltered(tmpAtomContainer));
         //threshold exceeded
         tmpAtomContainer.addBond(tmpBond);
-        Assertions.assertTrue(tmpMaxSpecificBondsFilter.isFiltered(tmpAtomContainer));
+        Assertions.assertFalse(tmpMinSpecificBondsFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxBondsOfSpecificBondOrderFilter returns false if a given atom
+     * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if a given atom
      * container is below or equals the threshold and true if the atom container exceeds the threshold; tests for bond
      * order being triple, quadruple, quintuple, unset and null.
      */
@@ -196,23 +198,23 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
         IAtomContainer tmpAtomContainer = new AtomContainer();;
         IBond tmpBond;
-        IFilter tmpMaxSpecificBondsFilter;
+        IFilter tmpMinSpecificBondsFilter;
         //
         for (IBond.Order tmpBondOrder : tmpBondOrderArray) {
-            tmpMaxSpecificBondsFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
+            tmpMinSpecificBondsFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
             tmpBond = new Bond();
             tmpBond.setOrder(tmpBondOrder);
             //
             //below threshold
-            Assertions.assertFalse(tmpMaxSpecificBondsFilter.isFiltered(tmpAtomContainer));
+            Assertions.assertTrue(tmpMinSpecificBondsFilter.isFiltered(tmpAtomContainer));
             //
             //threshold equaled
             tmpAtomContainer.addBond(tmpBond);
-            Assertions.assertFalse(tmpMaxSpecificBondsFilter.isFiltered(tmpAtomContainer));
+            Assertions.assertFalse(tmpMinSpecificBondsFilter.isFiltered(tmpAtomContainer));
             //
             //threshold exceeded
             tmpAtomContainer.addBond(tmpBond);
-            Assertions.assertTrue(tmpMaxSpecificBondsFilter.isFiltered(tmpAtomContainer));
+            Assertions.assertFalse(tmpMinSpecificBondsFilter.isFiltered(tmpAtomContainer));
         }
     }
 
@@ -226,12 +228,12 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
                 NullPointerException.class,
                 () -> {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
-                    int tmpMaxBondsOfSpecificBondOrder = 5;
+                    int tmpMinBondsOfSpecificBondOrder = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    IFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                            tmpBondOrder, tmpMaxBondsOfSpecificBondOrder, tmpConsiderImplicitHydrogens
+                    IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                            tmpBondOrder, tmpMinBondsOfSpecificBondOrder, tmpConsiderImplicitHydrogens
                     );
-                    tmpMaxBondsOfSpecificBondOrderFilter.isFiltered(null);
+                    tmpMinBondsOfSpecificBondOrderFilter.isFiltered(null);
                 }
         );
     }
@@ -243,12 +245,12 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     public void filterMethodTest_returnsIAtomContainerSetNotNull() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
+        int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        Filter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        Object tmpReturnValue = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
+        Object tmpReturnValue = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -262,18 +264,18 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderDouble() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",   // 2
-                "c1ccccc1", // 3 - filtered
-                "CC(=O)O"   // 1
+                "c1ccccc1", // 3
+                "CC(=O)O"   // 1 - filtered
         );
-        int[] tmpNotFilteredArray = new int[]{0, 2};
+        int[] tmpNotFilteredArray = new int[]{0, 1};
         //
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
-        int tmpMaxSpecificBondCount = 2;
+        int tmpMinSpecificBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        Filter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        IAtomContainerSet tmpFilteredACSet = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -290,18 +292,18 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderSingle_considerImplHs() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",   // 7
-                "CC(=O)O",  // 6
-                "c1ccccc1"  // 9 - filtered
+                "CC(=O)O",  // 6 - filtered
+                "c1ccccc1"  // 9
         );
-        int[] tmpNotFilteredArray = new int[]{0, 1};
+        int[] tmpNotFilteredArray = new int[]{0, 2};
         //
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
-        int tmpMaxSpecificBondCount = 7;
+        int tmpMinSpecificBondCount = 7;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        Filter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        IAtomContainerSet tmpFilteredACSet = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -317,19 +319,19 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     @Test
     public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderSingle_notConsiderImplHs() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "c1ccccc1", // 3 - filtered
-                "C=CC=C",   // 1
+                "c1ccccc1", // 3
+                "C=CC=C",   // 1 - filtered
                 "CC(=O)O"   // 2 - filtered
         );
-        int[] tmpNotFilteredArray = new int[]{1};
+        int[] tmpNotFilteredArray = new int[]{0};
         //
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
-        int tmpMaxSpecificBondCount = 1;
+        int tmpMinSpecificBondCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        Filter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        IAtomContainerSet tmpFilteredACSet = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -345,12 +347,12 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
                 NullPointerException.class,
                 () -> {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
-                    int tmpMaxSpecificBondCount = 5;
+                    int tmpMinSpecificBondCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                            tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+                    Filter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                            tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
                     );
-                    tmpMaxBondsOfSpecificBondOrderFilter.filter(null);
+                    tmpMinBondsOfSpecificBondOrderFilter.filter(null);
                 }
         );
     }
@@ -361,28 +363,28 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     @Test
     public void getBondOrderOfInterestMethodTest_returnsBondOrderOfInterest() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
+        int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        Assertions.assertSame(tmpMaxBondsOfSpecificBondOrderFilter.bondOrderOfInterest,
-                tmpMaxBondsOfSpecificBondOrderFilter.getBondOrderOfInterest());
+        Assertions.assertSame(tmpMinBondsOfSpecificBondOrderFilter.bondOrderOfInterest,
+                tmpMinBondsOfSpecificBondOrderFilter.getBondOrderOfInterest());
     }
 
     /**
-     * Tests the getter of maxSpecificBondCount whether it returns maxSpecificBondCount.
+     * Tests the getter of minSpecificBondCount whether it returns minSpecificBondCount.
      */
     @Test
-    public void getMaxSpecificBondCountMethodTest_returnsMaxSpecificBondCount() {
+    public void getMinSpecificBondCountMethodTest_returnsMinSpecificBondCount() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
+        int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        Assertions.assertSame(tmpMaxBondsOfSpecificBondOrderFilter.maxSpecificBondCount,
-                tmpMaxBondsOfSpecificBondOrderFilter.getMaxSpecificBondCount());
+        Assertions.assertSame(tmpMinBondsOfSpecificBondOrderFilter.minSpecificBondCount,
+                tmpMinBondsOfSpecificBondOrderFilter.getMinSpecificBondCount());
     }
 
     /**
@@ -391,13 +393,13 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
     @Test
     public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
+        int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
+        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
-        Assertions.assertSame(tmpMaxBondsOfSpecificBondOrderFilter.considerImplicitHydrogens,
-                tmpMaxBondsOfSpecificBondOrderFilter.isConsiderImplicitHydrogens());
+        Assertions.assertSame(tmpMinBondsOfSpecificBondOrderFilter.considerImplicitHydrogens,
+                tmpMinBondsOfSpecificBondOrderFilter.isConsiderImplicitHydrogens());
     }
 
 }

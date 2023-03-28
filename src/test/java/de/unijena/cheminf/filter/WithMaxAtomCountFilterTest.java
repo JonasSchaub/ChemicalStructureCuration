@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.filter.filters.MaxAtomCountFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

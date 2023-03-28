@@ -7,10 +7,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public interface IFilter {
 
-    /*
-    TODO: refactor getsFiltered to isFiltered / doesGetFiltered / ... ?
-     */
-
     /**
      * Checks whether the filter applies on a given IAtomContainer instance.
      * Returns true, if the given atom container gets filtered.

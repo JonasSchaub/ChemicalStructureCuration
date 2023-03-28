@@ -23,54 +23,56 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf.filter.filters;
 
+import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
 
 /**
- * Max heavy atom count filter for filtering atom containers based on a maximum non-hydrogen atom count.
+ * Min heavy atom count filter for filtering atom containers based on a minimum non-hydrogen atom count.
  */
-public class MaxHeavyAtomCountFilter extends Filter {
+public class MinHeavyAtomCountFilter extends Filter {
 
     /**
-     * Integer value of the max heavy atom count threshold.
+     * Integer value of the min heavy atom count threshold.
      */
-    protected final int maxHeavyAtomCount;
+    protected final int minHeavyAtomCount;
 
     /**
-     * Constructor of the MaxHeavyAtomCountFilter class. Atom containers that equal the given max atom count do not get
+     * Constructor of the MinHeavyAtomCountFilter class. Atom containers that equal the given min atom count do not get
      * filtered.
      *
-     * @param aMaxHeavyAtomCount integer value of the max heavy atom count to filter by
-     * @throws IllegalArgumentException if the given max heavy atom count is less than zero
+     * @param aMinHeavyAtomCount integer value of the min heavy atom count to filter by
+     * @throws IllegalArgumentException if the given min heavy atom count is less than zero
      */
-    public MaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
-        if (aMaxHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
+    public MinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
+        if (aMinHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+            throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
         }
-        this.maxHeavyAtomCount = aMaxHeavyAtomCount;
+        this.minHeavyAtomCount = aMinHeavyAtomCount;
     }
 
     /**
      * {@inheritDoc}
-     * Atom containers that equal the max heavy atom count do not get filtered.
+     * Atom containers that equal the min heavy atom count do not get filtered.
      */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
-        return FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.maxHeavyAtomCount + 1);
+        return !FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.minHeavyAtomCount);
     }
 
     /**
-     * Returns the max heavy atom count.
+     * Returns the min heavy atom count.
      *
      * @return Integer value
      */
-    public int getMaxHeavyAtomCount() {
-        return this.maxHeavyAtomCount;
+    public int getMinHeavyAtomCount() {
+        return this.minHeavyAtomCount;
     }
 
 }

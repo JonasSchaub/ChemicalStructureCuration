@@ -23,9 +23,11 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
+import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
@@ -34,20 +36,20 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
- * Test class for class MinBondCountFilter.
+ * Test class for class MinAtomCountFilter.
  */
-public class MinBondCountFilterTest {
+public class MinAtomCountFilterTest {
 
     /**
      * Tests whether the public constructor initializes all class fields with the given parameters; test 1.
      */
     @Test
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test1() {
-        int tmpMinBondCount = 5;
+        int tmpMinAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.minBondCount);
-        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondCountFilter.considerImplicitHydrogens);
+        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpMinAtomCount, tmpMinAtomCountFilter.minAtomCount);
+        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinAtomCountFilter.considerImplicitHydrogens);
     }
 
     /**
@@ -55,98 +57,98 @@ public class MinBondCountFilterTest {
      */
     @Test
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test2() {
-        int tmpMinBondCount = 10;
+        int tmpMinAtomCount = 10;
         boolean tmpConsiderImplicitHydrogens = false;
-        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.minBondCount);
-        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondCountFilter.considerImplicitHydrogens);
+        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpMinAtomCount, tmpMinAtomCountFilter.minAtomCount);
+        Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinAtomCountFilter.considerImplicitHydrogens);
     }
 
     /**
-     * Tests whether the public constructor throws an IllegalArgumentException if the given min bond count is of a
+     * Tests whether the public constructor throws an IllegalArgumentException if the given min atom count is of a
      * negative value.
      */
     @Test
-    public void publicConstructorTest_throwsIllegalArgumentExceptionIfMinBondCountIsNegative() {
+    public void publicConstructorTest_throwsIllegalArgumentExceptionIfMinAtomCountIsNegative() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    int tmpMinBondCount = -1;
+                    int tmpMinAtomCount = -1;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+                    new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
                 }
         );
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinBondCountFilter returns a boolean value.
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns a boolean value.
      */
     @Test
     public void isFilteredMethodTest_returnsBoolean() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpMinBondCount = 0;
+        int tmpMinAtomCount = 0;
         boolean tmpConsiderImplicitHydrogens = true;
-        IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
         Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinBondCountFilter returns false if an AC exceeds the min bond
-     * count considering bonds to implicit hydrogen atoms.
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns false if an AC exceeds the min atom
+     * count considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void isFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //9 bonds
-        int tmpMinBondCount = 9;
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //9 atoms
+        int tmpMinAtomCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
-        IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinBondCountFilter returns true if an AC does not exceed the min
-     * bond count considering bonds to implicit hydrogen atoms.
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns true if an AC does not exceed the min
+     * atom count considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void isFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //9 bonds
-        int tmpMinBondCount = 10;
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //9 atoms
+        int tmpMinAtomCount = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinBondCountFilter returns false if an AC exceeds the min bond
-     * count not considering bonds to implicit hydrogen atoms.
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns false if an AC exceeds the min atom
+     * count not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void isFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //3 bonds
-        int tmpMinBondCount = 3;
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //3 atoms
+        int tmpMinAtomCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinBondCountFilter returns true if an AC does not exceed the min
-     * bond count not considering bonds to implicit hydrogen atoms.
+     * Tests whether method .isFiltered() of class MinAtomCountFilter returns true if an AC does not exceed the min
+     * atom count not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");   //3 bonds
-        int tmpMinBondCount = 4;
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //3 atoms
+        int tmpMinAtomCount = 4;
         boolean tmpConsiderImplicitHydrogens = false;
-        IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
         Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
@@ -159,10 +161,10 @@ public class MinBondCountFilterTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    int tmpMinBondCount = 5;
+                    int tmpMinAtomCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-                    tmpMinBondCountFilter.isFiltered(null);
+                    IFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+                    tmpMinAtomCountFilter.isFiltered(null);
                 }
         );
     }
@@ -173,10 +175,10 @@ public class MinBondCountFilterTest {
     @Test
     public void filterMethodTest_returnsIAtomContainerSetNotNull() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        int tmpMinBondCount = 5;
+        int tmpMinAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Object tmpReturnValue = tmpMinBondCountFilter.filter(tmpAtomContainerSet);
+        Filter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Object tmpReturnValue = tmpMinAtomCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -189,16 +191,16 @@ public class MinBondCountFilterTest {
     @Test
     public void filterMethodTest_filtersAsExpected_test1() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "C=CC=C",   // 9 (3) - filtered
+                "C=CC=C",   //10 (4) - filtered
                 "c1ccccc1", //12 (6)
-                "CCO"       // 8 (2) - filtered
+                "CCO"       // 9 (3) - filtered
         );
         int[] tmpNotFilteredArray = new int[]{1};
         //
-        int tmpMinBondCount = 11;
+        int tmpMinAtomCount = 11;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpMinBondCountFilter.filter(tmpAtomContainerSet);
+        Filter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        IAtomContainerSet tmpFilteredACSet = tmpMinAtomCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -213,16 +215,16 @@ public class MinBondCountFilterTest {
     @Test
     public void filterMethodTest_filtersAsExpected_test2() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "CCO",      // 8 (2) - filtered
+                "CCO",      // 9 (3) - filtered
                 "c1ccccc1", //12 (6)
-                "C=CC=C"    // 9 (3)
+                "C=CC=C"    //10 (4)
         );
         int[] tmpNotFilteredArray = new int[]{1, 2};
         //
-        int tmpMinBondCount = 3;
+        int tmpMinAtomCount = 4;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpMinBondCountFilter.filter(tmpAtomContainerSet);
+        Filter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        IAtomContainerSet tmpFilteredACSet = tmpMinAtomCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -237,23 +239,23 @@ public class MinBondCountFilterTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    int tmpMinBondCount = 5;
+                    int tmpMinAtomCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    Filter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-                    tmpMinBondCountFilter.filter(null);
+                    Filter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+                    tmpMinAtomCountFilter.filter(null);
                 }
         );
     }
 
     /**
-     * Tests the getter of minBondCount whether it returns minBondCount.
+     * Tests the getter of minAtomCount whether it returns minAtomCount.
      */
     @Test
-    public void getMinBondCountMethodTest_returnsMinBondCount() {
-        int tmpMinBondCount = 5;
+    public void getMinAtomCountMethodTest_returnsMinAtomCount() {
+        int tmpMinAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMinBondCountFilter.minBondCount, tmpMinBondCountFilter.getMinBondCount());
+        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMinAtomCountFilter.minAtomCount, tmpMinAtomCountFilter.getMinAtomCount());
     }
 
     /**
@@ -261,10 +263,10 @@ public class MinBondCountFilterTest {
      */
     @Test
     public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        int tmpMinBondCount = 5;
+        int tmpMinAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMinBondCountFilter.considerImplicitHydrogens, tmpMinBondCountFilter.isConsiderImplicitHydrogens());
+        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
+        Assertions.assertSame(tmpMinAtomCountFilter.considerImplicitHydrogens, tmpMinAtomCountFilter.isConsiderImplicitHydrogens());
     }
 
 }

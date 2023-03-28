@@ -25,7 +25,16 @@
 
 package de.unijena.cheminf.filter;
 
-import org.apache.commons.lang3.NotImplementedException;
+import de.unijena.cheminf.filter.filters.HasAllValidAtomicNumbersFilter;
+import de.unijena.cheminf.filter.filters.HasInvalidAtomicNumbersFilter;
+import de.unijena.cheminf.filter.filters.MaxAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MaxBondCountFilter;
+import de.unijena.cheminf.filter.filters.MaxBondsOfSpecificBondOrderFilter;
+import de.unijena.cheminf.filter.filters.MaxHeavyAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MinAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MinBondCountFilter;
+import de.unijena.cheminf.filter.filters.MinBondsOfSpecificBondOrderFilter;
+import de.unijena.cheminf.filter.filters.MinHeavyAtomCountFilter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;

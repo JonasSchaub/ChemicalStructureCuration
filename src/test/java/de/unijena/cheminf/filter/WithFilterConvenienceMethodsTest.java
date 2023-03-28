@@ -26,12 +26,23 @@
 package de.unijena.cheminf.filter;
 
 import de.unijena.cheminf.TestUtils;
+import de.unijena.cheminf.filter.filters.HasAllValidAtomicNumbersFilter;
+import de.unijena.cheminf.filter.filters.HasInvalidAtomicNumbersFilter;
+import de.unijena.cheminf.filter.filters.MaxBondCountFilter;
+import de.unijena.cheminf.filter.filters.MaxBondsOfSpecificBondOrderFilter;
+import de.unijena.cheminf.filter.filters.MaxHeavyAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MinBondCountFilter;
+import de.unijena.cheminf.filter.filters.MinBondsOfSpecificBondOrderFilter;
+import de.unijena.cheminf.filter.filters.MinHeavyAtomCountFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 
+/**
+ * Test class of FilterPipeline methods to add specific filters to the pipeline.
+ */
 public class WithFilterConvenienceMethodsTest {
 
     /*

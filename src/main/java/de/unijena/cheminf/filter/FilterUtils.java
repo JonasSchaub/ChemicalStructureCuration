@@ -30,7 +30,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.interfaces.IElement;
 
 import java.util.Objects;
 
@@ -190,5 +189,7 @@ public class FilterUtils {
         }
         return true;
     }
+
+    //TODO: FilterUtils for filtering on mass
 
 }

@@ -23,25 +23,23 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf.filter.filters;
 
+import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
 
 /**
- * Max atom count filter for filtering atom containers based on a maximum atom count.
+ * Min atom count filter for filtering atom containers based on a minimum atom count.
  */
-public class MaxAtomCountFilter extends Filter {
-
-    /*
-    TODO: rename maxAtomCount to maxAtomCountThreshold?
-     */
+public class MinAtomCountFilter extends Filter {
 
     /**
-     * Integer value of the max atom count threshold.
+     * Integer value of the min atom count threshold.
      */
-    protected final int maxAtomCount;
+    protected final int minAtomCount;
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
@@ -50,40 +48,40 @@ public class MaxAtomCountFilter extends Filter {
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor of the MaxAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
-     * containers that equal the given max atom count do not get filtered.
+     * Constructor of the MinAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
+     * containers that equal the given min atom count do not get filtered.
      *
-     * @param aMaxAtomCount integer value of the max atom count to filter by
+     * @param aMinAtomCount integer value of the min atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                  calculating an atom containers atom count
-     * @throws IllegalArgumentException if the given max atom count is less than zero
+     * @throws IllegalArgumentException if the given min atom count is less than zero
      */
-    public MaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
+    public MinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+            throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
-        this.maxAtomCount = aMaxAtomCount;
+        this.minAtomCount = aMinAtomCount;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
     /**
      * {@inheritDoc}
-     * Atom containers that equal the max atom count do not get filtered.
+     * Atom containers that equal the min atom count do not get filtered.
      */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
-        return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.maxAtomCount + 1, this.considerImplicitHydrogens);
+        return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.minAtomCount, this.considerImplicitHydrogens);
     }
 
     /**
-     * Returns the max atom count.
+     * Returns the min atom count.
      *
      * @return Integer value
      */
-    public int getMaxAtomCount() {
-        return this.maxAtomCount;
+    public int getMinAtomCount() {
+        return this.minAtomCount;
     }
 
     /**

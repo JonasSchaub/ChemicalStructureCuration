@@ -23,17 +23,19 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf.filter.filters;
 
+import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
 
 /**
- * Has all valid atomic numbers filter to filter atom containers with all valid atomic numbers out of a set of atom
- * containers.
+ * Has invalid atomic numbers filter to filter atom containers with atoms with invalid atomic numbers out of a set of
+ * atom containers.
  */
-public class HasAllValidAtomicNumbersFilter extends Filter {
+public class HasInvalidAtomicNumbersFilter extends Filter {
 
     /**
      * Boolean value whether to consider the wildcard atomic number zero as a valid atomic number.
@@ -41,13 +43,13 @@ public class HasAllValidAtomicNumbersFilter extends Filter {
     protected final boolean wildcardAtomicNumberIsValid;
 
     /**
-     * Constructor of the HasAllValidAtomicNumbersFilter class. The wildcard atomic number zero may or may not be
+     * Constructor of the HasInvalidAtomicNumbersFilter class. The wildcard atomic number zero may or may not be
      * considered as valid atomic number.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
      */
-    public HasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
+    public HasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
     }
 
@@ -63,10 +65,10 @@ public class HasAllValidAtomicNumbersFilter extends Filter {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         try {
-            return !FilterUtils.hasAllValidAtomicNumbers(anAtomContainer, this.wildcardAtomicNumberIsValid);
+            return FilterUtils.hasAllValidAtomicNumbers(anAtomContainer, this.wildcardAtomicNumberIsValid);
         } catch (IllegalArgumentException anIllegalArgumentException) {
             //TODO: log / report the exception
-            return true;
+            return false;
         }
     }
 

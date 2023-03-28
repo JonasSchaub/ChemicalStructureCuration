@@ -1,11 +1,15 @@
 package de.unijena.cheminf.filter;
 
 import de.unijena.cheminf.TestUtils;
+import de.unijena.cheminf.filter.filters.MinAtomCountFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 
+/**
+ * Test class of the FilterPipeline method .withFilter().
+ */
 public class WithFilterMethodTest {
 
     /**

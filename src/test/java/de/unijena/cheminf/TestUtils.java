@@ -81,8 +81,6 @@ public class TestUtils {
         return tmpSmilesParser.parseSmiles(aSmilesString);
     }
 
-    //TODO: method that returns an AtomContainerSet with a given number of empty AtomContainers
-
     /**
      * Returns an atom container set containing a given number of empty atom containers.
      *
@@ -101,7 +99,7 @@ public class TestUtils {
         return tmpAtomContainerSet;
     }
 
-    /** TODO: might be removed
+    /**
      * Returns a Filter instance whose .getsFiltered() method always returns a default value.
      *
      * @return instance of Filter
