@@ -26,10 +26,11 @@
 package de.unijena.cheminf.filter;
 
 import de.unijena.cheminf.ChemUtils;
-import org.apache.commons.lang3.NotImplementedException;
+import de.unijena.cheminf.filter.filters.MassComputationFlavours;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import java.util.Objects;
 
@@ -107,10 +108,10 @@ public class FilterUtils {
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aBondOrder Constant of IBond.Order to specify the bond order of the bonds to be counted; null or
-     *                  IBond.Order.UNSET are allowed
+     *                   IBond.Order.UNSET are allowed
      * @param aThresholdValue Integer value of the bond count threshold
      * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms; this is
-     *                                  only relevant when counting bonds of the order one / single
+     *                                   only relevant when counting bonds of the order one / single
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is less than zero
@@ -190,6 +191,35 @@ public class FilterUtils {
         return true;
     }
 
-    //TODO: FilterUtils for filtering on mass
+    /**
+     * Checks whether the mass of a molecule (given IAtomContainer instance) exceeds or equals a given threshold value.
+     * This function takes a 'mass flavour' that switches the computation type of the mass calculation. The key
+     * distinction is how specified/unspecified isotopes are handled. A specified isotope is an atom that has either
+     * {@link IAtom#setMassNumber(Integer)} or {@link IAtom#setExactMass(Double)} set to non-null and non-zero.
+     * The mass of the molecule is calculated via {@link AtomContainerManipulator#getMass(IAtomContainer, int)}.
+     * TODO: test the different mass computation type flavours?
+     * TODO: make 'mass flavour' optional at this level or at the filter level? (overload method)
+     *
+     * @param anAtomContainer IAtomContainer instance to check
+     * @param aFlavour MassCalculationFlavour that switches the computation type of the mass calculation;
+     *                 see: {@link MassComputationFlavours},
+     *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
+     * @param aThresholdValue integer value of the mass threshold
+     * @return the mass of the molecule
+     * @throws NullPointerException if the given IAtomContainer instance or the given mass computation flavour is null
+     * @throws IllegalArgumentException if the given threshold value is less than zero
+     * @see MassComputationFlavours
+     * @see AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    public static boolean exceedsOrEqualsMass(IAtomContainer anAtomContainer, MassComputationFlavours aFlavour, double aThresholdValue)
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavour) is null."); //TODO: or use MolWeight as default if null is given?
+        if (aThresholdValue < 0) {
+            throw new IllegalArgumentException("aThresholdValue (double value) is < than 0.");
+        }
+        double tmpMassOfMolecule = AtomContainerManipulator.getMass(anAtomContainer, aFlavour.getAssociatedIntegerValue());
+        return tmpMassOfMolecule >= aThresholdValue;
+    }
 
 }

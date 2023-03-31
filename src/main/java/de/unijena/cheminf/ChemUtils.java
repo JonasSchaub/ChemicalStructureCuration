@@ -72,7 +72,7 @@ public class ChemUtils {
         return tmpImplicitHydrogensCount;
     }
 
-    /** TODO: not used in any filter so far
+    /** TODO: not used in any filter so far; use countExplicitHydrogens() of AtomContainerManipulator instead?
      * Returns the number of explicit hydrogen atoms present in the given atom container.
      *
      * @param anAtomContainer IAtomContainer instance to check

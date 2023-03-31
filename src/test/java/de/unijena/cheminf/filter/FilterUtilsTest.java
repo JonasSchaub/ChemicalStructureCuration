@@ -26,6 +26,7 @@
 package de.unijena.cheminf.filter;
 
 import de.unijena.cheminf.TestUtils;
+import de.unijena.cheminf.filter.filters.MassComputationFlavours;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;
@@ -37,6 +38,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IElement;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
  * Test class for methods of class FilterUtils.
@@ -845,6 +847,175 @@ public class FilterUtilsTest {
                     tmpAtomContainer.addAtom(tmpAtom);
                     boolean tmpIncludeWildcardNumber = true;    //has no impact
                     FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils returns a boolean value.
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_returnsBooleanValue() {
+        IAtomContainer tmpAtomContainer = new AtomContainer();
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        double tmpThresholdValue = 10;
+        Assertions.assertInstanceOf(Boolean.class, FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue));
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils returns true if the mass of a molecule
+     * exceeds the given threshold value.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_returnsTrueIfMassExceedsThreshold() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "C",
+                "c1ccccc1",
+                "O=C=O"
+        );
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        double tmpThresholdValue;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpThresholdValue = AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue()) - 1;
+            System.out.println(AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue())); //TODO: remove
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils returns true if the mass of a molecule
+     * equals the given threshold value.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_returnsTrueIfMassEqualsThreshold() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "C",
+                "c1ccccc1",
+                "O=C=O"
+        );
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        double tmpThresholdValue;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpThresholdValue = AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue());
+            System.out.println(AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue())); //TODO: remove
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils returns true if the mass of a molecule
+     * falls short of the given threshold.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_returnsTrueIfMassIsBelowThreshold() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "C",
+                "c1ccccc1",
+                "O=C=O"
+        );
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        double tmpThresholdValue;
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            tmpThresholdValue = AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue()) + 1;
+            System.out.println(AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue())); //TODO: remove
+            Assertions.assertFalse(FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue));
+        }
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils returns the expected results if the given
+     * flavour is differs from AtomContainerManipulator.MolWeight.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_returnsExpectedResultForOtherFlavours() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString(
+                "O=C=O"
+        );
+        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
+                MassComputationFlavours.MolWeightIgnoreSpecified,    //0x2
+                MassComputationFlavours.MonoIsotopic,                //0x3
+                MassComputationFlavours.MostAbundant                 //0x4
+        };
+        double tmpThresholdValue;
+        for (MassComputationFlavours tmpFlavour :
+                tmpFlavoursArray) {
+            tmpThresholdValue = AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue());
+            System.out.println(AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue())); //TODO: remove
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue - 1));
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue));
+            Assertions.assertFalse(FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue + 1));
+        }
+    }
+
+    //TODO: test with specified
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils throws a NullPointerException if the given
+     * IAtomContainer instance is null.
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = null;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    double tmpThresholdValue = 10;
+                    FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils throws a NullPointerException if the
+     * given mass computation type flavour is null.
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_throwsNullPointerExceptionIfGivenFlavourIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    MassComputationFlavours tmpFlavour = null;
+                    double tmpThresholdValue = 10;
+                    FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .exceedsOrEqualsMass() method of class FilterUtils throws an IllegalArgumentException if the
+     * given threshold value is of a negative value.
+     */
+    @Test
+    public void exceedsOrEqualsMassMethodTest_throwsIllegalArgumentExceptionIfGivenThresholdIsNegative_twoTests() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    double tmpThresholdValue = -1;
+                    FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue);
+                }
+        );
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    double tmpThresholdValue = -10;
+                    FilterUtils.exceedsOrEqualsMass(tmpAtomContainer, tmpFlavour, tmpThresholdValue);
                 }
         );
     }
