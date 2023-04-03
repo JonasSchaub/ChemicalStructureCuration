@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf;
 
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.FilterPipeline;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
@@ -104,7 +104,7 @@ public class TestUtils {
      *
      * @return instance of Filter
      */
-    public static Filter getAllTrueOrFalseFilter() {
+    public static FilterBase getAllTrueOrFalseFilter() {
         boolean tmpDefaultValue = false;
         return TestUtils.getAllTrueOrFalseFilter(tmpDefaultValue);
     }
@@ -116,8 +116,8 @@ public class TestUtils {
      *                               Filter instance
      * @return instance of Filter
      */
-    public static Filter getAllTrueOrFalseFilter(boolean aIsFilteredReturnValue) {
-        return new Filter() {
+    public static FilterBase getAllTrueOrFalseFilter(boolean aIsFilteredReturnValue) {
+        return new FilterBase() {
             /**
              * Returns a boolean value independent of the given atom container.
              *

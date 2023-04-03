@@ -1043,7 +1043,7 @@ public class WithFilterConvenienceMethodsTest {
                 false,  //all valid
                 true,   //atomic number < 0
                 true,   //atomic number > 118
-                true,  //atomic number = 0
+                true,   //atomic number = 0
                 true    //atomic number is null
         };
         //

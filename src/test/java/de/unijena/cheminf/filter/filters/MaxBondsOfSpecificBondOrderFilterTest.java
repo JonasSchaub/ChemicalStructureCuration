@@ -26,7 +26,7 @@
 package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -247,7 +247,7 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpMaxSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
+        FilterBase tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         Object tmpReturnValue = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -272,7 +272,7 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         int tmpMaxSpecificBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
+        FilterBase tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -300,7 +300,7 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMaxSpecificBondCount = 7;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
+        FilterBase tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -328,7 +328,7 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMaxSpecificBondCount = 1;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
+        FilterBase tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -349,7 +349,7 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
                     int tmpMaxSpecificBondCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    Filter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
+                    FilterBase tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
                             tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
                     );
                     tmpMaxBondsOfSpecificBondOrderFilter.filter(null);

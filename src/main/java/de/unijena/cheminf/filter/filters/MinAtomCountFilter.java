@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter.filters;
 
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Min atom count filter for filtering atom containers based on a minimum atom count.
  */
-public class MinAtomCountFilter extends Filter {
+public class MinAtomCountFilter extends FilterBase {
 
     /**
      * Integer value of the min atom count threshold.

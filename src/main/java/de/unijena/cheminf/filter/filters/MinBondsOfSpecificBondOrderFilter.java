@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter.filters;
 
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -36,7 +36,7 @@ import java.util.Objects;
  * Min bonds of specific bond order filter for filtering atom containers based on a minimum count of bonds of a
  * specific bond order.
  */
-public class MinBondsOfSpecificBondOrderFilter extends Filter {
+public class MinBondsOfSpecificBondOrderFilter extends FilterBase {
 
     /**
      * IBond.Order of bonds to count and filter on.

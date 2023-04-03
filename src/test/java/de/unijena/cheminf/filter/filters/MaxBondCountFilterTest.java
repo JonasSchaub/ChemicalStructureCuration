@@ -26,7 +26,7 @@
 package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -177,7 +177,7 @@ public class MaxBondCountFilterTest {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMaxBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        FilterBase tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         Object tmpReturnValue = tmpMaxBondCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -199,7 +199,7 @@ public class MaxBondCountFilterTest {
         //
         int tmpMaxBondCount = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        FilterBase tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -223,7 +223,7 @@ public class MaxBondCountFilterTest {
         //
         int tmpMaxBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;
-        Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+        FilterBase tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         IAtomContainerSet tmpFilteredACSet = tmpMaxBondCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -241,7 +241,7 @@ public class MaxBondCountFilterTest {
                 () -> {
                     int tmpMaxBondCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    Filter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
+                    FilterBase tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
                     tmpMaxBondCountFilter.filter(null);
                 }
         );

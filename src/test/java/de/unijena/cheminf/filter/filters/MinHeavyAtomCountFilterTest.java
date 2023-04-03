@@ -26,7 +26,7 @@
 package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -172,7 +172,7 @@ public class MinHeavyAtomCountFilterTest {
     public void filterMethodTest_returnsIAtomContainerSetNotNull() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMinHeavyAtomCount = 5;
-        Filter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
+        FilterBase tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         Object tmpReturnValue = tmpMinHeavyAtomCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -193,7 +193,7 @@ public class MinHeavyAtomCountFilterTest {
         int[] tmpNotFilteredArray = new int[]{0, 2};
         //
         int tmpMinHeavyAtomCount = 4;
-        Filter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
+        FilterBase tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         IAtomContainerSet tmpFilteredACSet = tmpMinHeavyAtomCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -216,7 +216,7 @@ public class MinHeavyAtomCountFilterTest {
         int[] tmpNotFilteredArray = new int[]{1};
         //
         int tmpMinHeavyAtomCount = 6;
-        Filter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
+        FilterBase tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         IAtomContainerSet tmpFilteredACSet = tmpMinHeavyAtomCountFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -233,7 +233,7 @@ public class MinHeavyAtomCountFilterTest {
                 NullPointerException.class,
                 () -> {
                     int tmpMinHeavyAtomCount = 5;
-                    Filter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
+                    FilterBase tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
                     tmpMinHeavyAtomCountFilter.filter(null);
                 }
         );

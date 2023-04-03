@@ -32,15 +32,14 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import java.util.Objects;
 
 /**
- * Abstract class Filter - implements IFilter.
+ * Abstract class FilterBase - implements IFilter.  TODO
  */
-public abstract class Filter implements IFilter {
+public abstract class FilterBase implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?
     TODO: boolean needsInfoOfOtherACs? (for duplicates filter)
     TODO: add countOfFilteredACs
-    TODO: find a more telling name?
      */
 
     /**

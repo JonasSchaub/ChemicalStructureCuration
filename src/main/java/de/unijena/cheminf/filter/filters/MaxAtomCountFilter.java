@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter.filters;
 
-import de.unijena.cheminf.filter.Filter;
+import de.unijena.cheminf.filter.FilterBase;
 import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Max atom count filter for filtering atom containers based on a maximum atom count.
  */
-public class MaxAtomCountFilter extends Filter {
+public class MaxAtomCountFilter extends FilterBase {
 
     /*
     TODO: rename maxAtomCount to maxAtomCountThreshold?
