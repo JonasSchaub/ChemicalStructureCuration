@@ -43,6 +43,8 @@ import org.openscience.cdk.interfaces.IBond;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class for creating/building pipelines of multiple filters for filtering sets of atom containers based on molecular descriptors.  TODO: is this one sentence enough?
@@ -55,7 +57,6 @@ public class FilterPipeline {
     TODO: remove parameter tests of filters out of FilterPipeline methods?
     TODO: use the .withFilter() method in the .with...Filter() convenience methods?
     //
-    TODO: remove / adopt tests for .getsFiltered() method
     TODO: doc comments and test methods for new class fields
     TODO: getters for new class fields
     //
@@ -81,6 +82,11 @@ public class FilterPipeline {
      * Default value for the filter ID of an atom container that has not been filtered during a filtering process.
      */
     public static final int NOT_FILTERED_VALUE = -1;
+
+    /**
+     * Logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(FilterPipeline.class.getName());
 
     /**
      * Linked list of the IFilter instances that were added to this filter pipeline. Filters can be added via the filter
@@ -150,6 +156,7 @@ public class FilterPipeline {
      * filter an atom container got filtered by, every atom container gets the index of the filter in the list of
      * selected filters assigned as FilterID (integer property "FilterPipeline.FilterID"). Atom containers that do
      * not get filtered get a FilterID of negative one.
+     * Atom containers do not pass a filter if they cause an exception to be thrown.    TODO
      *
      * @param anAtomContainerSet set of atom containers to be filtered
      * @return atom container set of all atom containers that passed the filter pipeline
@@ -161,13 +168,20 @@ public class FilterPipeline {
         this.latestFilteringProcess_numberOfACsFilteredByEachFilter = new int[this.listOfSelectedFilters.size()];
         this.assignMolIdToAtomContainers(anAtomContainerSet);
         final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        boolean tmpIsFilteredFlag;
         IAtomContainer tmpAtomContainer;
 
         for (int tmpIndexOfFilter = 0; tmpIndexOfFilter < this.listOfSelectedFilters.size(); tmpIndexOfFilter++) {
             for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
                 if (!tmpIsFilteredBitSet.get(i)) {
                     tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
-                    if (this.listOfSelectedFilters.get(tmpIndexOfFilter).isFiltered(tmpAtomContainer)) {
+                    try {
+                        tmpIsFilteredFlag = this.listOfSelectedFilters.get(tmpIndexOfFilter).isFiltered(tmpAtomContainer);
+                    } catch (Exception anException) {
+                        FilterPipeline.LOGGER.log(Level.INFO, anException.toString(), anException);   //TODO: which level to log at?
+                        tmpIsFilteredFlag = true;
+                    }
+                    if (tmpIsFilteredFlag) {
                         tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfFilter);
                         tmpIsFilteredBitSet.set(i);
                         this.latestFilteringProcess_numberOfACsFilteredByEachFilter[tmpIndexOfFilter]++;
@@ -217,7 +231,7 @@ public class FilterPipeline {
      * @throws IllegalArgumentException if the given max atom count has a negative value
      */
     public FilterPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+        if (aMaxAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
@@ -235,7 +249,7 @@ public class FilterPipeline {
      * @throws IllegalArgumentException if the given min atom count has a negative value
      */
     public FilterPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
+        if (aMinAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
@@ -252,7 +266,7 @@ public class FilterPipeline {
      * @throws IllegalArgumentException if the given max heavy atom count has a negative value
      */
     public FilterPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
-        if (aMaxHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+        if (aMaxHeavyAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
@@ -269,7 +283,7 @@ public class FilterPipeline {
      * @throws IllegalArgumentException if the given min heavy atom count has a negative value
      */
     public FilterPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
-        if (aMinHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
+        if (aMinHeavyAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
@@ -287,7 +301,7 @@ public class FilterPipeline {
      * @throws IllegalArgumentException if the given max bond count has a negative value
      */
     public FilterPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxBondCount < 0) {    //TODO: would not harm the code but makes no sense
+        if (aMaxBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
@@ -305,7 +319,7 @@ public class FilterPipeline {
      * @throws IllegalArgumentException if the given min bond count has a negative value
      */
     public FilterPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinBondCount < 0) {    //TODO: would not harm the code but makes no sense; param. checks here?!
+        if (aMinBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
@@ -328,7 +342,7 @@ public class FilterPipeline {
     public FilterPipeline withMaxBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
-        if (aMaxSpecificBondCount < 0) {
+        if (aMaxSpecificBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
@@ -351,7 +365,7 @@ public class FilterPipeline {
     public FilterPipeline withMinBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
-        if (aMinSpecificBondCount < 0) {
+        if (aMinSpecificBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
