@@ -23,7 +23,7 @@
  *
  */
 
-package de.unijena.cheminf.filter.filters;
+package de.unijena.cheminf;
 
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,7 +37,13 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
  *
  * @see AtomContainerManipulator#getMass(IAtomContainer, int)
  */
-public enum MassComputationFlavours {   //TODO: Computation / Calculation ?
+public enum MassComputationFlavours {
+
+    /*
+    TODO: Computation / Calculation?
+    TODO: position the enum elsewhere in the project?
+    TODO: does this enum need tests?
+     */
 
     /**
      * When calculating the mass of a molecule, this option uses the mass stored on atoms (IAtom.getExactMass())
@@ -45,7 +51,7 @@ public enum MassComputationFlavours {   //TODO: Computation / Calculation ?
      *
      * @see AtomContainerManipulator#MolWeight
      */
-    MolWeight(AtomContainerManipulator.MolWeight),
+    MolWeight(AtomContainerManipulator.MolWeight),          //0x1
 
     /**
      * When calculating the mass of a molecule, this option ignores the mass stored on atoms (IAtom.getExactMass())
@@ -53,7 +59,7 @@ public enum MassComputationFlavours {   //TODO: Computation / Calculation ?
      *
      * @see AtomContainerManipulator#MolWeightIgnoreSpecified
      */
-    MolWeightIgnoreSpecified(AtomContainerManipulator.MolWeightIgnoreSpecified),
+    MolWeightIgnoreSpecified(AtomContainerManipulator.MolWeightIgnoreSpecified),    //0x2
 
     /**
      * When calculating the mass of a molecule, this option uses the mass stored on atoms IAtom.getExactMass()
@@ -61,7 +67,7 @@ public enum MassComputationFlavours {   //TODO: Computation / Calculation ?
      *
      * @see AtomContainerManipulator#MonoIsotopic
      */
-    MonoIsotopic(AtomContainerManipulator.MonoIsotopic),
+    MonoIsotopic(AtomContainerManipulator.MonoIsotopic),    //0x3
 
     /**
      * When calculating the mass of a molecule, this option uses the mass stored on atoms IAtom.getExactMass()
@@ -70,7 +76,7 @@ public enum MassComputationFlavours {   //TODO: Computation / Calculation ?
      *
      * @see AtomContainerManipulator#MostAbundant
      */
-    MostAbundant(AtomContainerManipulator.MostAbundant);
+    MostAbundant(AtomContainerManipulator.MostAbundant);    //0x4
 
     /**
      * Integer value associated with the specific 'mass flavour'.
@@ -81,8 +87,13 @@ public enum MassComputationFlavours {   //TODO: Computation / Calculation ?
      * Internal constructor.
      *
      * @param anAssociatedIntegerValue the integer value the 'mass flavour' is associated with
+     * @throws IllegalArgumentException if the given associated integer value is less than one or greater than four
      */
-    MassComputationFlavours(int anAssociatedIntegerValue) {
+    MassComputationFlavours(int anAssociatedIntegerValue) throws IllegalArgumentException {
+        if (anAssociatedIntegerValue < 1 || anAssociatedIntegerValue > 4) {
+            throw new IllegalArgumentException("The integer value associated with a mass computation flavour may only " +
+                    "be a value between one and four.");
+        }
         this.associatedIntegerValue = anAssociatedIntegerValue;
     }
 

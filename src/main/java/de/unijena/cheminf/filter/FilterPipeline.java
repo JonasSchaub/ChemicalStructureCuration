@@ -25,16 +25,19 @@
 
 package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.MassComputationFlavours;
 import de.unijena.cheminf.filter.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.HasInvalidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.MaxAtomCountFilter;
 import de.unijena.cheminf.filter.filters.MaxBondCountFilter;
 import de.unijena.cheminf.filter.filters.MaxBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.filter.filters.MaxHeavyAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MaxMolecularMassFilter;
 import de.unijena.cheminf.filter.filters.MinAtomCountFilter;
 import de.unijena.cheminf.filter.filters.MinBondCountFilter;
 import de.unijena.cheminf.filter.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.filter.filters.MinHeavyAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MinMolecularMassFilter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -395,6 +398,96 @@ public class FilterPipeline {
      */
     public FilterPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a max molecular mass filter with the given parameters to the filter pipeline. The given mass computation
+     * flavour switches the computation type of the mass calculation; atom containers that equal the given max
+     * molecular mass value do not get filtered.
+     *
+     * @param aMaxMolecularMass double value of the max molecular mass value to filter by
+     * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
+     *                                calculation
+     * @return the FilterPipeline instance itself
+     * @throws NullPointerException if the given MassComputationFlavours value is null
+     * @throws IllegalArgumentException if the given max molecular mass is of a negative value
+     * @see MassComputationFlavours
+     * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    public FilterPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
+        if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+            throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
+        }
+        IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a max molecular mass filter with the given max molecular mass value to the filter pipeline.
+     * This method takes no mass computation flavour; for the new filter the default 'mass flavour'
+     * {@link MassComputationFlavours#MolWeight} is used. Atom containers that equal the given max
+     * molecular mass value do not get filtered.
+     *
+     * @param aMaxMolecularMass double value of the max molecular mass value to filter by
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given max molecular mass is of a negative value
+     * @see MassComputationFlavours
+     * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    public FilterPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
+        if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+            throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
+        }
+        IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a min molecular mass filter with the given parameters to the filter pipeline. The given mass computation
+     * flavour switches the computation type of the mass calculation; atom containers that equal the given min
+     * molecular mass value do not get filtered.
+     *
+     * @param aMinMolecularMass double value of the min molecular mass value to filter by
+     * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
+     *                                calculation
+     * @return the FilterPipeline instance itself
+     * @throws NullPointerException if the given MassComputationFlavours value is null
+     * @throws IllegalArgumentException if the given min molecular mass is of a negative value
+     * @see MassComputationFlavours
+     * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    public FilterPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
+        if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+            throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
+        }
+        IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour);
+        this.listOfSelectedFilters.add(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a min molecular mass filter with the given min molecular mass value to the filter pipeline.
+     * This method takes no mass computation flavour; for the new filter the default 'mass flavour'
+     * {@link MassComputationFlavours#MolWeight} is used. Atom containers that equal the given min
+     * molecular mass value do not get filtered.
+     *
+     * @param aMinMolecularMass double value of the min molecular mass value to filter by
+     * @return the FilterPipeline instance itself
+     * @throws IllegalArgumentException if the given min molecular mass is of a negative value
+     * @see MassComputationFlavours
+     * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    public FilterPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
+        if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+            throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
+        }
+        IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass);
         this.listOfSelectedFilters.add(tmpFilter);
         return this;
     }

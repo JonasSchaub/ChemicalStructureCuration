@@ -25,15 +25,18 @@
 
 package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.MassComputationFlavours;
 import de.unijena.cheminf.TestUtils;
 import de.unijena.cheminf.filter.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.HasInvalidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.MaxBondCountFilter;
 import de.unijena.cheminf.filter.filters.MaxBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.filter.filters.MaxHeavyAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MaxMolecularMassFilter;
 import de.unijena.cheminf.filter.filters.MinBondCountFilter;
 import de.unijena.cheminf.filter.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.filter.filters.MinHeavyAtomCountFilter;
+import de.unijena.cheminf.filter.filters.MinMolecularMassFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -1163,5 +1166,357 @@ public class WithFilterConvenienceMethodsTest {
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+
+    /**
+     * Tests whether the value returned by the .withMaxMolecularMassFilter() method of the class FilterPipeline with
+     * MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_returnsFilterPipelineInstanceItself() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputationFlavours parameter was extended by an instance of
+     * MaxMolecularMassFilter.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputationFlavours parameter has the given threshold value set to
+     * it; two tests.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenThresholdValue_twoTests() {
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxMolecularMass());
+        tmpThresholdValue = 20.0;
+        tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxMolecularMass());
+    }
+
+    /**
+     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputationFlavours parameter has the given mass computation flavour
+     * set to it; two tests.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenMassComputationFlavour_twoTests() {
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMassComputationFlavour());
+        tmpFlavour = MassComputationFlavours.MonoIsotopic;
+        tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMassComputationFlavour());
+    }
+
+    /**
+     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * parameter throws an IllegalArgumentException if the given max molecular mass threshold value is of a negative
+     * value; two tests.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -0.1;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -5.0;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * parameter throws a NullPointerException if the given mass computation flavour is null.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_throwsNullPointerExceptionIfGivenFlavourIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    double tmpThresholdValue = 10.0;
+                    MassComputationFlavours tmpFlavour = null;
+                    new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the value returned by the .withMaxMolecularMassFilter() method of the class FilterPipeline with
+     * no MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_noFlavour_returnsFilterPipelineInstanceItself() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        double tmpThresholdValue = 10.0;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMaxMolecularMassFilter(tmpThresholdValue));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputationFlavours parameter was extended by an instance of
+     * MaxMolecularMassFilter.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
+        double tmpThresholdValue = 10.0;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputationFlavours parameter has the given threshold value set to
+     * it; two tests.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_noFlavour_newFilterHasGivenThresholdValue_twoTests() {
+        double tmpThresholdValue = 10.0;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxMolecularMass());
+        tmpThresholdValue = 20.0;
+        tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMaxMolecularMass());
+    }
+
+    /**
+     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MolWeight}
+     * set as mass computation flavour.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_noFlavour_newFilterHasMolWeightAsMassComputationFlavour() {
+        double tmpThresholdValue = 10.0;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertEquals(
+                MassComputationFlavours.MolWeight,
+                ((MaxMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMassComputationFlavour()
+        );
+    }
+
+    /**
+     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with no MassComputationFlavours
+     * parameter throws an IllegalArgumentException if the given max molecular mass threshold value is of a negative
+     * value; two tests.
+     */
+    @Test
+    public void withMaxMolecularMassFilterMethodTest_noFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -0.1;
+                    new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+                }
+        );
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -5.0;
+                    new FilterPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+                }
+        );
+    }
+
+    //TODO: test .filter() method with MaxMolecularMassFilter?
+
+    /**
+     * Tests whether the value returned by the .withMinMolecularMassFilter() method of the class FilterPipeline with
+     * MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_withFlavour_returnsFilterPipelineInstanceItself() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputationFlavours parameter was extended by an instance of
+     * MinMolecularMassFilter.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_withFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputationFlavours parameter has the given threshold value set to
+     * it; two tests.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenThresholdValue_twoTests() {
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinMolecularMass());
+        tmpThresholdValue = 20.0;
+        tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinMolecularMass());
+    }
+
+    /**
+     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputationFlavours parameter has the given mass computation flavour
+     * set to it; two tests.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenMassComputationFlavour_twoTests() {
+        double tmpThresholdValue = 10.0;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMassComputationFlavour());
+        tmpFlavour = MassComputationFlavours.MonoIsotopic;
+        tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMassComputationFlavour());
+    }
+
+    /**
+     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * parameter throws an IllegalArgumentException if the given min molecular mass threshold value is of a negative
+     * value; two tests.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_withFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -0.1;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -5.0;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * parameter throws a NullPointerException if the given mass computation flavour is null.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_withFlavour_throwsNullPointerExceptionIfGivenFlavourIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    double tmpThresholdValue = 10.0;
+                    MassComputationFlavours tmpFlavour = null;
+                    new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the value returned by the .withMinMolecularMassFilter() method of the class FilterPipeline with
+     * no MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_noFlavour_returnsFilterPipelineInstanceItself() {
+        FilterPipeline tmpFilterPipeline = new FilterPipeline();
+        double tmpThresholdValue = 10.0;
+        Assertions.assertInstanceOf(tmpFilterPipeline.getClass(), tmpFilterPipeline.withMinMolecularMassFilter(tmpThresholdValue));
+    }
+
+    /**
+     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputationFlavours parameter was extended by an instance of
+     * MinMolecularMassFilter.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
+        double tmpThresholdValue = 10.0;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+    }
+
+    /**
+     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputationFlavours parameter has the given threshold value set to
+     * it; two tests.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_noFlavour_newFilterHasGivenThresholdValue_twoTests() {
+        double tmpThresholdValue = 10.0;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinMolecularMass());
+        tmpThresholdValue = 20.0;
+        tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinMolecularMass());
+    }
+
+    /**
+     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MolWeight}
+     * set as mass computation flavour.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_noFlavour_newFilterHasMolWeightAsMassComputationFlavour() {
+        double tmpThresholdValue = 10.0;
+        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertEquals(
+                MassComputationFlavours.MolWeight,
+                ((MinMolecularMassFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMassComputationFlavour()
+        );
+    }
+
+    /**
+     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with no MassComputationFlavours
+     * parameter throws an IllegalArgumentException if the given min molecular mass threshold value is of a negative
+     * value; two tests.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_noFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -0.1;
+                    new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+                }
+        );
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    double tmpThresholdValue = -5.0;
+                    new FilterPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+                }
+        );
+    }
+
+    //TODO: test .filter() method with MinMolecularMassFilter?
 
 }
