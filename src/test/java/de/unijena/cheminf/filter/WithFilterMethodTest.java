@@ -105,7 +105,7 @@ public class WithFilterMethodTest {
     public void withFilterMethodTest_combiningTwoFilters_twoFiltersAreAddedToListOfSelectedFilters() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         int tmpInitialListSize = tmpFilterPipeline.getListOfSelectedFilters().size();
-        FilterBase tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
+        BaseFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         tmpFilterPipeline = tmpFilterPipeline.withFilter(tmpEmptyFilter).withFilter(tmpEmptyFilter);
         Assertions.assertEquals(tmpInitialListSize + 2, tmpFilterPipeline.getListOfSelectedFilters().size());
     }

@@ -32,14 +32,16 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import java.util.Objects;
 
 /**
- * Abstract class FilterBase - implements IFilter.  TODO
+ * Abstract class BaseFilter - implements IFilter.  TODO
  */
-public abstract class FilterBase implements IFilter {
+public abstract class BaseFilter implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?
     TODO: boolean needsInfoOfOtherACs? (for duplicates filter)
-    TODO: add countOfFilteredACs
+    TODO: add countOfFilteredACs (?)
+    TODO: log exceptions thrown by isFiltered() and treat those molecules as if true was returned
+    TODO: is there a way to use the loggers of the classes that extend this class for logging?
      */
 
     /**

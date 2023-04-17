@@ -27,7 +27,7 @@ package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.ChemUtils;
 import de.unijena.cheminf.MassComputationFlavours;
-import de.unijena.cheminf.filter.FilterBase;
+import de.unijena.cheminf.filter.BaseFilter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * Max molecular mass filter for filtering atom containers based on a maximum molecular mass.
  */
-public class MaxMolecularMassFilter extends FilterBase {
+public class MaxMolecularMassFilter extends BaseFilter {
 
     /**
      * Double value of the max molecular mass threshold.

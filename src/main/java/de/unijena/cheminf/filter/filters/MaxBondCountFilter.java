@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter.filters;
 
-import de.unijena.cheminf.filter.FilterBase;
+import de.unijena.cheminf.filter.BaseFilter;
 import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Max bond count filter for filtering atom containers based on a maximum bond count.
  */
-public class MaxBondCountFilter extends FilterBase {
+public class MaxBondCountFilter extends BaseFilter {
 
     /**
      * Integer value of the max bond count threshold.

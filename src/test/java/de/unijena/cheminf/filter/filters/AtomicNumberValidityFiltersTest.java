@@ -26,7 +26,7 @@
 package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
-import de.unijena.cheminf.filter.FilterBase;
+import de.unijena.cheminf.filter.BaseFilter;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -327,7 +327,7 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
-        FilterBase tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);  //TODO: outsource code?
+        BaseFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);  //TODO: outsource code?
         IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -381,7 +381,7 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
-        FilterBase tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        BaseFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {

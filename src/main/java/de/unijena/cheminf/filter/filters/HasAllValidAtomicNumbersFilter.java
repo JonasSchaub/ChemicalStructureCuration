@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter.filters;
 
-import de.unijena.cheminf.filter.FilterBase;
+import de.unijena.cheminf.filter.BaseFilter;
 import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -35,7 +35,7 @@ import java.util.Objects;
  * Has all valid atomic numbers filter to filter atom containers with all valid atomic numbers out of a set of atom
  * containers.
  */
-public class HasAllValidAtomicNumbersFilter extends FilterBase {
+public class HasAllValidAtomicNumbersFilter extends BaseFilter {
 
     /**
      * Boolean value whether to consider the wildcard atomic number zero as a valid atomic number.

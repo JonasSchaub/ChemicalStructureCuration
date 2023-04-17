@@ -28,7 +28,7 @@ package de.unijena.cheminf.filter.filters;
 import de.unijena.cheminf.ChemUtils;
 import de.unijena.cheminf.MassComputationFlavours;
 import de.unijena.cheminf.TestUtils;
-import de.unijena.cheminf.filter.FilterBase;
+import de.unijena.cheminf.filter.BaseFilter;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -278,7 +278,7 @@ public class MinMolecularMassFilterTest {
                 () -> {
                     double tmpMinMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    FilterBase tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
+                    BaseFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
                     tmpMinMolecularMassFilter.isFiltered(null);
                 }
         );
@@ -292,7 +292,7 @@ public class MinMolecularMassFilterTest {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         double tmpMinMolecularMass = 5.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        FilterBase tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
+        BaseFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
         Object tmpReturnValue = tmpMinMolecularMassFilter.filter(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -314,7 +314,7 @@ public class MinMolecularMassFilterTest {
         //
         double tmpMinMolecularMass = 30.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        FilterBase tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
+        BaseFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
         IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -338,7 +338,7 @@ public class MinMolecularMassFilterTest {
         //
         double tmpMinMolecularMass = 50.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        FilterBase tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
+        BaseFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
         IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.filter(tmpAtomContainerSet);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -356,7 +356,7 @@ public class MinMolecularMassFilterTest {
                 () -> {
                     double tmpMinMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    FilterBase tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
+                    BaseFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
                     tmpMinMolecularMassFilter.filter(null);
                 }
         );

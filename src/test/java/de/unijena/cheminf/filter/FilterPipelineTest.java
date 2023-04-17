@@ -204,7 +204,7 @@ public class FilterPipelineTest {
     public void listOfSelectedFiltersClassVarTest_storesFilterInstances() {
         FilterPipeline tmpFilterPipeline = new FilterPipeline();
         tmpFilterPipeline.listOfSelectedFilters.add(new MaxAtomCountFilter(0, true));
-        Assertions.assertInstanceOf(FilterBase.class, tmpFilterPipeline.listOfSelectedFilters.getFirst());
+        Assertions.assertInstanceOf(BaseFilter.class, tmpFilterPipeline.listOfSelectedFilters.getFirst());
     }
 
     /**

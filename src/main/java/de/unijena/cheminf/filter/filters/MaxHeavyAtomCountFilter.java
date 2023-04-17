@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter.filters;
 
-import de.unijena.cheminf.filter.FilterBase;
+import de.unijena.cheminf.filter.BaseFilter;
 import de.unijena.cheminf.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Max heavy atom count filter for filtering atom containers based on a maximum non-hydrogen atom count.
  */
-public class MaxHeavyAtomCountFilter extends FilterBase {
+public class MaxHeavyAtomCountFilter extends BaseFilter {
 
     /**
      * Integer value of the max heavy atom count threshold.
