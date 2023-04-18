@@ -231,7 +231,8 @@ public class ChemUtils {
     public static double getMass(IAtomContainer anAtomContainer, MassComputationFlavours aFlavour)
             throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavour) is null."); //TODO: or use MolWeight as default if null is given?
+        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavour) is null.");
+        //TODO: use MolWeight as default if null is given?
         //TODO: throw an exception if the associated integer is no value between 1 and 4? Added a check to the MassComputationFlavours internal constructor
         return AtomContainerManipulator.getMass(anAtomContainer, aFlavour.getAssociatedIntegerValue());
     }
