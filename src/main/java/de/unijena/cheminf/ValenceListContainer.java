@@ -28,12 +28,13 @@ package de.unijena.cheminf;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * TODO
- * TODO: link!
+ * TODO: link / reference!
  */
 public class ValenceListContainer {
 
@@ -44,8 +45,13 @@ public class ValenceListContainer {
      */
 
     /**
+     * Logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(ValenceListContainer.class.getName());
+
+    /**
      * String of the path of the PubChem valence list text file in this project.
-     * TODO: link!
+     * TODO: link / reference!
      */
     private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt";
 
@@ -56,34 +62,43 @@ public class ValenceListContainer {
     private static final int HIGHEST_ATOMIC_NUMBER_IN_LIST = 112;
 
     /**
-     * Integer value of the number of
+     * Integer value of the number of rows contained by the PubChem valence list text file; 981 lines of content + one
+     * headline.
+     * @see #VALENCE_LIST_FILE_PATH
      */
-    private static final int NUMBER_OF_LIST_ENTRIES = 981;
+    private static final int NUMBER_OF_ROWS_IN_FILE = 982;
 
     /**
-     * TODO
+     * Integer value of the number of columns per line of the PubChem valence list text file; the columns are: atomic
+     * number (column 1), charge (column 2), number of π bonds (column 3), number of σ bonds (column 4), maximum number
+     * of implicit hydrogens (column 5).
+     * @see #VALENCE_LIST_FILE_PATH
      */
-    private static final int NUMBER_OF_VALUES_PER_ENTRY = 5;
+    private static final int NUMBER_OF_COLUMNS_PER_LINE_OF_FILE = 5;
 
     /**
-     * TODO
+     * Instance of ValenceListContainer; it is initialized at the first call of {@link ValenceListContainer#getInstance()}.
      */
-    private static ValenceListContainer INSTANCE;
+    protected static ValenceListContainer INSTANCE;
 
     /**
-     * TODO
+     * Array list of integer arrays that stores the data held by the PubChem valence list text file. Every element in
+     * the list is the equivalent to a line of the text file (except the headline); the values contained by the array
+     * are:
+     * atomic number (index 0), charge (index 1), number of π bonds (index 2), number of σ bonds (index 3) and the
+     * maximum number of implicit hydrogens (index 4).
      */
     private final ArrayList<int[]> valenceList; //TODO: int[][] instead?
-    private final int[][] valenceListMatrix;    //TODO
 
     /**
-     * TODO
-     * Contains a pointer for every element present in the list. The pointer points to the first entry in the valence
-     * list matrix that regards to a specific element. ...
-     * For a faster access on the valence list matrix.
+     * Integer matrix that contains a pointer for every chemical element present in the valence list
+     * ({@link #valenceList}) that points at the first entry in the list that regards to the element and the total
+     * number of entries that belong to the specific element.
+     * The values regarding a specific element may be accessed via:
+     *      valenceList[ atomic number - 1 ] [0] ->  pointer;
+     *      valenceList[ atomic number - 1 ] [1] ->  number of entries.
      */
     private final int[][] valenceListPointerMatrix;
-    private final int[] valenceListPointerArray;    //TODO
 
     /**
      * Private constructor. Loads the text file "PubChem_Valence_list.txt", a list of valid valences and configurations
@@ -93,9 +108,7 @@ public class ValenceListContainer {
      */
     private ValenceListContainer() {
         this.valenceListPointerMatrix = new int[ValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST][2];
-        this.valenceListPointerArray = new int[ValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST]; //TODO
-        this.valenceList = new ArrayList<>(ValenceListContainer.NUMBER_OF_LIST_ENTRIES);
-        this.valenceListMatrix = new int[ValenceListContainer.NUMBER_OF_LIST_ENTRIES][ValenceListContainer.NUMBER_OF_VALUES_PER_ENTRY]; //TODO
+        this.valenceList = new ArrayList<>(ValenceListContainer.NUMBER_OF_ROWS_IN_FILE - 1);
         //
         try {   //TODO: check the following block of code
             File tmpValenceListFile = new File(ValenceListContainer.VALENCE_LIST_FILE_PATH);
@@ -108,21 +121,21 @@ public class ValenceListContainer {
             String tmpLine;
             String[] tmpLineElements;
             int[] tmpListEntryArray;
-            int tmpCurrentElement = 0;
+            int tmpCurrentElementAtomicNumber = 0;
             int tmpListEntryIndex = 0;
             while ((tmpLine = tmpBufferedReader.readLine()) != null) {
-                tmpLineElements = tmpLine.split("\t", 5);
+                tmpLineElements = tmpLine.split("\t", ValenceListContainer.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE);
                 tmpListEntryArray = new int[5];
                 for (int i = 0; i < 5; i++) {
                     tmpListEntryArray[i] = Integer.parseInt(tmpLineElements[i]);
                 }
                 this.valenceList.add(tmpListEntryArray);
                 //
-                if (tmpListEntryArray[0] != tmpCurrentElement) {
-                    tmpCurrentElement++;
-                    this.valenceListPointerMatrix[tmpCurrentElement-1] = new int[]{tmpListEntryIndex, 0};
+                if (tmpListEntryArray[0] != tmpCurrentElementAtomicNumber) {
+                    tmpCurrentElementAtomicNumber++;
+                    this.valenceListPointerMatrix[tmpCurrentElementAtomicNumber - 1] = new int[]{tmpListEntryIndex, 0};
                 }
-                this.valenceListPointerMatrix[tmpCurrentElement-1][1]++;
+                this.valenceListPointerMatrix[tmpCurrentElementAtomicNumber - 1][1]++;
                 //
                 tmpListEntryIndex++;
             }
@@ -130,33 +143,54 @@ public class ValenceListContainer {
             tmpFileReader.close();
             tmpBufferedReader.close();
             //
-        } catch (IOException e) {     //TODO
-            //throw new RuntimeException(e);
+        } catch (Exception anException) {     //TODO: ?!?
+            ValenceListContainer.LOGGER.log(Level.SEVERE, anException.toString(), anException);
+            //throw anException;
         }
     }
 
     /**
-     * TODO
-     * @return
+     * Returns an instance of ValenceListContainer.
+     *
+     * @return ValenceListContainer
      */
     public static ValenceListContainer getInstance() {
         if (ValenceListContainer.INSTANCE == null) {
+            //TODO: throw exception if the file could not be read?
             ValenceListContainer.INSTANCE = new ValenceListContainer();
         }
         return ValenceListContainer.INSTANCE;
     }
 
     /**
-     * TODO
-     * @return
+     * Returns an array list of integer arrays that stores the data held by the PubChem valence list, a list of valid
+     * valences and configurations of atoms. The values contained by each of the five integers long arrays are:
+     *      [0] -> atomic number,
+     *      [1] -> charge,
+     *      [2] -> number of π bonds,
+     *      [3] -> number of σ bonds,
+     *      [4] -> maximum number of implicit hydrogens.
+     * The {@link ValenceListContainer#valenceListPointerMatrix} (see
+     * {@link ValenceListContainer#getValenceListPointerMatrix()}) might be used for direct access on list entries
+     * regarding a specific chemical element.
+     *
+     * @return array list of integer arrays
+     * @see ValenceListContainer#getValenceListPointerMatrix()
      */
     public ArrayList<int[]> getValenceList() {
         return valenceList;
     }
 
     /**
-     * TODO
-     * @return
+     * Returns an integer matrix that contains a pointer for every chemical element present in the valence list (see
+     * {@link ValenceListContainer#getValenceList()}) that points at the first entry in the list that regards to the
+     * element and the total number of entries that belong to the specific element.
+     * The values regarding a specific element may be accessed via:
+     *      valenceList[ atomic number - 1 ] [0] ->  pointer;
+     *      valenceList[ atomic number - 1 ] [1] ->  number of entries.
+     *
+     * @return two-dimensional matrix of integer values
+     * @see ValenceListContainer#getValenceList()
      */
     public int[][] getValenceListPointerMatrix() {
         return valenceListPointerMatrix;
