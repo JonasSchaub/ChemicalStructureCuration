@@ -40,7 +40,7 @@ public class ValenceListContainer {
 
     /*
     TODO: implement tests
-    TODO: check the block of code from the old branch
+    TODO: solution that prevents changes on valence list and pointer matrix
     TODO: doc comments
      */
 
@@ -87,6 +87,8 @@ public class ValenceListContainer {
      * are:
      * atomic number (index 0), charge (index 1), number of π bonds (index 2), number of σ bonds (index 3) and the
      * maximum number of implicit hydrogens (index 4).
+     * TODO: is there a way to make sure that no changes can be done to the values contained by the list?
+     *          return deep-copies of the list instead?
      */
     private final ArrayList<int[]> valenceList; //TODO: int[][] instead?
 
@@ -107,10 +109,10 @@ public class ValenceListContainer {
      * TODO: link / reference!
      */
     private ValenceListContainer() {
-        this.valenceListPointerMatrix = new int[ValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST][2];
         this.valenceList = new ArrayList<>(ValenceListContainer.NUMBER_OF_ROWS_IN_FILE - 1);
+        this.valenceListPointerMatrix = new int[ValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST][2];
         //
-        try {   //TODO: check the following block of code
+        try {
             File tmpValenceListFile = new File(ValenceListContainer.VALENCE_LIST_FILE_PATH);
             FileReader tmpFileReader = new FileReader(tmpValenceListFile);
             BufferedReader tmpBufferedReader = new BufferedReader(tmpFileReader);
@@ -182,6 +184,24 @@ public class ValenceListContainer {
     }
 
     /**
+     * TODO
+     * @param aValenceListIndex
+     * @param anAtomConfigurationArrayIndex
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public int getValenceListEntry(int aValenceListIndex, int anAtomConfigurationArrayIndex) throws IllegalArgumentException {
+        if (aValenceListIndex >= ValenceListContainer.NUMBER_OF_ROWS_IN_FILE - 1)
+            throw new IllegalArgumentException("The given valence list index (aValenceListIndex) exceeds the size" +
+                    " of the list.");
+        if (anAtomConfigurationArrayIndex >= ValenceListContainer.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE)
+            throw new IllegalArgumentException("The given array index (anAtomConfigurationArrayIndex) exceeds the" +
+                    " array length of five.");
+        return this.valenceList.get(aValenceListIndex)[anAtomConfigurationArrayIndex];
+        //TODO: negative values?
+    }
+
+    /**
      * Returns an integer matrix that contains a pointer for every chemical element present in the valence list (see
      * {@link ValenceListContainer#getValenceList()}) that points at the first entry in the list that regards to the
      * element and the total number of entries that belong to the specific element.
@@ -194,6 +214,32 @@ public class ValenceListContainer {
      */
     public int[][] getValenceListPointerMatrix() {
         return valenceListPointerMatrix;
+    }
+
+    /**
+     * TODO
+     * @param anAtomicNumber
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public int getValenceListElementPointer(int anAtomicNumber) throws IllegalArgumentException {
+        if (anAtomicNumber < 1 || anAtomicNumber >= ValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST)
+            throw new IllegalArgumentException("The given atomic number (anAtomicNumber) needs to be an integer" +
+                    " value between one and 112."); //TODO: does this sound like one and 112 are included?
+        return this.valenceListPointerMatrix[anAtomicNumber - 1][0];
+    }
+
+    /**
+     * TODO
+     * @param anAtomicNumber
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public int getValenceListElementAtomConfigurationsCount(int anAtomicNumber) throws IllegalArgumentException {
+        if (anAtomicNumber < 1 || anAtomicNumber >= ValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST)
+            throw new IllegalArgumentException("The given atomic number (anAtomicNumber) needs to be an integer" +
+                    " value between one and 112."); //TODO: does this sound like one and 112 are included?
+        return this.valenceListPointerMatrix[anAtomicNumber - 1][1];
     }
 
 }

@@ -26,7 +26,10 @@
 package de.unijena.cheminf;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,23 +39,30 @@ import java.util.List;
  *
  * @see ValenceListContainer
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ValenceListContainerTest {
 
-    //TODO
+    /*
+    TODO
+     */
 
-    /** TODO: this test need to be done as the first one!!
-     * TODO
+    /**
+     * Tests whether the initial call of the .getInstance() method of class ValenceListContainer initializes the static
+     * class variable INSTANCE with an instance of ValenceListContainer and returns it.
      */
     @Test
-    public void getInstanceMethodTest_initializesStaticVarInstanceOnFirstCall() {
+    @Order(1)
+    public void getInstanceMethodTest_initializesStaticVarInstanceOnFirstCallAndReturnsIt() {
         Assertions.assertNull(ValenceListContainer.INSTANCE);
         Object tmpReturnedInstance = ValenceListContainer.getInstance();
         Assertions.assertNotNull(ValenceListContainer.INSTANCE);
+        Assertions.assertSame(ValenceListContainer.INSTANCE, tmpReturnedInstance);
         Assertions.assertInstanceOf(ValenceListContainer.class, tmpReturnedInstance);
     }
 
     /**
-     * TODO
+     * Tests whether the second call of the .getInstance() method of class ValenceListContainer returns the same
+     * instance of ValenceListContainer as the first call.
      */
     @Test
     public void getInstanceMethodTest_secondCallReturnsSameInstanceAsFirstCall() {
@@ -63,7 +73,8 @@ public class ValenceListContainerTest {
     }
 
     /**
-     * TODO
+     * Tests whether the .getValenceList() method of class ValenceListContainer returns an array list of integer arrays
+     * of length five.
      */
     @Test
     public void getValenceListMethodTest_returnsArrayListOfIntegerArraysOfLength5() {
@@ -74,10 +85,22 @@ public class ValenceListContainerTest {
         Assertions.assertEquals(5, ((int[]) ((List<?>) tmpReturnedInstance).get(0)).length);
     }
 
+    /**
+     * Tests whether the array list returned by the .getValenceList() method of class ValenceListContainer has a size
+     * of 981.
+     */
+    @Test
+    public void getValenceListMethodTest_returnedArrayListHasSizeOf981() {
+        ValenceListContainer tmpValenceListContainer = ValenceListContainer.getInstance();
+        ArrayList<int[]> tmpArrayList = tmpValenceListContainer.getValenceList();
+        Assertions.assertEquals(981, tmpArrayList.size());
+    }
+
     //TODO: getValenceList(): further tests of the logic
 
     /**
-     * TODO
+     * Tests whether the .getValenceListPointerMatrix() method of class ValenceListContainer returns a two-dimensional
+     * matrix of integer values.
      */
     @Test
     public void getValenceListPointerMatrixMethodTest_returnsIntegerMatrix() {
@@ -87,7 +110,8 @@ public class ValenceListContainerTest {
     }
 
     /**
-     * TODO
+     * Tests whether the two-dimensional matrix returned by the .getValenceListPointerMatrix() method of class
+     * ValenceListContainer has a size of 112 x 2.
      */
     @Test
     public void getValenceListPointerMatrixMethodTest_returnsIntegerMatrixOfDimensions112x2() {
