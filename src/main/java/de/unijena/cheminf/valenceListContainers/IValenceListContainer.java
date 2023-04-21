@@ -23,23 +23,21 @@
  *
  */
 
-package de.unijena.cheminf.filter;
-
-import org.openscience.cdk.interfaces.IAtomContainer;
+package de.unijena.cheminf.valenceListContainers;
 
 /**
- * IFilter interface.
+ * IValenceListContainer interface.
  */
-public interface IFilter {
+public interface IValenceListContainer {
 
-    /**
-     * Checks whether the filter applies on a given IAtomContainer instance.
-     * Returns true, if the given atom container gets filtered.
-     *
-     * @param anAtomContainer IAtomContainer instance to be checked
-     * @return true, if the filter applies on the given atom container
-     * @throws NullPointerException if the given IAtomContainer instance is null
-     */
-    boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    //TODO
+
+    public int getValenceListEntry(int aValenceListIndex, int anAtomConfigurationArrayIndex) throws IllegalArgumentException;
+
+    public int[] getValenceListEntry(int aValenceListIndex) throws IllegalArgumentException;
+
+    public int getValenceListElementPointer(int anAtomicNumber) throws IllegalArgumentException;
+
+    public int getAtomConfigurationsCountOfElement(int anAtomicNumber) throws IllegalArgumentException;
 
 }
