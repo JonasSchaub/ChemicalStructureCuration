@@ -31,8 +31,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * Test class of class ValenceListContainer.
@@ -40,7 +39,7 @@ import java.util.List;
  * @see PubChemValenceListContainer
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ValenceListContainerTest {
+public class PubChemValenceListContainerTest {
 
     /*
     TODO
@@ -49,10 +48,12 @@ public class ValenceListContainerTest {
     /**
      * Tests whether the initial call of the .getInstance() method of class ValenceListContainer initializes the static
      * class variable INSTANCE with an instance of ValenceListContainer and returns it.
+     *
+     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
     @Order(1)
-    public void getInstanceMethodTest_initializesStaticVarInstanceOnFirstCallAndReturnsIt() {
+    public void getInstanceMethodTest_initializesStaticVarInstanceOnFirstCallAndReturnsIt() throws IOException {
         Assertions.assertNull(PubChemValenceListContainer.INSTANCE);
         Object tmpReturnedInstance = PubChemValenceListContainer.getInstance();
         Assertions.assertNotNull(PubChemValenceListContainer.INSTANCE);
@@ -63,9 +64,11 @@ public class ValenceListContainerTest {
     /**
      * Tests whether the second call of the .getInstance() method of class ValenceListContainer returns the same
      * instance of ValenceListContainer as the first call.
+     *
+     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getInstanceMethodTest_secondCallReturnsSameInstanceAsFirstCall() {
+    public void getInstanceMethodTest_secondCallReturnsSameInstanceAsFirstCall() throws IOException {
         Assertions.assertSame(
                 PubChemValenceListContainer.getInstance(),
                 PubChemValenceListContainer.getInstance()
@@ -101,25 +104,29 @@ public class ValenceListContainerTest {
     /**
      * Tests whether the .getValenceListPointerMatrix() method of class ValenceListContainer returns a two-dimensional
      * matrix of integer values.
+     *
+     * @throws IOException if a problem occurs loading the data from the valence list file
      */
-    @Test
-    public void getValenceListPointerMatrixMethodTest_returnsIntegerMatrix() {
+    /*@Test
+    public void getValenceListPointerMatrixMethodTest_returnsIntegerMatrix() throws IOException {
         PubChemValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
         Object tmpReturnedInstance = tmpValenceListContainer.getValenceListPointerMatrix();
         Assertions.assertInstanceOf(int[][].class, tmpReturnedInstance);
-    }
+    }*/
 
     /**
      * Tests whether the two-dimensional matrix returned by the .getValenceListPointerMatrix() method of class
      * ValenceListContainer has a size of 112 x 2.
+     *
+     * @throws IOException if a problem occurs loading the data from the valence list file
      */
-    @Test
-    public void getValenceListPointerMatrixMethodTest_returnsIntegerMatrixOfDimensions112x2() {
+    /*@Test
+    public void getValenceListPointerMatrixMethodTest_returnsIntegerMatrixOfDimensions112x2() throws IOException {
         PubChemValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
         int[][] tmpValenceListPointerMatrix = tmpValenceListContainer.getValenceListPointerMatrix();
         Assertions.assertEquals(112, tmpValenceListPointerMatrix.length);
         Assertions.assertEquals(2, tmpValenceListPointerMatrix[0].length);
-    }
+    }*/
 
     //TODO: getValenceListPointerMatrix(): further tests of the logic
 

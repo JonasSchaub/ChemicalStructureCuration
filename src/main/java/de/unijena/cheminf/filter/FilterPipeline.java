@@ -132,7 +132,7 @@ public class FilterPipeline {
      *
      * @param aNameOfAtomContainerProperty Name string of the atom container property to be used at reporting of a
      *                                     filtering process; if null is given,
-     * @throws IllegalArgumentException if the given property name string is blank
+     * @throws IllegalArgumentException if the given property name string is null or blank
      */
     public FilterPipeline(String aNameOfAtomContainerProperty) throws IllegalArgumentException {
         if (aNameOfAtomContainerProperty != null && aNameOfAtomContainerProperty.isBlank()) {
