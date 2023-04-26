@@ -41,7 +41,7 @@ public class BaseValenceListContainer implements IValenceListContainer {
      * (column 1), charge (column 2), number of π bonds (column 3), number of σ bonds (column 4), maximum number of
      * implicit hydrogens (column 5).
      */
-    private static final int NUMBER_OF_COLUMNS_PER_LINE_OF_FILE = 5;
+    protected static final int NUMBER_OF_COLUMNS_PER_LINE_OF_FILE = 5;
 
     /**
      * Two-dimensional matrix of integer values that stores the data loaded from a valence list text file. Every element
@@ -50,7 +50,7 @@ public class BaseValenceListContainer implements IValenceListContainer {
      * atomic number (index 0), charge (index 1), number of π bonds (index 2), number of σ bonds (index 3) and the
      * maximum number of implicit hydrogens (index 4).
      */
-    private final int[][] valenceListMatrix;
+    protected final int[][] valenceListMatrix;
 
     /**
      * Integer matrix that contains a pointer for every chemical element present in the valence list matrix
@@ -61,7 +61,7 @@ public class BaseValenceListContainer implements IValenceListContainer {
      *      valenceList[ atomic number - 1 ] [0] ->  pointer;
      *      valenceList[ atomic number - 1 ] [1] ->  number of entries.
      */
-    private final int[][] valenceListPointerMatrix;
+    protected final int[][] valenceListPointerMatrix;
 
     /**
      * Private constructor. Loads a valence list text file, a file containing a list of valid valences and
@@ -104,12 +104,18 @@ public class BaseValenceListContainer implements IValenceListContainer {
      */
     @Override
     public int getValenceListEntry(int aValenceListEntryIndex, int anAtomConfigurationArrayIndex) throws IllegalArgumentException {
-        if (aValenceListEntryIndex >= this.valenceListMatrix.length)
+        if (aValenceListEntryIndex < 0) {
+            throw new IllegalArgumentException("One of the given indices (aValenceListEntryIndex," +
+                    " anAtomConfigurationArrayIndex) is of a negative value.");
+        }
+        if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
             throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) exceeds" +
-                    " the length of the valence list.");
-        if (anAtomConfigurationArrayIndex >= this.valenceListMatrix[0].length)
+                    " the length of the valence list matrix first dimension.");
+        }
+        if (anAtomConfigurationArrayIndex >= this.valenceListMatrix[0].length) {
             throw new IllegalArgumentException("The given array index (anAtomConfigurationArrayIndex) exceeds the" +
                     " atom configuration array length of five.");
+        }
         return this.valenceListMatrix[aValenceListEntryIndex][anAtomConfigurationArrayIndex];
         //TODO: negative values?
     }
@@ -119,9 +125,14 @@ public class BaseValenceListContainer implements IValenceListContainer {
      */
     @Override
     public int[] getValenceListEntry(int aValenceListEntryIndex) throws IllegalArgumentException {   //TODO: adopt method and param name
-        if (aValenceListEntryIndex >= this.valenceListMatrix.length)
-            throw new IllegalArgumentException("The given valence list index (aValenceListEntryIndex) exceeds the size" +    //TODO
-                    " of the list.");
+        if (aValenceListEntryIndex < 0) {
+            throw new IllegalArgumentException("The given valence list index (aValenceListEntryIndex) is of a negative" +    //TODO
+                    " value.");
+        }
+        if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
+            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) exceeds" +
+                    " the length of the valence list matrix first dimension.");   //TODO
+        }
         return this.valenceListMatrix[aValenceListEntryIndex].clone();
     }
 
@@ -137,10 +148,10 @@ public class BaseValenceListContainer implements IValenceListContainer {
      * {@inheritDoc}
      */
     @Override
-    public int getValenceListElementPointer(int anAtomicNumber) throws IllegalArgumentException {
-        if (anAtomicNumber < 1 || anAtomicNumber > this.valenceListPointerMatrix.length)
-            throw new IllegalArgumentException("The given atomic number (anAtomicNumber) needs to be an integer" +
-                    " value between one and 112."); //TODO: does this sound like one and 112 are included?
+    public int getValenceListElementPointer(int anAtomicNumber) {
+        if (anAtomicNumber < 1 || anAtomicNumber > this.valenceListPointerMatrix.length) {
+            return -1;
+        }
         return this.valenceListPointerMatrix[anAtomicNumber - 1][0];
     }
 
@@ -148,10 +159,10 @@ public class BaseValenceListContainer implements IValenceListContainer {
      * {@inheritDoc}
      */
     @Override
-    public int getAtomConfigurationsCountOfElement(int anAtomicNumber) throws IllegalArgumentException {
-        if (anAtomicNumber < 1 || anAtomicNumber > this.valenceListPointerMatrix.length)
-            throw new IllegalArgumentException("The given atomic number (anAtomicNumber) needs to be an integer" +
-                    " value between one and 112."); //TODO: does this sound like one and 112 are included?
+    public int getAtomConfigurationsCountOfElement(int anAtomicNumber) {
+        if (anAtomicNumber < 1 || anAtomicNumber > this.valenceListPointerMatrix.length) {
+            return 0;
+        }
         return this.valenceListPointerMatrix[anAtomicNumber - 1][1];
     }
 
@@ -169,6 +180,8 @@ public class BaseValenceListContainer implements IValenceListContainer {
      * (column 4) and the maximum number of implicit hydrogens (column 5). The file needs to have a headline and
      * each of the following lines needs to contain the mentioned five columns, each separated by a tab ("\t") and in
      * the specific order. The list entries must be sorted according to their atomic number, starting with the lowest.
+     * <p>
+     * If an atomic number is not present in the valence list, the pointer in the pointer matrix is set to -1.
      *
      * @param aValenceListFilePath String of the file path of the valence list text file in the project
      * @param aNumberOfRowsInFile Integer value of the number of rows in the file (including the headline)
@@ -214,11 +227,16 @@ public class BaseValenceListContainer implements IValenceListContainer {
                     throw new IOException("The atomic numbers contained by the valence list file exceed the expected" +
                             " highest atomic number.");
                 }
-                if (this.valenceListMatrix[i][0] != tmpCurrentElementAtomicNumber + 1) {
-                    throw new IOException("The entries of the valence list file are not sorted according to their" +
+                if (this.valenceListMatrix[i][0] < tmpCurrentElementAtomicNumber) {    //TODO: what if the list is not consistent in the atomic numbers?
+                    throw new IOException("Entries in the valence list file are not sorted according to their" +
                             " atomic number.");
                 }
                 tmpCurrentElementAtomicNumber++;
+                while (this.valenceListMatrix[i][0] > tmpCurrentElementAtomicNumber) {
+                    //sets the pointer to -1 if an atomic number is not present in the imported valence list
+                    this.valenceListPointerMatrix[tmpCurrentElementAtomicNumber - 1] = new int[]{-1, 0};
+                    tmpCurrentElementAtomicNumber++;
+                }
                 this.valenceListPointerMatrix[tmpCurrentElementAtomicNumber - 1] = new int[]{tmpListEntryIndex, 0};
             }
             this.valenceListPointerMatrix[tmpCurrentElementAtomicNumber - 1][1]++;

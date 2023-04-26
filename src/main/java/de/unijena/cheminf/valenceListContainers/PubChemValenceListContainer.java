@@ -50,7 +50,7 @@ public class PubChemValenceListContainer extends BaseValenceListContainer {
     private static final Logger LOGGER = Logger.getLogger(PubChemValenceListContainer.class.getName());
 
     /**
-     * String of the path of the PubChem valence list text file in this project.
+     * String of the file path of the PubChem valence list text file in this project.
      * TODO: link / reference!
      */
     private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt";
@@ -59,19 +59,19 @@ public class PubChemValenceListContainer extends BaseValenceListContainer {
      * Integer value of the highest atomic number contained in the "PubChem_Valence_list.txt".
      * @see #VALENCE_LIST_FILE_PATH
      */
-    private static final int HIGHEST_ATOMIC_NUMBER_IN_LIST = 112;
+    protected static final int HIGHEST_ATOMIC_NUMBER_IN_LIST = 112;
 
     /**
      * Integer value of the number of rows contained by the PubChem valence list text file; 981 lines of content + one
      * headline.
      * @see #VALENCE_LIST_FILE_PATH
      */
-    private static final int NUMBER_OF_ROWS_IN_FILE = 982;
+    protected static final int NUMBER_OF_ROWS_IN_FILE = 982;
 
     /**
      * Instance of ValenceListContainer; it is initialized at the first call of {@link PubChemValenceListContainer#getInstance()}.
      */
-    protected static PubChemValenceListContainer INSTANCE = null;   //TODO: in caps lock?
+    protected static PubChemValenceListContainer instance = null;
 
     /**
      * Private constructor. Loads the text file "PubChem_Valence_list.txt", a list of valid valences and configurations
@@ -91,7 +91,12 @@ public class PubChemValenceListContainer extends BaseValenceListContainer {
     }
 
     /**
-     * Returns an instance of ValenceListContainer.
+     * Returns an IValenceListContainer instance containing the data loaded from the "PubChem_Valence_list.txt"
+     * text file, a list of valid valences and configurations of atoms with respect to atomic number (column 1), charge
+     * (column 2), number of π bonds (column 3), number of σ bonds (column 4) and the maximum number of implicit
+     * hydrogens (column 5).
+     * <p>
+     * An instance is only generated once.
      *
      * @return ValenceListContainer
      * @throws IOException if no instance exists so far and a problem occurs generating one by loading the data from
@@ -99,10 +104,10 @@ public class PubChemValenceListContainer extends BaseValenceListContainer {
      * or the file differs from the expected format)
      */
     public static PubChemValenceListContainer getInstance() throws IOException {
-        if (PubChemValenceListContainer.INSTANCE == null) {
-            PubChemValenceListContainer.INSTANCE = new PubChemValenceListContainer();
+        if (PubChemValenceListContainer.instance == null) {
+            PubChemValenceListContainer.instance = new PubChemValenceListContainer();
         }
-        return PubChemValenceListContainer.INSTANCE;
+        return PubChemValenceListContainer.instance;
     }
 
 }

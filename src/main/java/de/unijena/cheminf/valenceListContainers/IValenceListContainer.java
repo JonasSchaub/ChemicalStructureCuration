@@ -37,24 +37,26 @@ public interface IValenceListContainer {
     /**
      * Returns a specific value contained by the valence list matrix, a matrix containing valid valences and
      * configurations of atoms with regard to atomic number, charge, number of π bonds, number of σ bonds and the
-     * maximum number of implicit hydrogens.
+     * maximum number of implicit hydrogens.<p>
      * For the entry with the index x in the valence list, the values specifying the respective atom configuration may
      * be accessed via:
-     *      (x, 0) -> atomic number,
-     *      (x, 1) -> charge,
-     *      (x, 2) -> number of π bonds,
-     *      (x, 3) -> number of σ bonds,
+     * <ul>
+     *      (x, 0) -> atomic number<p>
+     *      (x, 1) -> charge<p>
+     *      (x, 2) -> number of π bonds<p>
+     *      (x, 3) -> number of σ bonds<p>
      *      (x, 4) -> maximum number of implicit hydrogens.
-     * To get the length of the valence list / the number of valid valences and configurations of atoms contained by
-     * the valence list matrix, use the method {@link #getLengthOfValenceList()}. To directly access list entries
-     * regarding a specific chemical element, the methods {@link #getValenceListElementPointer(int)} and
+     * </ul>
+     * To get the length of the valence list matrix (which equals the number of valid valences and configurations of
+     * atoms contained by the valence list matrix), use the method {@link #getLengthOfValenceList()}. To directly access
+     * list entries regarding a specific chemical element, the methods {@link #getValenceListElementPointer(int)} and
      * {@link #getAtomConfigurationsCountOfElement(int)} might be used.
      *
      * @param aValenceListEntryIndex index of the valence list entry to be accessed
      * @param anAtomConfigurationArrayIndex index of the value in the atom configuration array to be returned
      * @return integer value
      * @throws IllegalArgumentException if the given valence list entry index exceeds {@link #getLengthOfValenceList()}
-     * or the atom configuration array index exceeds the value four
+     * or the atom configuration array index exceeds the value four or if one of the given indices is of a negative value
      * @see #getValenceListEntry(int)
      * @see #getLengthOfValenceList()
      * @see #getValenceListElementPointer(int)
@@ -94,19 +96,23 @@ public interface IValenceListContainer {
 
     /**
      * TODO
+     * Returns -1 if an atomic number is not present in the valence list.
+     * TODO: exception if atomic number is not present?
+     *
      * @param anAtomicNumber
      * @return
-     * @throws IllegalArgumentException
      */
-    public int getValenceListElementPointer(int anAtomicNumber) throws IllegalArgumentException;
+    public int getValenceListElementPointer(int anAtomicNumber);
 
     /**
      * TODO
+     * The given atomic number is not checked for validity. If the given atomic number is not included in the valence
+     * list, zero is returned.
+     *
      * @param anAtomicNumber
      * @return
-     * @throws IllegalArgumentException
      */
-    public int getAtomConfigurationsCountOfElement(int anAtomicNumber) throws IllegalArgumentException;
+    public int getAtomConfigurationsCountOfElement(int anAtomicNumber);
 
     /**
      * TODO
