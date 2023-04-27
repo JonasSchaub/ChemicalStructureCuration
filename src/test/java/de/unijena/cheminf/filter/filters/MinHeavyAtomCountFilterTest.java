@@ -135,7 +135,7 @@ public class MinHeavyAtomCountFilterTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMinHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalseIfGivenAtomContainerEqualsTheMinHeavyAtomCount() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms

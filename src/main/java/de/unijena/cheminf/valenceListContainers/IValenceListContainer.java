@@ -89,13 +89,18 @@ public interface IValenceListContainer {
     public int[] getValenceListEntry(int aValenceListIndex) throws IllegalArgumentException;
 
     /**
-     * TODO
-     * @return
+     * Returns the number of entries in the valence list. This value may be used as upper bound when iterating over the
+     * entries of the valence list via {@link #getValenceListEntry}.
+     *
+     * @return integer value
+     * @see #getValenceListEntry(int, int)
+     * @see #getValenceListEntry(int)
      */
     public int getLengthOfValenceList();
 
     /**
      * TODO
+     * <p>
      * Returns -1 if an atomic number is not present in the valence list.
      * TODO: exception if atomic number is not present?
      *
@@ -106,6 +111,7 @@ public interface IValenceListContainer {
 
     /**
      * TODO
+     * <p>
      * The given atomic number is not checked for validity. If the given atomic number is not included in the valence
      * list, zero is returned.
      *
@@ -115,8 +121,13 @@ public interface IValenceListContainer {
     public int getAtomConfigurationsCountOfElement(int anAtomicNumber);
 
     /**
-     * TODO
-     * @return
+     * Returns the highest atomic number present in the valence list. This value may be used as upper bound when
+     * iterating over the valence list element pointers ({@link #getValenceListElementPointer(int)} or the atom
+     * configurations count of elements ({@link #getAtomConfigurationsCountOfElement(int)}.
+     *
+     * @return integer value
+     * @see #getValenceListElementPointer(int)
+     * @see #getAtomConfigurationsCountOfElement(int)
      */
     public int getHighestAtomicNumberInList();
 

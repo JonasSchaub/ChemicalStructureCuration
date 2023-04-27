@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 public class PubChemValenceListContainer extends BaseValenceListContainer {
 
     /*
-    TODO: implement tests
     TODO: remove logger?
     TODO: check the doc comments
     TODO: class description

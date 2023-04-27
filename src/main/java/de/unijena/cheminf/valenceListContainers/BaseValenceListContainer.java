@@ -104,7 +104,7 @@ public class BaseValenceListContainer implements IValenceListContainer {
      */
     @Override
     public int getValenceListEntry(int aValenceListEntryIndex, int anAtomConfigurationArrayIndex) throws IllegalArgumentException {
-        if (aValenceListEntryIndex < 0) {
+        if (aValenceListEntryIndex < 0 || anAtomConfigurationArrayIndex < 0) {
             throw new IllegalArgumentException("One of the given indices (aValenceListEntryIndex," +
                     " anAtomConfigurationArrayIndex) is of a negative value.");
         }
@@ -117,21 +117,20 @@ public class BaseValenceListContainer implements IValenceListContainer {
                     " atom configuration array length of five.");
         }
         return this.valenceListMatrix[aValenceListEntryIndex][anAtomConfigurationArrayIndex];
-        //TODO: negative values?
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int[] getValenceListEntry(int aValenceListEntryIndex) throws IllegalArgumentException {   //TODO: adopt method and param name
+    public int[] getValenceListEntry(int aValenceListEntryIndex) throws IllegalArgumentException {
         if (aValenceListEntryIndex < 0) {
-            throw new IllegalArgumentException("The given valence list index (aValenceListEntryIndex) is of a negative" +    //TODO
-                    " value.");
+            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is of a" +
+                    " negative value.");
         }
         if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
             throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) exceeds" +
-                    " the length of the valence list matrix first dimension.");   //TODO
+                    " the length of the valence list matrix first dimension.");
         }
         return this.valenceListMatrix[aValenceListEntryIndex].clone();
     }
@@ -227,7 +226,7 @@ public class BaseValenceListContainer implements IValenceListContainer {
                     throw new IOException("The atomic numbers contained by the valence list file exceed the expected" +
                             " highest atomic number.");
                 }
-                if (this.valenceListMatrix[i][0] < tmpCurrentElementAtomicNumber) {    //TODO: what if the list is not consistent in the atomic numbers?
+                if (this.valenceListMatrix[i][0] < tmpCurrentElementAtomicNumber) {
                     throw new IOException("Entries in the valence list file are not sorted according to their" +
                             " atomic number.");
                 }
