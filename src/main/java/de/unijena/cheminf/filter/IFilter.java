@@ -26,11 +26,21 @@
 package de.unijena.cheminf.filter;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * IFilter interface.
  */
 public interface IFilter {
+
+    /**
+     * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
+     *
+     * @param anAtomContainerSet set of atom containers to be filtered
+     * @return atom container set of all atom containers that passed the filter
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     */
+    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
     /**
      * Checks whether the filter applies on a given IAtomContainer instance.
@@ -40,6 +50,6 @@ public interface IFilter {
      * @return true, if the filter applies on the given atom container
      * @throws NullPointerException if the given IAtomContainer instance is null
      */
-    boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
 
 }

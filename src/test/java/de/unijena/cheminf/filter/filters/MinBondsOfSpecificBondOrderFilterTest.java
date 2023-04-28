@@ -26,7 +26,6 @@
 package de.unijena.cheminf.filter.filters;
 
 import de.unijena.cheminf.TestUtils;
-import de.unijena.cheminf.filter.BaseFilter;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -247,7 +246,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpMinSpecificBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        BaseFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+        IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         Object tmpReturnValue = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -272,7 +271,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         int tmpMinSpecificBondCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
-        BaseFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+        IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -300,7 +299,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMinSpecificBondCount = 7;
         boolean tmpConsiderImplicitHydrogens = true;
-        BaseFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+        IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -328,7 +327,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         int tmpMinSpecificBondCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        BaseFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+        IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
         );
         IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.filter(tmpAtomContainerSet);
@@ -349,7 +348,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
                     int tmpMinSpecificBondCount = 5;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    BaseFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
+                    IFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
                             tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
                     );
                     tmpMinBondsOfSpecificBondOrderFilter.filter(null);

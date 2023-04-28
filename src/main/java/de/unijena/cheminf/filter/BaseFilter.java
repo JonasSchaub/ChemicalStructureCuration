@@ -45,11 +45,7 @@ public abstract class BaseFilter implements IFilter {
      */
 
     /**
-     * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
-     *
-     * @param anAtomContainerSet set of atom containers to be filtered
-     * @return atom container set of all atom containers that passed the filter
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * {@inheritDoc}
      */
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");

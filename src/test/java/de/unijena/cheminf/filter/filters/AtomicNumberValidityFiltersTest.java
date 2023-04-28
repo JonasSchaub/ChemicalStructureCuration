@@ -327,7 +327,7 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
-        BaseFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);  //TODO: outsource code?
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);  //TODO: outsource code?
         IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -381,7 +381,7 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
-        BaseFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         IAtomContainerSet tmpFilteredACSet = tmpFilter.filter(tmpAtomContainerSet);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
