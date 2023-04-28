@@ -43,7 +43,6 @@ public class PubChemValenceListContainerTest {
 
     /*
     TODO: add references to the PubChem valence list?
-    TODO: test the constructor? (all the different reasons to throw an IOException)
      */
 
     /**

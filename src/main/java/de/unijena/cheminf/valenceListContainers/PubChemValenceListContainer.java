@@ -29,24 +29,19 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * TODO
+ * A container that imports and stores the data contained by the PubChem valence list text file.
  * TODO: link / reference!
+ * <p>
+ * The class follows the Singleton pattern. To receive an instance of the class, the method {@link #getInstance()} may
+ * be used.
  */
 public class PubChemValenceListContainer extends BaseValenceListContainer {
 
     /*
-    TODO: remove logger?
-    TODO: check the doc comments
-    TODO: class description
     TODO: add link / reference to the source of the PubChem valence list file
     //
     TODO: implement filter
      */
-
-    /** TODO: unnecessary? / remove?
-     * Logger of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(PubChemValenceListContainer.class.getName());
 
     /**
      * String of the file path of the PubChem valence list text file in this project.

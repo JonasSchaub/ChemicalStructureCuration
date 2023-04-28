@@ -47,6 +47,7 @@ public class BaseValenceListContainer implements IValenceListContainer {
      * Two-dimensional matrix of integer values that stores the data loaded from a valence list text file. Every element
      * in the upper-level array of the matrix is the equivalent to a line of the text file (except the headline); the
      * values contained by the inner arrays are:
+     * <p>
      * atomic number (index 0), charge (index 1), number of π bonds (index 2), number of σ bonds (index 3) and the
      * maximum number of implicit hydrogens (index 4).
      */
@@ -54,25 +55,32 @@ public class BaseValenceListContainer implements IValenceListContainer {
 
     /**
      * Integer matrix that contains a pointer for every chemical element present in the valence list matrix
-     * ({@link #valenceListMatrix}) that points at the first entry in the upper-level array that regards to the
-     * element. In addition to the pointer, the matrix stores the total number of entries that belong to the specific
-     * element.
+     * ({@link #valenceListMatrix}). The pointer equals the index of the first entry in the upper-level array of the
+     * valence list matrix that regards to the specific element. In addition to the pointer, the matrix stores the count
+     * of how many entries in the valence list matrix regard to a specific element.
+     * <p>
      * The values regarding a specific element may be accessed via:
-     *      valenceList[ atomic number - 1 ] [0] ->  pointer;
-     *      valenceList[ atomic number - 1 ] [1] ->  number of entries.
+     * <ul>
+     *      [ atomic number - 1 ] [0] ->  pointer;<p>
+     *      [ atomic number - 1 ] [1] ->  number of entries.
+     * </ul>
      */
     protected final int[][] valenceListPointerMatrix;
 
     /**
      * Private constructor. Loads a valence list text file, a file containing a list of valid valences and
      * configurations of atoms.
+     * <p>
      * The list, in which each line stands for one valid atom configuration, is expected to have the following format
      * and contain the following information:
-     * - one headline;
-     * - five columns per line, separated by tab ("\t");
-     * - stored data: atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
-     *   bonds (column 4), maximum number of implicit hydrogens (column 5).
-     * The list entries must be sorted according to their atomic number, starting with the lowest.
+     * <ul>
+     * <li>one headline;
+     * <li>five columns per line, separated by tab ("\t");
+     * <li>stored data: atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
+     * bonds (column 4), maximum number of implicit hydrogens (column 5).
+     * </ul>
+     * The list entries must be sorted according to their atomic number, starting with the entries with the lowest
+     * atomic number.
      *
      * @param aValenceListFilePath String of the file path of the valence list text file in the project
      * @param aNumberOfRowsInFile Integer value of the number of rows in the file (including the headline)
