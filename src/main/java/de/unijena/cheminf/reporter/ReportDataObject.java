@@ -30,7 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 /**
  * Object that stores all data necessary for an entry in a report file.
  */
-public class Report {
+public class ReportDataObject {
 
     /*
     TODO: choose a more specific class name?
@@ -60,9 +60,9 @@ public class Report {
     private final String processingStepDescription;
 
     /**
-     * String description of the reported problem.
+     * The reported exception.
      */
-    private final String errorDescription;
+    private final Exception reportedException;
 
     /**
      * Constructor. Initializes all class variables.
@@ -71,15 +71,15 @@ public class Report {
      * @param anIdentifier integer identifier of the structure
      * @param anOptionalIdentifier optional second integer identifier of the structure or null if there is none
      * @param aProcessingStepDescription string describing the processing step the reported problem occurred in
-     * @param anErrorDescription string description of the reported problem
+     * @param anException exception to be reported
      */
-    public Report(IAtomContainer anAtomContainer, int anIdentifier, Integer anOptionalIdentifier,
-                  String aProcessingStepDescription, String anErrorDescription) {
+    public ReportDataObject(IAtomContainer anAtomContainer, int anIdentifier, Integer anOptionalIdentifier,
+                            String aProcessingStepDescription, Exception anException) {
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
         this.optionalIdentifier = anOptionalIdentifier;
         this.processingStepDescription = aProcessingStepDescription;
-        this.errorDescription = anErrorDescription;
+        this.reportedException = anException;
     }
 
     /**
@@ -119,12 +119,12 @@ public class Report {
     }
 
     /**
-     * Returns a string description of the reported problem.
+     * Returns the exception to be reported.
      *
      * @return instance of String
      */
-    public String getErrorDescription() {
-        return errorDescription;
+    public Exception getReportedException() {
+        return reportedException;
     }
 
 }

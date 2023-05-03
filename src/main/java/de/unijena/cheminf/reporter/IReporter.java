@@ -43,11 +43,11 @@ public interface IReporter {
 
     /**
      * TODO
-     * (appends a report to the list of reports)
+     * (appends a report data object to a list of report data objects)
      *
-     * @param aReport the report to append
+     * @param aReportDataObject the report to append
      */
-    public void appendReport(Report aReport);
+    public void appendReport(ReportDataObject aReportDataObject);
 
     /**
      * TODO
