@@ -48,8 +48,8 @@ public class FilterPipelineFilterIDTests {
     public void getAssignedFilterID_returnsIntegerValue() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpAnyFilterID = 0;
-        tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
-        Assertions.assertInstanceOf(Integer.class, new FilterPipeline().getAssignedFilterID(tmpAtomContainer));
+        tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        Assertions.assertInstanceOf(Integer.class, new CurationPipeline().getAssignedFilterID(tmpAtomContainer));
     }
 
     /**
@@ -60,8 +60,8 @@ public class FilterPipelineFilterIDTests {
     public void getAssignedFilterID_returnedValueEqualsFilterIDOfGivenAC_0() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpAnyFilterID = 0;
-        tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
-        Assertions.assertEquals(tmpAnyFilterID, new FilterPipeline().getAssignedFilterID(tmpAtomContainer));
+        tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        Assertions.assertEquals(tmpAnyFilterID, new CurationPipeline().getAssignedFilterID(tmpAtomContainer));
     }
 
     /**
@@ -72,8 +72,8 @@ public class FilterPipelineFilterIDTests {
     public void getAssignedFilterID_returnedValueEqualsFilterIDOfGivenAC_1() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpAnyFilterID = 1;
-        tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
-        Assertions.assertEquals(tmpAnyFilterID, new FilterPipeline().getAssignedFilterID(tmpAtomContainer));
+        tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        Assertions.assertEquals(tmpAnyFilterID, new CurationPipeline().getAssignedFilterID(tmpAtomContainer));
     }
 
     /**
@@ -85,7 +85,7 @@ public class FilterPipelineFilterIDTests {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FilterPipeline().getAssignedFilterID(null);
+                    new CurationPipeline().getAssignedFilterID(null);
                 }
         );
     }
@@ -100,7 +100,7 @@ public class FilterPipelineFilterIDTests {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    new FilterPipeline().getAssignedFilterID(new AtomContainer());
+                    new CurationPipeline().getAssignedFilterID(new AtomContainer());
                 }
         );
     }
@@ -116,8 +116,8 @@ public class FilterPipelineFilterIDTests {
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
-                    tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, new Object());
-                    new FilterPipeline().getAssignedFilterID(tmpAtomContainer);
+                    tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, new Object());
+                    new CurationPipeline().getAssignedFilterID(tmpAtomContainer);
                 }
         );
     }
@@ -127,8 +127,8 @@ public class FilterPipelineFilterIDTests {
      */
     @Test
     public void getArrayOfAssignedFilterIDsTest_returnsNotNull() {
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Assertions.assertNotNull(tmpFilterPipeline.getArrayOfAssignedFilterIDs(new AtomContainerSet()));
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        Assertions.assertNotNull(tmpCurationPipeline.getArrayOfAssignedFilterIDs(new AtomContainerSet()));
     }
 
     /**
@@ -137,8 +137,8 @@ public class FilterPipelineFilterIDTests {
      */
     @Test
     public void getArrayOfAssignedFilterIDsTest_returnsArrayOfIntegers() {
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Assertions.assertInstanceOf(int[].class, tmpFilterPipeline.getArrayOfAssignedFilterIDs(new AtomContainerSet()));
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        Assertions.assertInstanceOf(int[].class, tmpCurationPipeline.getArrayOfAssignedFilterIDs(new AtomContainerSet()));
     }
 
     /**
@@ -149,10 +149,10 @@ public class FilterPipelineFilterIDTests {
     public void getArrayOfAssignedFilterIDsTest_returnsArrayOfLengthOneIfGiven1AC() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         int tmpAnyFilterID = 0;
-        tmpAtomContainerSet.getAtomContainer(0).setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpAnyFilterID);
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Assertions.assertEquals(1, tmpFilterPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet).length);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        Assertions.assertEquals(1, tmpCurationPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet).length);
     }
 
     /**
@@ -164,10 +164,10 @@ public class FilterPipelineFilterIDTests {
     public void getArrayOfAssignedFilterIDsTest_returnedValueEqualsFilterIDOfGivenAtomContainer_FilterID0() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         int tmpFilterID = 0;
-        tmpAtomContainerSet.getAtomContainer(0).setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterID);
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterID);
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        int[] tmpFilterIDArray = tmpFilterPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int[] tmpFilterIDArray = tmpCurationPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
         Assertions.assertEquals(tmpFilterID, tmpFilterIDArray[0]);
     }
 
@@ -180,10 +180,10 @@ public class FilterPipelineFilterIDTests {
     public void getArrayOfAssignedFilterIDsTest_returnedValueEqualsFilterIDOfGivenAtomContainer_FilterID1() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         int tmpFilterID = 1;
-        tmpAtomContainerSet.getAtomContainer(0).setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterID);
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterID);
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        int[] tmpFilterIDArray = tmpFilterPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int[] tmpFilterIDArray = tmpCurationPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
         Assertions.assertEquals(tmpFilterID, tmpFilterIDArray[0]);
     }
 
@@ -196,11 +196,11 @@ public class FilterPipelineFilterIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
-            tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, 0);
+            tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, 0);
         }
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Assertions.assertEquals(3, tmpFilterPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet).length);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        Assertions.assertEquals(3, tmpCurationPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet).length);
     }
 
     /**
@@ -215,11 +215,11 @@ public class FilterPipelineFilterIDTests {
         int tmpFilterID = 0;
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
-            tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterID);
+            tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterID);
         }
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        int[] tmpFilterIDArray = tmpFilterPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int[] tmpFilterIDArray = tmpCurationPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             Assertions.assertEquals(tmpFilterID, tmpFilterIDArray[i]);
         }
@@ -236,11 +236,11 @@ public class FilterPipelineFilterIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int[] tmpFilterIDArray = new int[]{4, 0, 2};
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
-            tmpAtomContainerSet.getAtomContainer(i).setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterIDArray[i]);
+            tmpAtomContainerSet.getAtomContainer(i).setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, tmpFilterIDArray[i]);
         }
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Assertions.assertArrayEquals(tmpFilterIDArray, tmpFilterPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet));
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        Assertions.assertArrayEquals(tmpFilterIDArray, tmpCurationPipeline.getArrayOfAssignedFilterIDs(tmpAtomContainerSet));
     }
 
     /**
@@ -252,7 +252,7 @@ public class FilterPipelineFilterIDTests {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FilterPipeline().getArrayOfAssignedFilterIDs(null);
+                    new CurationPipeline().getArrayOfAssignedFilterIDs(null);
                 }
         );
     }
@@ -268,7 +268,7 @@ public class FilterPipelineFilterIDTests {
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-                    new FilterPipeline().getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+                    new CurationPipeline().getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
                 }
         );
     }
@@ -284,8 +284,8 @@ public class FilterPipelineFilterIDTests {
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-                    tmpAtomContainerSet.getAtomContainer(0).setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, new Object());
-                    new FilterPipeline().getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
+                    tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, new Object());
+                    new CurationPipeline().getArrayOfAssignedFilterIDs(tmpAtomContainerSet);
                 }
         );
     }

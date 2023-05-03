@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.IProcessingStep;
 import de.unijena.cheminf.MassComputationFlavours;
 import de.unijena.cheminf.filter.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.HasInvalidAtomicNumbersFilter;
@@ -38,30 +39,35 @@ import de.unijena.cheminf.filter.filters.MinBondCountFilter;
 import de.unijena.cheminf.filter.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.filter.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.filter.filters.MinMolecularMassFilter;
+import de.unijena.cheminf.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 
-import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class for creating/building pipelines of multiple filters for filtering sets of atom containers based on molecular descriptors.  TODO: is this one sentence enough?
+ * A high-level API for curating, standardizing or filtering sets of molecules.
+ * TODO (use the DepictionGenerator as guideline)
+ *
+ * Class for creating/building pipelines of multiple filters for filtering sets of atom containers based on molecular descriptors.
  * Only contains filters that are based on molecular descriptors and can be applied for each atom container separately
  * (without knowledge of the other atom containers - as it would be necessary e.g. for filtering duplicates).
  */
-public class FilterPipeline {
+public class CurationPipeline {
 
     /*
     TODO: remove parameter tests of filters out of FilterPipeline methods?
     TODO: use the .withFilter() method in the .with...Filter() convenience methods?
     //
-    TODO: doc comments and test methods for new class fields
-    TODO: getters for new class fields
+    TODO: adopt test methods to pipeline changes
+        - check whether they are still doing their job (throw no exception)
+        - check whether they need to be removed / replaced
+        - check the doc-comments
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
@@ -89,67 +95,42 @@ public class FilterPipeline {
     /**
      * Logger of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(FilterPipeline.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CurationPipeline.class.getName());
 
     /**
-     * Linked list of the IFilter instances that were added to this filter pipeline. Filters can be added via the filter
-     * specific convenience methods or using the .withFilter() method of this class.
+     * Linked list that contains all processing steps (instances of IProcessingStep) that were added to the pipeline.
      */
-    protected final LinkedList<IFilter> listOfSelectedFilters;
+    protected final LinkedList<IProcessingStep> listOfSelectedProcessingSteps;
 
     /**
-     * Name string of the atom container property optionally used at the reporting of a filtering process.
+     * Name string of the atom container property that contains an optional second identifier of type integer. If the
+     * String is not null, no second identifier is used.
      */
     protected final String optionalIDPropertyName;
 
     /**
-     * TODO
-     */
-    protected int latestFilteringProcess_numberOfGivenACs;
-
-    /**
-     * TODO
-     */
-    protected int latestFilteringProcess_numberOfReturnedACs;
-
-    /**
-     * TODO
-     */
-    protected int[] latestFilteringProcess_numberOfACsFilteredByEachFilter;
-
-    /** TODO: realize what is written in the comment
-     * Constructor. At reporting of filtering processes, the MolID (assigned to each atom container during filtering
+     * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
      * process) is used for a unique identification of each atom container.
      */
-    public FilterPipeline() {
-        this((String) null);
+    public CurationPipeline() {
+        this(null);
     }
 
-    /** TODO: realize what is written in the comment
-     * Constructor. At reporting of filtering processes, the atom container property with the given name (String
-     * parameter) is used for a unique identification of each atom container in addition to the MolID, an identifier
-     * assigned to each atom container during filtering process.
+    /**
+     * Constructor. At reporting of a curation processes, the atom container property with the given name (String
+     * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
+     * assigned to each atom container during a curation process.
      *
      * @param aNameOfAtomContainerProperty Name string of the atom container property to be used at reporting of a
-     *                                     filtering process; if null is given,
-     * @throws IllegalArgumentException if the given property name string is null or blank
+     *                                     curation process; if null is given, no second identifier is used
+     * @throws IllegalArgumentException if the given property name string is blank
      */
-    public FilterPipeline(String aNameOfAtomContainerProperty) throws IllegalArgumentException {
+    public CurationPipeline(String aNameOfAtomContainerProperty) throws IllegalArgumentException {
         if (aNameOfAtomContainerProperty != null && aNameOfAtomContainerProperty.isBlank()) {
             throw new IllegalArgumentException("The given String aNameOfAtomContainerProperty is blank.");
         }
         this.optionalIDPropertyName = aNameOfAtomContainerProperty;
-        this.listOfSelectedFilters = new LinkedList<>();
-    }
-
-    /** TODO: remove this constructor (?!)
-     * Protected Constructor. Generates a copy of the original Filter instance maintaining all its fields.
-     *
-     * @param anOriginalFilterPipeline FilterPipeline instance to generate the copy of
-     */
-    protected FilterPipeline(FilterPipeline anOriginalFilterPipeline) {
-        this.optionalIDPropertyName = anOriginalFilterPipeline.optionalIDPropertyName;
-        this.listOfSelectedFilters = anOriginalFilterPipeline.listOfSelectedFilters;
+        this.listOfSelectedProcessingSteps = new LinkedList<>();
     }
 
     /**
@@ -162,46 +143,61 @@ public class FilterPipeline {
      * Atom containers do not pass a filter if they cause an exception to be thrown.    TODO
      *
      * @param anAtomContainerSet set of atom containers to be filtered
+     * @param aReporter TODO
      * @return atom container set of all atom containers that passed the filter pipeline
      * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * @throws CloneNotSupportedException TODO
      */
-    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet, IReporter aReporter) throws NullPointerException, CloneNotSupportedException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        this.latestFilteringProcess_numberOfGivenACs = anAtomContainerSet.getAtomContainerCount();
-        this.latestFilteringProcess_numberOfACsFilteredByEachFilter = new int[this.listOfSelectedFilters.size()];
         this.assignMolIdToAtomContainers(anAtomContainerSet);
-        final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        IAtomContainerSet tmpACSetToProcess;
+        IAtomContainerSet tmpResultingACSet = (IAtomContainerSet) anAtomContainerSet.clone();
+        // final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        IProcessingStep tmpCurrentProcessingStep;
         boolean tmpIsFilteredFlag;
-        IAtomContainer tmpAtomContainer;
 
-        for (int tmpIndexOfFilter = 0; tmpIndexOfFilter < this.listOfSelectedFilters.size(); tmpIndexOfFilter++) {
-            for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-                if (!tmpIsFilteredBitSet.get(i)) {
-                    tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
-                    try {
-                        tmpIsFilteredFlag = this.listOfSelectedFilters.get(tmpIndexOfFilter).isFiltered(tmpAtomContainer);
-                    } catch (Exception anException) {
-                        FilterPipeline.LOGGER.log(Level.INFO, anException.toString(), anException);   //TODO: which level to log at?
-                        tmpIsFilteredFlag = true;
-                    }
-                    if (tmpIsFilteredFlag) {
-                        tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfFilter);
-                        tmpIsFilteredBitSet.set(i);
-                        this.latestFilteringProcess_numberOfACsFilteredByEachFilter[tmpIndexOfFilter]++;
-                    }
+        for (int i = 0; i < this.listOfSelectedProcessingSteps.size(); i++) {
+            tmpCurrentProcessingStep = this.listOfSelectedProcessingSteps.get(i);
+            tmpACSetToProcess = tmpResultingACSet;
+            tmpResultingACSet = new AtomContainerSet();
+            //TODO: is there a way to set an initial atom container count?
+            for (IAtomContainer tmpAtomContainer : tmpACSetToProcess.atomContainers()) {
+                if (tmpAtomContainer == null) {
+                    //TODO: log
+                    //TODO: appendReport
+                    continue;
                 }
+                try {
+                    if (tmpCurrentProcessingStep.isFilter()) {
+                        tmpIsFilteredFlag = ((IFilter) this.listOfSelectedProcessingSteps.get(i)).isFiltered(tmpAtomContainer);
+                    } else {
+                        //TODO: do the processing
+                        tmpIsFilteredFlag = false;
+                    }
+                } catch (Exception anException) {
+                    CurationPipeline.LOGGER.log(Level.INFO, anException.toString(), anException);   //TODO: which level to log at?
+                    //TODO: appendReport
+                    tmpIsFilteredFlag = true;
+                }
+                if (tmpIsFilteredFlag) {
+                    tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, i);
+                    continue;
+                }
+                tmpResultingACSet.addAtomContainer(tmpAtomContainer);
             }
         }
-        final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
-        for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
+
+        //TODO: if the FilterID I used in the FilterPipeline should be maintained, the following code needs some adoptions
+        /*for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
             if (!tmpIsFilteredBitSet.get(i)) {
-                tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, FilterPipeline.NOT_FILTERED_VALUE);
-                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+                tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, CurationPipeline.NOT_FILTERED_VALUE);
+                tmpResultingACSet.addAtomContainer(tmpAtomContainer);
             }
-        }
+        }*/
 
-        /*final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
+        /*final IAtomContainerSet tmpResultingACSet = new AtomContainerSet();
         int tmpIndexOfAppliedFilter;
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {  //TODO: switch order/position of loops
@@ -214,14 +210,13 @@ public class FilterPipeline {
                 }
             }
             if (tmpIndexOfAppliedFilter == FilterPipeline.NOT_FILTERED_VALUE) {
-                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+                tmpResultingACSet.addAtomContainer(tmpAtomContainer);
             }
             tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
         }*/
 
-        this.latestFilteringProcess_numberOfReturnedACs = tmpFilteredACSet.getAtomContainerCount();
-
-        return tmpFilteredACSet;
+        //aReporter.report(); //TODO: directly report? this would cause problems with the lot of test methods
+        return tmpResultingACSet;
     }
 
     /**
@@ -233,12 +228,12 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given max atom count has a negative value
      */
-    public FilterPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -251,12 +246,12 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given min atom count has a negative value
      */
-    public FilterPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -268,12 +263,12 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given max heavy atom count has a negative value
      */
-    public FilterPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
+    public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
         if (aMaxHeavyAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -285,12 +280,12 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given min heavy atom count has a negative value
      */
-    public FilterPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
+    public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
         if (aMinHeavyAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -303,12 +298,12 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given max bond count has a negative value
      */
-    public FilterPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -321,12 +316,12 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given min bond count has a negative value
      */
-    public FilterPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -342,14 +337,14 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given max specific bond count has a negative value
      */
-    public FilterPipeline withMaxBondsOfSpecificBondOrderFilter(
+    public CurationPipeline withMaxBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
         if (aMaxSpecificBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -365,14 +360,14 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws IllegalArgumentException if the given min specific bond count has a negative value
      */
-    public FilterPipeline withMinBondsOfSpecificBondOrderFilter(
+    public CurationPipeline withMinBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
         if (aMinSpecificBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -383,9 +378,9 @@ public class FilterPipeline {
      *                                     as a valid atomic number
      * @return the FilterPipeline instance itself
      */
-    public FilterPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
+    public CurationPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -396,9 +391,9 @@ public class FilterPipeline {
      *                                     as a valid atomic number
      * @return the FilterPipeline instance itself
      */
-    public FilterPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
+    public CurationPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -416,13 +411,13 @@ public class FilterPipeline {
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public FilterPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
         if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -438,12 +433,12 @@ public class FilterPipeline {
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public FilterPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
+    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
         if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -461,13 +456,13 @@ public class FilterPipeline {
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public FilterPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
         if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -483,12 +478,12 @@ public class FilterPipeline {
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public FilterPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
+    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
         if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass);
-        this.listOfSelectedFilters.add(tmpFilter);
+        this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
 
@@ -501,9 +496,9 @@ public class FilterPipeline {
      * @return the FilterPipeline instance itself
      * @throws NullPointerException if the given Filter instance is null
      */
-    public FilterPipeline withFilter(IFilter aFilterToAdd) throws NullPointerException {
+    public CurationPipeline withFilter(IFilter aFilterToAdd) throws NullPointerException {
         Objects.requireNonNull(aFilterToAdd, "aFilterToAdd (instance of Filter) is null.");
-        this.listOfSelectedFilters.add(aFilterToAdd);
+        this.listOfSelectedProcessingSteps.add(aFilterToAdd);
         return this;
     }
 
@@ -518,7 +513,7 @@ public class FilterPipeline {
     protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-            anAtomContainerSet.getAtomContainer(i).setProperty(FilterPipeline.MOL_ID_PROPERTY_NAME, i);
+            anAtomContainerSet.getAtomContainer(i).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, i);
         }
     }
 
@@ -564,14 +559,14 @@ public class FilterPipeline {
      */
     public int getAssignedMolID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        if (anAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME) == null) {
+        if (anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME) == null) {
             throw new IllegalArgumentException("The given IAtomContainer instance has no MolID assigned.");
         }
-        if (anAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME).getClass() != Integer.class) {
+        if (anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME).getClass() != Integer.class) {
             throw new IllegalArgumentException("The MolID assigned to the given IAtomContainer instance is not of " +
                     "data type Integer.");
         }
-        return anAtomContainer.getProperty(FilterPipeline.MOL_ID_PROPERTY_NAME);
+        return anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME);
     }
 
     /**
@@ -617,14 +612,14 @@ public class FilterPipeline {
      */
     public int getAssignedFilterID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        if (anAtomContainer.getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME) == null) {
+        if (anAtomContainer.getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME) == null) {
             throw new IllegalArgumentException("The given IAtomContainer instance has no FilterID assigned.");
         }
-        if (anAtomContainer.getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME).getClass() != Integer.class) {
+        if (anAtomContainer.getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME).getClass() != Integer.class) {
             throw new IllegalArgumentException("The FilterID assigned to the given IAtomContainer instance is not of " +
                     "data type Integer.");
         }
-        return anAtomContainer.getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME);
+        return anAtomContainer.getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME);
     }
 
     /**
@@ -632,8 +627,8 @@ public class FilterPipeline {
      *
      * @return LinkedList of IFilter instances
      */
-    public LinkedList<IFilter> getListOfSelectedFilters() {
-        return this.listOfSelectedFilters;
+    public LinkedList<IProcessingStep> getListOfSelectedProcessingSteps() {
+        return this.listOfSelectedProcessingSteps;
     }
 
     /**

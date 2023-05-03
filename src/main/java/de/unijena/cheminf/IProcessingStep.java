@@ -23,35 +23,28 @@
  *
  */
 
-package de.unijena.cheminf.filter;
-
-import de.unijena.cheminf.IProcessingStep;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomContainerSet;
+package de.unijena.cheminf;
 
 /**
- * IFilter interface.
+ * TODO
  */
-public interface IFilter extends IProcessingStep {
+public interface IProcessingStep {
+
+    /*
+    TODO
+     */
 
     /**
-     * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
-     *
-     * @param anAtomContainerSet set of atom containers to be filtered
-     * @return atom container set of all atom containers that passed the filter
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * TODO
+     * @return
      */
-    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
+    //public String getDescriptionString();
 
     /**
-     * Checks whether the filter applies on a given IAtomContainer instance.
-     * Returns true, if the given atom container gets filtered.
-     * TODO: mention that the method might throw other exceptions
+     * Returns whether the processing step is an instance of IFilter.
      *
-     * @param anAtomContainer IAtomContainer instance to be checked
-     * @return true, if the filter applies on the given atom container
-     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @return boolean value
      */
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    public boolean isFilter();
 
 }

@@ -26,7 +26,7 @@
 package de.unijena.cheminf;
 
 import de.unijena.cheminf.filter.BaseFilter;
-import de.unijena.cheminf.filter.FilterPipeline;
+import de.unijena.cheminf.filter.CurationPipeline;
 import de.unijena.cheminf.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.openscience.cdk.AtomContainer;
@@ -157,19 +157,19 @@ public class TestUtils {
                     "count of atom containers in anAtomContainerSet (instance of IAtomContainerSet).");
         }
         //
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withFilter(aFilter);
-        IAtomContainerSet tmpFilteredACSet = tmpFilterPipeline.filter(anAtomContainerSet);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().withFilter(aFilter);
+        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.filter(anAtomContainerSet);
         int tmpIndexInFilteredSet = 0;
         int tmpFilterID;
         for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
-            tmpFilterID = anAtomContainerSet.getAtomContainer(i).getProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME);
+            tmpFilterID = anAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME);
             if (!anIsFilteredBooleanArray[i]) {
-                Assertions.assertEquals(FilterPipeline.NOT_FILTERED_VALUE, tmpFilterID);
+                Assertions.assertEquals(CurationPipeline.NOT_FILTERED_VALUE, tmpFilterID);
                 Assertions.assertSame(anAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
                 tmpIndexInFilteredSet++;
                 continue;
             }
-            Assertions.assertTrue(tmpFilterID != FilterPipeline.NOT_FILTERED_VALUE);
+            Assertions.assertTrue(tmpFilterID != CurationPipeline.NOT_FILTERED_VALUE);
         }
     }
 

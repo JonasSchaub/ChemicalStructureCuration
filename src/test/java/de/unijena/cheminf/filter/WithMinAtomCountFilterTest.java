@@ -44,7 +44,7 @@ public class WithMinAtomCountFilterTest {
     public void withMinAtomCountFilterMethodTest_returnsNotNull() {
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertNotNull(new FilterPipeline().withMinAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        Assertions.assertNotNull(new CurationPipeline().withMinAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /**
@@ -55,7 +55,7 @@ public class WithMinAtomCountFilterTest {
     public void withMinAtomCountFilterMethodTest_returnsFilterPipelineInstance() {
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertInstanceOf(FilterPipeline.class, new FilterPipeline().withMinAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        Assertions.assertInstanceOf(CurationPipeline.class, new CurationPipeline().withMinAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /**
@@ -66,8 +66,8 @@ public class WithMinAtomCountFilterTest {
     public void withMinAtomCountFilterMethodTest_returnedFilterPipelineInstanceIsSameAsTheOneTheMethodIsCalledFrom() {
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        Assertions.assertSame(tmpFilterPipeline, tmpFilterPipeline.withMinAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMinAtomCountFilter(tmpIntegerParameter, tmpBooleanParameter));
     }
 
     /**
@@ -76,12 +76,12 @@ public class WithMinAtomCountFilterTest {
      */
     @Test
     public void withMinAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersIsTheSameAndWasExtendedByOne() {
-        FilterPipeline tmpFilterPipeline = new FilterPipeline();
-        LinkedList<IFilter> tmpListOfSelectedFilters = tmpFilterPipeline.getListOfSelectedFilters();
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        LinkedList<IFilter> tmpListOfSelectedFilters = tmpCurationPipeline.getListOfSelectedProcessingSteps();
         int tmpListInitialSize = tmpListOfSelectedFilters.size();
-        tmpFilterPipeline.withMinAtomCountFilter(10, true);
-        Assertions.assertSame(tmpListOfSelectedFilters, tmpFilterPipeline.getListOfSelectedFilters());
-        Assertions.assertEquals(tmpListInitialSize + 1, tmpFilterPipeline.getListOfSelectedFilters().size());
+        tmpCurationPipeline.withMinAtomCountFilter(10, true);
+        Assertions.assertSame(tmpListOfSelectedFilters, tmpCurationPipeline.getListOfSelectedProcessingSteps());
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpCurationPipeline.getListOfSelectedProcessingSteps().size());
     }
 
     /**
@@ -92,8 +92,8 @@ public class WithMinAtomCountFilterTest {
     public void withMinAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinAtomCountFilter() {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MinAtomCountFilter.class, tmpFilterPipeline.getListOfSelectedFilters().getLast());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
+        Assertions.assertInstanceOf(MinAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
     }
 
     /**
@@ -104,11 +104,11 @@ public class WithMinAtomCountFilterTest {
     public void withMinAtomCountFilterMethodTest_checksWhetherAddedMinAtomCountFilterHasGivenThresholdSet_twoTests() {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinAtomCount());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpThresholdValue, ((MinAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinAtomCount());
         tmpThresholdValue = 20;
-        tmpFilterPipeline = new FilterPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).getMinAtomCount());
+        tmpCurationPipeline = new CurationPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertEquals(tmpThresholdValue, ((MinAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinAtomCount());
     }
 
     /**
@@ -119,11 +119,11 @@ public class WithMinAtomCountFilterTest {
     public void withMinAtomCountFilterMethodTest_checksWhetherAddedMinAtomCountFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        FilterPipeline tmpFilterPipeline = new FilterPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MinAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isConsiderImplicitHydrogens());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertTrue(((MinAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
         tmpConsiderImplicitHydrogens = false;
-        tmpFilterPipeline = new FilterPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MinAtomCountFilter) tmpFilterPipeline.getListOfSelectedFilters().getLast()).isConsiderImplicitHydrogens());
+        tmpCurationPipeline = new CurationPipeline().withMinAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
+        Assertions.assertFalse(((MinAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
     }
 
     /**
@@ -136,7 +136,7 @@ public class WithMinAtomCountFilterTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpNegativeMinAtomCount = -1;
-                    new FilterPipeline().withMinAtomCountFilter(tmpNegativeMinAtomCount, true);
+                    new CurationPipeline().withMinAtomCountFilter(tmpNegativeMinAtomCount, true);
                 }
         );
     }

@@ -60,4 +60,11 @@ public abstract class BaseFilter implements IFilter {
         return tmpFilteredACSet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isFilter() {
+        return true;
+    }
 }
