@@ -34,6 +34,7 @@ class CreateMarkdownTest {
     @Test
     public void CreateCurationPipelineReport() throws IOException, CDKException {
 
+        //create test Atomcontainer to depict a test molecule
         IAtom atom = new Atom(C);
         IAtomContainer atomContainer = new AtomContainer();
         atomContainer.addAtom(atom);
@@ -56,7 +57,8 @@ class CreateMarkdownTest {
             String tmpId = "Identifier here";
             String tmpTypeOfError = "add type of error";
             String tmpErrorLocation = "add location of error";
-            CurationPipelineReport.append(String.format("|![Depiction of atom container](data:image/png;base64,%s)| %s|%s|%s|", tmpDepictionString, tmpId, tmpTypeOfError, tmpErrorLocation));
+            CurationPipelineReport.append(String.format("|![Depiction](%s%s)| %s|%s|%s|", "data:image/png;base64,", tmpDepictionString, tmpId, tmpTypeOfError, tmpErrorLocation));
+            System.out.println("data:image/png;base64," + tmpDepictionString);
         }
 
         try {
@@ -73,6 +75,7 @@ class CreateMarkdownTest {
             e.printStackTrace();
             throw new NullPointerException("amountOfErrors cannot be NULL" + e.getMessage());
         }
+
     }
 
 }

@@ -19,14 +19,22 @@ public class ReportDepiction {
 
     public String getDepictionAsImage(IAtomContainer atomContainer1) throws CDKException, IOException {
 
-        DepictionGenerator depictionGenerator = new DepictionGenerator().withAtomColors().withSize(200,200);
-        BufferedImage tmpImage = depictionGenerator.depict(atomContainer1).toImg();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(tmpImage, "png", outputStream);
-        byte[] imageBytes = outputStream.toByteArray();
-        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-        return base64Image;
+        try {
+
+            DepictionGenerator depictionGenerator = new DepictionGenerator().withAtomColors().withSize(400, 400);
+            BufferedImage tmpImage = depictionGenerator.depict(atomContainer1).toImg();
+            System.out.println(tmpImage);
+            ByteArrayOutputStream tmpOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(tmpImage, "png", tmpOutputStream);
+            byte[] imageBytes = tmpOutputStream.toByteArray();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            return base64Image;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("Error writing to file:" + e.getMessage());
+        } catch (CDKException e) {
+            e.printStackTrace();
+            throw new IOException("Error writing to file:" + e.getMessage());
+        }
     }
-
-
 }

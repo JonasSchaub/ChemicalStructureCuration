@@ -15,12 +15,14 @@ public class CreateMarkdown {
     /**
      * provides CreateMarkdown with needed variables
      */
-    Report report;
+    //private Report report;
 
     /**
      * provides Depiction as String to show it in the markdown file
      */
-    ReportDepiction reportDepiction;
+    //private ReportDepiction reportDepiction;
+    private StringBuilder curationPipelineReport;
+    private StringBuilder errors;
 
     /**
      * class to create a markdown file to report failures in the Curation Pipeline
@@ -33,18 +35,18 @@ public class CreateMarkdown {
     public void CreateCurationPipelineReport() throws IOException, CDKException {
 
         String header = "# Curation Pipeline Report\n";
-        StringBuilder errors = new StringBuilder();
-        int numberOfErrors = 3;
-        String errorsAmount = String.valueOf(numberOfErrors);
-        errors.append("\n|Number of Errors|"+ errorsAmount + "|\n");
-        errors.append("|------|-------|\n\n");
+        errors = new StringBuilder();
+        int tmpNumberOfErrors = 3;
+        String tmpErrorsAmount = String.valueOf(tmpNumberOfErrors);
+        this.errors.append("\n|Number of Errors|"+ tmpErrorsAmount + "|\n");
+        this.errors.append("|------|-------|\n\n");
 
-        StringBuilder CurationPipelineReport = new StringBuilder();
-        CurationPipelineReport.append("## Details\n");
-        CurationPipelineReport.append("|depiction|identifier|TypeOfError|ErrorLocation|\n");
-        CurationPipelineReport.append("| --- | -------- | -------- | -------- |\n");
+        curationPipelineReport = new StringBuilder();
+        this.curationPipelineReport.append("## Details\n");
+        this.curationPipelineReport.append("|depiction|identifier|TypeOfError|ErrorLocation|\n");
+        this.curationPipelineReport.append("| --- | -------- | -------- | -------- |\n");
 
-        /*
+        /* TODO create numberOfErrors count to make loop work and expand table in markdown file
          for (int i; i<= numberOfErrors; i++){
             String tmpDepictionString = reportDepiction.getDepictionAsImage(report.getAtomContainer(i));
             String tmpId = report.getIdentifier(i);
@@ -59,7 +61,7 @@ public class CreateMarkdown {
             FileWriter tmpWriter = new FileWriter(tmpFile);
             tmpWriter.write(header);
             tmpWriter.write(String.valueOf(errors));
-            tmpWriter.write(String.valueOf(CurationPipelineReport));
+            tmpWriter.write(String.valueOf(curationPipelineReport));
             tmpWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
