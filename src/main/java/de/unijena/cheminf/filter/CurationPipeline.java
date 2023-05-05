@@ -68,6 +68,10 @@ public class CurationPipeline {
         - check whether they are still doing their job (throw no exception)
         - check whether they need to be removed / replaced
         - check the doc-comments
+    TODO:
+        - initialize reporter
+        - remove reporter as parameter
+        - make file destination adjustable without the need to set a new reporter?
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
@@ -107,6 +111,11 @@ public class CurationPipeline {
      * String is not null, no second identifier is used.
      */
     protected final String optionalIDPropertyName;
+
+    /**
+     * Reporter of this curation pipeline.
+     */
+    private IReporter reporter;
 
     /**
      * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
@@ -639,6 +648,25 @@ public class CurationPipeline {
      */
     public String getOptionalIDPropertyName() {
         return optionalIDPropertyName;
+    }
+
+    /**
+     * Returns the reporter of this curation pipeline.
+     *
+     * @return IReporter instance
+     */
+    public IReporter getReporter() {
+        return reporter;
+    }
+
+    /**
+     * TODO
+     * @param aReporter
+     */
+    public void setReporter(IReporter aReporter) {
+        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
+        //TODO: further checks (?!)
+        this.reporter = aReporter;
     }
 
 }
