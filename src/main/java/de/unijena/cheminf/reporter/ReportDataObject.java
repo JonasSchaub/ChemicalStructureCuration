@@ -30,7 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 /**
  * Object that stores all data necessary for an entry in a report file.
  */
-public class Report {
+public class ReportDataObject {
 
     /*
     TODO: choose a more specific class name?
@@ -73,8 +73,8 @@ public class Report {
      * @param aProcessingStepDescription string describing the processing step the reported problem occurred in
      * @param anErrorDescription string description of the reported problem
      */
-    public Report(IAtomContainer anAtomContainer, int anIdentifier, Integer anOptionalIdentifier,
-                  String aProcessingStepDescription, String anErrorDescription) {
+    public ReportDataObject(IAtomContainer anAtomContainer, int anIdentifier, Integer anOptionalIdentifier,
+                            String aProcessingStepDescription, String anErrorDescription) {
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
         this.optionalIdentifier = anOptionalIdentifier;

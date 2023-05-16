@@ -25,6 +25,8 @@
 
 package de.unijena.cheminf.reporter;
 
+import org.openscience.cdk.exception.CDKException;
+
 import java.io.IOException;
 
 /**
@@ -45,15 +47,15 @@ public interface IReporter {
      * TODO
      * (appends a report to the list of reports)
      *
-     * @param aReport the report to append
+     * @param aReportDataObject the report to append
      */
-    public void appendReport(Report aReport);
+    public void appendReport(ReportDataObject aReportDataObject);
 
     /**
      * TODO
      * (creates the report file at the chosen destination)
      */
-    public void report();
+    public void report() throws CDKException, IOException;
 
     /**
      * TODO
