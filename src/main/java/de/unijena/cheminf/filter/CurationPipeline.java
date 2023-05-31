@@ -27,6 +27,7 @@ package de.unijena.cheminf.filter;
 
 import de.unijena.cheminf.IProcessingStep;
 import de.unijena.cheminf.MassComputationFlavours;
+import de.unijena.cheminf.curation.ChemicalStructureCurationUtils;
 import de.unijena.cheminf.filter.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.HasInvalidAtomicNumbersFilter;
 import de.unijena.cheminf.filter.filters.MaxAtomCountFilter;
@@ -143,26 +144,24 @@ public class CurationPipeline {
     }
 
     /**
-     * Applies the filter pipeline on the given set of atom containers and returns the set of those who passed all
-     * filters. To uniquely identify the atom containers during the filtering process, each atom container gets a
-     * unique MolID ("FilterPipeline.MolID") in form of an integer type property assigned. In order to trace by which
-     * filter an atom container got filtered by, every atom container gets the index of the filter in the list of
+     * Applies the curation pipeline on the given set of atom containers and returns the set of those who passed all
+     * curation steps. To uniquely identify the atom containers during the process, each atom container gets a unique
+     * MolID ("CurationPipeline.MolID") in form of an integer type property assigned.
+     * TODO
+     * In order to trace by which step an atom container got filtered by, every atom container gets the index of the filter in the list of
      * selected filters assigned as FilterID (integer property "FilterPipeline.FilterID"). Atom containers that do
      * not get filtered get a FilterID of negative one.
-     * Atom containers do not pass a filter if they cause an exception to be thrown.    TODO
+     * Atom containers do not pass a curation step if they cause an exception to be thrown.
      *
-     * @param anAtomContainerSet set of atom containers to be filtered
-     * @param aReporter TODO
+     * @param anAtomContainerSet set of atom containers to be processed
      * @return atom container set of all atom containers that passed the filter pipeline
      * @throws NullPointerException if the given IAtomContainerSet instance is null
-     * @throws CloneNotSupportedException TODO
      */
-    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet, IReporter aReporter) throws NullPointerException, CloneNotSupportedException {
+    public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         this.assignMolIdToAtomContainers(anAtomContainerSet);
         IAtomContainerSet tmpACSetToProcess;
-        IAtomContainerSet tmpResultingACSet = (IAtomContainerSet) anAtomContainerSet.clone();
-        // final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        IAtomContainerSet tmpResultingACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.reporter, anAtomContainerSet);
         IProcessingStep tmpCurrentProcessingStep;
         boolean tmpIsFilteredFlag;
 
@@ -178,7 +177,7 @@ public class CurationPipeline {
                     continue;
                 }
                 try {
-                    if (tmpCurrentProcessingStep.isFilter()) {
+                    if (tmpCurrentProcessingStep instanceof IFilter) {
                         tmpIsFilteredFlag = ((IFilter) this.listOfSelectedProcessingSteps.get(i)).isFiltered(tmpAtomContainer);
                     } else {
                         //TODO: do the processing
@@ -198,7 +197,9 @@ public class CurationPipeline {
         }
 
         //TODO: if the FilterID I used in the FilterPipeline should be maintained, the following code needs some adoptions
-        /*for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
+        /*
+        // final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
+        for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
             if (!tmpIsFilteredBitSet.get(i)) {
                 tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, CurationPipeline.NOT_FILTERED_VALUE);
@@ -224,10 +225,11 @@ public class CurationPipeline {
             tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
         }*/
 
-        //aReporter.report(); //TODO: directly report? this would cause problems with the lot of test methods
+        this.reporter.report(); //TODO: directly report? this would cause problems with the lot of test methods
         return tmpResultingACSet;
     }
 
+    //<editor-fold desc="with...Filter methods" default-state="collapsed">
     /**
      * Adds a max atom count filter with the given parameters to the filter pipeline. Implicit hydrogen atoms may or
      * may not be considered; atom containers that equal the given max atom count do not get filtered.
@@ -495,6 +497,7 @@ public class CurationPipeline {
         this.listOfSelectedProcessingSteps.add(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
     /**
      * Adds the given filter to the filter pipeline. This method may be used to manually add a Filter instance to the

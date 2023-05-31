@@ -25,6 +25,8 @@
 
 package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.BaseProcessingStep;
+import de.unijena.cheminf.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -34,7 +36,7 @@ import java.util.Objects;
 /**
  * Abstract class BaseFilter - implements IFilter.  TODO
  */
-public abstract class BaseFilter implements IFilter {
+public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?
@@ -45,8 +47,23 @@ public abstract class BaseFilter implements IFilter {
      */
 
     /**
-     * {@inheritDoc}
+     * TODO!!!
+     *
+     * @param aReporter reporter to report to
+     * @param anIndexInPipeline index of the processing step in the pipeline it is part of
+     * @param anAtomContainerSet atom container set to process
+     * @return
      */
+    @Override
+    public IAtomContainerSet process(IReporter aReporter, Integer anIndexInPipeline, IAtomContainerSet anAtomContainerSet) {
+        return this.filter(anAtomContainerSet);
+    }
+
+    /**
+     * {@inheritDoc}
+     * TODO: remove / replace with .process()
+     */
+    @Deprecated
     public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
@@ -60,11 +77,4 @@ public abstract class BaseFilter implements IFilter {
         return tmpFilteredACSet;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isFilter() {
-        return true;
-    }
 }

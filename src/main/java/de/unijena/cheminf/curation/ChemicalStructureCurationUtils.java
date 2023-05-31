@@ -25,9 +25,52 @@
 
 package de.unijena.cheminf.curation;
 
+import de.unijena.cheminf.filter.CurationPipeline;
+import de.unijena.cheminf.reporter.IReporter;
+import org.openscience.cdk.AtomContainerSet;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- *
+ * TODO
  */
 public class ChemicalStructureCurationUtils {
+
+    /**
+     * Logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(ChemicalStructureCurationUtils.class.getName());
+
+    /**
+     * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
+     * appended to the given reporter and excluded from the returned atom container set. The total count of atom
+     * containers failing the cloning-process is being logged.
+     *
+     * @param aReporter reporter to append the reports to
+     * @param anAtomContainerSet atom container set to be cloned
+     * @return a clone of the given atom container set
+     */
+    public static IAtomContainerSet cloneAtomContainerSet(IReporter aReporter, IAtomContainerSet anAtomContainerSet) {
+        IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
+        int tmpCloneNotSupportedExceptionsCount = 0;
+        for (IAtomContainer tmpAtomContainer :
+                anAtomContainerSet.atomContainers()) {
+            try {
+                tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
+            } catch (CloneNotSupportedException aCloneNotSupportedException) {
+                tmpCloneNotSupportedExceptionsCount++;
+                //TODO: report
+            }
+        }
+        if (tmpCloneNotSupportedExceptionsCount > 0) {
+            ChemicalStructureCurationUtils.LOGGER.log(Level.WARNING, tmpCloneNotSupportedExceptionsCount + " of " +
+                    anAtomContainerSet.getAtomContainerCount() + " given atom containers could not be cloned and" +
+                    " thereby were excluded from the returned atom container set.");
+        }
+        return tmpCloneOfGivenACSet;
+    }
 
 }

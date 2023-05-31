@@ -291,7 +291,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinBondCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.curate(tmpAtomContainerSet);
         int tmpIndexInFilteredSet = 0;
         int tmpFilterID;
         for (int i = 0; i < tmpGotFilteredArray.length; i++) {
@@ -327,7 +327,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinBondCount = 4;
         boolean tmpConsiderImplicitHydrogens = false;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.curate(tmpAtomContainerSet);
         int tmpIndexInFilteredSet = 0;
         int tmpFilterID;
         for (int i = 0; i < tmpGotFilteredArray.length; i++) {

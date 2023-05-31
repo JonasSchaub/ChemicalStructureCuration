@@ -25,6 +25,9 @@
 
 package de.unijena.cheminf;
 
+import de.unijena.cheminf.reporter.IReporter;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+
 /**
  * TODO
  */
@@ -35,16 +38,55 @@ public interface IProcessingStep {
      */
 
     /**
+     * Clones and processes the given atom container set.
      * TODO
-     * @return
+     *
+     * @param anAtomContainerSet atom container set to clone and process
+     * @return the processed atom container set
      */
-    //public String getDescriptionString();
+    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet);
 
     /**
-     * Returns whether the processing step is an instance of IFilter.
+     * Processes the given atom container set.
+     * <ul>
+     * <b>WARNING:</b> The given atom container set is not being cloned before processing. The given data might be
+     * modified in the process.
+     * </ul>
+     * To avoid any changes to your original data, use the method {@link #cloneAndProcess(IAtomContainerSet)}.
      *
-     * @return boolean value
+     * @param anAtomContainerSet atom container set to process
+     * @return the processed atom container set
+     * @see #cloneAndProcess(IAtomContainerSet)
      */
-    public boolean isFilter();
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet);
+
+    /**
+     * Processes the given atom container set. This method implementation is meant to be used if the processing step is
+     * part of a pipeline of multiple processing steps.
+     * <ul>
+     * <b>WARNING:</b> The given atom container set is not being cloned before processing. The given data might be
+     * modified in the process.
+     * </ul>
+     * Report data is only appended to the given reporter, no report file is created.
+     * TODO
+     *
+     * @param aReporter reporter to report to
+     * @param anIndexInPipeline index of the processing step in the pipeline it is part of
+     * @param anAtomContainerSet atom container set to process
+     * @return the processed atom container set
+     */
+    public IAtomContainerSet process(IReporter aReporter, Integer anIndexInPipeline, IAtomContainerSet anAtomContainerSet);
+
+    /**
+     * Returns the reporter of the processing step.
+     *
+     * @return IReporter instance
+     */
+    public IReporter getReporter();
+
+    /**
+     * Sets the reporter of the processing step.
+     */
+    public void setReporter(IReporter aReporter);
 
 }
