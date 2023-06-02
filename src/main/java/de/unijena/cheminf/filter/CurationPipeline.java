@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.filter;
 
+import de.unijena.cheminf.BaseProcessingStep;
 import de.unijena.cheminf.IProcessingStep;
 import de.unijena.cheminf.MassComputationFlavours;
 import de.unijena.cheminf.curation.ChemicalStructureCurationUtils;
@@ -47,7 +48,6 @@ import org.openscience.cdk.interfaces.IBond;
 
 import java.util.LinkedList;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  * Only contains filters that are based on molecular descriptors and can be applied for each atom container separately
  * (without knowledge of the other atom containers - as it would be necessary e.g. for filtering duplicates).
  */
-public class CurationPipeline {
+public class CurationPipeline extends BaseProcessingStep {
 
     /*
     TODO: remove parameter tests of filters out of FilterPipeline methods?
@@ -104,18 +104,13 @@ public class CurationPipeline {
     /**
      * Linked list that contains all processing steps (instances of IProcessingStep) that were added to the pipeline.
      */
-    protected final LinkedList<IProcessingStep> listOfSelectedProcessingSteps;
+    protected final LinkedList<IProcessingStep> listOfSelectedPipelineSteps;
 
     /**
      * Name string of the atom container property that contains an optional second identifier of type integer. If the
      * String is not null, no second identifier is used.
      */
     protected final String optionalIDPropertyName;
-
-    /**
-     * Reporter of this curation pipeline.
-     */
-    private IReporter reporter;
 
     /**
      * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
@@ -139,7 +134,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("The given String aNameOfAtomContainerProperty is blank.");
         }
         this.optionalIDPropertyName = aNameOfAtomContainerProperty;
-        this.listOfSelectedProcessingSteps = new LinkedList<>();
+        this.listOfSelectedPipelineSteps = new LinkedList<>();
     }
 
     /**
@@ -158,20 +153,32 @@ public class CurationPipeline {
      */
     public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        this.assignMolIdToAtomContainers(anAtomContainerSet);
+        this.assignMolIdToAtomContainers(anAtomContainerSet);   //TODO: think about this again
+        IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.getReporter(), anAtomContainerSet);
+        return this.process(tmpClonedACSet, this.getReporter(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
+        //this.assignMolIdToAtomContainers(anAtomContainerSet); TODO: think about this again
         IAtomContainerSet tmpACSetToProcess;
-        IAtomContainerSet tmpResultingACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.reporter, anAtomContainerSet);
+        IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
         IProcessingStep tmpProcessingStep;
 
-        for (int i = 0; i < this.listOfSelectedProcessingSteps.size(); i++) {
-            tmpProcessingStep = this.listOfSelectedProcessingSteps.get(i);
+        for (int i = 0; i < this.listOfSelectedPipelineSteps.size(); i++) {
+            tmpProcessingStep = this.listOfSelectedPipelineSteps.get(i);
             tmpACSetToProcess = tmpResultingACSet;
-            tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, this.reporter, i);
+            tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, aReporter, i);
             //TODO: is there a way to set an initial atom container count?
 
         }
 
-        this.reporter.report(); //TODO: directly report? this would cause problems with the lot of test methods
+        this.getReporter().report();    //TODO: directly report? this would cause problems with the lot of test methods
         return tmpResultingACSet;
     }
 
@@ -190,7 +197,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -208,7 +215,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -225,7 +232,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -242,7 +249,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -260,7 +267,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -278,7 +285,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -301,7 +308,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -324,7 +331,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -337,7 +344,7 @@ public class CurationPipeline {
      */
     public CurationPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -350,7 +357,7 @@ public class CurationPipeline {
      */
     public CurationPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -374,7 +381,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -395,7 +402,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -419,7 +426,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
 
@@ -440,7 +447,7 @@ public class CurationPipeline {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass);
-        this.listOfSelectedProcessingSteps.add(tmpFilter);
+        this.listOfSelectedPipelineSteps.add(tmpFilter);
         return this;
     }
     //</editor-fold>
@@ -450,13 +457,13 @@ public class CurationPipeline {
      * filter pipeline for which no convenience method - in the form of .with...Filter() - is available. This allows
      * the usage of subsequently implemented filters.
      *
-     * @param aFilterToAdd the IFilter instance that is to be added to the pipeline
+     * @param aProcessingStep the IProcessingStep instance that is to be added to the pipeline
      * @return the FilterPipeline instance itself
      * @throws NullPointerException if the given Filter instance is null
      */
-    public CurationPipeline withFilter(IFilter aFilterToAdd) throws NullPointerException {
-        Objects.requireNonNull(aFilterToAdd, "aFilterToAdd (instance of Filter) is null.");
-        this.listOfSelectedProcessingSteps.add(aFilterToAdd);
+    public CurationPipeline addProcessingStep(IProcessingStep aProcessingStep) throws NullPointerException {
+        Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of Filter) is null.");
+        this.listOfSelectedPipelineSteps.add(aProcessingStep);
         return this;
     }
 
@@ -585,8 +592,8 @@ public class CurationPipeline {
      *
      * @return LinkedList of IFilter instances
      */
-    public LinkedList<IProcessingStep> getListOfSelectedProcessingSteps() {
-        return this.listOfSelectedProcessingSteps;
+    public LinkedList<IProcessingStep> getListOfSelectedPipelineSteps() {
+        return this.listOfSelectedPipelineSteps;
     }
 
     /**
@@ -597,25 +604,6 @@ public class CurationPipeline {
      */
     public String getOptionalIDPropertyName() {
         return optionalIDPropertyName;
-    }
-
-    /**
-     * Returns the reporter of this curation pipeline.
-     *
-     * @return IReporter instance
-     */
-    public IReporter getReporter() {
-        return reporter;
-    }
-
-    /**
-     * TODO
-     * @param aReporter
-     */
-    public void setReporter(IReporter aReporter) {
-        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
-        //TODO: further checks (?!)
-        this.reporter = aReporter;
     }
 
 }

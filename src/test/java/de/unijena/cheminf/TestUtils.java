@@ -157,7 +157,7 @@ public class TestUtils {
                     "count of atom containers in anAtomContainerSet (instance of IAtomContainerSet).");
         }
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withFilter(aFilter);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(aFilter);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.curate(anAtomContainerSet);
         int tmpIndexInFilteredSet = 0;
         int tmpFilterID;

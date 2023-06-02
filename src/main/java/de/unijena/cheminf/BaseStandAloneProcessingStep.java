@@ -25,16 +25,19 @@
 
 package de.unijena.cheminf;
 
-import de.unijena.cheminf.reporter.IReporter;
+import de.unijena.cheminf.curation.ChemicalStructureCurationUtils;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.util.Objects;
 
-public abstract class BaseProcessingStep implements IProcessingStep {
+/**
+ * TODO
+ */
+public abstract class BaseStandAloneProcessingStep extends BaseProcessingStep implements IStandAloneProcessingStep {
 
-    /**
-     * Reporter of this processing step.
+    /*
+    TODO: param checks
      */
-    private IReporter reporter; //TODO: is "private" here correct?
 
     /**
      * Constructor. TODO
@@ -42,26 +45,34 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @param aDefaultReporter default reporter of the instance
      * @throws NullPointerException if the given IReporter instance is null
      */
-    /*public BaseCurationPipelineStep(IReporter aDefaultReporter) throws NullPointerException {
-        Objects.requireNonNull(aDefaultReporter, "aDefaultReporter (instance of IReporter) has been null.");
-        this.reporter = aDefaultReporter;
+    /*public BaseProcessingStep(IReporter aDefaultReporter) throws NullPointerException {
+        super(aDefaultReporter);
     }*/
 
     /**
-     * {@inheritDoc}
+     * Clones the given atom container set and processes it by giving it to the method
+     * {@link #process(IAtomContainerSet)}.
+     *
+     * @param anAtomContainerSet atom container set to clone and process
+     * @return the set of cloned and processed atom containers
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
     @Override
-    public IReporter getReporter() {
-        return reporter;
+    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.getReporter(), anAtomContainerSet);
+        return this.process(tmpClonedACSet);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setReporter(IReporter aReporter) {
-        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
-        this.reporter = aReporter;
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        IAtomContainerSet tmpResultingACSet = this.process(anAtomContainerSet, this.getReporter(), null);
+        this.getReporter().report();
+        return tmpResultingACSet;
     }
 
 }

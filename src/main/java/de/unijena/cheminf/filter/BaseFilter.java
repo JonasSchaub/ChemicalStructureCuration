@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.filter;
 
-import de.unijena.cheminf.BaseProcessingStep;
+import de.unijena.cheminf.BaseStandAloneProcessingStep;
 import de.unijena.cheminf.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * Abstract class BaseFilter - implements IFilter.  TODO
  */
-public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
+public abstract class BaseFilter extends BaseStandAloneProcessingStep implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?

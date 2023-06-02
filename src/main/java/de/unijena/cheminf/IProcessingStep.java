@@ -33,35 +33,6 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
  */
 public interface IProcessingStep {
 
-    /*
-    TODO
-     */
-
-    /**
-     * Clones and processes the given atom container set.
-     * TODO
-     *
-     * @param anAtomContainerSet atom container set to clone and process
-     * @return the processed atom container set
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
-     */
-    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
-
-    /**
-     * Processes the given atom container set.
-     * <ul>
-     * <b>WARNING:</b> The given atom container set is not being cloned before processing. The given data might be
-     * modified during the processing.
-     * </ul>
-     * To avoid any changes to your original data, use the method {@link #cloneAndProcess(IAtomContainerSet)}.
-     *
-     * @param anAtomContainerSet atom container set to process
-     * @return the processed atom container set
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
-     * @see #cloneAndProcess(IAtomContainerSet)
-     */
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
-
     /**
      * Processes the given atom container set. This method implementation is meant to be used if the processing step is
      * part of a pipeline of multiple processing steps.
@@ -81,14 +52,14 @@ public interface IProcessingStep {
     public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) throws NullPointerException;
 
     /**
-     * Returns the reporter of the processing step.
+     * Returns the reporter of the instance.
      *
      * @return IReporter instance
      */
     public IReporter getReporter();
 
     /**
-     * Sets the reporter of the processing step.
+     * Sets the reporter of the instance.
      *
      * @throws NullPointerException if the given instance of IReporter is null
      */

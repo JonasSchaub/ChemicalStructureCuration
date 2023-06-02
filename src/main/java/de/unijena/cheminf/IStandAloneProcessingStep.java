@@ -23,35 +23,42 @@
  *
  */
 
-package de.unijena.cheminf.filter;
+package de.unijena.cheminf;
 
-import de.unijena.cheminf.IStandAloneProcessingStep;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
- * IFilter interface.
+ * TODO
  */
-public interface IFilter extends IStandAloneProcessingStep {
+public interface IStandAloneProcessingStep extends IProcessingStep {
+
+    /*
+    TODO
+     */
 
     /**
-     * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
+     * Clones and processes the given atom container set.
+     * TODO
      *
-     * @param anAtomContainerSet set of atom containers to be filtered
-     * @return atom container set of all atom containers that passed the filter
+     * @param anAtomContainerSet atom container set to clone and process
+     * @return the processed atom container set
      * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
-    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
+    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
     /**
-     * Checks whether the filter applies on a given IAtomContainer instance.
-     * Returns true, if the given atom container gets filtered.
-     * TODO: mention that the method might throw other exceptions
+     * Processes the given atom container set.
+     * <ul>
+     * <b>WARNING:</b> The given atom container set is not being cloned before processing. The given data might be
+     * modified during the processing.
+     * </ul>
+     * To avoid any changes to your original data, use the method {@link #cloneAndProcess(IAtomContainerSet)}.
      *
-     * @param anAtomContainer IAtomContainer instance to be checked
-     * @return true, if the filter applies on the given atom container
-     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @param anAtomContainerSet atom container set to process
+     * @return the processed atom container set
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * @see #cloneAndProcess(IAtomContainerSet)
      */
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
 }

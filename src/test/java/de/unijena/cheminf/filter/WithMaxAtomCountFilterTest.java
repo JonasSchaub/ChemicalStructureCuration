@@ -80,11 +80,11 @@ public class WithMaxAtomCountFilterTest {
     @Disabled
     public void withMaxAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersIsTheSameAndWasExtendedByOne() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        LinkedList<IProcessingStep> tmpListOfSelectedFilters = tmpCurationPipeline.getListOfSelectedProcessingSteps();
+        LinkedList<IProcessingStep> tmpListOfSelectedFilters = tmpCurationPipeline.getListOfSelectedPipelineSteps();
         int tmpListInitialSize = tmpListOfSelectedFilters.size();
         tmpCurationPipeline.withMaxAtomCountFilter(10, true);
-        Assertions.assertSame(tmpListOfSelectedFilters, tmpCurationPipeline.getListOfSelectedProcessingSteps());
-        Assertions.assertEquals(tmpListInitialSize + 1, tmpCurationPipeline.getListOfSelectedProcessingSteps().size());
+        Assertions.assertSame(tmpListOfSelectedFilters, tmpCurationPipeline.getListOfSelectedPipelineSteps());
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpCurationPipeline.getListOfSelectedPipelineSteps().size());
     }
 
     /**
@@ -96,7 +96,7 @@ public class WithMaxAtomCountFilterTest {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MaxAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MaxAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -108,10 +108,10 @@ public class WithMaxAtomCountFilterTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxAtomCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxAtomCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxAtomCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxAtomCount());
     }
 
     /**
@@ -123,10 +123,10 @@ public class WithMaxAtomCountFilterTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertTrue(((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
         tmpConsiderImplicitHydrogens = false;
         tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertFalse(((MaxAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
     }
 
     /**

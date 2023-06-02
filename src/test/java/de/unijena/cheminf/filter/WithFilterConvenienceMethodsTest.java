@@ -87,7 +87,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MaxBondCountFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MaxBondCountFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -99,10 +99,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxBondCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxBondCount());
     }
 
     /**
@@ -114,10 +114,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertTrue(((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
         tmpConsiderImplicitHydrogens = false;
         tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertFalse(((MaxBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
     }
 
     /**
@@ -222,7 +222,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MinBondCountFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MinBondCountFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -234,10 +234,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinBondCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinBondCount());
     }
 
     /**
@@ -249,10 +249,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertTrue(((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
         tmpConsiderImplicitHydrogens = false;
         tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertFalse(((MinBondCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
     }
 
     /**
@@ -384,7 +384,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder,
                 tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MaxBondsOfSpecificBondOrderFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MaxBondsOfSpecificBondOrderFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -398,10 +398,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getBondOrderOfInterest());
+        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getBondOrderOfInterest());
         tmpBondOrder = IBond.Order.DOUBLE;
         tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getBondOrderOfInterest());
+        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getBondOrderOfInterest());
     }
 
     /**
@@ -415,10 +415,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxSpecificBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxSpecificBondCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxSpecificBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxSpecificBondCount());
     }
 
     /**
@@ -431,10 +431,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertTrue(((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
         tmpConsiderImplicitHydrogens = false;
         tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertFalse(((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
     }
 
     /**
@@ -571,7 +571,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MinBondsOfSpecificBondOrderFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MinBondsOfSpecificBondOrderFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -585,10 +585,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getBondOrderOfInterest());
+        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getBondOrderOfInterest());
         tmpBondOrder = IBond.Order.DOUBLE;
         tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getBondOrderOfInterest());
+        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getBondOrderOfInterest());
     }
 
     /**
@@ -602,10 +602,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinSpecificBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinSpecificBondCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinSpecificBondCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinSpecificBondCount());
     }
 
     /**
@@ -618,10 +618,10 @@ public class WithFilterConvenienceMethodsTest {
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertTrue(((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
         tmpConsiderImplicitHydrogens = false;
         tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isConsiderImplicitHydrogens());
+        Assertions.assertFalse(((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isConsiderImplicitHydrogens());
     }
 
     /**
@@ -751,7 +751,7 @@ public class WithFilterConvenienceMethodsTest {
     public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxHeavyAtomCountFilter() {
         int tmpIntegerParameter = 10;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpIntegerParameter);
-        Assertions.assertInstanceOf(MaxHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MaxHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -762,10 +762,10 @@ public class WithFilterConvenienceMethodsTest {
     public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherAddedMaxHeavyAtomCountFilterHasGivenThresholdSet_twoTests() {
         int tmpThresholdValue = 10;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxHeavyAtomCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxHeavyAtomCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxHeavyAtomCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxHeavyAtomCount());
     }
 
     /**
@@ -865,7 +865,7 @@ public class WithFilterConvenienceMethodsTest {
     public void withMinHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinHeavyAtomCountFilter() {
         int tmpIntegerParameter = 10;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpIntegerParameter);
-        Assertions.assertInstanceOf(MinHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MinHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -876,10 +876,10 @@ public class WithFilterConvenienceMethodsTest {
     public void withMinHeavyAtomCountFilterMethodTest_checksWhetherAddedMinHeavyAtomCountFilterHasGivenThresholdSet_twoTests() {
         int tmpThresholdValue = 10;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinHeavyAtomCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinHeavyAtomCount());
         tmpThresholdValue = 20;
         tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinHeavyAtomCount());
+        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinHeavyAtomCount());
     }
 
     /**
@@ -968,7 +968,7 @@ public class WithFilterConvenienceMethodsTest {
     public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasAllValidAtomicNumbersFilter() {
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertInstanceOf(HasAllValidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(HasAllValidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -981,11 +981,11 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasAllValidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isWildcardAtomicNumberIsValid());
+                ((HasAllValidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
         tmpWildcardAtomicNumberIsValid = false;
         tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasAllValidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isWildcardAtomicNumberIsValid());
+                ((HasAllValidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
     }
 
     /**
@@ -1077,7 +1077,7 @@ public class WithFilterConvenienceMethodsTest {
     public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasInvalidAtomicNumbersFilter() {
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertInstanceOf(HasInvalidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(HasInvalidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -1090,11 +1090,11 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasInvalidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isWildcardAtomicNumberIsValid());
+                ((HasInvalidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
         tmpWildcardAtomicNumberIsValid = false;
         tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasInvalidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).isWildcardAtomicNumberIsValid());
+                ((HasInvalidAtomicNumbersFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
     }
 
     /**
@@ -1189,7 +1189,7 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -1202,10 +1202,10 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxMolecularMass());
         tmpThresholdValue = 20.0;
         tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxMolecularMass());
     }
 
     /**
@@ -1218,10 +1218,10 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMassComputationFlavour());
+        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMassComputationFlavour());
         tmpFlavour = MassComputationFlavours.MonoIsotopic;
         tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMassComputationFlavour());
+        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMassComputationFlavour());
     }
 
     /**
@@ -1285,7 +1285,7 @@ public class WithFilterConvenienceMethodsTest {
     public void withMaxMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -1297,10 +1297,10 @@ public class WithFilterConvenienceMethodsTest {
     public void withMaxMolecularMassFilterMethodTest_noFlavour_newFilterHasGivenThresholdValue_twoTests() {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxMolecularMass());
         tmpThresholdValue = 20.0;
         tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMaxMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMaxMolecularMass());
     }
 
     /**
@@ -1314,7 +1314,7 @@ public class WithFilterConvenienceMethodsTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
                 MassComputationFlavours.MolWeight,
-                ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMassComputationFlavour()
+                ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
 
@@ -1365,7 +1365,7 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -1378,10 +1378,10 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinMolecularMass());
         tmpThresholdValue = 20.0;
         tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinMolecularMass());
     }
 
     /**
@@ -1394,10 +1394,10 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMassComputationFlavour());
+        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMassComputationFlavour());
         tmpFlavour = MassComputationFlavours.MonoIsotopic;
         tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMassComputationFlavour());
+        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMassComputationFlavour());
     }
 
     /**
@@ -1461,7 +1461,7 @@ public class WithFilterConvenienceMethodsTest {
     public void withMinMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast());
+        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
     }
 
     /**
@@ -1473,10 +1473,10 @@ public class WithFilterConvenienceMethodsTest {
     public void withMinMolecularMassFilterMethodTest_noFlavour_newFilterHasGivenThresholdValue_twoTests() {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinMolecularMass());
         tmpThresholdValue = 20.0;
         tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMinMolecularMass());
+        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMinMolecularMass());
     }
 
     /**
@@ -1490,7 +1490,7 @@ public class WithFilterConvenienceMethodsTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
                 MassComputationFlavours.MolWeight,
-                ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedProcessingSteps().getLast()).getMassComputationFlavour()
+                ((MinMolecularMassFilter) tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
 
