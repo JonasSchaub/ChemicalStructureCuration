@@ -43,22 +43,24 @@ public interface IProcessingStep {
      *
      * @param anAtomContainerSet atom container set to clone and process
      * @return the processed atom container set
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
-    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet);
+    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
     /**
      * Processes the given atom container set.
      * <ul>
      * <b>WARNING:</b> The given atom container set is not being cloned before processing. The given data might be
-     * modified in the process.
+     * modified during the processing.
      * </ul>
      * To avoid any changes to your original data, use the method {@link #cloneAndProcess(IAtomContainerSet)}.
      *
      * @param anAtomContainerSet atom container set to process
      * @return the processed atom container set
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      * @see #cloneAndProcess(IAtomContainerSet)
      */
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet);
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
     /**
      * Processes the given atom container set. This method implementation is meant to be used if the processing step is
@@ -70,12 +72,13 @@ public interface IProcessingStep {
      * Report data is only appended to the given reporter, no report file is created.
      * TODO
      *
-     * @param aReporter reporter to report to
-     * @param anIndexInPipeline index of the processing step in the pipeline it is part of
      * @param anAtomContainerSet atom container set to process
+     * @param aReporter          reporter to report to
+     * @param anIndexInPipeline  index of the processing step in the pipeline it is part of
      * @return the processed atom container set
+     * @throws NullPointerException if the given IReporter or IAtomContainerSet instance is null
      */
-    public IAtomContainerSet process(IReporter aReporter, Integer anIndexInPipeline, IAtomContainerSet anAtomContainerSet);
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) throws NullPointerException;
 
     /**
      * Returns the reporter of the processing step.
@@ -86,7 +89,9 @@ public interface IProcessingStep {
 
     /**
      * Sets the reporter of the processing step.
+     *
+     * @throws NullPointerException if the given instance of IReporter is null
      */
-    public void setReporter(IReporter aReporter);
+    public void setReporter(IReporter aReporter) throws NullPointerException;
 
 }

@@ -29,6 +29,8 @@ import de.unijena.cheminf.curation.ChemicalStructureCurationUtils;
 import de.unijena.cheminf.reporter.IReporter;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
+import java.util.Objects;
+
 /**
  * TODO
  */
@@ -43,15 +45,23 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     private IReporter reporter;
 
+    //TODO: Constructor
+    /*public BaseProcessingStep(IReporter aDefaultReporter) throws NullPointerException {
+        Objects.requireNonNull(aDefaultReporter, "aDefaultReporter (instance of IReporter) has been null.");
+        this.reporter = aDefaultReporter;
+    }*/
+
     /**
      * Clones the given atom container set and processes it by giving it to the method
      * {@link #process(IAtomContainerSet)}.
      *
      * @param anAtomContainerSet atom container set to clone and process
      * @return the set of cloned and processed atom containers
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
     @Override
-    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet) {
+    public IAtomContainerSet cloneAndProcess(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.reporter, anAtomContainerSet);
         return this.process(tmpClonedACSet);
     }
@@ -61,7 +71,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     @Override
     public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) {
-        IAtomContainerSet tmpResultingACSet = this.process(this.reporter, null, anAtomContainerSet);
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        IAtomContainerSet tmpResultingACSet = this.process(anAtomContainerSet, this.reporter, null);
         this.reporter.report();
         return tmpResultingACSet;
     }
@@ -79,6 +90,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     @Override
     public void setReporter(IReporter aReporter) {
+        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
         this.reporter = aReporter;
     }
 

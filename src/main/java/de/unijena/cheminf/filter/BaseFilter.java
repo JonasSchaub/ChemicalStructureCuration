@@ -49,13 +49,13 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     /**
      * TODO!!!
      *
-     * @param aReporter reporter to report to
-     * @param anIndexInPipeline index of the processing step in the pipeline it is part of
      * @param anAtomContainerSet atom container set to process
+     * @param aReporter          reporter to report to
+     * @param anIndexInPipeline  index of the processing step in the pipeline it is part of
      * @return
      */
     @Override
-    public IAtomContainerSet process(IReporter aReporter, Integer anIndexInPipeline, IAtomContainerSet anAtomContainerSet) {
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) {
         return this.filter(anAtomContainerSet);
     }
 

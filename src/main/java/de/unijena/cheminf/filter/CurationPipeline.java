@@ -41,7 +41,6 @@ import de.unijena.cheminf.filter.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.filter.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.filter.filters.MinMolecularMassFilter;
 import de.unijena.cheminf.reporter.IReporter;
-import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
@@ -162,68 +161,15 @@ public class CurationPipeline {
         this.assignMolIdToAtomContainers(anAtomContainerSet);
         IAtomContainerSet tmpACSetToProcess;
         IAtomContainerSet tmpResultingACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.reporter, anAtomContainerSet);
-        IProcessingStep tmpCurrentProcessingStep;
-        boolean tmpIsFilteredFlag;
+        IProcessingStep tmpProcessingStep;
 
         for (int i = 0; i < this.listOfSelectedProcessingSteps.size(); i++) {
-            tmpCurrentProcessingStep = this.listOfSelectedProcessingSteps.get(i);
+            tmpProcessingStep = this.listOfSelectedProcessingSteps.get(i);
             tmpACSetToProcess = tmpResultingACSet;
-            tmpResultingACSet = new AtomContainerSet();
+            tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, this.reporter, i);
             //TODO: is there a way to set an initial atom container count?
-            for (IAtomContainer tmpAtomContainer : tmpACSetToProcess.atomContainers()) {
-                if (tmpAtomContainer == null) {
-                    //TODO: log
-                    //TODO: appendReport
-                    continue;
-                }
-                try {
-                    if (tmpCurrentProcessingStep instanceof IFilter) {
-                        tmpIsFilteredFlag = ((IFilter) this.listOfSelectedProcessingSteps.get(i)).isFiltered(tmpAtomContainer);
-                    } else {
-                        //TODO: do the processing
-                        tmpIsFilteredFlag = false;
-                    }
-                } catch (Exception anException) {
-                    CurationPipeline.LOGGER.log(Level.INFO, anException.toString(), anException);   //TODO: which level to log at?
-                    //TODO: appendReport
-                    tmpIsFilteredFlag = true;
-                }
-                if (tmpIsFilteredFlag) {
-                    tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, i);
-                    continue;
-                }
-                tmpResultingACSet.addAtomContainer(tmpAtomContainer);
-            }
+
         }
-
-        //TODO: if the FilterID I used in the FilterPipeline should be maintained, the following code needs some adoptions
-        /*
-        // final BitSet tmpIsFilteredBitSet = new BitSet(anAtomContainerSet.getAtomContainerCount());
-        for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-            tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
-            if (!tmpIsFilteredBitSet.get(i)) {
-                tmpAtomContainer.setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, CurationPipeline.NOT_FILTERED_VALUE);
-                tmpResultingACSet.addAtomContainer(tmpAtomContainer);
-            }
-        }*/
-
-        /*final IAtomContainerSet tmpResultingACSet = new AtomContainerSet();
-        int tmpIndexOfAppliedFilter;
-        for (IAtomContainer tmpAtomContainer :
-                anAtomContainerSet.atomContainers()) {  //TODO: switch order/position of loops
-            tmpIndexOfAppliedFilter = FilterPipeline.NOT_FILTERED_VALUE;
-            //apply filters
-            for (int i = 0; i < this.listOfSelectedFilters.size(); i++) {
-                if (this.listOfSelectedFilters.get(i).getsFiltered(tmpAtomContainer)) {
-                    tmpIndexOfAppliedFilter = i;
-                    break;
-                }
-            }
-            if (tmpIndexOfAppliedFilter == FilterPipeline.NOT_FILTERED_VALUE) {
-                tmpResultingACSet.addAtomContainer(tmpAtomContainer);
-            }
-            tmpAtomContainer.setProperty(FilterPipeline.FILTER_ID_PROPERTY_NAME, tmpIndexOfAppliedFilter);
-        }*/
 
         this.reporter.report(); //TODO: directly report? this would cause problems with the lot of test methods
         return tmpResultingACSet;
