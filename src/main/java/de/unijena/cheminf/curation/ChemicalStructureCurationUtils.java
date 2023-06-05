@@ -25,7 +25,6 @@
 
 package de.unijena.cheminf.curation;
 
-import de.unijena.cheminf.filter.CurationPipeline;
 import de.unijena.cheminf.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;

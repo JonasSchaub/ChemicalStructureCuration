@@ -158,19 +158,19 @@ public class TestUtils {
         }
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(aFilter);
-        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.curate(anAtomContainerSet);
-        int tmpIndexInFilteredSet = 0;
-        int tmpFilterID;
+        IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.curate(anAtomContainerSet);
+        int tmpIndexInReturnedSet = 0;
         for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
-            tmpFilterID = anAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME);
-            if (!anIsFilteredBooleanArray[i]) {
-                Assertions.assertEquals(CurationPipeline.NOT_FILTERED_VALUE, tmpFilterID);
-                Assertions.assertSame(anAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
-                tmpIndexInFilteredSet++;
+            if (anIsFilteredBooleanArray[i]) {
                 continue;
             }
-            Assertions.assertTrue(tmpFilterID != CurationPipeline.NOT_FILTERED_VALUE);
+            Assertions.assertEquals(
+                    (Integer) anAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME),
+                    tmpReturnedACSet.getAtomContainer(tmpIndexInReturnedSet).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME)
+            );
+            tmpIndexInReturnedSet++;
         }
+        Assertions.assertEquals(tmpIndexInReturnedSet, tmpReturnedACSet.getAtomContainerCount());
     }
 
 }

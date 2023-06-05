@@ -352,7 +352,7 @@ public class CurationPipelineMolIDTests {
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-                    tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME, new Object());
+                    tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, new Object());
                     new CurationPipeline().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
                 }
         );

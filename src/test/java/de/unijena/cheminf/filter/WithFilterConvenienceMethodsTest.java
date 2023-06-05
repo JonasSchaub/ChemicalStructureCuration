@@ -270,77 +270,9 @@ public class WithFilterConvenienceMethodsTest {
         );
     }
 
-    /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
-     * MinBondCountFilter considering bonds to implicit hydrogen atoms.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
-     */
-    @Test
-    public void filterMethodTest_withMinBondCountFilter_considerImplHs_multipleMolecules() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "CC(=O)O",  // 7 (3) - filtered
-                "c1ccccc1", //12 (6)
-                "C1CCCC1",  //15 (5)
-                "NCC(=O)O", // 9 (4)
-                "C=CC=C",   // 9 (3)
-                "CCO"       // 8 (2) - filtered
-        );
-        boolean[] tmpGotFilteredArray = new boolean[]{true, false, false, false, false, true};
-        //
-        int tmpMinBondCount = 9;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.curate(tmpAtomContainerSet);
-        int tmpIndexInFilteredSet = 0;
-        int tmpFilterID;
-        for (int i = 0; i < tmpGotFilteredArray.length; i++) {
-            tmpFilterID = tmpAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME);
-            if (!tmpGotFilteredArray[i]) {
-                Assertions.assertEquals(CurationPipeline.NOT_FILTERED_VALUE, tmpFilterID);
-                Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
-                tmpIndexInFilteredSet++;
-                continue;
-            }
-            Assertions.assertTrue(tmpFilterID != CurationPipeline.NOT_FILTERED_VALUE);
-        }
-    }
+    //TODO: removed test filterMethodTest_withMinBondCountFilter_considerImplHs_multipleMolecules() due to the usage of FilterID
 
-    /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
-     * MinBondCountFilter not considering bonds to implicit hydrogen atoms.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
-     */
-    @Test
-    public void filterMethodTest_withMinBondCountFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "c1ccccc1", //12 (6)
-                "CC(=O)O",  // 7 (3) - filtered
-                "NCC(=O)O", // 9 (4)
-                "C1CCCC1",  //15 (5)
-                "C=CC=C",   // 9 (3) - filtered
-                "CCO"       // 8 (2) - filtered
-        );
-        boolean[] tmpGotFilteredArray = new boolean[]{false, true, false, false, true, true};
-        //
-        int tmpMinBondCount = 4;
-        boolean tmpConsiderImplicitHydrogens = false;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.curate(tmpAtomContainerSet);
-        int tmpIndexInFilteredSet = 0;
-        int tmpFilterID;
-        for (int i = 0; i < tmpGotFilteredArray.length; i++) {
-            tmpFilterID = tmpAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME);
-            if (!tmpGotFilteredArray[i]) {
-                Assertions.assertEquals(CurationPipeline.NOT_FILTERED_VALUE, tmpFilterID);
-                Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(i), tmpFilteredACSet.getAtomContainer(tmpIndexInFilteredSet));
-                tmpIndexInFilteredSet++;
-                continue;
-            }
-            Assertions.assertTrue(tmpFilterID != CurationPipeline.NOT_FILTERED_VALUE);
-        }
-    }
+    //TODO: removed test filterMethodTest_withMinBondCountFilter_notConsiderImplHs_multipleMolecules() due to the usage of FilterID
 
     /**
      * Tests whether the value returned by the .withMaxBondsOfSpecificBondOrderFilter() method of the class

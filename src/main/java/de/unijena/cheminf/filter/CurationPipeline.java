@@ -75,7 +75,7 @@ public class CurationPipeline extends BaseProcessingStep {
     //
     TODO (optional):
     - method to deep copy / clone a FilterPipeline?
-    - find a shorter name for FilterID and MolID property (?)
+    - find a shorter name for the MolID property (?)
     - methods for clearing MolIDs / FilterIDs of atom containers?
      */
 
@@ -84,17 +84,6 @@ public class CurationPipeline extends BaseProcessingStep {
      * process.
      */
     public static final String MOL_ID_PROPERTY_NAME = "FilterPipeline.MolID";
-
-    /**
-     * String of the name of the atom container property for tracking / tracing the filtering process by saving the
-     * index of the filter an atom container got filtered by.
-     */
-    public static final String FILTER_ID_PROPERTY_NAME = "FilterPipeline.FilterID";
-
-    /**
-     * Default value for the filter ID of an atom container that has not been filtered during a filtering process.
-     */
-    public static final int NOT_FILTERED_VALUE = -1;
 
     /**
      * Logger of this class.
@@ -144,7 +133,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * TODO
      * In order to trace by which step an atom container got filtered by, every atom container gets the index of the filter in the list of
      * selected filters assigned as FilterID (integer property "FilterPipeline.FilterID"). Atom containers that do
-     * not get filtered get a FilterID of negative one.
+     * not get filtered get a FilterID of negative one. TODO: FilterID is removed
      * Atom containers do not pass a curation step if they cause an exception to be thrown.
      *
      * @param anAtomContainerSet set of atom containers to be processed
@@ -532,59 +521,6 @@ public class CurationPipeline extends BaseProcessingStep {
                     "data type Integer.");
         }
         return anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME);
-    }
-
-    /**
-     * Returns the FilterIDs assigned to the atom containers in the given atom container set as integer array. A
-     * FilterID is assigned to every atom container of an atom container set that was given to or returned by the
-     * .filter() method of this class. This method may only be used for atom container sets that meet this criterion.
-     * For atom containers that have no FilterID set or an FilterID that is not of type integer, the corresponding
-     * entry in the returned array is set to an error value (-1).
-     *
-     * @param anAtomContainerSet IAtomContainerSet instance the FilterID array should be returned of
-     * @return Integer array of the atom containers FilterIDs
-     * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it
-     * is null
-     * @throws IllegalArgumentException if an AtomContainer contained by the given IAtomContainerSet instance has no
-     * FilterID assigned or the FilterID is not of data type Integer
-     */
-    public int[] getArrayOfAssignedFilterIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        final int[] tmpFilterIDArray = new int[anAtomContainerSet.getAtomContainerCount()];
-        for (int i = 0; i < tmpFilterIDArray.length; i++) {
-            try {
-                tmpFilterIDArray[i] = this.getAssignedFilterID(anAtomContainerSet.getAtomContainer(i));
-            } catch (NullPointerException aNullPointerException) {
-                throw new NullPointerException("AtomContainer " + i + " of the given IAtomContainerSet instance is null.");
-            } catch (IllegalArgumentException anIllegalArgumentException) {
-                throw new IllegalArgumentException("AtomContainer " + i + " of the given IAtomContainerSet instance " +
-                        "has no FilterID assigned or the FilterID is not of data type Integer.");
-            }
-        }
-        return tmpFilterIDArray;
-    }
-
-    /**
-     * Returns the FilterID assigned to the given atom container. A FilterID is assigned to every atom container of an
-     * atom container set that was given to or returned by the .filter() method of this class. This method may not be
-     * used for any atom container that does not meet this criterion.
-     *
-     * @param anAtomContainer IAtomContainer instance the FilterID should be returned of
-     * @return FilterID (integer value) of the given AtomContainer
-     * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given IAtomContainer instance has no FilterID assigned or the FilterID
-     * is not of data type Integer
-     */
-    public int getAssignedFilterID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        if (anAtomContainer.getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME) == null) {
-            throw new IllegalArgumentException("The given IAtomContainer instance has no FilterID assigned.");
-        }
-        if (anAtomContainer.getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME).getClass() != Integer.class) {
-            throw new IllegalArgumentException("The FilterID assigned to the given IAtomContainer instance is not of " +
-                    "data type Integer.");
-        }
-        return anAtomContainer.getProperty(CurationPipeline.FILTER_ID_PROPERTY_NAME);
     }
 
     /**
