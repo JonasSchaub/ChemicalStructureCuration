@@ -1,0 +1,80 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package de.unijena.cheminf.curation.filter;
+
+import de.unijena.cheminf.curation.BaseStandAloneProcessingStep;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import org.openscience.cdk.AtomContainerSet;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+
+import java.util.Objects;
+
+/**
+ * Abstract class BaseFilter - implements IFilter.  TODO
+ */
+public abstract class BaseFilter extends BaseStandAloneProcessingStep implements IFilter {
+
+    /*
+    TODO: flag filtered / not filtered ACs?
+    TODO: boolean needsInfoOfOtherACs? (for duplicates filter)
+    TODO: add countOfFilteredACs (?)
+    TODO: log exceptions thrown by isFiltered() and treat those molecules as if true was returned
+    TODO: is there a way to use the loggers of the classes that extend this class for logging?
+     */
+
+    /**
+     * TODO!!!
+     *
+     * @param anAtomContainerSet atom container set to process
+     * @param aReporter          reporter to report to
+     * @param anIndexInPipeline  index of the processing step in the pipeline it is part of
+     * @return
+     */
+    @Override
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) {
+        return this.filter(anAtomContainerSet);
+    }
+
+    /**
+     * {@inheritDoc}
+     * TODO: remove / replace with .process()
+     */
+    @Deprecated
+    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
+        for (IAtomContainer tmpAtomContainer :
+                anAtomContainerSet.atomContainers()) {
+            //apply filter
+            if (!this.isFiltered(tmpAtomContainer)) {
+                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+            }
+        }
+        return tmpFilteredACSet;
+    }
+
+}
