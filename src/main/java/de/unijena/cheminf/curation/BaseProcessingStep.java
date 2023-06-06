@@ -37,22 +37,55 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private IReporter reporter; //TODO: is "private" here correct?
 
     /**
+     * Name string of the atom container property that contains an optional second identifier of type integer. If the
+     * String is not null, no second identifier is used.
+     */
+    private String optionalIDPropertyName;
+
+    /**
+     * Constructor. Initializes the instances reporter with the default.
+     */
+    /*public BaseProcessingStep() throws NullPointerException {
+        this(null);     //TODO: default reporter
+    }*/
+
+    /**
      * Constructor. TODO
      *
-     * @param aDefaultReporter default reporter of the instance
+     * @param aReporter reporter to use for the reporting process
+     * @param anOptionalIDPropertyName optional name string of an atom container property that contains an optional
+     *                                 second identifier to be used at the reporting of a processing process; if null
+     *                                 is given, no second identifier is used
      * @throws NullPointerException if the given IReporter instance is null
      */
-    /*public BaseCurationPipelineStep(IReporter aDefaultReporter) throws NullPointerException {
-        Objects.requireNonNull(aDefaultReporter, "aDefaultReporter (instance of IReporter) has been null.");
-        this.reporter = aDefaultReporter;
-    }*/
+    public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) throws NullPointerException {
+        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) has been null.");
+        this.reporter = aReporter;
+        this.optionalIDPropertyName = anOptionalIDPropertyName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getOptionalIDPropertyName() {
+        return this.optionalIDPropertyName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
+        this.optionalIDPropertyName = anOptionalIDPropertyName;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public IReporter getReporter() {
-        return reporter;
+        return this.reporter;
     }
 
     /**

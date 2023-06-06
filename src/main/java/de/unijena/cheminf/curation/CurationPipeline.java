@@ -111,15 +111,16 @@ public class CurationPipeline extends BaseProcessingStep {
      * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
      * assigned to each atom container during a curation process.
      *
-     * @param aNameOfAtomContainerProperty Name string of the atom container property to be used at reporting of a
-     *                                     curation process; if null is given, no second identifier is used
+     * @param anOptionalIdentifierPropertyName optional string with the name of the atom container property that
+     *                                         contains an optional second identifier to be used at reporting of a
+     *                                         curation process; if null is given, no second identifier is used
      * @throws IllegalArgumentException if the given property name string is blank
      */
-    public CurationPipeline(String aNameOfAtomContainerProperty) throws IllegalArgumentException {
-        if (aNameOfAtomContainerProperty != null && aNameOfAtomContainerProperty.isBlank()) {
-            throw new IllegalArgumentException("The given String aNameOfAtomContainerProperty is blank.");
+    public CurationPipeline(String anOptionalIdentifierPropertyName) throws IllegalArgumentException {
+        if (anOptionalIdentifierPropertyName != null && anOptionalIdentifierPropertyName.isBlank()) {
+            throw new IllegalArgumentException("The given String anOptionalIdentifierPropertyName is blank.");
         }
-        this.optionalIDPropertyName = aNameOfAtomContainerProperty;
+        this.optionalIDPropertyName = anOptionalIdentifierPropertyName;
         this.listOfSelectedPipelineSteps = new LinkedList<>();
     }
 
@@ -527,16 +528,6 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public LinkedList<IProcessingStep> getListOfSelectedPipelineSteps() {
         return this.listOfSelectedPipelineSteps;
-    }
-
-    /**
-     * Returns the optional name string of the atom container property containing an identifier. This field is
-     * specified in the constructor.
-     *
-     * @return String optionalIDPropertyName
-     */
-    public String getOptionalIDPropertyName() {
-        return optionalIDPropertyName;
     }
 
 }

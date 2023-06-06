@@ -52,6 +52,26 @@ public interface IProcessingStep {
     public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) throws NullPointerException;
 
     /**
+     * Returns the name string of the atom container property containing an optional second identifier (e.g. the name
+     * of the structure). This field is specified in the constructor or in the respective setter.
+     * If the field is null, no second identifier is used when reporting.
+     *
+     * @return String containing the property name
+     * @see #setOptionalIDPropertyName(String)
+     */
+    public String getOptionalIDPropertyName();
+
+    /**
+     * Sets the name string of the atom container property containing an optional second identifier (e.g. the name
+     * of the structure) that is to be used when reporting the processing of a set of structures. If null is given
+     * or the processed structures do not have this property, no second identifier will be used at reporting.
+     *
+     * @param anOptionalIDPropertyName String containing the property name
+     * @see #getOptionalIDPropertyName()
+     */
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName);
+
+    /**
      * Returns the reporter of the instance.
      *
      * @return IReporter instance

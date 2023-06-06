@@ -31,18 +31,23 @@ package de.unijena.cheminf.curation;
 public enum ErrorCodes {
 
     /**
+     * The IAtomContainer instance could not be cloned.
+     */
+    ERROR_CODE_0000,
+
+    /**
      * The IAtomContainer instance of the structure is null.
      */
-    errorCode_0000,
+    ERROR_CODE_0001,
 
     /**
      * The IAtomContainer instance of the structure contains no atoms.
      */
-    errorCode_0001,
+    ERROR_CODE_0002,
 
     /**
      * ...
      */
-    errorCode_0002
+    ERROR_CODE_0003
 
 }
