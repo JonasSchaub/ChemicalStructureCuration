@@ -361,15 +361,15 @@ public class MaxMolecularMassFilterTest {
         );
     }
 
-    /** TODO: why does this one fail?
-     * Tests the getter of maxMolecularMass whether it returns maxMolecularMass.
+    /**
+     * Tests the getter of maxMolecularMass whether it returns the max molecular mass threshold value.
      */
     @Test
     public void getMaxMolecularMassMethodTest_returnsMaxMolecularMass() {
         double tmpMaxMolecularMass = 5.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertSame(tmpMaxMolecularMassFilter.maxMolecularMass, tmpMaxMolecularMassFilter.getMaxMolecularMass());
+        Assertions.assertEquals(tmpMaxMolecularMass, tmpMaxMolecularMassFilter.getMaxMolecularMass());
     }
 
     /**

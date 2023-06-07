@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation;
 
 import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.ReportDataObject;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -43,37 +44,5 @@ public class ChemicalStructureCurationUtils {
      * Logger of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(ChemicalStructureCurationUtils.class.getName());
-
-    /**
-     * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
-     * appended to the given reporter and excluded from the returned atom container set. The total count of atom
-     * containers failing the cloning-process is being logged.
-     *
-     * @param anAtomContainerSet atom container set to be cloned
-     * @param aReporter          reporter to append the reports to
-     * @return a clone of the given atom container set
-     * @throws NullPointerException if the given IAtomContainerSet or IReporter instance is null
-     */
-    public static IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet, IReporter aReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        //Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");  //TODO: add this line after a default reporter was integrated
-        IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
-        int tmpCloneNotSupportedExceptionsCount = 0;
-        for (IAtomContainer tmpAtomContainer :
-                anAtomContainerSet.atomContainers()) {
-            try {
-                tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
-            } catch (CloneNotSupportedException aCloneNotSupportedException) {
-                tmpCloneNotSupportedExceptionsCount++;
-                //TODO: report
-            }
-        }
-        if (tmpCloneNotSupportedExceptionsCount > 0) {
-            ChemicalStructureCurationUtils.LOGGER.log(Level.WARNING, tmpCloneNotSupportedExceptionsCount + " of " +
-                    anAtomContainerSet.getAtomContainerCount() + " given atom containers could not be cloned and" +
-                    " thereby were excluded from the returned atom container set.");
-        }
-        return tmpCloneOfGivenACSet;
-    }
 
 }

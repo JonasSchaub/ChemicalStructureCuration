@@ -1,8 +1,5 @@
 package de.unijena.cheminf.curation;
 
-import de.unijena.cheminf.curation.IProcessingStep;
-import de.unijena.cheminf.curation.TestUtils;
-import de.unijena.cheminf.curation.CurationPipeline;
 import de.unijena.cheminf.curation.filter.BaseFilter;
 import de.unijena.cheminf.curation.filter.IFilter;
 import de.unijena.cheminf.curation.filter.filters.MinAtomCountFilter;
@@ -47,20 +44,19 @@ public class WithFilterMethodTest {
         Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.addProcessingStep(tmpEmptyFilter));
     }
 
-    /** TODO
+    /**
      * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withFilter() method of
      * the class FilterPipeline is the same instance as before and was extended by one entry.
      */
     @Test
-    @Disabled
-    public void withFilterMethodTest_checksIfListOfSelectedFiltersIsTheSameAndWasExtendedByOne() {
+    public void withFilterMethodTest_checksIfListOfPipelineStepsIsTheSameAndWasExtendedByOne() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        LinkedList<IProcessingStep> tmpListOfSelectedFilters = tmpCurationPipeline.getListOfSelectedPipelineSteps();
-        int tmpListInitialSize = tmpListOfSelectedFilters.size();
+        LinkedList<IProcessingStep> tmpListOfPipelineSteps = tmpCurationPipeline.getListOfPipelineSteps();
+        int tmpListInitialSize = tmpListOfPipelineSteps.size();
         IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         tmpCurationPipeline.addProcessingStep(tmpEmptyFilter);
-        Assertions.assertSame(tmpListOfSelectedFilters, tmpCurationPipeline.getListOfSelectedPipelineSteps());
-        Assertions.assertEquals(tmpListInitialSize + 1, tmpCurationPipeline.getListOfSelectedPipelineSteps().size());
+        Assertions.assertSame(tmpListOfPipelineSteps, tmpCurationPipeline.getListOfPipelineSteps());
+        Assertions.assertEquals(tmpListInitialSize + 1, tmpCurationPipeline.getListOfPipelineSteps().size());
     }
 
     /**
@@ -71,8 +67,8 @@ public class WithFilterMethodTest {
     public void withFilterMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterInstance_test1() {
         IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(tmpEmptyFilter);
-        Assertions.assertInstanceOf(IFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
-        Assertions.assertSame(tmpEmptyFilter, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
+        Assertions.assertInstanceOf(IFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
+        Assertions.assertSame(tmpEmptyFilter, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
@@ -85,8 +81,8 @@ public class WithFilterMethodTest {
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpNewFilter = new MinAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
         CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(tmpNewFilter);
-        Assertions.assertInstanceOf(IFilter.class, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
-        Assertions.assertSame(tmpNewFilter, tmpCurationPipeline.getListOfSelectedPipelineSteps().getLast());
+        Assertions.assertInstanceOf(IFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
+        Assertions.assertSame(tmpNewFilter, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
@@ -110,10 +106,10 @@ public class WithFilterMethodTest {
     @Test
     public void withFilterMethodTest_combiningTwoFilters_twoFiltersAreAddedToListOfSelectedFilters() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpInitialListSize = tmpCurationPipeline.getListOfSelectedPipelineSteps().size();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         BaseFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         tmpCurationPipeline = tmpCurationPipeline.addProcessingStep(tmpEmptyFilter).addProcessingStep(tmpEmptyFilter);
-        Assertions.assertEquals(tmpInitialListSize + 2, tmpCurationPipeline.getListOfSelectedPipelineSteps().size());
+        Assertions.assertEquals(tmpInitialListSize + 2, tmpCurationPipeline.getListOfPipelineSteps().size());
     }
 
     /**
@@ -126,8 +122,8 @@ public class WithFilterMethodTest {
         IFilter tmpFilter1 = TestUtils.getAllTrueOrFalseFilter();
         IFilter tmpFilter2 = TestUtils.getAllTrueOrFalseFilter();
         tmpCurationPipeline.addProcessingStep(tmpFilter1).addProcessingStep(tmpFilter2);
-        Assertions.assertSame(tmpFilter1, tmpCurationPipeline.getListOfSelectedPipelineSteps().get(0));
-        Assertions.assertSame(tmpFilter2, tmpCurationPipeline.getListOfSelectedPipelineSteps().get(1));
+        Assertions.assertSame(tmpFilter1, tmpCurationPipeline.getListOfPipelineSteps().get(0));
+        Assertions.assertSame(tmpFilter2, tmpCurationPipeline.getListOfPipelineSteps().get(1));
     }
 
     /**
@@ -137,11 +133,11 @@ public class WithFilterMethodTest {
     @Test
     public void withFilterMethodTest_combiningMultipleFilters_5_listOfSelectedFiltersIsExtendedByGivenFilterCount() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpInitialListSize = tmpCurationPipeline.getListOfSelectedPipelineSteps().size();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         IFilter tmpEmptyFilter = TestUtils.getAllTrueOrFalseFilter();
         tmpCurationPipeline.addProcessingStep(tmpEmptyFilter).addProcessingStep(tmpEmptyFilter).addProcessingStep(tmpEmptyFilter)
                 .addProcessingStep(tmpEmptyFilter).addProcessingStep(tmpEmptyFilter);
-        Assertions.assertEquals(tmpInitialListSize + 5, tmpCurationPipeline.getListOfSelectedPipelineSteps().size());
+        Assertions.assertEquals(tmpInitialListSize + 5, tmpCurationPipeline.getListOfPipelineSteps().size());
     }
 
     /**
@@ -156,8 +152,8 @@ public class WithFilterMethodTest {
             tmpFilterArray[i] = TestUtils.getAllTrueOrFalseFilter();
             tmpCurationPipeline.addProcessingStep(tmpFilterArray[i] = TestUtils.getAllTrueOrFalseFilter());
         }
-        for (int i = 0; i < tmpCurationPipeline.getListOfSelectedPipelineSteps().size(); i++) {
-            Assertions.assertSame(tmpFilterArray[i], tmpCurationPipeline.getListOfSelectedPipelineSteps().get(i));
+        for (int i = 0; i < tmpCurationPipeline.getListOfPipelineSteps().size(); i++) {
+            Assertions.assertSame(tmpFilterArray[i], tmpCurationPipeline.getListOfPipelineSteps().get(i));
         }
     }
 

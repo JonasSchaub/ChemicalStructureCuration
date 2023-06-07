@@ -90,7 +90,7 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Linked list that contains all processing steps (instances of IProcessingStep) that were added to the pipeline.
      */
-    protected final LinkedList<IProcessingStep> listOfSelectedPipelineSteps;
+    protected final LinkedList<IProcessingStep> listOfPipelineSteps;
 
     /**
      * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
@@ -130,7 +130,7 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline(IReporter aReporter, String anOptionalIdentifierPropertyName) {
         super(aReporter, anOptionalIdentifierPropertyName);
-        this.listOfSelectedPipelineSteps = new LinkedList<>();
+        this.listOfPipelineSteps = new LinkedList<>();
     }
 
     /**
@@ -150,7 +150,7 @@ public class CurationPipeline extends BaseProcessingStep {
     public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         this.assignMolIdToAtomContainers(anAtomContainerSet);   //TODO: think about this again
-        IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(anAtomContainerSet, this.getReporter());
+        IAtomContainerSet tmpClonedACSet = this.cloneAtomContainerSet(anAtomContainerSet);
         return this.process(tmpClonedACSet);
     }
 
@@ -165,8 +165,8 @@ public class CurationPipeline extends BaseProcessingStep {
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
         IProcessingStep tmpProcessingStep;
 
-        for (int i = 0; i < this.listOfSelectedPipelineSteps.size(); i++) {
-            tmpProcessingStep = this.listOfSelectedPipelineSteps.get(i);
+        for (int i = 0; i < this.listOfPipelineSteps.size(); i++) {
+            tmpProcessingStep = this.listOfPipelineSteps.get(i);
             tmpACSetToProcess = tmpResultingACSet;
             tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, false);
             //TODO: is there a way to set an initial atom container count?
@@ -533,8 +533,8 @@ public class CurationPipeline extends BaseProcessingStep {
      *
      * @return LinkedList of IFilter instances
      */
-    public LinkedList<IProcessingStep> getListOfSelectedPipelineSteps() {
-        return this.listOfSelectedPipelineSteps;
+    public LinkedList<IProcessingStep> getListOfPipelineSteps() {
+        return this.listOfPipelineSteps;
     }
 
     /**
@@ -545,7 +545,7 @@ public class CurationPipeline extends BaseProcessingStep {
     @Override
     public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
         super.setOptionalIDPropertyName(anOptionalIDPropertyName);
-        this.listOfSelectedPipelineSteps.forEach(aProcessingStep -> {
+        this.listOfPipelineSteps.forEach(aProcessingStep -> {
             aProcessingStep.setOptionalIDPropertyName(anOptionalIDPropertyName);
         });
     }
@@ -559,7 +559,7 @@ public class CurationPipeline extends BaseProcessingStep {
     @Override
     public void setReporter(IReporter aReporter) throws NullPointerException {
         super.setReporter(aReporter);
-        this.listOfSelectedPipelineSteps.forEach(aProcessingStep -> {
+        this.listOfPipelineSteps.forEach(aProcessingStep -> {
             aProcessingStep.setReporter(aReporter);
         });
     }
@@ -579,8 +579,8 @@ public class CurationPipeline extends BaseProcessingStep {
         } else {
             tmpSubordinateID = "";
         }
-        for (int i = 0; i < this.listOfSelectedPipelineSteps.size(); i++) {
-            this.listOfSelectedPipelineSteps.get(i).setIndexOfStepInPipeline(tmpSubordinateID + i);
+        for (int i = 0; i < this.listOfPipelineSteps.size(); i++) {
+            this.listOfPipelineSteps.get(i).setIndexOfStepInPipeline(tmpSubordinateID + i);
         }
     }
 
@@ -593,13 +593,13 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     private void addToListOfProcessingSteps(IProcessingStep aProcessingStep) throws NullPointerException {
         Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
-        this.listOfSelectedPipelineSteps.add(aProcessingStep);
+        this.listOfPipelineSteps.add(aProcessingStep);
         aProcessingStep.setOptionalIDPropertyName(this.getOptionalIDPropertyName());
         aProcessingStep.setReporter(this.getReporter());
         aProcessingStep.setIndexOfStepInPipeline(
                 ((this.getIndexOfStepInPipeline() == null) ?
                         "" : this.getIndexOfStepInPipeline() + ".") +
-                        (this.listOfSelectedPipelineSteps.size() - 1)
+                        (this.listOfPipelineSteps.size() - 1)
         );
     }
 

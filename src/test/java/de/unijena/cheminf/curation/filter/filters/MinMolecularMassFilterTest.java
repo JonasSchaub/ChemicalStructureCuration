@@ -361,15 +361,15 @@ public class MinMolecularMassFilterTest {
         );
     }
 
-    /** TODO: why does this one fail?
-     * Tests the getter of minMolecularMass whether it returns minMolecularMass.
+    /**
+     * Tests the getter of minMolecularMass whether it returns the min molecular mass threshold value.
      */
     @Test
     public void getMinMolecularMassMethodTest_returnsMinMolecularMass() {
         double tmpMinMolecularMass = 5.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertSame(tmpMinMolecularMassFilter.minMolecularMass, tmpMinMolecularMassFilter.getMinMolecularMass());
+        Assertions.assertEquals(tmpMinMolecularMass, tmpMinMolecularMassFilter.getMinMolecularMass());
     }
 
     /**
