@@ -30,6 +30,7 @@ import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,11 +49,14 @@ public class ChemicalStructureCurationUtils {
      * appended to the given reporter and excluded from the returned atom container set. The total count of atom
      * containers failing the cloning-process is being logged.
      *
-     * @param aReporter reporter to append the reports to
      * @param anAtomContainerSet atom container set to be cloned
+     * @param aReporter          reporter to append the reports to
      * @return a clone of the given atom container set
+     * @throws NullPointerException if the given IAtomContainerSet or IReporter instance is null
      */
-    public static IAtomContainerSet cloneAtomContainerSet(IReporter aReporter, IAtomContainerSet anAtomContainerSet) {
+    public static IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet, IReporter aReporter) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        //Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");  //TODO: add this line after a default reporter was integrated
         IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
         int tmpCloneNotSupportedExceptionsCount = 0;
         for (IAtomContainer tmpAtomContainer :

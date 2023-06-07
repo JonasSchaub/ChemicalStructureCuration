@@ -33,21 +33,21 @@ public enum ErrorCodes {
     /**
      * The IAtomContainer instance could not be cloned.
      */
-    ERROR_CODE_0000,
+    CLONE_ERROR,
 
     /**
      * The IAtomContainer instance of the structure is null.
      */
-    ERROR_CODE_0001,
+    NULL_ERROR,
 
     /**
      * The IAtomContainer instance of the structure contains no atoms.
      */
-    ERROR_CODE_0002,
+    NO_ATOMS_ERROR,
 
     /**
      * ...
      */
-    ERROR_CODE_0003
+    XYZ_ERROR
 
 }

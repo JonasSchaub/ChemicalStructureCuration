@@ -25,8 +25,6 @@
 
 package de.unijena.cheminf.curation;
 
-import de.unijena.cheminf.curation.TestUtils;
-import de.unijena.cheminf.curation.CurationPipeline;
 import de.unijena.cheminf.curation.filter.BaseFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxAtomCountFilter;
 import org.junit.jupiter.api.Assertions;
@@ -139,11 +137,13 @@ public class CurationPipelineTest {
      * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets optionalIDPropertyName
      * to null.
      */
+    /*
     @Test
     public void publicFilterConstructorTest_noParameter_optionalIDPropertyNameIsNull() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
         Assertions.assertNull(tmpCurationPipeline.optionalIDPropertyName);
     }
+    */
 
     /**
      * Tests public constructor of the class FilterPipeline with String parameter whether it initializes
@@ -170,12 +170,14 @@ public class CurationPipelineTest {
      * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets the field
      * optionalIDPropertyName to the given String.
      */
+    /*
     @Test
     public void publicFilterConstructorTest_withStringParameter_optionalIDPropertyNameIsSameAsGivenString() {
         String tmpPropertyNameString = "SomeString";
         CurationPipeline tmpCurationPipeline = new CurationPipeline(tmpPropertyNameString);
         Assertions.assertSame(tmpPropertyNameString, tmpCurationPipeline.optionalIDPropertyName);
     }
+    */
 
     /** TODO: remove (?!)
      * Tests whether the protected constructor of the class FilterPipeline returns a copy of the original FilterPipeline
@@ -213,11 +215,13 @@ public class CurationPipelineTest {
      * Tests whether the .getOptionalIDPropertyName() method of the class FilterPipeline returns the instances field
      * optionalIDPropertyName.
      */
+    /*
     @Test
     public void getOptionalIDPropertyNameMethodTest_returnsClassFieldOptionalIDPropertyName() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
         Assertions.assertSame(tmpCurationPipeline.optionalIDPropertyName, tmpCurationPipeline.getOptionalIDPropertyName());
     }
+    */
 
     /**
      * Tests whether the return value of the .filter() method of class FilterPipeline is not null.

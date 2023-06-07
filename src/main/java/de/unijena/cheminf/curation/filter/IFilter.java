@@ -25,14 +25,14 @@
 
 package de.unijena.cheminf.curation.filter;
 
-import de.unijena.cheminf.curation.IStandAloneProcessingStep;
+import de.unijena.cheminf.curation.IProcessingStep;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * IFilter interface.
  */
-public interface IFilter extends IStandAloneProcessingStep {
+public interface IFilter extends IProcessingStep {
 
     /**
      * Applies the filter on a set of atom containers and returns the set of those who passed the filter.

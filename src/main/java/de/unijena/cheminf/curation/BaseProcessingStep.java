@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation;
 
 import de.unijena.cheminf.curation.reporter.IReporter;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.util.Objects;
 
@@ -42,27 +43,47 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     private String optionalIDPropertyName;
 
-    /**
-     * Constructor. Initializes the instances reporter with the default.
-     */
-    /*public BaseProcessingStep() throws NullPointerException {
-        this(null);     //TODO: default reporter
-    }*/
+    private String indexOfStepInPipeline = null;
 
     /**
      * Constructor. TODO
      *
-     * @param aReporter reporter to use for the reporting process
+     * @param aReporter reporter to report to when processing; if null is given, an instance of the default reporter
+     *                  is used
      * @param anOptionalIDPropertyName optional name string of an atom container property that contains an optional
      *                                 second identifier to be used at the reporting of a processing process; if null
      *                                 is given, no second identifier is used
-     * @throws NullPointerException if the given IReporter instance is null
      */
-    public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) throws NullPointerException {
-        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) has been null.");
-        this.reporter = aReporter;
+    public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) {
+        if (aReporter == null) {
+            //TODO: initialize with default reporter
+        } else {
+            this.reporter = aReporter;
+        }
         this.optionalIDPropertyName = anOptionalIDPropertyName;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        //TODO: assign IDs to the given atom containers?
+        if (aCloneBeforeProcessing) {
+            IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(anAtomContainerSet, this.reporter);
+            return this.process(tmpClonedACSet);
+        }
+        return this.process(anAtomContainerSet);
+    }
+
+    /**
+     * TODO
+     * @param anAtomContainerSet
+     * @return
+     * @throws NullPointerException
+     */
+    protected abstract IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
     /**
      * {@inheritDoc}
@@ -92,9 +113,25 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * {@inheritDoc}
      */
     @Override
-    public void setReporter(IReporter aReporter) {
-        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
+    public void setReporter(IReporter aReporter) throws NullPointerException {
+        //Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");  //TODO: use default reporter?
         this.reporter = aReporter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getIndexOfStepInPipeline() {
+        return this.indexOfStepInPipeline;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setIndexOfStepInPipeline(String anIndexString) {
+        this.indexOfStepInPipeline = anIndexString;
     }
 
 }

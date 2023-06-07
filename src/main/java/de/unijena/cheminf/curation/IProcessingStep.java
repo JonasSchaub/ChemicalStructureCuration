@@ -34,22 +34,22 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 public interface IProcessingStep {
 
     /**
-     * Processes the given atom container set. This method implementation is meant to be used if the processing step is
-     * part of a pipeline of multiple processing steps.
+     * Processes the given atom container set according to the processing steps added to the pipeline. To avoid any
+     * changes or modifications to your original data, use the option of cloning the given atom container set before
+     * processing (by setting the boolean parameter to true).
      * <ul>
-     * <b>WARNING:</b> The given atom container set is not being cloned before processing. The given data might be
-     * modified in the process.
+     * <b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before processing.
      * </ul>
-     * Report data is only appended to the given reporter, no report file is created.
+     * By the end of the processing, a report file containing info on ... is created.
      * TODO
      *
      * @param anAtomContainerSet atom container set to process
-     * @param aReporter          reporter to report to
-     * @param anIndexInPipeline  index of the processing step in the pipeline it is part of
+     * @param aCloneBeforeProcessing boolean value, whether to clone the atom containers of the given set before
+     *                               processing them
      * @return the processed atom container set
-     * @throws NullPointerException if the given IReporter or IAtomContainerSet instance is null
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) throws NullPointerException;
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException;
 
     /**
      * Returns the name string of the atom container property containing an optional second identifier (e.g. the name
@@ -80,9 +80,25 @@ public interface IProcessingStep {
 
     /**
      * Sets the reporter of the instance.
+     * TODO: use default reporter if null is given?
      *
+     * @param aReporter IReporter instance
      * @throws NullPointerException if the given instance of IReporter is null
      */
     public void setReporter(IReporter aReporter) throws NullPointerException;
+
+    /**
+     * Gets which index the processing step has in a superordinate pipeline.
+     *
+     * @return String instance or null, if the processing step is not part of a pipeline
+     */
+    public String getIndexOfStepInPipeline();
+
+    /**
+     * Sets which index the processing step has in a superordinate pipeline.
+     *
+     * @param anIndexString String instance or null, if the processing step is not part of a pipeline
+     */
+    public void setIndexOfStepInPipeline(String anIndexString);
 
 }

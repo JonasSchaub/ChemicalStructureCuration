@@ -25,7 +25,7 @@
 
 package de.unijena.cheminf.curation.filter;
 
-import de.unijena.cheminf.curation.BaseStandAloneProcessingStep;
+import de.unijena.cheminf.curation.BaseProcessingStep;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * Abstract class BaseFilter - implements IFilter.  TODO
  */
-public abstract class BaseFilter extends BaseStandAloneProcessingStep implements IFilter {
+public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?
@@ -47,15 +47,27 @@ public abstract class BaseFilter extends BaseStandAloneProcessingStep implements
      */
 
     /**
+     * TODO
+     */
+    public BaseFilter() {   //TODO: view all the filters constructors!!
+        this(null, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public BaseFilter(IReporter aReporter, String anOptionalIDPropertyName) {
+        super(aReporter, anOptionalIDPropertyName);
+    }
+
+    /**
      * TODO!!!
      *
      * @param anAtomContainerSet atom container set to process
-     * @param aReporter          reporter to report to
-     * @param anIndexInPipeline  index of the processing step in the pipeline it is part of
      * @return
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) {
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) {
         return this.filter(anAtomContainerSet);
     }
 

@@ -93,34 +93,43 @@ public class CurationPipeline extends BaseProcessingStep {
     protected final LinkedList<IProcessingStep> listOfSelectedPipelineSteps;
 
     /**
-     * Name string of the atom container property that contains an optional second identifier of type integer. If the
-     * String is not null, no second identifier is used.
-     */
-    protected final String optionalIDPropertyName;
-
-    /**
      * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
      * process) is used for a unique identification of each atom container.
+     * <br>
+     * The reporting of the curation / processing of a set of atom containers is done using the default reporter.
      */
     public CurationPipeline() {
-        this(null);
+        this(null, null);
+    }
+
+    /**
+     * TODO
+     */
+    public CurationPipeline(IReporter aReporter) {
+        this(aReporter, null);
+    }
+
+    /**
+     * TODO
+     */
+    public CurationPipeline(String anOptionalIdentifierPropertyName) {
+        this(null, anOptionalIdentifierPropertyName);
     }
 
     /**
      * Constructor. At reporting of a curation processes, the atom container property with the given name (String
      * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
      * assigned to each atom container during a curation process.
+     * <br>
+     * The reporting of the curation / processing of a set of atom container is done using the given reporter. If
+     * null is given, the default reporter is used.
      *
      * @param anOptionalIdentifierPropertyName optional string with the name of the atom container property that
      *                                         contains an optional second identifier to be used at reporting of a
      *                                         curation process; if null is given, no second identifier is used
-     * @throws IllegalArgumentException if the given property name string is blank
      */
-    public CurationPipeline(String anOptionalIdentifierPropertyName) throws IllegalArgumentException {
-        if (anOptionalIdentifierPropertyName != null && anOptionalIdentifierPropertyName.isBlank()) {
-            throw new IllegalArgumentException("The given String anOptionalIdentifierPropertyName is blank.");
-        }
-        this.optionalIDPropertyName = anOptionalIdentifierPropertyName;
+    public CurationPipeline(IReporter aReporter, String anOptionalIdentifierPropertyName) {
+        super(aReporter, anOptionalIdentifierPropertyName);
         this.listOfSelectedPipelineSteps = new LinkedList<>();
     }
 
@@ -141,17 +150,16 @@ public class CurationPipeline extends BaseProcessingStep {
     public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         this.assignMolIdToAtomContainers(anAtomContainerSet);   //TODO: think about this again
-        IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(this.getReporter(), anAtomContainerSet);
-        return this.process(tmpClonedACSet, this.getReporter(), null);
+        IAtomContainerSet tmpClonedACSet = ChemicalStructureCurationUtils.cloneAtomContainerSet(anAtomContainerSet, this.getReporter());
+        return this.process(tmpClonedACSet);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, IReporter aReporter, Integer anIndexInPipeline) throws NullPointerException {
+    protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
         //this.assignMolIdToAtomContainers(anAtomContainerSet); TODO: think about this again
         IAtomContainerSet tmpACSetToProcess;
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
@@ -160,12 +168,11 @@ public class CurationPipeline extends BaseProcessingStep {
         for (int i = 0; i < this.listOfSelectedPipelineSteps.size(); i++) {
             tmpProcessingStep = this.listOfSelectedPipelineSteps.get(i);
             tmpACSetToProcess = tmpResultingACSet;
-            tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, aReporter, i);
+            tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, false);
             //TODO: is there a way to set an initial atom container count?
-
         }
 
-        this.getReporter().report();    //TODO: directly report? this would cause problems with the lot of test methods
+        //this.getReporter().report();    //TODO: directly report? this would cause problems with the lot of test methods
         return tmpResultingACSet;
     }
 
@@ -184,7 +191,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -202,7 +209,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -219,7 +226,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -236,7 +243,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -254,7 +261,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -272,7 +279,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -295,7 +302,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -318,7 +325,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -331,7 +338,7 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -344,7 +351,7 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -368,7 +375,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -389,7 +396,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -413,7 +420,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
@@ -434,7 +441,7 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass);
-        this.listOfSelectedPipelineSteps.add(tmpFilter);
+        this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
     //</editor-fold>
@@ -450,7 +457,7 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline addProcessingStep(IProcessingStep aProcessingStep) throws NullPointerException {
         Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of Filter) is null.");
-        this.listOfSelectedPipelineSteps.add(aProcessingStep);
+        this.addToListOfProcessingSteps(aProcessingStep);
         return this;
     }
 
@@ -528,6 +535,72 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public LinkedList<IProcessingStep> getListOfSelectedPipelineSteps() {
         return this.listOfSelectedPipelineSteps;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <br>
+     * This optional identifier property name is also set to every processing step in the pipeline.
+     */
+    @Override
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
+        super.setOptionalIDPropertyName(anOptionalIDPropertyName);
+        this.listOfSelectedPipelineSteps.forEach(aProcessingStep -> {
+            aProcessingStep.setOptionalIDPropertyName(anOptionalIDPropertyName);
+        });
+    }
+
+    /**
+     * Sets the reporter of the pipeline and of every processing step in the pipeline.
+     *
+     * @param aReporter IReporter instance
+     * @throws NullPointerException if the given instance of IReporter is null
+     */
+    @Override
+    public void setReporter(IReporter aReporter) throws NullPointerException {
+        super.setReporter(aReporter);
+        this.listOfSelectedPipelineSteps.forEach(aProcessingStep -> {
+            aProcessingStep.setReporter(aReporter);
+        });
+    }
+
+    /**
+     * Sets the index the pipeline has in a superordinate pipeline and - in combination with the respective index of
+     * the step in this pipeline - to every processing step of this pipeline.
+     *
+     * @param anIndexString String with the index or null if it is not part of a pipeline
+     */
+    @Override
+    public void setIndexOfStepInPipeline(String anIndexString) {
+        super.setIndexOfStepInPipeline(anIndexString);
+        String tmpSubordinateID;
+        if (anIndexString != null) {
+            tmpSubordinateID = anIndexString + ".";
+        } else {
+            tmpSubordinateID = "";
+        }
+        for (int i = 0; i < this.listOfSelectedPipelineSteps.size(); i++) {
+            this.listOfSelectedPipelineSteps.get(i).setIndexOfStepInPipeline(tmpSubordinateID + i);
+        }
+    }
+
+    /**
+     * Adds the given processing step to the list of processing steps and sets its fields optionalIDPropertyName and
+     * reporter.
+     *
+     * @param aProcessingStep IProcessingStep to add to the list
+     * @throws NullPointerException if the given IProcessingStep instance is null
+     */
+    private void addToListOfProcessingSteps(IProcessingStep aProcessingStep) throws NullPointerException {
+        Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
+        this.listOfSelectedPipelineSteps.add(aProcessingStep);
+        aProcessingStep.setOptionalIDPropertyName(this.getOptionalIDPropertyName());
+        aProcessingStep.setReporter(this.getReporter());
+        aProcessingStep.setIndexOfStepInPipeline(
+                ((this.getIndexOfStepInPipeline() == null) ?
+                        "" : this.getIndexOfStepInPipeline() + ".") +
+                        (this.listOfSelectedPipelineSteps.size() - 1)
+        );
     }
 
 }
