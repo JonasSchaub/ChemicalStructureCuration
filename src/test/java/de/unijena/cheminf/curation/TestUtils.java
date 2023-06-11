@@ -157,7 +157,7 @@ public class TestUtils {
         }
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(aFilter);
-        IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.curate(anAtomContainerSet);
+        IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.process(anAtomContainerSet, true);
         int tmpIndexInReturnedSet = 0;
         for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
             if (anIsFilteredBooleanArray[i]) {

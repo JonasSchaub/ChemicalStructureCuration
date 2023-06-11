@@ -58,8 +58,8 @@ import java.util.logging.Logger;
 public class CurationPipeline extends BaseProcessingStep {
 
     /*
-    TODO: remove parameter tests of filters out of FilterPipeline methods?
-    TODO: use the .withFilter() method in the .with...Filter() convenience methods?
+    TODO:
+        - find a solution for the MolID-workaround
     //
     TODO: adopt test methods to pipeline changes
         - check whether they are still doing their job (throw no exception)
@@ -71,9 +71,8 @@ public class CurationPipeline extends BaseProcessingStep {
         - make file destination adjustable without the need to set a new reporter?
     //
     TODO (optional):
-    - method to deep copy / clone a FilterPipeline?
-    - find a shorter name for the MolID property (?)
-    - methods for clearing MolIDs / FilterIDs of atom containers?
+        - method to deep copy / clone a FilterPipeline?
+        - methods for clearing the MolIDs of an atom container?
      */
 
     /**
@@ -117,6 +116,8 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
+     * TODO: discuss: is this one constructor enough or shall there be "convenience constructors"?
+     *  - on the first case: remove the other constructors
      * Constructor. At reporting of a curation processes, the atom container property with the given name (String
      * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
      * assigned to each atom container during a curation process.
@@ -124,6 +125,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * The reporting of the curation / processing of a set of atom container is done using the given reporter. If
      * null is given, the default reporter is used.
      *
+     * @param aReporter TODO
      * @param anOptionalIdentifierPropertyName optional string with the name of the atom container property that
      *                                         contains an optional second identifier to be used at reporting of a
      *                                         curation process; if null is given, no second identifier is used
@@ -147,11 +149,23 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return atom container set of all atom containers that passed the filter pipeline
      * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
-    public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    /*  //TODO: this method is deprecated and will be removed in a later version
+    public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         this.assignMolIdToAtomContainers(anAtomContainerSet);   //TODO: think about this again
         IAtomContainerSet tmpClonedACSet = this.cloneAtomContainerSet(anAtomContainerSet);
         return this.process(tmpClonedACSet);
+    }
+    */
+
+    /**
+     * TODO: this is a workaround! Shall be removed in one of the next commits!
+     *  -> discuss: shall the MolID-assignment be decided by a method parameter?
+     */
+    @Override
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException {
+        this.assignMolIdToAtomContainers(anAtomContainerSet);
+        return super.process(anAtomContainerSet, aCloneBeforeProcessing);
     }
 
     /**

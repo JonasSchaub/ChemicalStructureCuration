@@ -37,6 +37,14 @@ import java.util.logging.Logger;
 
 public abstract class BaseProcessingStep implements IProcessingStep {
 
+    /*
+    TODO:
+     - find a solution on where and how to assign identifier to each given atom container
+        -> general solution for all processing steps?
+        -> I do not like the idea that only some of the implementations assign an ID when .process() is called and
+           others do not
+     */
+
     /**
      * Logger of this class.
      */
@@ -45,7 +53,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     /**
      * Reporter of this processing step.
      */
-    private IReporter reporter; //TODO: is "private" here correct?
+    private IReporter reporter; //TODO: is "private" in an abstract class correct?
 
     /**
      * Name string of the atom container property that contains an optional second identifier of type integer. If the

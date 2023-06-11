@@ -33,6 +33,17 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
  */
 public interface IProcessingStep {
 
+    /*
+    TODO:
+     - find a solution on where and how to assign identifier to each given atom container
+        -> general solution for all processing steps?
+        -> I do not like the idea that only some of the implementations assign an ID when .process() is called and
+           others do not
+    //
+    TODO (optional):
+        - method to deep copy / clone a processing step?
+     */
+
     /**
      * Processes the given atom container set according to the processing steps added to the pipeline. To avoid any
      * changes or modifications to your original data, use the option of cloning the given atom container set before
