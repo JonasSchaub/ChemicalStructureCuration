@@ -125,7 +125,7 @@ public class TestUtils {
              * @throws NullPointerException if the given IAtomContainer instance is null
              */
             @Override
-            public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+            protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
                 Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
                 return aIsFilteredReturnValue;
             }

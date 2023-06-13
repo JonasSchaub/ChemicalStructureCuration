@@ -61,7 +61,7 @@ public class HasInvalidAtomicNumbersFilter extends BaseFilter {
      * @throws NullPointerException if the given IAtomContainer instance or an IAtom instance contained by it is null
      */
     @Override
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         try {

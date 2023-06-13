@@ -60,7 +60,7 @@ public class MinHeavyAtomCountFilter extends BaseFilter {
      * Atom containers that equal the min heavy atom count do not get filtered.
      */
     @Override
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         return !FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.minHeavyAtomCount);

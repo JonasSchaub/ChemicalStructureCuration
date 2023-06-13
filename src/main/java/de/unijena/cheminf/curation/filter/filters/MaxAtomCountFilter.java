@@ -73,7 +73,7 @@ public class MaxAtomCountFilter extends BaseFilter {
      * Atom containers that equal the max atom count do not get filtered.
      */
     @Override
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.maxAtomCount + 1, this.considerImplicitHydrogens);

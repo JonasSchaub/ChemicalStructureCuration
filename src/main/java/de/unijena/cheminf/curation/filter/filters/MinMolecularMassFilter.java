@@ -86,7 +86,7 @@ public class MinMolecularMassFilter extends BaseFilter {
      * Atom containers that equal the min molecular mass do not get filtered.
      */
     @Override
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
         return ChemUtils.getMass(anAtomContainer, this.massComputationFlavour) < this.minMolecularMass;
