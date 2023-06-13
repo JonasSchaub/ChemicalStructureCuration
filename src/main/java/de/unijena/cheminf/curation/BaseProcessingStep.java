@@ -43,6 +43,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         -> general solution for all processing steps?
         -> I do not like the idea that only some of the implementations assign an ID when .process() is called and
            others do not
+    //
+    TODO:
+        - initialize reporter
+        - make file destination adjustable without the need to set a new reporter?
      */
 
     /**
@@ -61,6 +65,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     private String optionalIDPropertyName;
 
+    /**
+     * String with the index of the processing step in the pipeline (if it is part of a pipeline), or null if it is not
+     * part of a pipeline. It is stored as string to enable subordinate IDs (e.g. "1.1").
+     */
     private String indexOfStepInPipeline = null;
 
     /**
@@ -112,7 +120,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @return a clone of the given atom container set
      * @throws NullPointerException if the given IAtomContainerSet or IReporter instance is null
      */
-    protected IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
         int tmpCloneNotSupportedExceptionsCount = 0;
@@ -124,7 +132,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                 tmpCloneNotSupportedExceptionsCount++;
                 this.reporter.appendReport(new ReportDataObject(
                         tmpAtomContainer,
-                        tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME),    //TODO
+                        tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME),    //TODO: centralized solution for the identifiers?
                         tmpAtomContainer.getProperty(this.optionalIDPropertyName),
                         null,
                         this.getClass(),
@@ -169,7 +177,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     @Override
     public void setReporter(IReporter aReporter) throws NullPointerException {
-        //Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");  //TODO: use default reporter?
+        //TODO: just check for not null? / use the default reporter instead?
+        //Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");  //TODO: would cause problems with too many test methods at the moment
         this.reporter = aReporter;
     }
 

@@ -35,21 +35,27 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 public interface IFilter extends IProcessingStep {
 
     /**
+     * TODO: do I need to use the tag "@Override"?
      * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
+     * TODO
      *
      * @param anAtomContainerSet set of atom containers to be filtered
+     * @param aCloneBeforeProcessing boolean value, whether to clone the atom containers of the given set before
+     *                               processing them
      * @return atom container set of all atom containers that passed the filter
      * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
-    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException;
 
     /**
      * Checks whether the filter applies on a given IAtomContainer instance.
      * Returns true, if the given atom container gets filtered.
-     * TODO: mention that the method might throw other exceptions
+     * TODO: mention that the method might throw other exceptions?
+     * TODO: still not that happy with the naming
+     *  suggestions: getsFiltered / passesFilter / ... ?!
      *
      * @param anAtomContainer IAtomContainer instance to be checked
-     * @return true, if the filter applies on the given atom container
+     * @return true if the structure does not pass the filter
      * @throws NullPointerException if the given IAtomContainer instance is null
      */
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;

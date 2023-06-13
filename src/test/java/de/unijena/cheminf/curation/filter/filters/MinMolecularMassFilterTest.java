@@ -292,7 +292,7 @@ public class MinMolecularMassFilterTest {
         double tmpMinMolecularMass = 5.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Object tmpReturnValue = tmpMinMolecularMassFilter.filter(tmpAtomContainerSet);
+        Object tmpReturnValue = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -314,7 +314,7 @@ public class MinMolecularMassFilterTest {
         double tmpMinMolecularMass = 30.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -338,7 +338,7 @@ public class MinMolecularMassFilterTest {
         double tmpMinMolecularMass = 50.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -356,7 +356,7 @@ public class MinMolecularMassFilterTest {
                     double tmpMinMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
                     IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-                    tmpMinMolecularMassFilter.filter(null);
+                    tmpMinMolecularMassFilter.process(null, false);
                 }
         );
     }

@@ -292,7 +292,7 @@ public class MaxMolecularMassFilterTest {
         double tmpMaxMolecularMass = 5.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Object tmpReturnValue = tmpMaxMolecularMassFilter.filter(tmpAtomContainerSet);
+        Object tmpReturnValue = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -314,7 +314,7 @@ public class MaxMolecularMassFilterTest {
         double tmpMaxMolecularMass = 50.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -338,7 +338,7 @@ public class MaxMolecularMassFilterTest {
         double tmpMaxMolecularMass = 30.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -356,7 +356,7 @@ public class MaxMolecularMassFilterTest {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
                     IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-                    tmpMaxMolecularMassFilter.filter(null);
+                    tmpMaxMolecularMassFilter.process(null, false);
                 }
         );
     }

@@ -36,12 +36,6 @@ import java.util.Objects;
  */
 public class ReportDataObject {
 
-    /*
-    TODO: parameter checks?
-    TODO: how to access the parent structure(s)?
-    TODO: explicitly store the identifiers?
-     */
-
     /**
      * Atom container of the structure the report refers to.
      */
@@ -94,6 +88,7 @@ public class ReportDataObject {
             Class<? extends IProcessingStep> classOfProcessingStep,
             ErrorCodes anErrorCode
     ) throws NullPointerException {
+        //TODO: accept the atom container to be null? (case: NULL_ERROR)
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
         Objects.requireNonNull(classOfProcessingStep, "classOfProcessingStep (instance of Class<? extends" +

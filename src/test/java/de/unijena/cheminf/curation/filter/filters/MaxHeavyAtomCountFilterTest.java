@@ -172,7 +172,7 @@ public class MaxHeavyAtomCountFilterTest {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMaxHeavyAtomCount = 5;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
-        Object tmpReturnValue = tmpMaxHeavyAtomCountFilter.filter(tmpAtomContainerSet);
+        Object tmpReturnValue = tmpMaxHeavyAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -193,7 +193,7 @@ public class MaxHeavyAtomCountFilterTest {
         //
         int tmpMaxHeavyAtomCount = 4;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
-        IAtomContainerSet tmpFilteredACSet = tmpMaxHeavyAtomCountFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxHeavyAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -216,7 +216,7 @@ public class MaxHeavyAtomCountFilterTest {
         //
         int tmpMaxHeavyAtomCount = 3;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
-        IAtomContainerSet tmpFilteredACSet = tmpMaxHeavyAtomCountFilter.filter(tmpAtomContainerSet);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxHeavyAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -233,7 +233,7 @@ public class MaxHeavyAtomCountFilterTest {
                 () -> {
                     int tmpMaxHeavyAtomCount = 5;
                     IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
-                    tmpMaxHeavyAtomCountFilter.filter(null);
+                    tmpMaxHeavyAtomCountFilter.process(null, false);
                 }
         );
     }

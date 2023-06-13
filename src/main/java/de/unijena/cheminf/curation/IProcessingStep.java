@@ -45,9 +45,9 @@ public interface IProcessingStep {
      */
 
     /**
-     * Processes the given atom container set according to the processing steps added to the pipeline. To avoid any
-     * changes or modifications to your original data, use the option of cloning the given atom container set before
-     * processing (by setting the boolean parameter to true).
+     * Processes the given atom container set according to the processing step. To avoid any changes or modifications
+     * to the original data, use the option of cloning the given atom container set before processing (by setting the
+     * boolean parameter to true).
      * <ul>
      * <b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before processing.
      * </ul>

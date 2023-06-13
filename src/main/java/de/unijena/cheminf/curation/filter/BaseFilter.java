@@ -40,14 +40,12 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /*
     TODO: flag filtered / not filtered ACs?
-    TODO: boolean needsInfoOfOtherACs? (for duplicates filter)
     TODO: add countOfFilteredACs (?)
-    TODO: log exceptions thrown by isFiltered() and treat those molecules as if true was returned
     TODO: is there a way to use the loggers of the classes that extend this class for logging?
      */
 
     /**
-     * TODO
+     * Convenience constructor. Calls the main constructor with both params set to null.
      */
     public BaseFilter() {   //TODO: view all the filters constructors!!
         this(null, null);
@@ -61,32 +59,40 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * TODO!!!
-     *
-     * @param anAtomContainerSet atom container set to process
-     * @return
+     * {@inheritDoc}
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) {
-        return this.filter(anAtomContainerSet);
-    }
-
-    /**
-     * {@inheritDoc}
-     * TODO: remove / replace with .process()
-     */
-    @Deprecated
-    public IAtomContainerSet filter(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             //apply filter
-            if (!this.isFiltered(tmpAtomContainer)) {
+            if (!this.isFiltered(tmpAtomContainer, true)) {
                 tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
             }
         }
         return tmpFilteredACSet;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        return this.isFiltered(anAtomContainer, false);
+    }
+
+    /**
+     * TODO
+     *
+     * @param anAtomContainer IAtomContainer instance to be checked
+     * @param aReportToReporter boolean value whether to report issues with the given structure to the reporter
+     *                          or throw exceptions instead
+     * @return true if the structure does not pass the filter or has issues that were reported to the reporter;
+     *         false if the structure passes the criteria of the filter
+     * @throws NullPointerException if the given IAtomContainer instance is null
+     */
+    protected abstract boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException;
 
 }

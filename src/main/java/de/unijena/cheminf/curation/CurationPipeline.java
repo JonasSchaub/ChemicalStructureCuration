@@ -65,10 +65,6 @@ public class CurationPipeline extends BaseProcessingStep {
         - check whether they are still doing their job (throw no exception)
         - check whether they need to be removed / replaced
         - check the doc-comments
-    TODO:
-        - initialize reporter
-        - remove reporter as parameter
-        - make file destination adjustable without the need to set a new reporter?
     //
     TODO (optional):
         - method to deep copy / clone a FilterPipeline?
@@ -76,10 +72,11 @@ public class CurationPipeline extends BaseProcessingStep {
      */
 
     /**
-     * String of the name of the atom container property for uniquely identifying an atom container during the filtering
-     * process.
+     * TODO: move this property to BaseProcessingStep / IProcessingStep
+     * String of the name of the atom container property that is used to uniquely identify atom containers during the
+     * processing and when creating the report-file.
      */
-    public static final String MOL_ID_PROPERTY_NAME = "FilterPipeline.MolID";
+    public static final String MOL_ID_PROPERTY_NAME = "CurationPipeline.MolID";
 
     /**
      * Logger of this class.
@@ -117,7 +114,7 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * TODO: discuss: is this one constructor enough or shall there be "convenience constructors"?
-     *  - on the first case: remove the other constructors
+     *  - in the first case: remove the other constructors
      * Constructor. At reporting of a curation processes, the atom container property with the given name (String
      * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
      * assigned to each atom container during a curation process.
