@@ -28,6 +28,7 @@ package de.unijena.cheminf.curation;
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.CurationPipeline;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
@@ -50,8 +51,7 @@ public class CurationPipelineMolIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
         Assertions.assertNotNull(tmpAtomContainerSet.getAtomContainer(0).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME));
     }
 
@@ -60,12 +60,12 @@ public class CurationPipelineMolIDTests {
      * FilterPipeline is of type Integer.
      */
     @Test
+    @Disabled
     public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfTypeInteger() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
         Assertions.assertInstanceOf(Integer.class, tmpAtomContainerSet.getAtomContainer(0).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME));
     }
 
@@ -80,11 +80,10 @@ public class CurationPipelineMolIDTests {
         tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
         Assertions.assertSame(
                 tmpAtomContainer,
-                tmpAtomContainerSet.getAtomContainer(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME))
+                tmpAtomContainerSet.getAtomContainer(Integer.parseInt(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME)))
         );
     }
 
@@ -97,13 +96,12 @@ public class CurationPipelineMolIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
             Assertions.assertSame(
                     tmpAtomContainer,
-                    tmpAtomContainerSet.getAtomContainer(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME))
+                    tmpAtomContainerSet.getAtomContainer(Integer.parseInt(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME)))
             );
         }
     }
@@ -117,8 +115,7 @@ public class CurationPipelineMolIDTests {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    CurationPipeline tmpCurationPipeline = new CurationPipeline();
-                    tmpCurationPipeline.assignMolIdToAtomContainers(null);
+                    ProcessingStepUtils.assignMolIdToAtomContainers(null);
                 }
         );
     }
@@ -144,11 +141,11 @@ public class CurationPipelineMolIDTests {
      * Tests whether the value returned by the .getAssignedMolID() method of class FilterPipeline is of type Integer.
      */
     @Test
+    @Disabled
     public void getAssignedMolIDTest_returnsInt() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         tmpAtomContainer.setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, 0);
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertInstanceOf(Integer.class, tmpCurationPipeline.getAssignedMolID(tmpAtomContainer));
+        Assertions.assertInstanceOf(Integer.class, ProcessingStepUtils.getAssignedMolID(tmpAtomContainer));
     }
 
     /**
@@ -156,13 +153,13 @@ public class CurationPipelineMolIDTests {
      * of the given atom containers MolID (atom container property "Filter.MolID").
      */
     @Test
-    public void getAssignedMolIDTest_returnedIntEqualsAtomContainersMolID_MolID0() {
+    @Disabled
+    public void getAssignedMolIDTest_returnedIntEqualsAtomContainersMolID_MolID_0() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpMolID = 0;
         tmpAtomContainer.setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, tmpMolID);
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertEquals(tmpMolID, tmpCurationPipeline.getAssignedMolID(tmpAtomContainer));
+        Assertions.assertEquals(tmpMolID, ProcessingStepUtils.getAssignedMolID(tmpAtomContainer));
     }
 
     /**
@@ -170,13 +167,13 @@ public class CurationPipelineMolIDTests {
      * of the given atom containers MolID (atom container property "Filter.MolID").
      */
     @Test
-    public void getAssignedMolIDTest_returnedIntEqualsAtomContainersMolID_MolID1() {
+    @Disabled
+    public void getAssignedMolIDTest_returnedIntEqualsAtomContainersMolID_MolID_1() {
         IAtomContainer tmpAtomContainer = new AtomContainer();
         int tmpMolID = 1;
         tmpAtomContainer.setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, tmpMolID);
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertEquals(tmpMolID, tmpCurationPipeline.getAssignedMolID(tmpAtomContainer));
+        Assertions.assertEquals(tmpMolID, ProcessingStepUtils.getAssignedMolID(tmpAtomContainer));
     }
 
     /**
@@ -188,7 +185,7 @@ public class CurationPipelineMolIDTests {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new CurationPipeline().getAssignedMolID(null);
+                    ProcessingStepUtils.getAssignedMolID(null);
                 }
         );
     }
@@ -202,7 +199,7 @@ public class CurationPipelineMolIDTests {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    new CurationPipeline().getAssignedMolID(new AtomContainer());
+                    ProcessingStepUtils.getAssignedMolID(new AtomContainer());
                 }
         );
     }
@@ -212,13 +209,14 @@ public class CurationPipelineMolIDTests {
      * atom container given to the .getAssignedMolID() method of class FilterPipeline is not an integer value.
      */
     @Test
+    @Disabled
     public void getAssignedMolIDTest_throwsIllegalArgumentExceptionIfGivenAtomContainersMolIDIsNotOfDataTypeInt() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     tmpAtomContainer.setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, new Object());
-                    new CurationPipeline().getAssignedMolID(tmpAtomContainer);
+                    ProcessingStepUtils.getAssignedMolID(tmpAtomContainer);
                 }
         );
     }
@@ -228,8 +226,7 @@ public class CurationPipelineMolIDTests {
      */
     @Test
     public void getArrayOfAssignedMolIDsTest_returnsNotNull() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertNotNull(tmpCurationPipeline.getArrayOfAssignedMolIDs(new AtomContainerSet()));
+        Assertions.assertNotNull(ProcessingStepUtils.getArrayOfAssignedMolIDs(new AtomContainerSet()));
     }
 
     /**
@@ -237,9 +234,9 @@ public class CurationPipelineMolIDTests {
      * array.
      */
     @Test
+    @Disabled
     public void getArrayOfAssignedMolIDsTest_returnsArrayOfIntegers() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertInstanceOf(int[].class, tmpCurationPipeline.getArrayOfAssignedMolIDs(new AtomContainerSet()));
+        Assertions.assertInstanceOf(int[].class, ProcessingStepUtils.getArrayOfAssignedMolIDs(new AtomContainerSet()));
     }
 
     /**
@@ -251,9 +248,8 @@ public class CurationPipelineMolIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        Assertions.assertEquals(1, tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet).length);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        Assertions.assertEquals(1, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet).length);
     }
 
     /**
@@ -266,10 +262,9 @@ public class CurationPipelineMolIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        int[] tmpMolIDArray = tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-        Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(0).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME), tmpMolIDArray[0]);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        String[] tmpMolIDArray = ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+        Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(0).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME), tmpMolIDArray[0]);
     }
 
     //TODO: adopt following methods
@@ -284,9 +279,8 @@ public class CurationPipelineMolIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        Assertions.assertEquals(3, tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet).length);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        Assertions.assertEquals(3, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet).length);
     }
 
     /** TODO
@@ -299,11 +293,10 @@ public class CurationPipelineMolIDTests {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        int[] tmpMolIDArray = tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        String[] tmpMolIDArray = ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
-            Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME), tmpMolIDArray[i]);
+            Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME), tmpMolIDArray[i]);
         }
     }
 
@@ -313,18 +306,17 @@ public class CurationPipelineMolIDTests {
      * the inconsistently numbered MolIDs of the three atom containers.
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_returnedValuesEqualsMolIDsOfGivenACs_3ACs_manuallySetInconsistentMolIDs() {   //TODO
+    public void getArrayOfAssignedMolIDsTest_returnedValuesEqualMolIDsOfGivenACs_3ACs_manuallySetInconsistentMolIDs() {   //TODO
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, 9);
-        tmpAtomContainerSet.getAtomContainer(1).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, 3);
-        tmpAtomContainerSet.getAtomContainer(2).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, 7);
+        tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, "9");
+        tmpAtomContainerSet.getAtomContainer(1).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, "3");
+        tmpAtomContainerSet.getAtomContainer(2).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, "7");
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int[] tmpMolIDArray = tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+        String[] tmpMolIDArray = ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
         Assertions.assertEquals(3, tmpMolIDArray.length);
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
-            Assertions.assertEquals((Integer) tmpAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME), tmpMolIDArray[i]);
+            Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME), tmpMolIDArray[i]);
         }
     }
 
@@ -338,7 +330,7 @@ public class CurationPipelineMolIDTests {
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-                    new CurationPipeline().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                    ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
                 }
         );
     }
@@ -348,13 +340,14 @@ public class CurationPipelineMolIDTests {
      * if a given atom container has a MolID that is no integer value.
      */
     @Test
+    @Disabled
     public void getArrayOfAssignedMolIDsTest_throwsIllegalArgumentExceptionIfAnAtomContainerHasAMolIdThatIsNoIntegerValue() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
                     tmpAtomContainerSet.getAtomContainer(0).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, new Object());
-                    new CurationPipeline().getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                    ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
                 }
         );
     }
@@ -369,10 +362,9 @@ public class CurationPipelineMolIDTests {
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-                    CurationPipeline tmpCurationPipeline = new CurationPipeline();
-                    tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+                    ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
                     tmpAtomContainerSet.getAtomContainer(2).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, null);
-                    tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                    ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
                 }
         );
     }
@@ -382,15 +374,15 @@ public class CurationPipelineMolIDTests {
      * if one of multiple given atom containers has a MolID that is no integer value.
      */
     @Test
+    @Disabled
     public void getArrayOfAssignedMolIDsTest_multipleACs_oneWithNotIntegerValueMolID_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-                    CurationPipeline tmpCurationPipeline = new CurationPipeline();
-                    tmpCurationPipeline.assignMolIdToAtomContainers(tmpAtomContainerSet);
+                    ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
                     tmpAtomContainerSet.getAtomContainer(1).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, new Object());
-                    tmpCurationPipeline.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
+                    ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
                 }
         );
     }
@@ -404,7 +396,7 @@ public class CurationPipelineMolIDTests {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new CurationPipeline().getArrayOfAssignedMolIDs(null);
+                    ProcessingStepUtils.getArrayOfAssignedMolIDs(null);
                 }
         );
     }

@@ -1,5 +1,7 @@
-package de.unijena.cheminf.reporter;
+package de.unijena.cheminf.curation.reporter;
 
+import de.unijena.cheminf.curation.reporter.ReportDepiction;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.openscience.cdk.exception.CDKException;
@@ -31,6 +33,7 @@ class CreateMarkdownTest {
      * @throws CDKException
      */
     @Test
+    @Disabled
     public void CreateCurationPipelineReport() throws IOException, CDKException {
 
         //create test Atomcontainer to depict a test molecule

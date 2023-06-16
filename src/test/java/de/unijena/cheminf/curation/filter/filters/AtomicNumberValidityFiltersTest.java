@@ -327,7 +327,7 @@ public class AtomicNumberValidityFiltersTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);  //TODO: outsource code?
-        IAtomContainerSet tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
+        IAtomContainerSet tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false, true);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             if (!tmpIsInvalidArray[i]) {
@@ -339,7 +339,7 @@ public class AtomicNumberValidityFiltersTest {
         Assertions.assertEquals(tmpIndexInFilteredACSet, tmpFilteredACSet.getAtomContainerCount());
         //
         tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
+        tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false, true);
         tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             if (tmpIsInvalidArray[i]) {
@@ -381,7 +381,7 @@ public class AtomicNumberValidityFiltersTest {
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        IAtomContainerSet tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
+        IAtomContainerSet tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false, true);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             if (!tmpIsInvalidArray[i]) {
@@ -393,7 +393,7 @@ public class AtomicNumberValidityFiltersTest {
         Assertions.assertEquals(tmpIndexInFilteredACSet, tmpFilteredACSet.getAtomContainerCount());
         //
         tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
+        tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false, true);
         tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             if (tmpIsInvalidArray[i]) {

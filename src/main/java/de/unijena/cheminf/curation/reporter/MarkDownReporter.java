@@ -1,4 +1,4 @@
-package de.unijena.cheminf.reporter;
+package de.unijena.cheminf.curation.reporter;
 
 import org.openscience.cdk.exception.CDKException;
 
@@ -52,10 +52,10 @@ public class MarkDownReporter implements IReporter {
             ReportDepiction aReportDepiction = new ReportDepiction();
             String tmpDepictionString = aReportDepiction.getDepictionAsString(tmpReportDataObject.getAtomContainer());
             String tmpIdentifier = String.valueOf(tmpReportDataObject.getIdentifier());
-            String tmpErrorDescription = tmpReportDataObject.getErrorDescription();
-            String tmpProcessingStepDescription = tmpReportDataObject.getProcessingStepDescription();
-            CurationPipelineReport.append(String.format("|![Depiction](%s%s)| %s|%s|%s|", "data:image/png;base64,",
-                    tmpDepictionString, tmpIdentifier, tmpErrorDescription, tmpProcessingStepDescription));
+            //String tmpErrorDescription = tmpReportDataObject.getErrorDescription();   //TODO: does not compile after merge
+            //String tmpProcessingStepDescription = tmpReportDataObject.getProcessingStepDescription();
+            //CurationPipelineReport.append(String.format("|![Depiction](%s%s)| %s|%s|%s|", "data:image/png;base64,",
+            //        tmpDepictionString, tmpIdentifier, tmpErrorDescription, tmpProcessingStepDescription));
 
         }
         try {

@@ -45,6 +45,7 @@ import org.openscience.cdk.interfaces.IBond;
 
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -70,13 +71,6 @@ public class CurationPipeline extends BaseProcessingStep {
         - method to deep copy / clone a FilterPipeline?
         - methods for clearing the MolIDs of an atom container?
      */
-
-    /**
-     * TODO: move this property to BaseProcessingStep / IProcessingStep
-     * String of the name of the atom container property that is used to uniquely identify atom containers during the
-     * processing and when creating the report-file.
-     */
-    public static final String MOL_ID_PROPERTY_NAME = "CurationPipeline.MolID";
 
     /**
      * Logger of this class.
@@ -156,34 +150,30 @@ public class CurationPipeline extends BaseProcessingStep {
     */
 
     /**
-     * TODO: this is a workaround! Shall be removed in one of the next commits!
-     *  -> discuss: shall the MolID-assignment be decided by a method parameter?
-     */
-    @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException {
-        this.assignMolIdToAtomContainers(anAtomContainerSet);
-        return super.process(anAtomContainerSet, aCloneBeforeProcessing);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+        //TODO: remove check of anAtomContainerSet? might be irrelevant
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        //this.assignMolIdToAtomContainers(anAtomContainerSet); TODO: think about this again
         IAtomContainerSet tmpACSetToProcess;
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
-        IProcessingStep tmpProcessingStep;
-
-        for (int i = 0; i < this.listOfPipelineSteps.size(); i++) {
-            tmpProcessingStep = this.listOfPipelineSteps.get(i);
-            tmpACSetToProcess = tmpResultingACSet;
-            tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, false);
-            //TODO: is there a way to set an initial atom container count?
+        //
+        try {
+            for (IProcessingStep tmpProcessingStep : this.listOfPipelineSteps) {
+                tmpACSetToProcess = tmpResultingACSet;
+                tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, false, false);
+                //TODO: is there a way to set an initial atom container count?
+            }
+        } catch (Exception anUnexpectedException) {
+            CurationPipeline.LOGGER.log(Level.SEVERE, "The curation process was interrupted by an unexpected" +
+                    " exception: " + anUnexpectedException.toString(), anUnexpectedException);
+            //TODO: create some kind of notification / message to append to the report file
+            //this.getReporter().report();  //TODO
+            return null;
         }
-
-        //this.getReporter().report();    //TODO: directly report? this would cause problems with the lot of test methods
+        //
+        //this.getReporter().report();    //TODO: would cause to many problems with test methods atm
         return tmpResultingACSet;
     }
 
@@ -470,73 +460,6 @@ public class CurationPipeline extends BaseProcessingStep {
         Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of Filter) is null.");
         this.addToListOfProcessingSteps(aProcessingStep);
         return this;
-    }
-
-    /**
-     * Assigns a unique identifier in form of a MolID to every atom container of the given atom container set. For this
-     * purpose, each atom container is assigned an integer property of name "FilterPipeline.MolID". The assigned MolID
-     * equals the index of the atom container in the given atom container set.
-     *
-     * @param anAtomContainerSet IAtomContainerSet to whose atom containers MolIDs should be assigned
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
-     */
-    protected void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-            anAtomContainerSet.getAtomContainer(i).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, i);
-        }
-    }
-
-    /**
-     * Returns the MolIDs assigned to the atom containers in the given atom container set as integer array. A MolID is
-     * assigned to every atom container of an atom container set that was given to or returned by the .filter() method
-     * of this class. This method may only be used for atom container sets that meet this criterion. Otherwise, an
-     * IllegalArgumentException gets thrown.
-     *
-     * @param anAtomContainerSet IAtomContainerSet instance the MolID array should be returned of
-     * @return Integer array of the atom containers MolIDs
-     * @throws NullPointerException if the given instance of IAtomContainerSet or an AtomContainer contained by it
-     * is null
-     * @throws IllegalArgumentException if an AtomContainer of the given IAtomContainerSet instance has no MolID
-     * assigned or the MolID is not of data type Integer
-     */
-    public int[] getArrayOfAssignedMolIDs(IAtomContainerSet anAtomContainerSet) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        final int[] tmpMolIDArray = new int[anAtomContainerSet.getAtomContainerCount()];
-        for (int i = 0; i < tmpMolIDArray.length; i++) {
-            try {
-                tmpMolIDArray[i] = this.getAssignedMolID(anAtomContainerSet.getAtomContainer(i));
-            } catch (NullPointerException aNullPointerException) {
-                throw new NullPointerException("AtomContainer " + i + " of the given IAtomContainerSet instance is null.");
-            } catch (IllegalArgumentException anIllegalArgumentException) {
-                throw new IllegalArgumentException("AtomContainer " + i + " of the given AtomContainerSet has no MolID " +
-                        "assigned or the MolID is not of data type Integer.");
-            }
-        }
-        return tmpMolIDArray;
-    }
-
-    /**
-     * Returns the MolID assigned to the given atom container. A MolID is assigned to every atom container of an atom
-     * container set that was given to or returned by the .filter() method of this class. This method may not be used
-     * for any atom container that does not meet this criterion.
-     *
-     * @param anAtomContainer IAtomContainer instance the MolID should be returned of
-     * @return MolID (integer value) of the given AtomContainer
-     * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given IAtomContainer instance has no MolID assigned or the MolID is not
-     * of data type Integer
-     */
-    public int getAssignedMolID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        if (anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME) == null) {
-            throw new IllegalArgumentException("The given IAtomContainer instance has no MolID assigned.");
-        }
-        if (anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME).getClass() != Integer.class) {
-            throw new IllegalArgumentException("The MolID assigned to the given IAtomContainer instance is not of " +
-                    "data type Integer.");
-        }
-        return anAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME);
     }
 
     /**

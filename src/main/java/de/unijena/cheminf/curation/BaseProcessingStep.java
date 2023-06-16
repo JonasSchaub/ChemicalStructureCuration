@@ -57,7 +57,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     /**
      * Reporter of this processing step.
      */
-    private IReporter reporter; //TODO: is "private" in an abstract class correct?
+    private IReporter reporter;
 
     /**
      * Name string of the atom container property that contains an optional second identifier of type integer. If the
@@ -93,14 +93,23 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * {@inheritDoc}
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException {
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing, boolean anAssignIdentifiers) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        //TODO: assign IDs to the given atom containers?
+        //TODO: assign IDs to the given atom containers dependent on second boolean param
+        if (anAssignIdentifiers) {
+            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
+        } //TODO: else: check existence of MolID ?
         if (aCloneBeforeProcessing) {
             IAtomContainerSet tmpClonedACSet = this.cloneAtomContainerSet(anAtomContainerSet);
             return this.process(tmpClonedACSet);
         }
-        return this.process(anAtomContainerSet);
+        IAtomContainerSet tmpResultingACSet = this.process(anAtomContainerSet);
+        if (this.indexOfStepInPipeline == null) {
+            //generate the report file only if the processing step is not part of a pipeline
+            //this.reporter.report();   //TODO: default reporter necessary
+            //this.reporter.clear();
+        }
+        return tmpResultingACSet;
     }
 
     /**
@@ -112,6 +121,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     protected abstract IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
     /** TODO
+     * TODO: place in utils? would mean a lot more of params (reporter, optionalIDPropertyName, this.getClass())
      * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
      * appended to the given reporter and excluded from the returned atom container set. The total count of atom
      * containers failing the cloning-process is being logged.
@@ -130,10 +140,11 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                 tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
             } catch (CloneNotSupportedException aCloneNotSupportedException) {
                 tmpCloneNotSupportedExceptionsCount++;
+                //TODO: check the data type of both atom container properties?
                 this.reporter.appendReport(new ReportDataObject(
                         tmpAtomContainer,
-                        tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME),    //TODO: centralized solution for the identifiers?
-                        tmpAtomContainer.getProperty(this.optionalIDPropertyName),
+                        tmpAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString(),
+                        tmpAtomContainer.getProperty(this.optionalIDPropertyName).toString(),
                         null,
                         this.getClass(),
                         ErrorCodes.CLONE_ERROR
@@ -141,7 +152,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             }
         }
         if (tmpCloneNotSupportedExceptionsCount > 0) {
-            BaseProcessingStep.LOGGER.log(Level.WARNING, tmpCloneNotSupportedExceptionsCount + " of " +
+            BaseProcessingStep.LOGGER.log(Level.WARNING, tmpCloneNotSupportedExceptionsCount + " of " + //TODO: logging level?
                     anAtomContainerSet.getAtomContainerCount() + " given atom containers could not be cloned and" +
                     " thereby were excluded from the returned atom container set.");
         }
@@ -195,6 +206,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     @Override
     public void setIndexOfStepInPipeline(String anIndexString) {
+        //TODO: accept empty or blank Strings?
         this.indexOfStepInPipeline = anIndexString;
     }
 

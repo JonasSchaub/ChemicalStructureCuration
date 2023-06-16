@@ -30,27 +30,25 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
- * IFilter interface.
+ * IFilter interface. Classes implementing this interface are meant not to cause any changes to given data other
+ * than simply filtering it.    TODO
  */
 public interface IFilter extends IProcessingStep {
 
     /**
-     * TODO: do I need to use the tag "@Override"?
-     * Applies the filter on a set of atom containers and returns the set of those who passed the filter.
-     * TODO
-     *
-     * @param anAtomContainerSet set of atom containers to be filtered
-     * @param aCloneBeforeProcessing boolean value, whether to clone the atom containers of the given set before
-     *                               processing them
-     * @return atom container set of all atom containers that passed the filter
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * {@inheritDoc}
+     * <ul>
+     * <b>Note:</b> Classes implementing {@link IFilter} are not meant to cause any modifications to the provided
+     * atom containers themself.
+     * </ul>
      */
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException;
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing, boolean anAssignIdentifiers) throws NullPointerException;
 
     /**
      * Checks whether the filter applies on a given IAtomContainer instance.
-     * Returns true, if the given atom container gets filtered.
-     * TODO: mention that the method might throw other exceptions?
+     * <br>
+     * True is returned, if the given atom container gets filtered; returns false if the atom container passes the
+     * filter; throws an exception if there is an issue with the structure.
      * TODO: still not that happy with the naming
      *  suggestions: getsFiltered / passesFilter / ... ?!
      *

@@ -38,7 +38,17 @@ public enum ErrorCodes {
     /**
      * The IAtomContainer instance of the structure is null.
      */
-    NULL_ERROR,
+    ATOM_CONTAINER_NULL_ERROR,
+
+    /**
+     * An IAtom instance contained by the atom container of the structure is null.
+     */
+    ATOM_NULL_ERROR,
+
+    /**
+     * An IBond instance contained by the atom container of the structure is null.
+     */
+    BOND_NULL_ERROR,
 
     /**
      * The IAtomContainer instance of the structure contains no atoms.
@@ -48,6 +58,11 @@ public enum ErrorCodes {
     /**
      * ...
      */
-    XYZ_ERROR
+    XYZ_ERROR,
+
+    /**
+     * An unexpected exception occurred.
+     */
+    UNEXPECTED_EXCEPTION_ERROR
 
 }

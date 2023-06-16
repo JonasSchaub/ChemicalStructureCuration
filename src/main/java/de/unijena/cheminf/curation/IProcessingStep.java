@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation;
 
 import de.unijena.cheminf.curation.reporter.IReporter;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
@@ -45,22 +46,53 @@ public interface IProcessingStep {
      */
 
     /**
+     * String of the name of the atom container property that is used to uniquely identify atom containers during the
+     * processing and when creating the report-file.
+     */
+    public static final String MOL_ID_PROPERTY_NAME = "Processing_MolID";
+
+    /**
      * Processes the given atom container set according to the processing step. To avoid any changes or modifications
      * to the original data, use the option of cloning the given atom container set before processing (by setting the
-     * boolean parameter to true).
+     * first boolean parameter to true).
      * <ul>
      * <b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before processing.
      * </ul>
-     * By the end of the processing, a report file containing info on ... is created.
-     * TODO
+     * To make modifications to and possible issues with structures the most traceable, it is advised to set the second
+     * boolean parameter to true to automatically assign a MolID, an atom container property with the name
+     * {@link #MOL_ID_PROPERTY_NAME}, to every atom container in the given set. The MolID is a String containing the
+     * index of the respective atom container in the original data set. Note that in this case formerly assigned values
+     * do get overwritten. If the second boolean parameter is set to false, every atom container of the given set is
+     * expected to have a MolID assigned and an exception might be thrown if this is not the case.<br>
+     * <br>
+     * By the end of the processing and if the index of this processing step has not been set (via
+     * {@link #setIndexOfStepInPipeline(String)} to anything else than null (default), a report file containing info
+     * on issues with structures is created. If it is not null, a supervisory entity is expected to execute the
+     * {@link IReporter#report()} method. The reporter can be accessed via the respective getter and setter of this
+     * class.
      *
      * @param anAtomContainerSet atom container set to process
      * @param aCloneBeforeProcessing boolean value, whether to clone the atom containers of the given set before
      *                               processing them
+     * @param anAssignIdentifiers boolean value, whether to assign a MolID to the atom containers of the given set; in
+     *                            case of false, every atom container in the set is expected to have a MolID assigned
      * @return the processed atom container set
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
+     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
+     * without causing issues)
+     * @see #getReporter()
+     * @see #setReporter(IReporter)
+     * @see #setIndexOfStepInPipeline(String)
+     * @see #MOL_ID_PROPERTY_NAME
+     * @see ProcessingStepUtils#assignMolIdToAtomContainers(IAtomContainerSet)
+     * @see ProcessingStepUtils#getAssignedMolID(IAtomContainer)
+     * @see ProcessingStepUtils#getArrayOfAssignedMolIDs(IAtomContainerSet)
      */
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException;
+    public IAtomContainerSet process(
+            IAtomContainerSet anAtomContainerSet,
+            boolean aCloneBeforeProcessing,
+            boolean anAssignIdentifiers
+    ) throws NullPointerException;
 
     /**
      * Returns the name string of the atom container property containing an optional second identifier (e.g. the name

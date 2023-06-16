@@ -157,14 +157,14 @@ public class TestUtils {
         }
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(aFilter);
-        IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.process(anAtomContainerSet, true);
+        IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.process(anAtomContainerSet, true, true);
         int tmpIndexInReturnedSet = 0;
         for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
             if (anIsFilteredBooleanArray[i]) {
                 continue;
             }
-            Assertions.assertEquals(
-                    (Integer) anAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME),
+            Assertions.assertSame(
+                    anAtomContainerSet.getAtomContainer(i).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME),
                     tmpReturnedACSet.getAtomContainer(tmpIndexInReturnedSet).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME)
             );
             tmpIndexInReturnedSet++;
