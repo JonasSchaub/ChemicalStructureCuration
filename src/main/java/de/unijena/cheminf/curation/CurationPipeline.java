@@ -68,7 +68,7 @@ public class CurationPipeline extends BaseProcessingStep {
         - check the doc-comments
     //
     TODO (optional):
-        - method to deep copy / clone a FilterPipeline?
+        - method to deep copy / clone a CurationPipeline?
         - methods for clearing the MolIDs of an atom container?
      */
 
@@ -132,7 +132,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * MolID ("CurationPipeline.MolID") in form of an integer type property assigned.
      * TODO
      * In order to trace by which step an atom container got filtered by, every atom container gets the index of the filter in the list of
-     * selected filters assigned as FilterID (integer property "FilterPipeline.FilterID"). Atom containers that do
+     * selected filters assigned as FilterID (integer property "CurationPipeline.FilterID"). Atom containers that do
      * not get filtered get a FilterID of negative one. TODO: FilterID is removed
      * Atom containers do not pass a curation step if they cause an exception to be thrown.
      *
@@ -177,14 +177,14 @@ public class CurationPipeline extends BaseProcessingStep {
         return tmpResultingACSet;
     }
 
-    //<editor-fold desc="with...Filter methods" default-state="collapsed">
+    //<editor-fold desc="with...Filter methods" defaultstate="collapsed">
     /**
      * Adds a max atom count filter with the given parameters to the filter pipeline. Implicit hydrogen atoms may or
      * may not be considered; atom containers that equal the given max atom count do not get filtered.
      *
      * @param aMaxAtomCount integer value of the max atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max atom count has a negative value
      */
     public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
@@ -202,7 +202,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *
      * @param aMinAtomCount integer value of the min atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min atom count has a negative value
      */
     public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
@@ -219,7 +219,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * that equal the given max heavy atom count do not get filtered.
      *
      * @param aMaxHeavyAtomCount integer value of the max atom count to filter by
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max heavy atom count has a negative value
      */
     public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
@@ -236,7 +236,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * that equal the given min heavy atom count do not get filtered.
      *
      * @param aMinHeavyAtomCount integer value of the min atom count to filter by
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min heavy atom count has a negative value
      */
     public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
@@ -254,7 +254,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *
      * @param aMaxBondCount integer value of the max bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max bond count has a negative value
      */
     public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
@@ -272,7 +272,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *
      * @param aMinBondCount integer value of the min bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min bond count has a negative value
      */
     public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
@@ -293,7 +293,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aMaxSpecificBondCount  integer value of the max specific bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max specific bond count has a negative value
      */
     public CurationPipeline withMaxBondsOfSpecificBondOrderFilter(
@@ -316,7 +316,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aMinSpecificBondCount  integer value of the min specific bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min specific bond count has a negative value
      */
     public CurationPipeline withMinBondsOfSpecificBondOrderFilter(
@@ -335,7 +335,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      */
     public CurationPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
@@ -348,7 +348,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      */
     public CurationPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
@@ -362,16 +362,16 @@ public class CurationPipeline extends BaseProcessingStep {
      * molecular mass value do not get filtered.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
-     * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
+     * @param aMassComputationFlavour MassComputation.Flavours constant that switches the computation type of the mass
      *                                calculation
-     * @return the FilterPipeline instance itself
-     * @throws NullPointerException if the given MassComputationFlavours value is null
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given max molecular mass is of a negative value
-     * @see MassComputationFlavours
+     * @see MassComputation.Flavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
+    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputation.Flavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputation.Flavours constant) is null.");
         if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
@@ -383,13 +383,13 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Adds a max molecular mass filter with the given max molecular mass value to the filter pipeline.
      * This method takes no mass computation flavour; for the new filter the default 'mass flavour'
-     * {@link MassComputationFlavours#MolWeight} is used. Atom containers that equal the given max
+     * {@link MassComputation.Flavours#MolWeight} is used. Atom containers that equal the given max
      * molecular mass value do not get filtered.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max molecular mass is of a negative value
-     * @see MassComputationFlavours
+     * @see MassComputation.Flavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
     public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
@@ -407,16 +407,16 @@ public class CurationPipeline extends BaseProcessingStep {
      * molecular mass value do not get filtered.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
-     * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
+     * @param aMassComputationFlavour MassComputation.Flavours constant that switches the computation type of the mass
      *                                calculation
-     * @return the FilterPipeline instance itself
-     * @throws NullPointerException if the given MassComputationFlavours value is null
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given min molecular mass is of a negative value
-     * @see MassComputationFlavours
+     * @see MassComputation.Flavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputationFlavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
+    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputation.Flavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputation.Flavours constant) is null.");
         if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
@@ -428,13 +428,13 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Adds a min molecular mass filter with the given min molecular mass value to the filter pipeline.
      * This method takes no mass computation flavour; for the new filter the default 'mass flavour'
-     * {@link MassComputationFlavours#MolWeight} is used. Atom containers that equal the given min
+     * {@link MassComputation.Flavours#MolWeight} is used. Atom containers that equal the given min
      * molecular mass value do not get filtered.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min molecular mass is of a negative value
-     * @see MassComputationFlavours
+     * @see MassComputation.Flavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
     public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
@@ -453,7 +453,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * the usage of subsequently implemented filters.
      *
      * @param aProcessingStep the IProcessingStep instance that is to be added to the pipeline
-     * @return the FilterPipeline instance itself
+     * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given Filter instance is null
      */
     public CurationPipeline addProcessingStep(IProcessingStep aProcessingStep) throws NullPointerException {

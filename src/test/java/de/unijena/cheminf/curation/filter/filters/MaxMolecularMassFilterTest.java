@@ -25,8 +25,7 @@
 
 package de.unijena.cheminf.curation.filter.filters;
 
-import de.unijena.cheminf.curation.ChemUtils;
-import de.unijena.cheminf.curation.MassComputationFlavours;
+import de.unijena.cheminf.curation.MassComputation;
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
@@ -42,76 +41,16 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 public class MaxMolecularMassFilterTest {
 
     /**
-     * Tests whether both public constructors initialize the class var maxMolecularMass with the given double value;
-     * test 1.
-     */
-    @Test
-    public void publicConstructorsTest_bothInitializeMaxMolecularMassWithGivenParam_test1() {
-        double tmpMaxMolecularMass = 5.0;
-        //specified mass computation flavour
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpMaxMolecularMass, tmpMaxMolecularMassFilter.maxMolecularMass);
-        //default mass computation flavour
-        tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass);
-        Assertions.assertEquals(tmpMaxMolecularMass, tmpMaxMolecularMassFilter.maxMolecularMass);
-    }
-
-    /**
-     * Tests whether both public constructors initialize the class var maxMolecularMass with the given double value;
-     * test 2.
-     */
-    @Test
-    public void publicConstructorsTest_bothInitializeMaxMolecularMassWithGivenParam_test2() {
-        double tmpMaxMolecularMass = 10.0;
-        //specified mass computation flavour
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpMaxMolecularMass, tmpMaxMolecularMassFilter.maxMolecularMass);
-        //default mass computation flavour
-        tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass);
-        Assertions.assertEquals(tmpMaxMolecularMass, tmpMaxMolecularMassFilter.maxMolecularMass);
-    }
-
-    /**
-     * Tests whether the public constructor that takes a 'mass flavour' initializes the respective class var with the
-     * given MassComputationFlavours constant; two tests.
-     */
-    @Test
-    public void publicConstructorWithSpecifiedFlavourTest_initializesMassComputationFlavourWithGivenFlavour_twoTests() {
-        double tmpMaxMolecularMass = 5.0;
-        //test 1
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, tmpMaxMolecularMassFilter.massComputationFlavour);
-        //test 2
-        tmpFlavour = MassComputationFlavours.MonoIsotopic;
-        tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, tmpMaxMolecularMassFilter.massComputationFlavour);
-    }
-
-    /**
-     * Tests whether the public constructor that takes no 'mass flavour' initializes the respective class var with
-     * MassComputationFlavours constant MolWeight.
-     */
-    @Test
-    public void publicConstructorNoFlavourTest_initializesMassComputationFlavourWithFlavourMolWeight() {
-        double tmpMaxMolecularMass = 5.0;
-        MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass);
-        Assertions.assertEquals(MassComputationFlavours.MolWeight, tmpMaxMolecularMassFilter.massComputationFlavour);
-    }
-
-    /**
      * Tests whether both public constructors throw an IllegalArgumentException if the given max molecular mass is of a
      * negative value.
      */
     @Test
-    public void publicConstructorsTest_bothThrowIllegalArgumentExceptionIfMaxMolecularMassIsNegative() {
+    public void publicConstructorsTest_maxMolecularMassOfNegativeValue_bothConstructorsThrowIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpMaxMolecularMass = -0.1;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
                 }
         );
@@ -125,41 +64,30 @@ public class MaxMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the public constructor that takes a 'mass flavour' throws a NullPointerException if the given
-     * MassComputationFlavours constant is null.
+     * Tests whether the public constructor with a 'mass flavour' as parameter throws a NullPointerException if the
+     * given MassComputation.Flavours constant is null.
      */
     @Test
-    public void publicConstructorWithSpecifiedFlavourTest_throwsNullPointerExceptionIfGivenFlavourIsNull() {
+    public void publicConstructorTest_flavourIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
-                    MassComputationFlavours tmpFlavour = null;
+                    MassComputation.Flavours tmpFlavour = null;
                     new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
                 }
         );
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns a boolean value.
-     */
-    @Test
-    public void isFilteredMethodTest_returnsBoolean() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        double tmpMaxMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        IFilter tmpFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-    }
-
-    /**
-     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns true if an AC exceeds the max
-     * molecular mass; tested with different mass computation flavours; tested with multiple atom containers.
+     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns true if a given atom container
+     * exceeds the max molecular mass value; tested with different mass computation flavours; tested with multiple
+     * atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerExceedsTheMaxMass_diffFlavoursTested() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersExceedingMaxMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -170,19 +98,19 @@ public class MaxMolecularMassFilterTest {
         tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
         tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
         //
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
+        MassComputation.Flavours[] tmpFlavoursArray = new MassComputation.Flavours[]{
+                MassComputation.Flavours.MolWeight,
+                MassComputation.Flavours.MolWeightIgnoreSpecified,
+                MassComputation.Flavours.MonoIsotopic,
+                MassComputation.Flavours.MostAbundant
         };
         IFilter tmpFilter;
-        for (MassComputationFlavours tmpFlavour :
+        for (MassComputation.Flavours tmpFlavour :
                 tmpFlavoursArray) {
             for (IAtomContainer tmpAtomContainer :
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MaxMolecularMassFilter(
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
+                        MassComputation.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
                         tmpFlavour
                 );
                 Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
@@ -191,13 +119,14 @@ public class MaxMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns false if an AC falls short of the max
-     * molecular mass; tested with different mass computation flavours; tested with multiple atom containers.
+     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns false if a given atom container falls
+     * short of the max molecular mass value; tested with different mass computation flavours; tested with multiple
+     * atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsFalseIfGivenAtomContainerFallsShortOfTheMaxMass_diffFlavoursTested() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersFallingShortOfMaxMass_testedWithDiffFlavours() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -208,19 +137,19 @@ public class MaxMolecularMassFilterTest {
         tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
         tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
         //
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
+        MassComputation.Flavours[] tmpFlavoursArray = new MassComputation.Flavours[]{
+                MassComputation.Flavours.MolWeight,
+                MassComputation.Flavours.MolWeightIgnoreSpecified,
+                MassComputation.Flavours.MonoIsotopic,
+                MassComputation.Flavours.MostAbundant
         };
         IFilter tmpFilter;
-        for (MassComputationFlavours tmpFlavour :
+        for (MassComputation.Flavours tmpFlavour :
                 tmpFlavoursArray) {
             for (IAtomContainer tmpAtomContainer :
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MaxMolecularMassFilter(
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
+                        MassComputation.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
                         tmpFlavour
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
@@ -229,13 +158,14 @@ public class MaxMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns true if an AC equals the max
-     * molecular mass; tested with different mass computation flavours; tested with multiple atom containers.
+     * Tests whether method .isFiltered() of class MaxMolecularMassFilter returns true if a given atom container equals
+     * the max molecular mass value; tested with different mass computation flavours; tested with multiple atom
+     * containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMaxMass_diffFlavoursTested() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersEqualingMaxMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -246,19 +176,19 @@ public class MaxMolecularMassFilterTest {
         tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
         tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
         //
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
+        MassComputation.Flavours[] tmpFlavoursArray = new MassComputation.Flavours[]{
+                MassComputation.Flavours.MolWeight,
+                MassComputation.Flavours.MolWeightIgnoreSpecified,
+                MassComputation.Flavours.MonoIsotopic,
+                MassComputation.Flavours.MostAbundant
         };
         IFilter tmpFilter;
-        for (MassComputationFlavours tmpFlavour :
+        for (MassComputation.Flavours tmpFlavour :
                 tmpFlavoursArray) {
             for (IAtomContainer tmpAtomContainer :
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MaxMolecularMassFilter(
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour),
+                        MassComputation.getMass(tmpAtomContainer, tmpFlavour),
                         tmpFlavour
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
@@ -271,12 +201,12 @@ public class MaxMolecularMassFilterTest {
      * null.
      */
     @Test
-    public void isFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void isFilteredMethodTest_atomContainerIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
                     tmpMaxMolecularMassFilter.isFiltered(null);
                 }
@@ -284,26 +214,13 @@ public class MaxMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
-     */
-    @Test
-    public void filterMethodTest_returnsIAtomContainerSetNotNull() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        double tmpMaxMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Object tmpReturnValue = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
-        Assertions.assertNotNull(tmpReturnValue);
-        Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
-    }
-
-    /**
-     * Tests whether the .filter() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 1.
+     * Tests whether the .process() method filters as expected for this filter; exemplary tested with 'mass flavour'
+     * MolWeight; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_massFlavourMolWeight_test1() throws InvalidSmilesException {
+    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test1() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",        //approx. 16
                 "C=CC=C",   //approx. 54 - filtered
@@ -312,7 +229,7 @@ public class MaxMolecularMassFilterTest {
         int[] tmpNotFilteredArray = new int[]{0, 2};
         //
         double tmpMaxMolecularMass = 50.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
         IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
@@ -322,12 +239,12 @@ public class MaxMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the .filter() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 2.
+     * Tests whether the .process() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_massFlavourMolWeight_test2() throws InvalidSmilesException {
+    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test2() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",        //approx. 16
                 "C=CC=C",   //approx. 54 - filtered
@@ -336,7 +253,7 @@ public class MaxMolecularMassFilterTest {
         int[] tmpNotFilteredArray = new int[]{0};
         //
         double tmpMaxMolecularMass = 30.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
         IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
@@ -346,41 +263,20 @@ public class MaxMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the .filter() method throws a NullPointerException if the given IAtomContainerSet instance is null.
+     * Tests whether the .process() method throws a NullPointerException if the given IAtomContainerSet instance is
+     * null.
      */
     @Test
-    public void filterMethodTest_throwsNullPointerExceptionIfGivenIAtomContainerSetIsNull() {
+    public void processMethodTest_atomContainerIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
                     tmpMaxMolecularMassFilter.process(null, false, true);
                 }
         );
-    }
-
-    /**
-     * Tests the getter of maxMolecularMass whether it returns the max molecular mass threshold value.
-     */
-    @Test
-    public void getMaxMolecularMassMethodTest_returnsMaxMolecularMass() {
-        double tmpMaxMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpMaxMolecularMass, tmpMaxMolecularMassFilter.getMaxMolecularMass());
-    }
-
-    /**
-     * Tests the getter of massComputationFlavour whether it returns massComputationFlavour.
-     */
-    @Test
-    public void getMassComputationFlavourMethodTest_returnsMassComputationFlavour() {
-        double tmpMaxMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MaxMolecularMassFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        Assertions.assertSame(tmpMaxMolecularMassFilter.massComputationFlavour, tmpMaxMolecularMassFilter.getMassComputationFlavour());
     }
 
 }

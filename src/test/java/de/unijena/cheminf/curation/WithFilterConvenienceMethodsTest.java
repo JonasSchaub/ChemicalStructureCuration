@@ -78,11 +78,11 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxBondCountFilter()
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMaxBondCountFilter()
      * method of the class FilterPipeline was extended by an instance of MaxBondCountFilter.
      */
     @Test
-    public void withMaxBondCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxBondCountFilter() {
+    public void withMaxBondCountFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfMaxBondCountFilter() {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
@@ -90,7 +90,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxBondCountFilter added to the listOfSelectedFilters by the .withMaxBondCountFilter() method
+     * Tests whether the MaxBondCountFilter added to the listOfPipelineSteps by the .withMaxBondCountFilter() method
      * of the class FilterPipeline contains the given max bond count threshold value.
      */
     @Test
@@ -105,7 +105,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxBondCountFilter added to the listOfSelectedFilters by the .withMaxBondCountFilter() method
+     * Tests whether the MaxBondCountFilter added to the listOfPipelineSteps by the .withMaxBondCountFilter() method
      * of the class FilterPipeline has the given boolean value set.
      */
     @Test
@@ -213,11 +213,11 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinBondCountFilter()
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMinBondCountFilter()
      * method of the class FilterPipeline was extended by an instance of MinBondCountFilter.
      */
     @Test
-    public void withMinBondCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinBondCountFilter() {
+    public void withMinBondCountFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfMinBondCountFilter() {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
@@ -225,7 +225,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinBondCountFilter added to the listOfSelectedFilters by the .withMinBondCountFilter() method
+     * Tests whether the MinBondCountFilter added to the listOfPipelineSteps by the .withMinBondCountFilter() method
      * of the class FilterPipeline contains the given min bond count threshold value.
      */
     @Test
@@ -240,7 +240,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinBondCountFilter added to the listOfSelectedFilters by the .withMinBondCountFilter() method
+     * Tests whether the MinBondCountFilter added to the listOfPipelineSteps by the .withMinBondCountFilter() method
      * of the class FilterPipeline has the given boolean value set.
      */
     @Test
@@ -304,12 +304,12 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the
      * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline was extended by an instance of
      * MaxBondsOfSpecificBondOrderFilter.
      */
     @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxBondsOfSpecificBondOrderFilter() {
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfMaxBondsOfSpecificBondOrderFilter() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -319,7 +319,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfPipelineSteps by the
      * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given bond order of
      * interest.
      */
@@ -336,7 +336,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfPipelineSteps by the
      * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given max specific bond
      * count threshold value.
      */
@@ -353,7 +353,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfPipelineSteps by the
      * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline has the given boolean value set.
      */
     @Test
@@ -492,12 +492,12 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the
      * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline was extended by an instance of
      * MinBondsOfSpecificBondOrderFilter.
      */
     @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinBondsOfSpecificBondOrderFilter() {
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfMinBondsOfSpecificBondOrderFilter() {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -506,7 +506,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfPipelineSteps by the
      * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given bond order of
      * interest.
      */
@@ -523,7 +523,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfPipelineSteps by the
      * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given min specific bond
      * count threshold value.
      */
@@ -540,7 +540,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
+     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfPipelineSteps by the
      * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline has the given boolean value set.
      */
     @Test
@@ -675,18 +675,18 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxHeavyAtomCountFilter()
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMaxHeavyAtomCountFilter()
      * method of the class FilterPipeline was extended by an instance of MaxHeavyAtomCountFilter.
      */
     @Test
-    public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxHeavyAtomCountFilter() {
+    public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfMaxHeavyAtomCountFilter() {
         int tmpIntegerParameter = 10;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpIntegerParameter);
         Assertions.assertInstanceOf(MaxHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MaxHeavyAtomCountFilter added to the listOfSelectedFilters by the .withMaxHeavyAtomCountFilter()
+     * Tests whether the MaxHeavyAtomCountFilter added to the listOfPipelineSteps by the .withMaxHeavyAtomCountFilter()
      * method of the class FilterPipeline contains the given max heavy atom count threshold value.
      */
     @Test
@@ -789,18 +789,18 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinHeavyAtomCountFilter()
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMinHeavyAtomCountFilter()
      * method of the class FilterPipeline was extended by an instance of MinHeavyAtomCountFilter.
      */
     @Test
-    public void withMinHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinHeavyAtomCountFilter() {
+    public void withMinHeavyAtomCountFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfMinHeavyAtomCountFilter() {
         int tmpIntegerParameter = 10;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpIntegerParameter);
         Assertions.assertInstanceOf(MinHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MinHeavyAtomCountFilter added to the listOfSelectedFilters by the .withMinHeavyAtomCountFilter()
+     * Tests whether the MinHeavyAtomCountFilter added to the listOfPipelineSteps by the .withMinHeavyAtomCountFilter()
      * method of the class FilterPipeline contains the given min heavy atom count threshold value.
      */
     @Test
@@ -892,18 +892,18 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withHasAllValidAtomicNumbersFilter()
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withHasAllValidAtomicNumbersFilter()
      * method of the class FilterPipeline was extended by an instance of HasAllValidAtomicNumbersFilter.
      */
     @Test
-    public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasAllValidAtomicNumbersFilter() {
+    public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfHasAllValidAtomicNumbersFilter() {
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         Assertions.assertInstanceOf(HasAllValidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the HasAllValidAtomicNumbersFilter added to the listOfSelectedFilters by the .withHasAllValidAtomicNumbersFilter()
+     * Tests whether the HasAllValidAtomicNumbersFilter added to the listOfPipelineSteps by the .withHasAllValidAtomicNumbersFilter()
      * method of the class FilterPipeline has the boolean class field wildcardAtomicNumberIsValid set to the given
      * boolean value.
      */
@@ -1001,18 +1001,18 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withHasInvalidAtomicNumbersFilter()
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withHasInvalidAtomicNumbersFilter()
      * method of the class FilterPipeline was extended by an instance of HasInvalidAtomicNumbersFilter.
      */
     @Test
-    public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasInvalidAtomicNumbersFilter() {
+    public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherListOfPipelineStepsWasExtendedByInstanceOfHasInvalidAtomicNumbersFilter() {
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
         Assertions.assertInstanceOf(HasInvalidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the HasInvalidAtomicNumbersFilter added to the listOfSelectedFilters by the .withHasInvalidAtomicNumbersFilter()
+     * Tests whether the HasInvalidAtomicNumbersFilter added to the listOfPipelineSteps by the .withHasInvalidAtomicNumbersFilter()
      * method of the class FilterPipeline has the boolean class field wildcardAtomicNumberIsValid set to the given
      * boolean value.
      */
@@ -1100,38 +1100,38 @@ public class WithFilterConvenienceMethodsTest {
 
     /**
      * Tests whether the value returned by the .withMaxMolecularMassFilter() method of the class FilterPipeline with
-     * MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     * MassComputation.Flavours parameter is the FilterPipeline instance the method was called of.
      */
     @Test
     public void withMaxMolecularMassFilterMethodTest_withFlavour_returnsFilterPipelineInstanceItself() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour));
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter was extended by an instance of
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputation.Flavours parameter was extended by an instance of
      * MaxMolecularMassFilter.
      */
     @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_listOfPipelineStepsWasExtendedByInstanceOfMaxMolecularMassFilter() {
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given threshold value set to
+     * Tests whether the MaxMolecularMassFilter added to the listOfPipelineSteps by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputation.Flavours parameter has the given threshold value set to
      * it; two tests.
      */
     @Test
     public void withMaxMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenThresholdValue_twoTests() {
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxMolecularMass());
         tmpThresholdValue = 20.0;
@@ -1140,23 +1140,23 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given mass computation flavour
+     * Tests whether the MaxMolecularMassFilter added to the listOfPipelineSteps by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputation.Flavours parameter has the given mass computation flavour
      * set to it; two tests.
      */
     @Test
     public void withMaxMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenMassComputationFlavour_twoTests() {
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
-        tmpFlavour = MassComputationFlavours.MonoIsotopic;
+        tmpFlavour = MassComputation.Flavours.MonoIsotopic;
         tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
     }
 
     /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputation.Flavours
      * parameter throws an IllegalArgumentException if the given max molecular mass threshold value is of a negative
      * value; two tests.
      */
@@ -1166,7 +1166,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -0.1;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1174,14 +1174,14 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
     }
 
     /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputation.Flavours
      * parameter throws a NullPointerException if the given mass computation flavour is null.
      */
     @Test
@@ -1190,7 +1190,7 @@ public class WithFilterConvenienceMethodsTest {
                 NullPointerException.class,
                 () -> {
                     double tmpThresholdValue = 10.0;
-                    MassComputationFlavours tmpFlavour = null;
+                    MassComputation.Flavours tmpFlavour = null;
                     new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1198,7 +1198,7 @@ public class WithFilterConvenienceMethodsTest {
 
     /**
      * Tests whether the value returned by the .withMaxMolecularMassFilter() method of the class FilterPipeline with
-     * no MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     * no MassComputation.Flavours parameter is the FilterPipeline instance the method was called of.
      */
     @Test
     public void withMaxMolecularMassFilterMethodTest_noFlavour_returnsFilterPipelineInstanceItself() {
@@ -1208,20 +1208,20 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter was extended by an instance of
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputation.Flavours parameter was extended by an instance of
      * MaxMolecularMassFilter.
      */
     @Test
-    public void withMaxMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
+    public void withMaxMolecularMassFilterMethodTest_noFlavour_listOfPipelineStepsWasExtendedByInstanceOfMaxMolecularMassFilter() {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has the given threshold value set to
+     * Tests whether the MaxMolecularMassFilter added to the listOfPipelineSteps by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputation.Flavours parameter has the given threshold value set to
      * it; two tests.
      */
     @Test
@@ -1235,8 +1235,8 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MolWeight}
+     * Tests whether the MaxMolecularMassFilter added to the listOfPipelineSteps by the .withMaxMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputation.Flavours parameter has {@link MassComputation.Flavours#MolWeight}
      * set as mass computation flavour.
      */
     @Test
@@ -1244,13 +1244,13 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
-                MassComputationFlavours.MolWeight,
+                MassComputation.Flavours.MolWeight,
                 ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
 
     /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with no MassComputationFlavours
+     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with no MassComputation.Flavours
      * parameter throws an IllegalArgumentException if the given max molecular mass threshold value is of a negative
      * value; two tests.
      */
@@ -1276,38 +1276,38 @@ public class WithFilterConvenienceMethodsTest {
 
     /**
      * Tests whether the value returned by the .withMinMolecularMassFilter() method of the class FilterPipeline with
-     * MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     * MassComputation.Flavours parameter is the FilterPipeline instance the method was called of.
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_withFlavour_returnsFilterPipelineInstanceItself() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour));
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter was extended by an instance of
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputation.Flavours parameter was extended by an instance of
      * MinMolecularMassFilter.
      */
     @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
+    public void withMinMolecularMassFilterMethodTest_withFlavour_listOfPipelineStepsWasExtendedByInstanceOfMinMolecularMassFilter() {
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given threshold value set to
+     * Tests whether the MinMolecularMassFilter added to the listOfPipelineSteps by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputation.Flavours parameter has the given threshold value set to
      * it; two tests.
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenThresholdValue_twoTests() {
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinMolecularMass());
         tmpThresholdValue = 20.0;
@@ -1316,23 +1316,23 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given mass computation flavour
+     * Tests whether the MinMolecularMassFilter added to the listOfPipelineSteps by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with MassComputation.Flavours parameter has the given mass computation flavour
      * set to it; two tests.
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenMassComputationFlavour_twoTests() {
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
-        tmpFlavour = MassComputationFlavours.MonoIsotopic;
+        tmpFlavour = MassComputation.Flavours.MonoIsotopic;
         tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
     }
 
     /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputation.Flavours
      * parameter throws an IllegalArgumentException if the given min molecular mass threshold value is of a negative
      * value; two tests.
      */
@@ -1342,7 +1342,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -0.1;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1350,14 +1350,14 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
     }
 
     /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputation.Flavours
      * parameter throws a NullPointerException if the given mass computation flavour is null.
      */
     @Test
@@ -1366,7 +1366,7 @@ public class WithFilterConvenienceMethodsTest {
                 NullPointerException.class,
                 () -> {
                     double tmpThresholdValue = 10.0;
-                    MassComputationFlavours tmpFlavour = null;
+                    MassComputation.Flavours tmpFlavour = null;
                     new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1374,7 +1374,7 @@ public class WithFilterConvenienceMethodsTest {
 
     /**
      * Tests whether the value returned by the .withMinMolecularMassFilter() method of the class FilterPipeline with
-     * no MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     * no MassComputation.Flavours parameter is the FilterPipeline instance the method was called of.
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_noFlavour_returnsFilterPipelineInstanceItself() {
@@ -1384,20 +1384,20 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter was extended by an instance of
+     * Tests whether the listOfPipelineSteps of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputation.Flavours parameter was extended by an instance of
      * MinMolecularMassFilter.
      */
     @Test
-    public void withMinMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
+    public void withMinMolecularMassFilterMethodTest_noFlavour_listOfPipelineStepsWasExtendedByInstanceOfMinMolecularMassFilter() {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
         Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has the given threshold value set to
+     * Tests whether the MinMolecularMassFilter added to the listOfPipelineSteps by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputation.Flavours parameter has the given threshold value set to
      * it; two tests.
      */
     @Test
@@ -1411,8 +1411,8 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MolWeight}
+     * Tests whether the MinMolecularMassFilter added to the listOfPipelineSteps by the .withMinMolecularMassFilter()
+     * method of the class FilterPipeline with no MassComputation.Flavours parameter has {@link MassComputation.Flavours#MolWeight}
      * set as mass computation flavour.
      */
     @Test
@@ -1420,13 +1420,13 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
-                MassComputationFlavours.MolWeight,
+                MassComputation.Flavours.MolWeight,
                 ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
 
     /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with no MassComputationFlavours
+     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with no MassComputation.Flavours
      * parameter throws an IllegalArgumentException if the given min molecular mass threshold value is of a negative
      * value; two tests.
      */

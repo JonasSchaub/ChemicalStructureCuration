@@ -25,8 +25,7 @@
 
 package de.unijena.cheminf.curation.filter.filters;
 
-import de.unijena.cheminf.curation.ChemUtils;
-import de.unijena.cheminf.curation.MassComputationFlavours;
+import de.unijena.cheminf.curation.MassComputation;
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.filter.IFilter;
 import org.junit.jupiter.api.Assertions;
@@ -42,76 +41,16 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 public class MinMolecularMassFilterTest {
 
     /**
-     * Tests whether both public constructors initialize the class var minMolecularMass with the given double value;
-     * test 1.
-     */
-    @Test
-    public void publicConstructorsTest_bothInitializeMinMolecularMassWithGivenParam_test1() {
-        double tmpMinMolecularMass = 5.0;
-        //specified mass computation flavour
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpMinMolecularMass, tmpMinMolecularMassFilter.minMolecularMass);
-        //default mass computation flavour
-        tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass);
-        Assertions.assertEquals(tmpMinMolecularMass, tmpMinMolecularMassFilter.minMolecularMass);
-    }
-
-    /**
-     * Tests whether both public constructors initialize the class var minMolecularMass with the given double value;
-     * test 2.
-     */
-    @Test
-    public void publicConstructorsTest_bothInitializeMinMolecularMassWithGivenParam_test2() {
-        double tmpMinMolecularMass = 10.0;
-        //specified mass computation flavour
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpMinMolecularMass, tmpMinMolecularMassFilter.minMolecularMass);
-        //default mass computation flavour
-        tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass);
-        Assertions.assertEquals(tmpMinMolecularMass, tmpMinMolecularMassFilter.minMolecularMass);
-    }
-
-    /**
-     * Tests whether the public constructor that takes a 'mass flavour' initializes the respective class var with the
-     * given MassComputationFlavours constant; two tests.
-     */
-    @Test
-    public void publicConstructorWithSpecifiedFlavourTest_initializesMassComputationFlavourWithGivenFlavour_twoTests() {
-        double tmpMinMolecularMass = 5.0;
-        //test 1
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, tmpMinMolecularMassFilter.massComputationFlavour);
-        //test 2
-        tmpFlavour = MassComputationFlavours.MonoIsotopic;
-        tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, tmpMinMolecularMassFilter.massComputationFlavour);
-    }
-
-    /**
-     * Tests whether the public constructor that takes no 'mass flavour' initializes the respective class var with
-     * MassComputationFlavours constant MolWeight.
-     */
-    @Test
-    public void publicConstructorNoFlavourTest_initializesMassComputationFlavourWithFlavourMolWeight() {
-        double tmpMinMolecularMass = 5.0;
-        MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass);
-        Assertions.assertEquals(MassComputationFlavours.MolWeight, tmpMinMolecularMassFilter.massComputationFlavour);
-    }
-
-    /**
      * Tests whether both public constructors throw an IllegalArgumentException if the given min molecular mass is of a
      * negative value.
      */
     @Test
-    public void publicConstructorsTest_bothThrowIllegalArgumentExceptionIfMinMolecularMassIsNegative() {
+    public void publicConstructorsTest_minMolecularMassOfNegativeValue_bothConstructorsThrowIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpMinMolecularMass = -0.1;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
                 }
         );
@@ -125,41 +64,29 @@ public class MinMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the public constructor that takes a 'mass flavour' throws a NullPointerException if the given
-     * MassComputationFlavours constant is null.
+     * Tests whether the public constructor with a 'mass flavour' as parameter throws a NullPointerException if the
+     * given MassComputation.Flavours constant is null.
      */
     @Test
-    public void publicConstructorWithSpecifiedFlavourTest_throwsNullPointerExceptionIfGivenFlavourIsNull() {
+    public void publicConstructorTest_flavourIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpMinMolecularMass = 5.0;
-                    MassComputationFlavours tmpFlavour = null;
+                    MassComputation.Flavours tmpFlavour = null;
                     new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
                 }
         );
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinMolecularMassFilter returns a boolean value.
-     */
-    @Test
-    public void isFilteredMethodTest_returnsBoolean() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        double tmpMinMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        IFilter tmpFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-    }
-
-    /**
      * Tests whether method .isFiltered() of class MinMolecularMassFilter returns true if an AC falls short of the min
-     * molecular mass; tested with different mass computation flavours; tested with multiple atom containers.
+     * molecular mass value; tested with different mass computation flavours; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerFallsShortOfTheMinMass_diffFlavoursTested() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersFallingShortOfMinMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -170,19 +97,19 @@ public class MinMolecularMassFilterTest {
         tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
         tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
         //
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
+        MassComputation.Flavours[] tmpFlavoursArray = new MassComputation.Flavours[]{
+                MassComputation.Flavours.MolWeight,
+                MassComputation.Flavours.MolWeightIgnoreSpecified,
+                MassComputation.Flavours.MonoIsotopic,
+                MassComputation.Flavours.MostAbundant
         };
         IFilter tmpFilter;
-        for (MassComputationFlavours tmpFlavour :
+        for (MassComputation.Flavours tmpFlavour :
                 tmpFlavoursArray) {
             for (IAtomContainer tmpAtomContainer :
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MinMolecularMassFilter(
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
+                        MassComputation.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
                         tmpFlavour
                 );
                 Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
@@ -197,7 +124,7 @@ public class MinMolecularMassFilterTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsFalseIfGivenAtomContainerExceedsTheMinMass_diffFlavoursTested() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersExceedingMinMass_returnsFalse_testedWithDiffFlavours() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -208,19 +135,19 @@ public class MinMolecularMassFilterTest {
         tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
         tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
         //
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
+        MassComputation.Flavours[] tmpFlavoursArray = new MassComputation.Flavours[]{
+                MassComputation.Flavours.MolWeight,
+                MassComputation.Flavours.MolWeightIgnoreSpecified,
+                MassComputation.Flavours.MonoIsotopic,
+                MassComputation.Flavours.MostAbundant
         };
         IFilter tmpFilter;
-        for (MassComputationFlavours tmpFlavour :
+        for (MassComputation.Flavours tmpFlavour :
                 tmpFlavoursArray) {
             for (IAtomContainer tmpAtomContainer :
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MinMolecularMassFilter(
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
+                        MassComputation.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
                         tmpFlavour
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
@@ -235,7 +162,7 @@ public class MinMolecularMassFilterTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMinMass_diffFlavoursTested() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersEqualingMinMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -246,19 +173,19 @@ public class MinMolecularMassFilterTest {
         tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
         tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
         //
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
+        MassComputation.Flavours[] tmpFlavoursArray = new MassComputation.Flavours[]{
+                MassComputation.Flavours.MolWeight,
+                MassComputation.Flavours.MolWeightIgnoreSpecified,
+                MassComputation.Flavours.MonoIsotopic,
+                MassComputation.Flavours.MostAbundant
         };
         IFilter tmpFilter;
-        for (MassComputationFlavours tmpFlavour :
+        for (MassComputation.Flavours tmpFlavour :
                 tmpFlavoursArray) {
             for (IAtomContainer tmpAtomContainer :
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MinMolecularMassFilter(
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour),
+                        MassComputation.getMass(tmpAtomContainer, tmpFlavour),
                         tmpFlavour
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
@@ -271,12 +198,12 @@ public class MinMolecularMassFilterTest {
      * null.
      */
     @Test
-    public void isFilteredMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void isFilteredMethodTest_atomContainerIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpMinMolecularMass = 5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
                     tmpMinMolecularMassFilter.isFiltered(null);
                 }
@@ -284,26 +211,12 @@ public class MinMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
-     */
-    @Test
-    public void filterMethodTest_returnsIAtomContainerSetNotNull() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        double tmpMinMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Object tmpReturnValue = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false, true);
-        Assertions.assertNotNull(tmpReturnValue);
-        Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
-    }
-
-    /**
-     * Tests whether the .filter() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 1.
+     * Tests whether the .process() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_massFlavourMolWeight_test1() throws InvalidSmilesException {
+    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test1() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",        //approx. 16 - filtered
                 "C=CC=C",   //approx. 54
@@ -312,7 +225,7 @@ public class MinMolecularMassFilterTest {
         int[] tmpNotFilteredArray = new int[]{1, 2};
         //
         double tmpMinMolecularMass = 30.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
         IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
@@ -322,12 +235,12 @@ public class MinMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the .filter() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 2.
+     * Tests whether the .process() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_massFlavourMolWeight_test2() throws InvalidSmilesException {
+    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test2() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",        //approx. 16 - filtered
                 "C=CC=C",   //approx. 54
@@ -336,7 +249,7 @@ public class MinMolecularMassFilterTest {
         int[] tmpNotFilteredArray = new int[]{1};
         //
         double tmpMinMolecularMass = 50.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
         IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
@@ -346,41 +259,20 @@ public class MinMolecularMassFilterTest {
     }
 
     /**
-     * Tests whether the .filter() method throws a NullPointerException if the given IAtomContainerSet instance is null.
+     * Tests whether the .process() method throws a NullPointerException if the given IAtomContainerSet instance is
+     * null.
      */
     @Test
-    public void filterMethodTest_throwsNullPointerExceptionIfGivenIAtomContainerSetIsNull() {
+    public void processMethodTest_atomContainerIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpMinMolecularMass = 5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
                     IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
                     tmpMinMolecularMassFilter.process(null, false, true);
                 }
         );
-    }
-
-    /**
-     * Tests the getter of minMolecularMass whether it returns the min molecular mass threshold value.
-     */
-    @Test
-    public void getMinMolecularMassMethodTest_returnsMinMolecularMass() {
-        double tmpMinMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertEquals(tmpMinMolecularMass, tmpMinMolecularMassFilter.getMinMolecularMass());
-    }
-
-    /**
-     * Tests the getter of massComputationFlavour whether it returns massComputationFlavour.
-     */
-    @Test
-    public void getMassComputationFlavourMethodTest_returnsMassComputationFlavour() {
-        double tmpMinMolecularMass = 5.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        MinMolecularMassFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour);
-        Assertions.assertSame(tmpMinMolecularMassFilter.massComputationFlavour, tmpMinMolecularMassFilter.getMassComputationFlavour());
     }
 
 }

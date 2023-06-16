@@ -34,7 +34,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IElement;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
  * Test class for methods of class ChemUtils.
@@ -893,117 +892,6 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
                     ChemUtils.getHeavyAtomsCount(tmpAtomContainer);
-                }
-        );
-    }
-
-    /**
-     * Tests whether the .getMass() method of class ChemUtils returns a double value.
-     */
-    @Test
-    public void getMassMethodTest_returnsDoubleValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        Assertions.assertInstanceOf(Double.class, ChemUtils.getMass(tmpAtomContainer, tmpFlavour));
-    }
-
-    /**
-     * Tests whether the values returned by the .getMass() method of class ChemUtils equal the masses calculated by
-     * the .getMass() method of class AtomContainerManipulator.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
-     * @see AtomContainerManipulator#getMass(IAtomContainer, int)
-     */
-    @Test
-    public void getMassMethodTest_calculatedValuesEqualAtomContainerManipulatorMethodGetMassResults_withDiffFlavours()
-            throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "CCO",
-                "NCC(=O)O",
-                "C",
-                "CH",
-                "HCH"
-        );
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
-        };
-        for (MassComputationFlavours tmpFlavour :
-                tmpFlavoursArray) {
-            for (IAtomContainer tmpAtomContainer :
-                    tmpAtomContainerSet.atomContainers()) {
-                Assertions.assertEquals(
-                        AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue()),
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour)
-                );
-            }
-        }
-    }
-
-    /**
-     * Tests whether the values returned by the .getMass() method of class ChemUtils equal the masses calculated by
-     * the .getMass() method of class AtomContainerManipulator if atoms have a specified mass.
-     *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed
-     * @see AtomContainerManipulator#getMass(IAtomContainer, int)
-     */
-    @Test
-    public void getMassMethodTest_calculatedValuesEqualAtomContainerManipulatorMethodGetMassResults_withDiffFlavours_withSpecifiedMass()
-            throws InvalidSmilesException {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
-                "CCO",
-                "CCO"
-        );
-        tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
-        tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
-        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
-                MassComputationFlavours.MolWeight,
-                MassComputationFlavours.MolWeightIgnoreSpecified,
-                MassComputationFlavours.MonoIsotopic,
-                MassComputationFlavours.MostAbundant
-        };
-        for (MassComputationFlavours tmpFlavour :
-                tmpFlavoursArray) {
-            for (IAtomContainer tmpAtomContainer :
-                    tmpAtomContainerSet.atomContainers()) {
-                Assertions.assertEquals(
-                        AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue()),
-                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour)
-                );
-            }
-        }
-    }
-
-    /**
-     * Tests whether the .getMass() method of class ChemUtils throws a NullPointerException if the given
-     * IAtomContainer instance is null.
-     */
-    @Test
-    public void getMassMethodTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> {
-                    IAtomContainer tmpAtomContainer = null;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    ChemUtils.getMass(tmpAtomContainer, tmpFlavour);
-                }
-        );
-    }
-
-    /**
-     * Tests whether the .getMass() method of class ChemUtils throws a NullPointerException if the given
-     * MassComputationFlavours constant is null.
-     */
-    @Test
-    public void getMassMethodTest_throwsNullPointerExceptionIfGivenMassComputationFlavourIsNull() {
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> {
-                    IAtomContainer tmpAtomContainer = new AtomContainer();
-                    MassComputationFlavours tmpFlavour = null;
-                    ChemUtils.getMass(tmpAtomContainer, tmpFlavour);
                 }
         );
     }
