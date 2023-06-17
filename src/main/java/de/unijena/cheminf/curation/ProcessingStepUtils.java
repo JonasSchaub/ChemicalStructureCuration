@@ -31,9 +31,13 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import java.util.Objects;
 
 /**
- * Util class with methods
+ * Util class of the processing steps.
  */
 public class ProcessingStepUtils {
+
+    /*
+    TODO: check methods getArrayOfAssignedMolIDs and getAssignedMolID and check their doc comments 
+     */
 
     /**
      * Assigns a unique identifier in form of a MolID to every atom container of the given atom container set. For this
@@ -48,8 +52,32 @@ public class ProcessingStepUtils {
      */
     public static void assignMolIdToAtomContainers(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        IAtomContainer tmpAtomContainer;
         for (int i = 0; i < anAtomContainerSet.getAtomContainerCount(); i++) {
-            anAtomContainerSet.getAtomContainer(i).setProperty(IProcessingStep.MOL_ID_PROPERTY_NAME, String.valueOf(i));
+            tmpAtomContainer = anAtomContainerSet.getAtomContainer(i);
+            if (tmpAtomContainer != null) {
+                tmpAtomContainer.setProperty(IProcessingStep.MOL_ID_PROPERTY_NAME, String.valueOf(i));
+            }
+        }
+    }
+
+    /**
+     * Removes the atom container property with the name {@link IProcessingStep#MOL_ID_PROPERTY_NAME} from every atom
+     * container of the given atom container set.
+     * TODO: has no tests so far
+     *
+     * @param anAtomContainerSet set of atom containers to remove property from
+     */
+    public static void removeMolIdPropertyFromAtomContainers(IAtomContainerSet anAtomContainerSet) {
+        //TODO: check for null? (or just do nothing instead?)
+        if (anAtomContainerSet == null) {
+            return;
+        }
+        for (IAtomContainer tmpAtomContainer :
+                anAtomContainerSet.atomContainers()) {
+            if (tmpAtomContainer != null) {
+                tmpAtomContainer.removeProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+            }
         }
     }
 

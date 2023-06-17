@@ -46,8 +46,10 @@ public interface IProcessingStep {
      */
 
     /**
-     * String of the name of the atom container property that is used to uniquely identify atom containers during the
-     * processing and when creating the report-file.
+     * Name string of the atom container property that is used to store the MolID. The MolID is an ID that needs to be
+     * assigned to every atom container of a processed atom container set to uniquely identify each single atom
+     * container and enhance the entries of the report file. The MolID is meant to be a String-property to give the
+     * option of extending it with info on duplicates or a parent structure.
      */
     public static final String MOL_ID_PROPERTY_NAME = "Processing_MolID";
 

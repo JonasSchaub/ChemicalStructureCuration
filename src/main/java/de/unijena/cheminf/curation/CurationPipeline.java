@@ -59,9 +59,6 @@ import java.util.logging.Logger;
 public class CurationPipeline extends BaseProcessingStep {
 
     /*
-    TODO:
-        - find a solution for the MolID-workaround
-    //
     TODO: adopt test methods to pipeline changes
         - check whether they are still doing their job (throw no exception)
         - check whether they need to be removed / replaced
@@ -80,7 +77,7 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Linked list that contains all processing steps (instances of IProcessingStep) that were added to the pipeline.
      */
-    protected final LinkedList<IProcessingStep> listOfPipelineSteps;
+    private final LinkedList<IProcessingStep> listOfPipelineSteps;
 
     /**
      * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
@@ -116,7 +113,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * The reporting of the curation / processing of a set of atom container is done using the given reporter. If
      * null is given, the default reporter is used.
      *
-     * @param aReporter TODO
+     * @param aReporter IReporter instance to use for the creation of the report file
      * @param anOptionalIdentifierPropertyName optional string with the name of the atom container property that
      *                                         contains an optional second identifier to be used at reporting of a
      *                                         curation process; if null is given, no second identifier is used

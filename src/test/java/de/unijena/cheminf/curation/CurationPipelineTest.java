@@ -127,7 +127,7 @@ public class CurationPipelineTest {
     @Test
     public void publicFilterConstructorTest_noParameter_listOfSelectedFiltersInitialized() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertNotNull(tmpCurationPipeline.listOfPipelineSteps);
+        Assertions.assertNotNull(tmpCurationPipeline.getListOfPipelineSteps());
     }
 
     /**
@@ -137,7 +137,7 @@ public class CurationPipelineTest {
     @Test
     public void publicFilterConstructorTest_noParameter_instancesListOfSelectedFiltersIsEmpty() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertTrue(tmpCurationPipeline.listOfPipelineSteps.isEmpty());
+        Assertions.assertTrue(tmpCurationPipeline.getListOfPipelineSteps().isEmpty());
     }
 
     /**
@@ -160,7 +160,7 @@ public class CurationPipelineTest {
     public void publicFilterConstructorTest_withStringParameter_listOfSelectedFiltersInitialized() {
         String tmpPropertyNameString = "SomeString";
         CurationPipeline tmpCurationPipeline = new CurationPipeline(tmpPropertyNameString);
-        Assertions.assertNotNull(tmpCurationPipeline.listOfPipelineSteps);
+        Assertions.assertNotNull(tmpCurationPipeline.getListOfPipelineSteps());
     }
 
     /**
@@ -170,7 +170,7 @@ public class CurationPipelineTest {
     public void publicFilterConstructorTest_withStringParameter_instancesListOfSelectedFiltersIsEmpty() {
         String tmpPropertyNameString = "SomeString";
         CurationPipeline tmpCurationPipeline = new CurationPipeline(tmpPropertyNameString);
-        Assertions.assertTrue(tmpCurationPipeline.listOfPipelineSteps.isEmpty());
+        Assertions.assertTrue(tmpCurationPipeline.getListOfPipelineSteps().isEmpty());
     }
 
     /**
@@ -197,26 +197,6 @@ public class CurationPipelineTest {
         Assertions.assertSame(tmpOriginalFilterPipeline.listOfSelectedFilters, tmpFilterPipelineCopy.listOfSelectedFilters);
         Assertions.assertSame(tmpOriginalFilterPipeline.listOfFilterParameters, tmpFilterPipelineCopy.listOfFilterParameters);
     }*/
-
-    /**
-     * Tests whether the .getListOfSelectedFilters() method of the class FilterPipeline returns the instances field
-     * listOfSelectedFilters.
-     */
-    @Test
-    public void getListOfSelectedFiltersMethodTest_returnsClassFieldListOfSelectedFilters() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        Assertions.assertSame(tmpCurationPipeline.listOfPipelineSteps, tmpCurationPipeline.getListOfPipelineSteps());
-    }
-
-    /**
-     * Tests whether the class field listOfSelectedFilters stores Filter instances.
-     */
-    @Test //TODO: can I test the stored data type (without anything being stored in the list yet)?
-    public void listOfSelectedFiltersClassVarTest_storesFilterInstances() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        tmpCurationPipeline.listOfPipelineSteps.add(new MaxAtomCountFilter(0, true));
-        Assertions.assertInstanceOf(BaseFilter.class, tmpCurationPipeline.listOfPipelineSteps.getFirst());
-    }
 
     /**
      * Tests whether the .getOptionalIDPropertyName() method of the class FilterPipeline returns the instances field

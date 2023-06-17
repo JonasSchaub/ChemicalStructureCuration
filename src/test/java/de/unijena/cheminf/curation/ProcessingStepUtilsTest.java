@@ -25,8 +25,6 @@
 
 package de.unijena.cheminf.curation;
 
-import de.unijena.cheminf.curation.TestUtils;
-import de.unijena.cheminf.curation.CurationPipeline;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -36,82 +34,39 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
- * Test class for the FilterPipeline class. It holds all the test methods that are associated with the MolID, which is
- * an ID that is assigned to every atom container of an atom container set that was passed to the .filter() method of
- * class FilterPipeline to uniquely identify each single atom container.
+ * Test class of the ProcessingStepUtils class.
+ *
+ * @see ProcessingStepUtils
  */
-public class CurationPipelineMolIDTests {
+public class ProcessingStepUtilsTest {
+
+    /*
+    TODO: rework tests of getArrayOfAssignedMolIDs
+    TODO: rework tests of getAssignedMolID
+     */
 
     /**
-     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns an MolID to a single
-     * atom container contained in a given atom container set. The ID should be set as property to the atom container.
+     * Tests whether the method .assignMolIdToAtomContainers() initializes the atom container property
+     * {@link IProcessingStep#MOL_ID_PROPERTY_NAME} of every given atom container with a String containing the
+     * respective index of the atom container in the atom container set.
      */
     @Test
-    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsNotNull() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-        Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
-        //
-        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        Assertions.assertNotNull(tmpAtomContainerSet.getAtomContainer(0).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME));
-    }
-
-    /**
-     * Tests whether the atom container property assigned by the method .assignMolIdToAtomContainers() of the class
-     * FilterPipeline is of type Integer.
-     */
-    @Test
-    @Disabled
-    public void assignMolIdToAtomContainersTest_singleAC_propertyMolIDIsOfTypeInteger() {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(1);
-        Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
-        //
-        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        Assertions.assertInstanceOf(Integer.class, tmpAtomContainerSet.getAtomContainer(0).getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME));
-    }
-
-    /**
-     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns a MolID of to a
-     * single atom container that equals its index in the atom container set passed to the method.
-     */
-    @Test
-    public void assignMolIdToAtomContainersTest_propertyMolIDEqualsTheACsIndexInTheACSet_singleAC() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        IAtomContainerSet tmpAtomContainerSet = new AtomContainerSet();
-        tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
-        Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
-        //
-        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        Assertions.assertSame(
-                tmpAtomContainer,
-                tmpAtomContainerSet.getAtomContainer(Integer.parseInt(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME)))
-        );
-    }
-
-    /**
-     * Tests whether the method .assignMolIdToAtomContainers() of the class FilterPipeline assigns a MolID of to each
-     * atom container in the atom container set passed to the method that equals its index in the atom container set.
-     */
-    @Test
-    public void assignMolIdToAtomContainersTest_multipleACs_propertyMolIDEqualsTheACsIndexInTheACSet() {
+    public void assignMolIdToAtomContainersTest_3ACs_assignsMolIDContainingTheACsIndexInSet() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
         ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertSame(
-                    tmpAtomContainer,
-                    tmpAtomContainerSet.getAtomContainer(Integer.parseInt(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME)))
-            );
+        for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
+            Assertions.assertEquals(i, Integer.parseInt(tmpAtomContainerSet.getAtomContainer(i).getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME)));
         }
     }
 
     /**
-     * Tests whether a NullPointerException is thrown if the atom container set given to the
-     * .assignMolIdToAtomContainers() method of the class FilterPipeline is null.
+     * Tests whether a NullPointerException is thrown if the atom container set given to method
+     * .assignMolIdToAtomContainers() is null.
      */
     @Test
-    public void assignMolIdToAtomContainersTest_throwNullPointerExceptionIfGivenParamIsNull() {
+    public void assignMolIdToAtomContainersTest_null_throwNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -120,22 +75,20 @@ public class CurationPipelineMolIDTests {
         );
     }
 
-    /*@Test   //TODO: check every single AC for not being null? I did not even find a way to create / cause that situation
-    public void assignMolIdToAtomContainersTest_throwNullPointerExceptionIfOneOfTheACsIsNull() {
+    /**
+     * Tests whether the method .removeMolIdPropertyFromAtomContainers() removes the respective property of all the
+     * atom containers given set.
+     */
+    @Test
+    public void removeMolIdPropertyFromAtomContainers_3ACs_removesMolIDProperty() {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        //IAtomContainer tmpAtomContainer = null;
-        //tmpAtomContainerSet.replaceAtomContainer(1, tmpAtomContainer);
-        //tmpAtomContainerSet.addAtomContainer(tmpAtomContainer);
-        Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
-        //
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> {
-                    FilterPipeline tmpFilterPipeline = new FilterPipeline();
-                    tmpFilter.assignMolIdToAtomContainers(tmpAtomContainerSet);
-                }
-        );
-    }*/
+        ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
+        ProcessingStepUtils.removeMolIdPropertyFromAtomContainers(tmpAtomContainerSet);
+        for (IAtomContainer tmpAtomContainer :
+                tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertNull(tmpAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME));
+        }
+    }
 
     /**
      * Tests whether the value returned by the .getAssignedMolID() method of class FilterPipeline is of type Integer.
@@ -370,29 +323,11 @@ public class CurationPipelineMolIDTests {
     }
 
     /**
-     * Tests whether the .getArrayOfAssignerMolIDs() method of class FilterPipeline throws an IllegalArgumentException
-     * if one of multiple given atom containers has a MolID that is no integer value.
-     */
-    @Test
-    @Disabled
-    public void getArrayOfAssignedMolIDsTest_multipleACs_oneWithNotIntegerValueMolID_throwsIllegalArgumentException() {
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-                    ProcessingStepUtils.assignMolIdToAtomContainers(tmpAtomContainerSet);
-                    tmpAtomContainerSet.getAtomContainer(1).setProperty(CurationPipeline.MOL_ID_PROPERTY_NAME, new Object());
-                    ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpAtomContainerSet);
-                }
-        );
-    }
-
-    /**
      * Tests whether a NullPointerException is thrown if the atom container set given to the .getArrayOfAssignedMolIDs()
-     * method of the class FilterPipeline is null.
+     * method is null.
      */
     @Test
-    public void getArrayOfAssignedMolIDsTest_throwNullPointerExceptionIfGivenAtomContainerSetIsNull() {
+    public void getArrayOfAssignedMolIDsTest_null_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
