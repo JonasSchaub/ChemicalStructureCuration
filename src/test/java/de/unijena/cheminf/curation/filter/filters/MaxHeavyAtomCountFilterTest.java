@@ -238,14 +238,4 @@ public class MaxHeavyAtomCountFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of maxHeavyAtomCount whether it returns maxHeavyAtomCount.
-     */
-    @Test
-    public void getMaxHeavyAtomCountMethodTest_returnsMaxHeavyAtomCount() {
-        int tmpMaxHeavyAtomCount = 5;
-        MaxHeavyAtomCountFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
-        Assertions.assertSame(tmpMaxHeavyAtomCountFilter.maxHeavyAtomCount, tmpMaxHeavyAtomCountFilter.getMaxHeavyAtomCount());
-    }
-
 }

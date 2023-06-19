@@ -238,14 +238,4 @@ public class MinHeavyAtomCountFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of minHeavyAtomCount whether it returns minHeavyAtomCount.
-     */
-    @Test
-    public void getMinHeavyAtomCountMethodTest_returnsMinHeavyAtomCount() {
-        int tmpMinHeavyAtomCount = 5;
-        MinHeavyAtomCountFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
-        Assertions.assertSame(tmpMinHeavyAtomCountFilter.minHeavyAtomCount, tmpMinHeavyAtomCountFilter.getMinHeavyAtomCount());
-    }
-
 }

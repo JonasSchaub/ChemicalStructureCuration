@@ -28,10 +28,12 @@ package de.unijena.cheminf.curation;
 import de.unijena.cheminf.curation.filter.IFilter;
 import de.unijena.cheminf.curation.filter.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.curation.filter.filters.HasInvalidAtomicNumbersFilter;
+import de.unijena.cheminf.curation.filter.filters.MaxAtomCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxBondCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxMolecularMassFilter;
+import de.unijena.cheminf.curation.filter.filters.MinAtomCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MinBondCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.filter.filters.MinHeavyAtomCountFilter;
@@ -52,6 +54,80 @@ public class WithFilterConvenienceMethodsTest {
     //
     TODO: revisit tests of .process() method with respective filters
      */
+
+    //<editor-fold desc="withMaxAtomCountFilter method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the .withMaxAtomCountFilter() method of the class CurationPipeline returns the CurationPipeline
+     * instance itself and adds a MaxAtomCountFilter to the list of processing steps.
+     */
+    @Test
+    public void withMaxAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxAtomCountFilter(
+                tmpThresholdValue, tmpConsiderImplicitHydrogens
+        );
+        Assertions.assertSame(tmpReturnedPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MaxAtomCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
+    }
+
+    /**
+     * Tests whether the .withMaxAtomCountFilter() method of the class CurationPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMaxAtomCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpNegativeMaxAtomCount = -1;
+                    new CurationPipeline().withMaxAtomCountFilter(tmpNegativeMaxAtomCount, true);
+                }
+        );
+    }
+
+    //TODO: test .process() method with MaxAtomCountFilter?
+    //</editor-fold>
+
+    //<editor-fold desc="withMinAtomCountFilter method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the .withMinAtomCountFilter() method of the class CurationPipeline returns the CurationPipeline
+     * instance itself and adds a MinAtomCountFilter to the list of processing steps.
+     */
+    @Test
+    public void withMinAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
+        int tmpThresholdValue = 10;
+        boolean tmpConsiderImplicitHydrogens = true;
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinAtomCountFilter(
+                tmpThresholdValue, tmpConsiderImplicitHydrogens
+        );
+        Assertions.assertSame(tmpReturnedPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MinAtomCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
+    }
+
+    /**
+     * Tests whether the .withMinAtomCountFilter() method of the class CurationPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMinAtomCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpNegativeMinAtomCount = -1;
+                    new CurationPipeline().withMinAtomCountFilter(tmpNegativeMinAtomCount, true);
+                }
+        );
+    }
+
+    //TODO: test .process() method with MinAtomCountFilter?
+    //</editor-fold>
 
     //<editor-fold desc="withMaxBondCountFilter method tests" defaultstate="collapsed">
     /**

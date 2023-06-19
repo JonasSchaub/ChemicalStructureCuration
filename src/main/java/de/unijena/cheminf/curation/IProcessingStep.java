@@ -68,10 +68,10 @@ public interface IProcessingStep {
      * expected to have a MolID assigned and an exception might be thrown if this is not the case.<br>
      * <br>
      * By the end of the processing and if the index of this processing step has not been set (via
-     * {@link #setIndexOfStepInPipeline(String)} to anything else than null (default), a report file containing info
-     * on issues with structures is created. If it is not null, a supervisory entity is expected to execute the
-     * {@link IReporter#report()} method. The reporter can be accessed via the respective getter and setter of this
-     * class.
+     * {@link #setIndexOfStepInPipeline(String)}) to anything else than null (default), a report file containing info
+     * on issues with structures is created. If the index differs from null, a supervisory entity is expected to
+     * execute the {@link IReporter#report()} method of the reporter. The reporter can be accessed via the respective
+     * getter and setter to change the (type of) reporter or change the location to create the report file at.
      *
      * @param anAtomContainerSet atom container set to process
      * @param aCloneBeforeProcessing boolean value, whether to clone the atom containers of the given set before

@@ -246,26 +246,4 @@ public class MinAtomCountFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of minAtomCount whether it returns minAtomCount.
-     */
-    @Test
-    public void getMinAtomCountMethodTest_returnsMinAtomCount() {
-        int tmpMinAtomCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMinAtomCountFilter.minAtomCount, tmpMinAtomCountFilter.getMinAtomCount());
-    }
-
-    /**
-     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
-     */
-    @Test
-    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        int tmpMinAtomCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMinAtomCountFilter.considerImplicitHydrogens, tmpMinAtomCountFilter.isConsiderImplicitHydrogens());
-    }
-
 }

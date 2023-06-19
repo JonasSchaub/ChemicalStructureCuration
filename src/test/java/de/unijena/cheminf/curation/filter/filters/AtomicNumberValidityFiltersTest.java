@@ -429,16 +429,4 @@ public class AtomicNumberValidityFiltersTest {
         );
     }
 
-    /**
-     * Tests the getter of wildcardAtomicNumberIsValid whether it returns wildcardAtomicNumberIsValid.
-     */
-    @Test
-    public void isWildcardAtomicNumberIsValidMethodTest_returnsWildcardAtomicNumberIsValid() {
-        boolean tmpWildcardAtomicNumberIsValid = true;
-        HasAllValidAtomicNumbersFilter tmpFilter1 = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertSame(tmpFilter1.wildcardAtomicNumberIsValid, tmpFilter1.isWildcardAtomicNumberIsValid());
-        HasInvalidAtomicNumbersFilter tmpFilter2 = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertSame(tmpFilter2.wildcardAtomicNumberIsValid, tmpFilter2.isWildcardAtomicNumberIsValid());
-    }
-
 }

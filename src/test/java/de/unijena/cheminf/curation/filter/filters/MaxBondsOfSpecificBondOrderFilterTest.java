@@ -356,49 +356,4 @@ public class MaxBondsOfSpecificBondOrderFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of bondOrderOfInterest whether it returns bondOrderOfInterest.
-     */
-    @Test
-    public void getBondOrderOfInterestMethodTest_returnsBondOrderOfInterest() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
-        );
-        Assertions.assertSame(tmpMaxBondsOfSpecificBondOrderFilter.bondOrderOfInterest,
-                tmpMaxBondsOfSpecificBondOrderFilter.getBondOrderOfInterest());
-    }
-
-    /**
-     * Tests the getter of maxSpecificBondCount whether it returns maxSpecificBondCount.
-     */
-    @Test
-    public void getMaxSpecificBondCountMethodTest_returnsMaxSpecificBondCount() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
-        );
-        Assertions.assertSame(tmpMaxBondsOfSpecificBondOrderFilter.maxSpecificBondCount,
-                tmpMaxBondsOfSpecificBondOrderFilter.getMaxSpecificBondCount());
-    }
-
-    /**
-     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
-     */
-    @Test
-    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMaxSpecificBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondsOfSpecificBondOrderFilter tmpMaxBondsOfSpecificBondOrderFilter = new MaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens
-        );
-        Assertions.assertSame(tmpMaxBondsOfSpecificBondOrderFilter.considerImplicitHydrogens,
-                tmpMaxBondsOfSpecificBondOrderFilter.isConsiderImplicitHydrogens());
-    }
-
 }

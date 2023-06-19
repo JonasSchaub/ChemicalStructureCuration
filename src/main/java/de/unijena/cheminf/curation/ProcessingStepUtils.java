@@ -64,9 +64,9 @@ public class ProcessingStepUtils {
     /**
      * Removes the atom container property with the name {@link IProcessingStep#MOL_ID_PROPERTY_NAME} from every atom
      * container of the given atom container set.
-     * TODO: has no tests so far
      *
      * @param anAtomContainerSet set of atom containers to remove property from
+     * @see IProcessingStep#MOL_ID_PROPERTY_NAME
      */
     public static void removeMolIdPropertyFromAtomContainers(IAtomContainerSet anAtomContainerSet) {
         //TODO: check for null? (or just do nothing instead?)
@@ -86,6 +86,8 @@ public class ProcessingStepUtils {
      * containers in the given set do not have a property with the name {@link IProcessingStep#MOL_ID_PROPERTY_NAME},
      * an IllegalArgumentException gets thrown. Every atom container set returned by {@link IProcessingStep#process}
      * should meet this criterion.
+     * <br>
+     * If a MolID is not of data type String, a string representation of the respective object is used.
      *
      * @param anAtomContainerSet IAtomContainerSet instance to return the MolIDs of
      * @return String array with the MolIDs of the atom containers of the given atom container set
@@ -116,6 +118,8 @@ public class ProcessingStepUtils {
      * Returns the MolID assigned to the given atom container. This method may only be used for atom containers that
      * have a property with the name {@link IProcessingStep#MOL_ID_PROPERTY_NAME}. Every atom container returned by
      * {@link IProcessingStep#process} should meet this criterion.
+     * <br>
+     * If the property is no string property, a string representation of the object is returned.
      *
      * @param anAtomContainer IAtomContainer instance the MolID should be returned of
      * @return MolID of the given AtomContainer
@@ -129,7 +133,6 @@ public class ProcessingStepUtils {
         if (anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME) == null) {
             throw new IllegalArgumentException("The given IAtomContainer instance has no MolID assigned.");
         }
-        //TODO: check the data type?
         return anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString();
     }
 
