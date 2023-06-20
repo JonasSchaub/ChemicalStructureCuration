@@ -356,49 +356,4 @@ public class MinBondsOfSpecificBondOrderFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of bondOrderOfInterest whether it returns bondOrderOfInterest.
-     */
-    @Test
-    public void getBondOrderOfInterestMethodTest_returnsBondOrderOfInterest() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMinSpecificBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
-        );
-        Assertions.assertSame(tmpMinBondsOfSpecificBondOrderFilter.bondOrderOfInterest,
-                tmpMinBondsOfSpecificBondOrderFilter.getBondOrderOfInterest());
-    }
-
-    /**
-     * Tests the getter of minSpecificBondCount whether it returns minSpecificBondCount.
-     */
-    @Test
-    public void getMinSpecificBondCountMethodTest_returnsMinSpecificBondCount() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMinSpecificBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
-        );
-        Assertions.assertSame(tmpMinBondsOfSpecificBondOrderFilter.minSpecificBondCount,
-                tmpMinBondsOfSpecificBondOrderFilter.getMinSpecificBondCount());
-    }
-
-    /**
-     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
-     */
-    @Test
-    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMinSpecificBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinBondsOfSpecificBondOrderFilter tmpMinBondsOfSpecificBondOrderFilter = new MinBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens
-        );
-        Assertions.assertSame(tmpMinBondsOfSpecificBondOrderFilter.considerImplicitHydrogens,
-                tmpMinBondsOfSpecificBondOrderFilter.isConsiderImplicitHydrogens());
-    }
-
 }

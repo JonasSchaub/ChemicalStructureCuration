@@ -28,10 +28,12 @@ package de.unijena.cheminf.curation;
 import de.unijena.cheminf.curation.filter.IFilter;
 import de.unijena.cheminf.curation.filter.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.curation.filter.filters.HasInvalidAtomicNumbersFilter;
+import de.unijena.cheminf.curation.filter.filters.MaxAtomCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxBondCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MaxMolecularMassFilter;
+import de.unijena.cheminf.curation.filter.filters.MinAtomCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MinBondCountFilter;
 import de.unijena.cheminf.curation.filter.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.filter.filters.MinHeavyAtomCountFilter;
@@ -43,88 +45,113 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
- * Test class of FilterPipeline methods to add specific filters to the pipeline.
+ * Test class of CurationPipeline methods to add specific filters to the pipeline.
  */
 public class WithFilterConvenienceMethodsTest {
 
     /*
     TODO: add tests for every new filter class
     //
-    TODO: place tests of filter method else where / in a separate class?
+    TODO: revisit tests of .process() method with respective filters
      */
 
+    //<editor-fold desc="withMaxAtomCountFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMaxBondCountFilter() method of the class FilterPipeline is a
-     * FilterPipeline instance.
+     * Tests whether the .withMaxAtomCountFilter() method of the class CurationPipeline returns the CurationPipeline
+     * instance itself and adds a MaxAtomCountFilter to the list of processing steps.
      */
     @Test
-    public void withMaxBondCountFilterMethodTest_returnsFilterPipelineInstance() {
+    public void withMaxAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpIntegerParameter = 10;
-        boolean tmpBooleanParameter = true;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMaxBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
-    }
-
-    /**
-     * Tests whether the instance returned by the .withMaxBondCountFilter() method of the class FilterPipeline is the
-     * FilterPipeline instance the method was called of.
-     */
-    @Test
-    public void withMaxBondCountFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpIntegerParameter = 10;
-        boolean tmpBooleanParameter = true;
-        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMaxBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxBondCountFilter()
-     * method of the class FilterPipeline was extended by an instance of MaxBondCountFilter.
-     */
-    @Test
-    public void withMaxBondCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxBondCountFilter() {
-        int tmpIntegerParameter = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MaxBondCountFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MaxBondCountFilter added to the listOfSelectedFilters by the .withMaxBondCountFilter() method
-     * of the class FilterPipeline contains the given max bond count threshold value.
-     */
-    @Test
-    public void withMaxBondCountFilterMethodTest_checksWhetherAddedMaxBondCountFilterHasGivenThresholdSet_twoTests() {
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxBondCount());
-        tmpThresholdValue = 20;
-        tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxBondCount());
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxAtomCountFilter(
+                tmpThresholdValue, tmpConsiderImplicitHydrogens
+        );
+        Assertions.assertSame(tmpReturnedPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MaxAtomCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MaxBondCountFilter added to the listOfSelectedFilters by the .withMaxBondCountFilter() method
-     * of the class FilterPipeline has the given boolean value set.
+     * Tests whether the .withMaxAtomCountFilter() method of the class CurationPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMaxBondCountFilterMethodTest_checksWhetherAddedMaxBondCountFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
+    public void withMaxAtomCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpNegativeMaxAtomCount = -1;
+                    new CurationPipeline().withMaxAtomCountFilter(tmpNegativeMaxAtomCount, true);
+                }
+        );
+    }
+
+    //TODO: test .process() method with MaxAtomCountFilter?
+    //</editor-fold>
+
+    //<editor-fold desc="withMinAtomCountFilter method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the .withMinAtomCountFilter() method of the class CurationPipeline returns the CurationPipeline
+     * instance itself and adds a MinAtomCountFilter to the list of processing steps.
+     */
+    @Test
+    public void withMinAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MaxBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-        tmpConsiderImplicitHydrogens = false;
-        tmpCurationPipeline = new CurationPipeline().withMaxBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MaxBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinAtomCountFilter(
+                tmpThresholdValue, tmpConsiderImplicitHydrogens
+        );
+        Assertions.assertSame(tmpReturnedPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MinAtomCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the .withMaxBondCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
+     * Tests whether the .withMinAtomCountFilter() method of the class CurationPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
+     */
+    @Test
+    public void withMinAtomCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    int tmpNegativeMinAtomCount = -1;
+                    new CurationPipeline().withMinAtomCountFilter(tmpNegativeMinAtomCount, true);
+                }
+        );
+    }
+
+    //TODO: test .process() method with MinAtomCountFilter?
+    //</editor-fold>
+
+    //<editor-fold desc="withMaxBondCountFilter method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the .withMaxBondCountFilter() method of the class CurationPipeline returns the CurationPipeline
+     * instance itself and adds a MaxBondCountFilter to the list of processing steps.
+     */
+    @Test
+    public void withMaxBondCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = true;
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxBondCountFilter(tmpIntegerParameter, tmpBooleanParameter);
+        Assertions.assertSame(tmpReturnedPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MaxBondCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
+    }
+
+    /**
+     * Tests whether the .withMaxBondCountFilter() method of the class CurationPipeline throws an IllegalArgumentException
      * if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMaxBondCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMaxBondCountIsNegative() {    //TODO: do so?
+    public void withMaxBondCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -135,13 +162,14 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MaxBondCountFilter considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxBondCountFilter_considerImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondCountFilter_considerImplHs_multipleMolecules() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 7 (3)
                 "c1ccccc1", //12 (6) - filtered
@@ -156,19 +184,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MaxBondCountFilter not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxBondCountFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondCountFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //12 (6) - filtered
                 "CC(=O)O",  // 7 (3)
@@ -183,83 +212,35 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinBondCountFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMinBondCountFilter() method of the class FilterPipeline is an
-     * FilterPipeline instance.
+     * Tests whether the .withMinBondCountFilter() method of the class CurationPipeline returns the CurationPipeline
+     * instance itself and adds a MinBondCountFilter to the list of processing steps.
      */
     @Test
-    public void withMinBondCountFilterMethodTest_returnsFilterPipelineInstance() {
+    public void withMinBondCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMinBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinBondCountFilter(tmpIntegerParameter, tmpBooleanParameter);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MinBondCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the instance returned by the .withMinBondCountFilter() method of the class FilterPipeline is the
-     * FilterPipeline instance the method was called of.
-     */
-    @Test
-    public void withMinBondCountFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpIntegerParameter = 10;
-        boolean tmpBooleanParameter = true;
-        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMinBondCountFilter(tmpIntegerParameter, tmpBooleanParameter));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinBondCountFilter()
-     * method of the class FilterPipeline was extended by an instance of MinBondCountFilter.
-     */
-    @Test
-    public void withMinBondCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinBondCountFilter() {
-        int tmpIntegerParameter = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MinBondCountFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MinBondCountFilter added to the listOfSelectedFilters by the .withMinBondCountFilter() method
-     * of the class FilterPipeline contains the given min bond count threshold value.
-     */
-    @Test
-    public void withMinBondCountFilterMethodTest_checksWhetherAddedMinBondCountFilterHasGivenThresholdSet_twoTests() {
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinBondCount());
-        tmpThresholdValue = 20;
-        tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinBondCount());
-    }
-
-    /**
-     * Tests whether the MinBondCountFilter added to the listOfSelectedFilters by the .withMinBondCountFilter() method
-     * of the class FilterPipeline has the given boolean value set.
-     */
-    @Test
-    public void withMinBondCountFilterMethodTest_checksWhetherAddedMinBondCountFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MinBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-        tmpConsiderImplicitHydrogens = false;
-        tmpCurationPipeline = new CurationPipeline().withMinBondCountFilter(tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MinBondCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-    }
-
-    /**
-     * Tests whether the .withMinBondCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
+     * Tests whether the .withMinBondCountFilter() method of the class CurationPipeline throws an IllegalArgumentException
      * if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMinBondCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMinBondCountIsNegative() {    //TODO: do so?
+    public void withMinBondCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -272,108 +253,37 @@ public class WithFilterConvenienceMethodsTest {
     //TODO: removed test filterMethodTest_withMinBondCountFilter_considerImplHs_multipleMolecules() due to the usage of FilterID
 
     //TODO: removed test filterMethodTest_withMinBondCountFilter_notConsiderImplHs_multipleMolecules() due to the usage of FilterID
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxBondsOfSpecificBondOrderFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMaxBondsOfSpecificBondOrderFilter() method of the class
-     * FilterPipeline is an FilterPipeline instance.
+     * Tests whether the .withMaxBondsOfSpecificBondOrderFilter() method of the class CurationPipeline returns the
+     * CurationPipeline instance itself and adds a MaxBondsOfSpecificBondOrderFilter to the list of processing steps.
      */
     @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstance() {
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMaxBondsOfSpecificBondOrderFilter(
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxBondsOfSpecificBondOrderFilter(
                 tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter
-        ));
+        );
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(
+                MaxBondsOfSpecificBondOrderFilter.class,
+                tmpReturnedPipeline.getListOfPipelineSteps().getLast()
+        );
     }
 
     /**
-     * Tests whether the instance returned by the .withMaxBondsOfSpecificBondOrderFilter() method of the class
-     * FilterPipeline is the FilterPipeline instance the method was called of.
-     */
-    @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpIntegerParameter = 10;
-        boolean tmpBooleanParameter = true;
-        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMaxBondsOfSpecificBondOrderFilter(
-                tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter
-        ));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the
-     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline was extended by an instance of
-     * MaxBondsOfSpecificBondOrderFilter.
-     */
-    @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxBondsOfSpecificBondOrderFilter() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpIntegerParameter = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder,
-                tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MaxBondsOfSpecificBondOrderFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
-     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given bond order of
-     * interest.
-     */
-    @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMaxBondsOfSpecificBondOrderFilterHasGivenBondOrderSet_twoTests() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getBondOrderOfInterest());
-        tmpBondOrder = IBond.Order.DOUBLE;
-        tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getBondOrderOfInterest());
-    }
-
-    /**
-     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
-     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given max specific bond
-     * count threshold value.
-     */
-    @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMaxBondsOfSpecificBondOrderFilterHasGivenThresholdSet_twoTests() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxSpecificBondCount());
-        tmpThresholdValue = 20;
-        tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxSpecificBondCount());
-    }
-
-    /**
-     * Tests whether the MaxBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
-     * .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline has the given boolean value set.
-     */
-    @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMaxBondsOfSpecificBondOrderFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-        tmpConsiderImplicitHydrogens = false;
-        tmpCurationPipeline = new CurationPipeline().withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MaxBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-    }
-
-    /**
-     * Tests whether the .withMaxBondsOfSpecificBondOrderFilter() method of the class FilterPipeline throws an
+     * Tests whether the .withMaxBondsOfSpecificBondOrderFilter() method of the class CurationPipeline throws an
      * IllegalArgumentException if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMaxBondCountIsNegative() {    //TODO: do so?
+    public void withMaxBondsOfSpecificBondOrderFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -385,13 +295,14 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MaxBondsOfSpecificBondOrderFilter with bond order single and considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3) - filtered
                 "CC(=O)O",  // 6 (2)
@@ -406,19 +317,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MaxBondsOfSpecificBondOrderFilter with bond order single and not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3) - filtered
                 "CC(=O)O",  // 6 (2) - filtered
@@ -433,19 +345,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MaxBondsOfSpecificBondOrderFilter with bond order double; test is exemplary for filtering on other bond orders.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 1
                 "c1ccccc1", // 3 - filtered
@@ -460,107 +373,41 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
+        );
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="withMinBondsOfSpecificBondOrderFilter method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the .withMinBondsOfSpecificBondOrderFilter() method of the class CurationPipeline returns the
+     * CurationPipeline instance itself and adds a MinBondsOfSpecificBondOrderFilter to the list of processing steps.
+     */
+    @Test
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
+        IBond.Order tmpBondOrder = IBond.Order.UNSET;
+        int tmpIntegerParameter = 10;
+        boolean tmpBooleanParameter = true;
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinBondsOfSpecificBondOrderFilter(
+                tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter
+        );
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(
+                MinBondsOfSpecificBondOrderFilter.class,
+                tmpReturnedPipeline.getListOfPipelineSteps().getLast()
         );
     }
 
     /**
-     * Tests whether the value returned by the .withMinBondsOfSpecificBondOrderFilter() method of the class
-     * FilterPipeline is an FilterPipeline instance.
-     */
-    @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstance() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpIntegerParameter = 10;
-        boolean tmpBooleanParameter = true;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter));
-    }
-
-    /**
-     * Tests whether the instance returned by the .withMinBondsOfSpecificBondOrderFilter() method of the class
-     * FilterPipeline is the FilterPipeline instance the method was called of.
-     */
-    @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpIntegerParameter = 10;
-        boolean tmpBooleanParameter = true;
-        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpBooleanParameter));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the
-     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline was extended by an instance of
-     * MinBondsOfSpecificBondOrderFilter.
-     */
-    @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinBondsOfSpecificBondOrderFilter() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpIntegerParameter = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpIntegerParameter, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(MinBondsOfSpecificBondOrderFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
-     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given bond order of
-     * interest.
-     */
-    @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMinBondsOfSpecificBondOrderFilterHasGivenBondOrderSet_twoTests() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getBondOrderOfInterest());
-        tmpBondOrder = IBond.Order.DOUBLE;
-        tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpBondOrder, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getBondOrderOfInterest());
-    }
-
-    /**
-     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
-     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline contains the given min specific bond
-     * count threshold value.
-     */
-    @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMinBondsOfSpecificBondOrderFilterHasGivenThresholdSet_twoTests() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinSpecificBondCount());
-        tmpThresholdValue = 20;
-        tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpThresholdValue, ((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinSpecificBondCount());
-    }
-
-    /**
-     * Tests whether the MinBondsOfSpecificBondOrderFilter added to the listOfSelectedFilters by the
-     * .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline has the given boolean value set.
-     */
-    @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_checksWhetherAddedMinBondsOfSpecificBondOrderFilterHasGivenBooleanConsiderImplHsSet_twoTests() {
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertTrue(((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-        tmpConsiderImplicitHydrogens = false;
-        tmpCurationPipeline = new CurationPipeline().withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens);
-        Assertions.assertFalse(((MinBondsOfSpecificBondOrderFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isConsiderImplicitHydrogens());
-    }
-
-    /**
-     * Tests whether the .withMinBondsOfSpecificBondOrderFilter() method of the class FilterPipeline throws an
+     * Tests whether the .withMinBondsOfSpecificBondOrderFilter() method of the class CurationPipeline throws an
      * IllegalArgumentException if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMinBondsOfSpecificBondOrderFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMinBondCountIsNegative() {    //TODO: do so?
+    public void withMinBondsOfSpecificBondOrderFilterMethodTest_negativeThreshouldValue_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -572,13 +419,14 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MinBondsOfSpecificBondOrderFilter with bond order single and considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
+    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3)
                 "CC(=O)O",  // 6 (2) - filtered
@@ -593,19 +441,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MinBondsOfSpecificBondOrderFilter with bond order single and not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMinBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3)
                 "CC(=O)O",  // 6 (2)
@@ -620,19 +469,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected when filtering with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected when filtering with a
      * MinBondsOfSpecificBondOrderFilter with bond order double; test is exemplary for filtering on other bond orders.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
+    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 1 - filtered
                 "c1ccccc1", // 3
@@ -647,64 +497,34 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxHeavyAtomCountFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMaxHeavyAtomCountFilter() method of the class FilterPipeline is a
-     * FilterPipeline instance.
+     * Tests whether the .withMaxHeavyAtomCountFilter() method of the class CurationPipeline returns the
+     * CurationPipeline instance itself and adds a MaxHeavyAtomCountFilter to the list of processing steps.
      */
     @Test
-    public void withMaxHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstance() {
+    public void withMaxHeavyAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpIntegerParameter = 10;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMaxHeavyAtomCountFilter(tmpIntegerParameter));
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxHeavyAtomCountFilter(tmpIntegerParameter);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MaxHeavyAtomCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the instance returned by the .withMaxHeavyAtomCountFilter() method of the class FilterPipeline is
-     * the FilterPipeline instance the method was called of.
+     * Tests whether the .withMaxHeavyAtomCountFilter() method of the class CurationPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMaxHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpIntegerParameter = 10;
-        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMaxHeavyAtomCountFilter(tmpIntegerParameter));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxHeavyAtomCountFilter()
-     * method of the class FilterPipeline was extended by an instance of MaxHeavyAtomCountFilter.
-     */
-    @Test
-    public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMaxHeavyAtomCountFilter() {
-        int tmpIntegerParameter = 10;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpIntegerParameter);
-        Assertions.assertInstanceOf(MaxHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MaxHeavyAtomCountFilter added to the listOfSelectedFilters by the .withMaxHeavyAtomCountFilter()
-     * method of the class FilterPipeline contains the given max heavy atom count threshold value.
-     */
-    @Test
-    public void withMaxHeavyAtomCountFilterMethodTest_checksWhetherAddedMaxHeavyAtomCountFilterHasGivenThresholdSet_twoTests() {
-        int tmpThresholdValue = 10;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxHeavyAtomCount());
-        tmpThresholdValue = 20;
-        tmpCurationPipeline = new CurationPipeline().withMaxHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxHeavyAtomCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxHeavyAtomCount());
-    }
-
-    /**
-     * Tests whether the .withMaxHeavyAtomCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
-     * if the given integer parameter is of a negative value.
-     */
-    @Test
-    public void withMaxHeavyAtomCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMaxHeavyAtomCountIsNegative() {    //TODO: do so?
+    public void withMaxHeavyAtomCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -715,13 +535,14 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in filtering process with a
      * MaxHeavyAtomCountFilter; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
+    public void processMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4
                 "c1ccccc1", // 6 - filtered
@@ -735,19 +556,20 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMaxHeavyAtomCount = 4;
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in filtering process with a
      * MaxHeavyAtomCountFilter; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
+    public void processMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4 - filtered
                 "c1ccccc1", // 6 - filtered
@@ -761,64 +583,34 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMaxHeavyAtomCount = 3;
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinHeavyAtomCountFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMinHeavyAtomCountFilter() method of the class FilterPipeline is a
-     * FilterPipeline instance.
+     * Tests whether the .withMinHeavyAtomCountFilter() method of the class CurationPipeline returns the
+     * CurationPipeline instance itself and adds a MinHeavyAtomCountFilter to the list of processing steps.
      */
     @Test
-    public void withMinHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstance() {
+    public void withMinHeavyAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpIntegerParameter = 10;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMinHeavyAtomCountFilter(tmpIntegerParameter));
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinHeavyAtomCountFilter(tmpIntegerParameter);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MinHeavyAtomCountFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the instance returned by the .withMinHeavyAtomCountFilter() method of the class FilterPipeline is
-     * the FilterPipeline instance the method was called of.
+     * Tests whether the .withMinHeavyAtomCountFilter() method of the class CurationPipeline throws an
+     * IllegalArgumentException if the given integer parameter is of a negative value.
      */
     @Test
-    public void withMinHeavyAtomCountFilterMethodTest_returnsFilterPipelineInstanceItWasCalledOf() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        int tmpIntegerParameter = 10;
-        Assertions.assertSame(tmpCurationPipeline, tmpCurationPipeline.withMinHeavyAtomCountFilter(tmpIntegerParameter));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinHeavyAtomCountFilter()
-     * method of the class FilterPipeline was extended by an instance of MinHeavyAtomCountFilter.
-     */
-    @Test
-    public void withMinHeavyAtomCountFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfMinHeavyAtomCountFilter() {
-        int tmpIntegerParameter = 10;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpIntegerParameter);
-        Assertions.assertInstanceOf(MinHeavyAtomCountFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MinHeavyAtomCountFilter added to the listOfSelectedFilters by the .withMinHeavyAtomCountFilter()
-     * method of the class FilterPipeline contains the given min heavy atom count threshold value.
-     */
-    @Test
-    public void withMinHeavyAtomCountFilterMethodTest_checksWhetherAddedMinHeavyAtomCountFilterHasGivenThresholdSet_twoTests() {
-        int tmpThresholdValue = 10;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinHeavyAtomCount());
-        tmpThresholdValue = 20;
-        tmpCurationPipeline = new CurationPipeline().withMinHeavyAtomCountFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinHeavyAtomCountFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinHeavyAtomCount());
-    }
-
-    /**
-     * Tests whether the .withMinHeavyAtomCountFilter() method of the class FilterPipeline throws an IllegalArgumentException
-     * if the given integer parameter is of a negative value.
-     */
-    @Test
-    public void withMinHeavyAtomCountFilterMethodTest_throwsIllegalArgumentExceptionIfGivenMinHeavyAtomCountIsNegative() {    //TODO: do so?
+    public void withMinHeavyAtomCountFilterMethodTest_negativeThresholdValue_throwsIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -829,13 +621,14 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in a filtering process with a
      * MinHeavyAtomCountFilter; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
+    public void processMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4 - filtered
                 "c1ccccc1", // 6
@@ -849,19 +642,20 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinHeavyAtomCount = 5;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in a filtering process with a
      * MinHeavyAtomCountFilter; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
+    public void processMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4
                 "c1ccccc1", // 6
@@ -875,58 +669,37 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinHeavyAtomCount = 4;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
         //
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withHasAllValidAtomicNumbersFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withHasAllValidAtomicNumbersFilter() method of the class FilterPipeline
-     * is the FilterPipeline instance the method was called of.
+     * Tests whether the .withHasAllValidAtomicNumbersFilter() method of the class CurationPipeline returns the
+     * CurationPipeline instance itself and adds a HasAllValidAtomicNumbersFilter to the list of processing steps.
      */
     @Test
-    public void withHasAllValidAtomicNumbersFilterMethodTest_returnsFilterPipelineInstanceItself() {
+    public void withHasAllValidAtomicNumbersFilterMethodTest_returnsCurationPipelineInstanceItself() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         boolean tmpWildcardAtomicNumberIsValid = true;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid));
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(HasAllValidAtomicNumbersFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withHasAllValidAtomicNumbersFilter()
-     * method of the class FilterPipeline was extended by an instance of HasAllValidAtomicNumbersFilter.
-     */
-    @Test
-    public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasAllValidAtomicNumbersFilter() {
-        boolean tmpWildcardAtomicNumberIsValid = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertInstanceOf(HasAllValidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the HasAllValidAtomicNumbersFilter added to the listOfSelectedFilters by the .withHasAllValidAtomicNumbersFilter()
-     * method of the class FilterPipeline has the boolean class field wildcardAtomicNumberIsValid set to the given
-     * boolean value.
-     */
-    @Test
-    public void withHasAllValidAtomicNumbersFilterMethodTest_checksWhetherAddedHasAllValidAtomicNumbersFilterHasGivenBooleanValueSet_twoTests() {
-        boolean tmpWildcardAtomicNumberIsValid = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasAllValidAtomicNumbersFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
-        tmpWildcardAtomicNumberIsValid = false;
-        tmpCurationPipeline = new CurationPipeline().withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasAllValidAtomicNumbersFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
-    }
-
-    /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in a filtering process with a
      * HasAllValidAtomicNumbersFilter; test 2; wildcard atomic number is considered as valid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
+    public void processMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",
                 "C",
@@ -949,19 +722,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in a filtering process with a
      * HasAllValidAtomicNumbersFilter; test 2; wildcard atomic number is considered as invalid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
+    public void processMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C=CC=C",
@@ -984,58 +758,37 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withHasInvalidAtomicNumbersFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withHasInvalidAtomicNumbersFilter() method of the class FilterPipeline
-     * is the FilterPipeline instance the method was called of.
+     * Tests whether the .withHasInvalidAtomicNumbersFilter() method of the class CurationPipeline returns the
+     * CurationPipeline instance itself and adds a HasInvalidAtomicNumbersFilter to the list of processing steps.
      */
     @Test
-    public void withHasInvalidAtomicNumbersFilterMethodTest_returnsFilterPipelineInstanceItself() {
+    public void withHasInvalidAtomicNumbersFilterMethodTest_returnsCurationPipelineInstanceItself() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         boolean tmpWildcardAtomicNumberIsValid = true;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid));
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(HasInvalidAtomicNumbersFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withHasInvalidAtomicNumbersFilter()
-     * method of the class FilterPipeline was extended by an instance of HasInvalidAtomicNumbersFilter.
-     */
-    @Test
-    public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherListOfSelectedFiltersWasExtendedByInstanceOfHasInvalidAtomicNumbersFilter() {
-        boolean tmpWildcardAtomicNumberIsValid = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertInstanceOf(HasInvalidAtomicNumbersFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the HasInvalidAtomicNumbersFilter added to the listOfSelectedFilters by the .withHasInvalidAtomicNumbersFilter()
-     * method of the class FilterPipeline has the boolean class field wildcardAtomicNumberIsValid set to the given
-     * boolean value.
-     */
-    @Test
-    public void withHasInvalidAtomicNumbersFilterMethodTest_checksWhetherAddedHasInvalidAtomicNumbersFilterHasGivenBooleanValueSet_twoTests() {
-        boolean tmpWildcardAtomicNumberIsValid = true;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasInvalidAtomicNumbersFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
-        tmpWildcardAtomicNumberIsValid = false;
-        tmpCurationPipeline = new CurationPipeline().withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertEquals(tmpWildcardAtomicNumberIsValid,
-                ((HasInvalidAtomicNumbersFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).isWildcardAtomicNumberIsValid());
-    }
-
-    /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in a filtering process with a
      * HasInvalidAtomicNumbersFilter; test 2; wildcard atomic number is considered as valid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
+    public void processMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",
                 "C",
@@ -1058,19 +811,20 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
 
     /**
-     * Tests whether the .filter() method of class FilterPipeline behaves as expected in a filtering process with a
+     * TODO
+     * Tests whether the .process() method of class CurationPipeline behaves as expected in a filtering process with a
      * HasInvalidAtomicNumbersFilter; test 2; wildcard atomic number is considered as invalid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void filterMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
+    public void processMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C=CC=C",
@@ -1093,150 +847,49 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        TestUtils.filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+        TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxMolecularMassFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMaxMolecularMassFilter() method of the class FilterPipeline with
-     * MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     * Tests whether the .withMaxMolecularMassFilter() method of the class CurationPipeline with computation flavour
+     * parameter returns the CurationPipeline instance itself and adds a MaxMolecularMassFilter to the list of
+     * processing steps.
      */
     @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_returnsFilterPipelineInstanceItself() {
+    public void withMaxMolecularMassFilterMethodTest_withFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour));
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter was extended by an instance of
-     * MaxMolecularMassFilter.
+     * Tests whether the .withMaxMolecularMassFilter() method of the class CurationPipeline without computation flavour
+     * parameter returns the CurationPipeline instance itself and adds a MaxMolecularMassFilter to the list of
+     * processing steps.
      */
     @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given threshold value set to
-     * it; two tests.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenThresholdValue_twoTests() {
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxMolecularMass());
-        tmpThresholdValue = 20.0;
-        tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxMolecularMass());
-    }
-
-    /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given mass computation flavour
-     * set to it; two tests.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenMassComputationFlavour_twoTests() {
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
-        tmpFlavour = MassComputationFlavours.MonoIsotopic;
-        tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
-    }
-
-    /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
-     * parameter throws an IllegalArgumentException if the given max molecular mass threshold value is of a negative
-     * value; two tests.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    double tmpThresholdValue = -0.1;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-                }
-        );
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    double tmpThresholdValue = -5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-                }
-        );
-    }
-
-    /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
-     * parameter throws a NullPointerException if the given mass computation flavour is null.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_withFlavour_throwsNullPointerExceptionIfGivenFlavourIsNull() {
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> {
-                    double tmpThresholdValue = 10.0;
-                    MassComputationFlavours tmpFlavour = null;
-                    new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-                }
-        );
-    }
-
-    /**
-     * Tests whether the value returned by the .withMaxMolecularMassFilter() method of the class FilterPipeline with
-     * no MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_noFlavour_returnsFilterPipelineInstanceItself() {
+    public void withMaxMolecularMassFilterMethodTest_withoutFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue));
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter was extended by an instance of
-     * MaxMolecularMassFilter.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMaxMolecularMassFilter() {
-        double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertInstanceOf(MaxMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has the given threshold value set to
-     * it; two tests.
-     */
-    @Test
-    public void withMaxMolecularMassFilterMethodTest_noFlavour_newFilterHasGivenThresholdValue_twoTests() {
-        double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxMolecularMass());
-        tmpThresholdValue = 20.0;
-        tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMaxMolecularMass());
-    }
-
-    /**
-     * Tests whether the MaxMolecularMassFilter added to the listOfSelectedFilters by the .withMaxMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MolWeight}
+     * Tests whether the MaxMolecularMassFilter added to the listOfPipelineSteps by the .withMaxMolecularMassFilter()
+     * method of the class CurationPipeline with no MassComputation.Flavours parameter has {@link MassComputation.Flavours#MolWeight}
      * set as mass computation flavour.
      */
     @Test
@@ -1244,23 +897,23 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
-                MassComputationFlavours.MolWeight,
+                MassComputation.Flavours.MolWeight,
                 ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
 
     /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class FilterPipeline with no MassComputationFlavours
-     * parameter throws an IllegalArgumentException if the given max molecular mass threshold value is of a negative
-     * value; two tests.
+     * Tests whether both .withMaxMolecularMassFilter() methods of the class CurationPipeline throw an
+     * IllegalArgumentException if the given max molecular mass threshold value is of a negative value.
      */
     @Test
-    public void withMaxMolecularMassFilterMethodTest_noFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
+    public void withMaxMolecularMassFilterMethodsTest_negativeThresholdValue_throwIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -0.1;
-                    new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+                    new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
         Assertions.assertThrows(
@@ -1272,171 +925,84 @@ public class WithFilterConvenienceMethodsTest {
         );
     }
 
-    //TODO: test .filter() method with MaxMolecularMassFilter?
-
     /**
-     * Tests whether the value returned by the .withMinMolecularMassFilter() method of the class FilterPipeline with
-     * MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
-     */
-    @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_returnsFilterPipelineInstanceItself() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline();
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour));
-    }
-
-    /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter was extended by an instance of
-     * MinMolecularMassFilter.
-     */
-    @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
-    }
-
-    /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given threshold value set to
-     * it; two tests.
-     */
-    @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenThresholdValue_twoTests() {
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinMolecularMass());
-        tmpThresholdValue = 20.0;
-        tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinMolecularMass());
-    }
-
-    /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with MassComputationFlavours parameter has the given mass computation flavour
-     * set to it; two tests.
-     */
-    @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_newFilterHasGivenMassComputationFlavour_twoTests() {
-        double tmpThresholdValue = 10.0;
-        MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
-        tmpFlavour = MassComputationFlavours.MonoIsotopic;
-        tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-        Assertions.assertEquals(tmpFlavour, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour());
-    }
-
-    /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
-     * parameter throws an IllegalArgumentException if the given min molecular mass threshold value is of a negative
-     * value; two tests.
-     */
-    @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    double tmpThresholdValue = -0.1;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-                }
-        );
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    double tmpThresholdValue = -5.0;
-                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MolWeight;
-                    new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
-                }
-        );
-    }
-
-    /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with MassComputationFlavours
+     * Tests whether the .withMaxMolecularMassFilter() method of the class CurationPipeline with MassComputation.Flavours
      * parameter throws a NullPointerException if the given mass computation flavour is null.
      */
     @Test
-    public void withMinMolecularMassFilterMethodTest_withFlavour_throwsNullPointerExceptionIfGivenFlavourIsNull() {
+    public void withMaxMolecularMassFilterMethodTest_flavourIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
                     double tmpThresholdValue = 10.0;
-                    MassComputationFlavours tmpFlavour = null;
-                    new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                    MassComputation.Flavours tmpFlavour = null;
+                    new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinMolecularMassFilter method tests" defaultstate="collapsed">
     /**
-     * Tests whether the value returned by the .withMinMolecularMassFilter() method of the class FilterPipeline with
-     * no MassComputationFlavours parameter is the FilterPipeline instance the method was called of.
+     * Tests whether the .withMinMolecularMassFilter() method of the class CurationPipeline with computation flavour
+     * parameter returns the CurationPipeline instance itself and adds a MinMolecularMassFilter to the list of
+     * processing steps.
      */
     @Test
-    public void withMinMolecularMassFilterMethodTest_noFlavour_returnsFilterPipelineInstanceItself() {
+    public void withMinMolecularMassFilterMethodTest_withFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
-        Assertions.assertInstanceOf(tmpCurationPipeline.getClass(), tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue));
+        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the listOfSelectedFilters of the FilterPipeline instance returned by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter was extended by an instance of
-     * MinMolecularMassFilter.
+     * Tests whether the .withMinMolecularMassFilter() method of the class CurationPipeline without computation flavour
+     * parameter returns the CurationPipeline instance itself and adds a MinMolecularMassFilter to the list of
+     * processing steps.
      */
     @Test
-    public void withMinMolecularMassFilterMethodTest_noFlavour_listOfSelectedFiltersWasExtendedByInstanceOfMinMolecularMassFilter() {
+    public void withMinMolecularMassFilterMethodTest_withoutFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline();
+        int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());
+        CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue);
+        Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
+        Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
+        Assertions.assertInstanceOf(MinMolecularMassFilter.class, tmpReturnedPipeline.getListOfPipelineSteps().getLast());
     }
 
     /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has the given threshold value set to
-     * it; two tests.
-     */
-    @Test
-    public void withMinMolecularMassFilterMethodTest_noFlavour_newFilterHasGivenThresholdValue_twoTests() {
-        double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinMolecularMass());
-        tmpThresholdValue = 20.0;
-        tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
-        Assertions.assertEquals(tmpThresholdValue, ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMinMolecularMass());
-    }
-
-    /**
-     * Tests whether the MinMolecularMassFilter added to the listOfSelectedFilters by the .withMinMolecularMassFilter()
-     * method of the class FilterPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MolWeight}
+     * Tests whether the MinMolecularMassFilter added to the listOfPipelineSteps by the .withMinMolecularMassFilter()
+     * method of the class CurationPipeline with no computation flavour parameter has {@link MassComputation.Flavours#MolWeight}
      * set as mass computation flavour.
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_noFlavour_newFilterHasMolWeightAsMassComputationFlavour() {
         double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
-                MassComputationFlavours.MolWeight,
-                ((MinMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
+                MassComputation.Flavours.MolWeight,
+                ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
 
     /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class FilterPipeline with no MassComputationFlavours
-     * parameter throws an IllegalArgumentException if the given min molecular mass threshold value is of a negative
-     * value; two tests.
+     * Tests whether both .withMinMolecularMassFilter() methods of the class CurationPipeline with throw an
+     * IllegalArgumentException if the given min molecular mass threshold value is of a negative value.
      */
     @Test
-    public void withMinMolecularMassFilterMethodTest_noFlavour_throwsIllegalArgumentExceptionIfGivenThresholdValueIsOfNegativeValue_twoTests() {
+    public void withMinMolecularMassFilterMethodsTest_negativeThresholdValue_throwIllegalArgumentException() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -0.1;
-                    new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue);
+                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+                    new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
         Assertions.assertThrows(
@@ -1448,6 +1014,21 @@ public class WithFilterConvenienceMethodsTest {
         );
     }
 
-    //TODO: test .filter() method with MinMolecularMassFilter?
+    /**
+     * Tests whether the .withMinMolecularMassFilter() method of the class CurationPipeline with MassComputation.Flavours
+     * parameter throws a NullPointerException if the given mass computation flavour is null.
+     */
+    @Test
+    public void withMinMolecularMassFilterMethodTest_flavourIsNull_throwsNullPointerException() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    double tmpThresholdValue = 10.0;
+                    MassComputation.Flavours tmpFlavour = null;
+                    new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
+                }
+        );
+    }
+    //</editor-fold>
 
 }

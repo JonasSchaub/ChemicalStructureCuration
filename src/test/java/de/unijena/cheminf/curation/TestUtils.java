@@ -145,7 +145,7 @@ public class TestUtils {
      * @throws IllegalArgumentException if the length of the given boolean array does not equal the count of atom
      * containers in the given atom container set
      */
-    public static void filterPipeline_getsFilteredMethodTest_testsBehaviorOfMethodWithSpecificFilter(
+    public static void curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
             IFilter aFilter, IAtomContainerSet anAtomContainerSet, boolean[] anIsFilteredBooleanArray
     ) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aFilter, "aFilter (instance of Filter) is null.");

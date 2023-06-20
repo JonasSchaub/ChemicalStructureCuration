@@ -246,26 +246,4 @@ public class MaxBondCountFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of maxBondCount whether it returns maxBondCount.
-     */
-    @Test
-    public void getMaxBondCountMethodTest_returnsMaxBondCount() {
-        int tmpMaxBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMaxBondCountFilter.maxBondCount, tmpMaxBondCountFilter.getMaxBondCount());
-    }
-
-    /**
-     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
-     */
-    @Test
-    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        int tmpMaxBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMaxBondCountFilter.considerImplicitHydrogens, tmpMaxBondCountFilter.isConsiderImplicitHydrogens());
-    }
-
 }

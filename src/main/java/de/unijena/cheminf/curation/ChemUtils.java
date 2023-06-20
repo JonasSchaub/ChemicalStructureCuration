@@ -212,29 +212,4 @@ public class ChemUtils {
         return tmpExplicitAtomsCount - tmpExplicitHydrogensCount;
     }
 
-    /**
-     * Calculates the mass of a molecule (given IAtomContainer instance). This function takes a 'mass flavour' that
-     * switches the computation type of the mass calculation. The key distinction is how specified/unspecified isotopes
-     * are handled. A specified isotope is an atom that has either {@link IAtom#setMassNumber(Integer)} or
-     * {@link IAtom#setExactMass(Double)} set to non-null and non-zero.
-     * The mass of the molecule is calculated via {@link AtomContainerManipulator#getMass(IAtomContainer, int)}.
-     *
-     * @param anAtomContainer IAtomContainer instance to calculate the mass of
-     * @param aFlavour MassCalculationFlavours constant that switches the computation type of the mass calculation;
-     *                 see: {@link MassComputationFlavours},
-     *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
-     * @return double value of the mass of the molecule
-     * @throws NullPointerException if the given IAtomContainer instance or the given mass computation flavour is null
-     * @see MassComputationFlavours
-     * @see AtomContainerManipulator#getMass(IAtomContainer, int)
-     */
-    public static double getMass(IAtomContainer anAtomContainer, MassComputationFlavours aFlavour)
-            throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavour) is null.");
-        //TODO: use MolWeight as default if null is given?
-        //TODO: throw an exception if the associated integer is no value between 1 and 4? Added a check to the MassComputationFlavours internal constructor
-        return AtomContainerManipulator.getMass(anAtomContainer, aFlavour.getAssociatedIntegerValue());
-    }
-
 }

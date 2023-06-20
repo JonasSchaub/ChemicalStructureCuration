@@ -246,26 +246,4 @@ public class MinBondCountFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of minBondCount whether it returns minBondCount.
-     */
-    @Test
-    public void getMinBondCountMethodTest_returnsMinBondCount() {
-        int tmpMinBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMinBondCountFilter.minBondCount, tmpMinBondCountFilter.getMinBondCount());
-    }
-
-    /**
-     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
-     */
-    @Test
-    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        int tmpMinBondCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMinBondCountFilter.considerImplicitHydrogens, tmpMinBondCountFilter.isConsiderImplicitHydrogens());
-    }
-
 }

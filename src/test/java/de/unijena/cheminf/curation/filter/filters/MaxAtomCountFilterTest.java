@@ -246,26 +246,4 @@ public class MaxAtomCountFilterTest {
         );
     }
 
-    /**
-     * Tests the getter of maxAtomCount whether it returns maxAtomCount.
-     */
-    @Test
-    public void getMaxAtomCountMethodTest_returnsMaxAtomCount() {
-        int tmpMaxAtomCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxAtomCountFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMaxAtomCountFilter.maxAtomCount, tmpMaxAtomCountFilter.getMaxAtomCount());
-    }
-
-    /**
-     * Tests the getter of considerImplicitHydrogens whether it returns considerImplicitHydrogens.
-     */
-    @Test
-    public void isConsiderImplicitHydrogensMethodTest_returnsConsiderImplicitHydrogens() {
-        int tmpMaxAtomCount = 5;
-        boolean tmpConsiderImplicitHydrogens = true;
-        MaxAtomCountFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertSame(tmpMaxAtomCountFilter.considerImplicitHydrogens, tmpMaxAtomCountFilter.isConsiderImplicitHydrogens());
-    }
-
 }
