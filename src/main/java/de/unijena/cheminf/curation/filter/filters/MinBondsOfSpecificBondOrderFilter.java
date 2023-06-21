@@ -38,6 +38,10 @@ import java.util.Objects;
  */
 public class MinBondsOfSpecificBondOrderFilter extends BaseFilter {
 
+    /*
+    TODO: handling of issues (reporting)
+     */
+
     /**
      * IBond.Order of bonds to count and filter on.
      */

@@ -26,23 +26,26 @@
 package de.unijena.cheminf.curation.filter;
 
 import de.unijena.cheminf.curation.BaseProcessingStep;
+import de.unijena.cheminf.curation.ErrorCodes;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Abstract class BaseFilter - implements IFilter.  TODO
+ * Abstract class BaseFilter - implements IFilter. Reduces the number of abstract methods to the protected method
+ * {@link #isFiltered(IAtomContainer, boolean)}.
  */
 public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
-    /*
-    TODO: flag filtered / not filtered ACs?
-    TODO: add countOfFilteredACs (?)
-    TODO: is there a way to use the loggers of the classes that extend this class for logging?
+    /**
+     * Logger of this class.
      */
+    private static final Logger LOGGER = Logger.getLogger(BaseFilter.class.getName());
 
     /**
      * Convenience constructor. Calls the main constructor with both params set to null.
@@ -52,24 +55,35 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * {@inheritDoc}
+     * Constructor. TODO: what shall I type in a constructor that just calls the super? @Felix, @Jonas
      */
     public BaseFilter(IReporter aReporter, String anOptionalIDPropertyName) {
         super(aReporter, anOptionalIDPropertyName);
     }
 
     /**
-     * {@inheritDoc}
+     * Filters the atom containers of the given atom container set according to the values returned by {@link
+     * #isFiltered(IAtomContainer, boolean)}.
+     *
+     * @throws NullPointerException  if the given IAtomContainerSet instance is null or an atom container of the set
+     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
+     * without causing an issue)
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             //apply filter
-            if (!this.isFiltered(tmpAtomContainer, true)) {
-                tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+            try {
+                if (!this.isFiltered(tmpAtomContainer, true)) {
+                    tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
+                }
+            } catch (Exception anUnexpectedException) {
+                //reports and logs any unexpected exception; the structure does not pass the filter
+                this.appendReportToReporter(tmpAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+                BaseFilter.LOGGER.log(Level.SEVERE, anUnexpectedException.toString(), anUnexpectedException);
             }
         }
         return tmpFilteredACSet;
@@ -77,6 +91,8 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NullPointerException if the given IAtomContainer instance is null
      */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
@@ -84,14 +100,18 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * TODO
+     * Checks whether the filter applies on a given IAtomContainer instance. True is returned, if the given atom
+     * container gets filtered; returns false if the atom container passes the filter. This implementation takes a
+     * second, boolean parameter that specifies whether to report issues with the given structure to the reporter
+     * or to throw an exceptions instead. If an issue gets reported, true is returned.
      *
-     * @param anAtomContainer IAtomContainer instance to be checked
+     * @param anAtomContainer   IAtomContainer instance to be checked
      * @param aReportToReporter boolean value whether to report issues with the given structure to the reporter
      *                          or throw exceptions instead
      * @return true if the structure does not pass the filter or has issues that were reported to the reporter;
      *         false if the structure passes the criteria of the filter
-     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @throws NullPointerException if the given IAtomContainer instance is null and issues do not get reported to the
+     * reporter
      */
     protected abstract boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException;
 

@@ -37,6 +37,10 @@ import java.util.Objects;
  */
 public class MinMolecularMassFilter extends BaseFilter {
 
+    /*
+    TODO: handling of issues (reporting)
+     */
+
     /**
      * Double value of the min molecular mass threshold.
      */

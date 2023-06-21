@@ -49,12 +49,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A high-level API for curating, standardizing or filtering sets of molecules.
+ * A high-level API for curating, standardizing and filtering sets of molecules in a pipeline of multiple processing
+ * steps.
  * TODO (use the DepictionGenerator as guideline)
- *
- * Class for creating/building pipelines of multiple filters for filtering sets of atom containers based on molecular descriptors.
- * Only contains filters that are based on molecular descriptors and can be applied for each atom container separately
- * (without knowledge of the other atom containers - as it would be necessary e.g. for filtering duplicates).
+ * TODO: demonstrate usage of pipeline examplary
+ * Use the {@link #addProcessingStep(IProcessingStep)} method to add processing steps to the pipeline no convenience
+ * method exists for.
+ * ...
  */
 public class CurationPipeline extends BaseProcessingStep {
 
@@ -63,10 +64,17 @@ public class CurationPipeline extends BaseProcessingStep {
         - check whether they are still doing their job (throw no exception)
         - check whether they need to be removed / replaced
         - check the doc-comments
+        - new test methods might be necessary
+    //
+    TODO: is one constructor enough or shall there be "convenience constructors"?  @Felix, @Jonas
+        at the moment (since there is no reporting) I only use the convenience constructor
+    //
+    TODO: possibly overwrite the .process() method to modify the doc comment
+    //
+    TODO: remove param checks out of .with...Filter() methods?
     //
     TODO (optional):
         - method to deep copy / clone a CurationPipeline?
-        - methods for clearing the MolIDs of an atom container?
      */
 
     /**
@@ -77,12 +85,13 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Linked list that contains all processing steps (instances of IProcessingStep) that were added to the pipeline.
      */
-    private final LinkedList<IProcessingStep> listOfPipelineSteps;
+    private final LinkedList<IProcessingStep> listOfPipelineSteps;  //TODO: change type to <? extends IProcessingStep> ?  @Felix, @Jonas
 
     /**
-     * Constructor. At reporting of a curation process, the MolID (assigned to each atom container during a curation
-     * process) is used for a unique identification of each atom container.
+     * Constructor. Initializes the curation pipeline.
      * <br>
+     * At the reporting of a curation process, the MolID (assigned to each atom container before or during a curation
+     * process) is used for a unique identification of each atom container; no optional second identifier is used.
      * The reporting of the curation / processing of a set of atom containers is done using the default reporter.
      */
     public CurationPipeline() {
@@ -90,22 +99,6 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * TODO
-     */
-    public CurationPipeline(IReporter aReporter) {
-        this(aReporter, null);
-    }
-
-    /**
-     * TODO
-     */
-    public CurationPipeline(String anOptionalIdentifierPropertyName) {
-        this(null, anOptionalIdentifierPropertyName);
-    }
-
-    /**
-     * TODO: discuss: is this one constructor enough or shall there be "convenience constructors"?
-     *  - in the first case: remove the other constructors
      * Constructor. At reporting of a curation processes, the atom container property with the given name (String
      * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
      * assigned to each atom container during a curation process.
@@ -124,34 +117,14 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Applies the curation pipeline on the given set of atom containers and returns the set of those who passed all
-     * curation steps. To uniquely identify the atom containers during the process, each atom container gets a unique
-     * MolID ("CurationPipeline.MolID") in form of an integer type property assigned.
-     * TODO
-     * In order to trace by which step an atom container got filtered by, every atom container gets the index of the filter in the list of
-     * selected filters assigned as FilterID (integer property "CurationPipeline.FilterID"). Atom containers that do
-     * not get filtered get a FilterID of negative one. TODO: FilterID is removed
-     * Atom containers do not pass a curation step if they cause an exception to be thrown.
-     *
-     * @param anAtomContainerSet set of atom containers to be processed
-     * @return atom container set of all atom containers that passed the filter pipeline
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
-     */
-    /*  //TODO: this method is deprecated and will be removed in a later version
-    public IAtomContainerSet curate(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        this.assignMolIdToAtomContainers(anAtomContainerSet);   //TODO: think about this again
-        IAtomContainerSet tmpClonedACSet = this.cloneAtomContainerSet(anAtomContainerSet);
-        return this.process(tmpClonedACSet);
-    }
-    */
-
-    /**
      * {@inheritDoc}
+     *
+     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
+     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
+     * without causing an issue)
      */
     @Override
     protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
-        //TODO: remove check of anAtomContainerSet? might be irrelevant
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpACSetToProcess;
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
@@ -160,23 +133,25 @@ public class CurationPipeline extends BaseProcessingStep {
             for (IProcessingStep tmpProcessingStep : this.listOfPipelineSteps) {
                 tmpACSetToProcess = tmpResultingACSet;
                 tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, false, false);
-                //TODO: is there a way to set an initial atom container count?
+                //TODO: is there a way to set an initial atom container count to fasten the processing?  @Felix, @Jonas
+                // so far I was not able to find one (it is a protected method that does so)
             }
         } catch (Exception anUnexpectedException) {
             CurationPipeline.LOGGER.log(Level.SEVERE, "The curation process was interrupted by an unexpected" +
                     " exception: " + anUnexpectedException.toString(), anUnexpectedException);
-            //TODO: create some kind of notification / message to append to the report file
-            //this.getReporter().report();  //TODO
+            //TODO: treat NullPointerException separately? (case: previous processing step returned null)? - I do not have a clear opinion on this so far
+            //TODO: create some kind of notification / message to append to the report file - discuss with Max (or Felix, Jonas)
+            //this.getReporter().report();  //TODO: uncomment when default reporter and a handling of the report-files exist
             return null;
         }
         //
-        //this.getReporter().report();    //TODO: would cause to many problems with test methods atm
+        //this.getReporter().report();    //TODO: uncomment when default reporter exists
         return tmpResultingACSet;
     }
 
     //<editor-fold desc="with...Filter methods" defaultstate="collapsed">
     /**
-     * Adds a max atom count filter with the given parameters to the filter pipeline. Implicit hydrogen atoms may or
+     * Adds a max atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms may or
      * may not be considered; atom containers that equal the given max atom count do not get filtered.
      *
      * @param aMaxAtomCount integer value of the max atom count to filter by
@@ -185,7 +160,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws IllegalArgumentException if the given max atom count has a negative value
      */
     public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMaxAtomCount < 0) {
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
@@ -194,7 +169,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a min atom count filter with the given parameters to the filter pipeline. Implicit hydrogen atoms may or
+     * Adds a min atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms may or
      * may not be considered; atom containers that equal the given min atom count do not get filtered.
      *
      * @param aMinAtomCount integer value of the min atom count to filter by
@@ -203,7 +178,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws IllegalArgumentException if the given min atom count has a negative value
      */
     public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMinAtomCount < 0) {
             throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
@@ -212,7 +187,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a max heavy atom count filter with the given max heavy atom count to the filter pipeline. Atom containers
+     * Adds a max heavy atom count filter with the given max heavy atom count to the curation pipeline. Atom containers
      * that equal the given max heavy atom count do not get filtered.
      *
      * @param aMaxHeavyAtomCount integer value of the max atom count to filter by
@@ -220,7 +195,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws IllegalArgumentException if the given max heavy atom count has a negative value
      */
     public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
-        if (aMaxHeavyAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMaxHeavyAtomCount < 0) {
             throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
@@ -229,7 +204,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a min heavy atom count filter with the given min heavy atom count to the filter pipeline. Atom containers
+     * Adds a min heavy atom count filter with the given min heavy atom count to the curation pipeline. Atom containers
      * that equal the given min heavy atom count do not get filtered.
      *
      * @param aMinHeavyAtomCount integer value of the min atom count to filter by
@@ -237,7 +212,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws IllegalArgumentException if the given min heavy atom count has a negative value
      */
     public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
-        if (aMinHeavyAtomCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMinHeavyAtomCount < 0) {
             throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
@@ -246,7 +221,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a max bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
+     * Adds a max bond count filter with the given parameters to the curation pipeline. Bonds to implicit hydrogen atoms
      * may or may not be considered; atom containers that equal the given max bond count do not get filtered.
      *
      * @param aMaxBondCount integer value of the max bond count to filter by
@@ -255,7 +230,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws IllegalArgumentException if the given max bond count has a negative value
      */
     public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMaxBondCount < 0) {
             throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
@@ -264,7 +239,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a min bond count filter with the given parameters to the filter pipeline. Bonds to implicit hydrogen atoms
+     * Adds a min bond count filter with the given parameters to the curation pipeline. Bonds to implicit hydrogen atoms
      * may or may not be considered; atom containers that equal the given min bond count do not get filtered.
      *
      * @param aMinBondCount integer value of the min bond count to filter by
@@ -273,7 +248,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws IllegalArgumentException if the given min bond count has a negative value
      */
     public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMinBondCount < 0) {
             throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
@@ -282,7 +257,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a max bonds of specific bond order filter with the given parameters to the filter pipeline. Bonds to
+     * Adds a max bonds of specific bond order filter with the given parameters to the curation pipeline. Bonds to
      * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single; atom containers
      * that equal the given max specific bond count do not get filtered.
      *
@@ -296,7 +271,7 @@ public class CurationPipeline extends BaseProcessingStep {
     public CurationPipeline withMaxBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
-        if (aMaxSpecificBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMaxSpecificBondCount < 0) {
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
@@ -305,7 +280,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a min bonds of specific bond order filter with the given parameters to the filter pipeline. Bonds to
+     * Adds a min bonds of specific bond order filter with the given parameters to the curation pipeline. Bonds to
      * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single; atom containers
      * that equal the given min specific bond count do not get filtered.
      *
@@ -319,7 +294,7 @@ public class CurationPipeline extends BaseProcessingStep {
     public CurationPipeline withMinBondsOfSpecificBondOrderFilter(
             IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
-        if (aMinSpecificBondCount < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMinSpecificBondCount < 0) {
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
@@ -328,7 +303,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a has all valid atomic numbers filter with the given boolean parameter to the filter pipeline.
+     * Adds a has all valid atomic numbers filter with the given boolean parameter to the curation pipeline.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
@@ -341,7 +316,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a has invalid atomic numbers filter with the given boolean parameter to the filter pipeline.
+     * Adds a has invalid atomic numbers filter with the given boolean parameter to the curation pipeline.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
@@ -354,7 +329,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a max molecular mass filter with the given parameters to the filter pipeline. The given mass computation
+     * Adds a max molecular mass filter with the given parameters to the curation pipeline. The given mass computation
      * flavour switches the computation type of the mass calculation; atom containers that equal the given max
      * molecular mass value do not get filtered.
      *
@@ -367,9 +342,10 @@ public class CurationPipeline extends BaseProcessingStep {
      * @see MassComputation.Flavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputation.Flavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputation.Flavours aMassComputationFlavour)
+            throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputation.Flavours constant) is null.");
-        if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMaxMolecularMass < 0) {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour);
@@ -378,10 +354,9 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a max molecular mass filter with the given max molecular mass value to the filter pipeline.
-     * This method takes no mass computation flavour; for the new filter the default 'mass flavour'
-     * {@link MassComputation.Flavours#MolWeight} is used. Atom containers that equal the given max
-     * molecular mass value do not get filtered.
+     * Adds a max molecular mass filter with the given max molecular mass value to the curation pipeline. This method
+     * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputation.Flavours
+     * #MolWeight} is used. Atom containers that equal the given max molecular mass value do not get filtered.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
      * @return the CurationPipeline instance itself
@@ -390,7 +365,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
     public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
-        if (aMaxMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMaxMolecularMass < 0) {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass);
@@ -399,7 +374,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a min molecular mass filter with the given parameters to the filter pipeline. The given mass computation
+     * Adds a min molecular mass filter with the given parameters to the curation pipeline. The given mass computation
      * flavour switches the computation type of the mass calculation; atom containers that equal the given min
      * molecular mass value do not get filtered.
      *
@@ -412,9 +387,10 @@ public class CurationPipeline extends BaseProcessingStep {
      * @see MassComputation.Flavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputation.Flavours aMassComputationFlavour) throws NullPointerException, IllegalArgumentException {
+    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputation.Flavours aMassComputationFlavour)
+            throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputation.Flavours constant) is null.");
-        if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMinMolecularMass < 0) {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour);
@@ -423,10 +399,9 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a min molecular mass filter with the given min molecular mass value to the filter pipeline.
-     * This method takes no mass computation flavour; for the new filter the default 'mass flavour'
-     * {@link MassComputation.Flavours#MolWeight} is used. Atom containers that equal the given min
-     * molecular mass value do not get filtered.
+     * Adds a min molecular mass filter with the given min molecular mass value to the curation pipeline. This method
+     * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputation.Flavours
+     * #MolWeight} is used. Atom containers that equal the given min molecular mass value do not get filtered.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
      * @return the CurationPipeline instance itself
@@ -435,7 +410,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
     public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
-        if (aMinMolecularMass < 0) {    //TODO: param checks here or log those of the filter's constructor?
+        if (aMinMolecularMass < 0) {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass);
@@ -445,24 +420,24 @@ public class CurationPipeline extends BaseProcessingStep {
     //</editor-fold>
 
     /**
-     * Adds the given filter to the filter pipeline. This method may be used to manually add a Filter instance to the
-     * filter pipeline for which no convenience method - in the form of .with...Filter() - is available. This allows
-     * the usage of subsequently implemented filters.
+     * Adds the given processing step to the curation pipeline. This method may be used to manually add
+     * IProcessingStep instances to the pipeline for which no convenience method - in the form of .with...Filter() -
+     * exist. This allows the usage of subsequently implemented IProcessingStep implementations.
      *
      * @param aProcessingStep the IProcessingStep instance that is to be added to the pipeline
      * @return the CurationPipeline instance itself
-     * @throws NullPointerException if the given Filter instance is null
+     * @throws NullPointerException if the given IProcessingStep instance is null
      */
     public CurationPipeline addProcessingStep(IProcessingStep aProcessingStep) throws NullPointerException {
-        Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of Filter) is null.");
+        Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
         this.addToListOfProcessingSteps(aProcessingStep);
         return this;
     }
 
     /**
-     * Returns the list of selected filters.
+     * Returns the list that contains all processing steps that were added to the pipeline.
      *
-     * @return LinkedList of IFilter instances
+     * @return LinkedList of IProcessingStep instances
      */
     public LinkedList<IProcessingStep> getListOfPipelineSteps() {
         return this.listOfPipelineSteps;
@@ -471,7 +446,7 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * {@inheritDoc}
      * <br>
-     * This optional identifier property name is also set to every processing step in the pipeline.
+     * This optional identifier property name is also set to every processing step of the pipeline.
      */
     @Override
     public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
@@ -497,7 +472,7 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * Sets the index the pipeline has in a superordinate pipeline and - in combination with the respective index of
-     * the step in this pipeline - to every processing step of this pipeline.
+     * the step in this pipeline - to every processing step that is part of this pipeline.
      *
      * @param anIndexString String with the index or null if it is not part of a pipeline
      */

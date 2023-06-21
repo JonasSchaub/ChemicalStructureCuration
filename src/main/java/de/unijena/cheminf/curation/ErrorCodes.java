@@ -26,7 +26,7 @@
 package de.unijena.cheminf.curation;
 
 /**
- * TODO
+ * The enum defines the errors (issues with structures) encountered in the processing of structures.
  */
 public enum ErrorCodes {
 
@@ -61,7 +61,7 @@ public enum ErrorCodes {
     XYZ_ERROR,
 
     /**
-     * An unexpected exception occurred.
+     * An unexpected exception occurred. For more information the log / log-file shall be visited.
      */
     UNEXPECTED_EXCEPTION_ERROR
 

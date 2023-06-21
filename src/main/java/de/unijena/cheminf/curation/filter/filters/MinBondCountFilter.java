@@ -36,6 +36,10 @@ import java.util.Objects;
  */
 public class MinBondCountFilter extends BaseFilter {
 
+    /*
+    TODO: handling of issues (reporting)
+     */
+
     /**
      * Integer value of the min bond count threshold.
      */

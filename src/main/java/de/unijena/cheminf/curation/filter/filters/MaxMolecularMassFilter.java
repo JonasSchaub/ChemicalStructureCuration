@@ -37,6 +37,10 @@ import java.util.Objects;
  */
 public class MaxMolecularMassFilter extends BaseFilter {
 
+    /*
+    TODO: handling of issues (reporting)
+     */
+
     /**
      * Double value of the max molecular mass threshold.
      */

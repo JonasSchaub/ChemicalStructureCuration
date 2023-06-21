@@ -154,22 +154,24 @@ public class CurationPipelineTest {
      * Tests public constructor of the class FilterPipeline with String parameter whether it initializes
      * listOfSelectedFilters.
      */
-    @Test
+    /*@Test
+    @Disabled
     public void publicFilterConstructorTest_withStringParameter_listOfSelectedFiltersInitialized() {
         String tmpPropertyNameString = "SomeString";
         CurationPipeline tmpCurationPipeline = new CurationPipeline(tmpPropertyNameString);
         Assertions.assertNotNull(tmpCurationPipeline.getListOfPipelineSteps());
-    }
+    }*/
 
     /**
      * Tests whether the initialised list of selected filters is empty.
      */
-    @Test
+    /*@Test
+    @Disabled
     public void publicFilterConstructorTest_withStringParameter_instancesListOfSelectedFiltersIsEmpty() {
         String tmpPropertyNameString = "SomeString";
         CurationPipeline tmpCurationPipeline = new CurationPipeline(tmpPropertyNameString);
         Assertions.assertTrue(tmpCurationPipeline.getListOfPipelineSteps().isEmpty());
-    }
+    }*/
 
     /**
      * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets the field

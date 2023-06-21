@@ -67,38 +67,39 @@ public class ReportDataObject {
      */
     private final ErrorCodes errorCode;
 
-    /** TODO
-     * Constructor. Initializes all class variables.
+    /**
+     * Constructor. Creates a new report data object that stores all data needed for an entry in the report file.
      *
      * @param anAtomContainer atom container of the structure
-     * @param anIdentifier identifier string of the structure
+     * @param anIdentifier identifier string of the structure; may only be null if the given atom container is null
      * @param anOptionalIdentifier optional second identifier string of the structure or null if there is none
      * @param anIndexOfProcessingStepInPipeline string of the index of the processing step the in the pipeline or null
      *                                          if the is not part of a pipeline
-     * @param classOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
+     * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
      * @param anErrorCode error code of the reported problem
-     * @throws NullPointerException if the given anAtomContainer, anIdentifier, classOfProcessingStep or anErrorCode
-     *                              is null
+     * @throws NullPointerException if the given aClassOfProcessingStep or anErrorCode is null; if anIdentifier is null
+     *                              when anAtomContainer is not null
      */
     public ReportDataObject(
             IAtomContainer anAtomContainer,
             String anIdentifier,
             String anOptionalIdentifier,
             String anIndexOfProcessingStepInPipeline,
-            Class<? extends IProcessingStep> classOfProcessingStep,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
             ErrorCodes anErrorCode
     ) throws NullPointerException {
-        //TODO: accept the atom container to be null? (case: NULL_ERROR)
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
-        Objects.requireNonNull(classOfProcessingStep, "classOfProcessingStep (instance of Class<? extends" +
+        //TODO: accept the atom container to be null? (case: ATOM_CONTAINER_NULL_ERROR)
+        if (anAtomContainer == null) {
+            Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
+        }
+        Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
                 " IProcessingStep>) is null.");
         Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
         this.optionalIdentifier = anOptionalIdentifier;
         this.indexOfProcessingStepInPipeline = anIndexOfProcessingStepInPipeline;
-        this.classOfProcessingStep = classOfProcessingStep;
+        this.classOfProcessingStep = aClassOfProcessingStep;
         this.errorCode = anErrorCode;
     }
 
@@ -130,10 +131,10 @@ public class ReportDataObject {
     }
 
     /**
-     * Returns a string with the index of the processing step instance the problem was reported by in the pipeline, or
-     * null if the processing step is not part of a pipeline.
+     * Returns the index of the processing step in pipeline. This String may be null to state that the processing step
+     * is not part of a pipeline.
      *
-     * @return instance of String
+     * @return String instance or null
      */
     public String getIndexOfProcessingStepInPipeline() {
         return indexOfProcessingStepInPipeline;
@@ -151,7 +152,7 @@ public class ReportDataObject {
     /**
      * Returns the error code of the reported problem.
      *
-     * @return instance of ErrorCodes
+     * @return ErrorCodes constant
      */
     public ErrorCodes getErrorCode() {
         return errorCode;

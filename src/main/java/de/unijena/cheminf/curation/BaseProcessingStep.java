@@ -35,18 +35,25 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Base class of all processing steps. Reduces the number of abstract methods to the protected method {@link #process(
+ * IAtomContainerSet)}. In addition to overwriting this one method, processing steps extending this base class possibly
+ * need constructors initializing the fields specific to the processing step and respective getters.
+ * <br>
+ * Essentially, this abstract class works as a wrapper class for methods that take, process and return a set of atom
+ * containers, and thereby may be used to easily create workers that can be used as part of a pipeline (see {@link
+ * CurationPipeline}).
+ */
 public abstract class BaseProcessingStep implements IProcessingStep {
 
     /*
-    TODO:
-     - find a solution on where and how to assign identifier to each given atom container
-        -> general solution for all processing steps?
-        -> I do not like the idea that only some of the implementations assign an ID when .process() is called and
-           others do not
+    TODO: additional constructors?
+        - at all?
+        - here in the constructor or only at the level of the classes children?
     //
     TODO:
         - initialize reporter
-        - make file destination adjustable without the need to set a new reporter?
+        - make the destination of the report-file adjustable without the need to set a new reporter?
      */
 
     /**
@@ -61,24 +68,27 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * Name string of the atom container property that contains an optional second identifier of type integer. If the
-     * String is not null, no second identifier is used.
+     * String is null (default) or the reported atom containers do not have a respective property, no second identifier
+     * is used at the reporting of the processing.
      */
-    private String optionalIDPropertyName;
+    private String optionalIDPropertyName = null;
 
     /**
      * String with the index of the processing step in the pipeline (if it is part of a pipeline), or null if it is not
-     * part of a pipeline. It is stored as string to enable subordinate IDs (e.g. "1.1").
+     * part of a pipeline. It is stored as string to enable subordinate IDs (e.g. "1.1"). If the index differs from
+     * null (default), the {@link #process(IAtomContainerSet, boolean, boolean)} method expects a superordinate entity
+     * to call the {@link IReporter#report()} method of this instance's reporter.
      */
     private String indexOfStepInPipeline = null;
 
     /**
-     * Constructor. TODO
+     * Constructor. Initializes the fields {@link #reporter} and {@link #optionalIDPropertyName}.
      *
      * @param aReporter reporter to report to when processing; if null is given, an instance of the default reporter
      *                  is used
-     * @param anOptionalIDPropertyName optional name string of an atom container property that contains an optional
-     *                                 second identifier to be used at the reporting of a processing process; if null
-     *                                 is given, no second identifier is used
+     * @param anOptionalIDPropertyName null or the name string of an atom container property containing an optional
+     *                                 second identifier of structures to be used at the reporting of a processing
+     *                                 process; if null is given, no second identifier is used
      */
     public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) {
         if (aReporter == null) {
@@ -91,14 +101,26 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
+     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
+     * without causing an issue)
+     * @see #getReporter()
+     * @see #setReporter(IReporter)
+     * @see #setIndexOfStepInPipeline(String)
+     * @see #MOL_ID_PROPERTY_NAME
+     * @see ProcessingStepUtils#assignMolIdToAtomContainers(IAtomContainerSet)
+     * @see ProcessingStepUtils#getAssignedMolID(IAtomContainer)
+     * @see ProcessingStepUtils#getArrayOfAssignedMolIDs(IAtomContainerSet)
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing, boolean anAssignIdentifiers) throws NullPointerException {
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet,
+                                     boolean aCloneBeforeProcessing,
+                                     boolean anAssignIdentifiers) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        //TODO: assign IDs to the given atom containers dependent on second boolean param
         if (anAssignIdentifiers) {
             ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
-        } //TODO: else: check existence of MolID ?
+        } //TODO: else: check existence of MolIDs ?
         if (aCloneBeforeProcessing) {
             IAtomContainerSet tmpClonedACSet = this.cloneAtomContainerSet(anAtomContainerSet);
             return this.process(tmpClonedACSet);
@@ -107,21 +129,23 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         if (this.indexOfStepInPipeline == null) {
             //generate the report file only if the processing step is not part of a pipeline
             //this.reporter.report();   //TODO: default reporter necessary
-            //this.reporter.clear();
         }
         return tmpResultingACSet;
     }
 
     /**
-     * TODO
-     * @param anAtomContainerSet
-     * @return
-     * @throws NullPointerException
+     * Processes the given atom container set according to the processing step. Does not clone the given data; expects
+     * all atom containers to have a MolID (atom container property with the name {@link #MOL_ID_PROPERTY_NAME}).
+     *
+     * @param anAtomContainerSet atom container set to process
+     * @return the processed atom container set
+     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
+     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
+     * without causing an issue)
      */
     protected abstract IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
 
-    /** TODO
-     * TODO: place in utils? would mean a lot more of params (reporter, optionalIDPropertyName, this.getClass())
+    /**
      * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
      * appended to the given reporter and excluded from the returned atom container set. The total count of atom
      * containers failing the cloning-process is being logged.
@@ -140,15 +164,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                 tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
             } catch (CloneNotSupportedException aCloneNotSupportedException) {
                 tmpCloneNotSupportedExceptionsCount++;
-                //TODO: check the data type of both atom container properties?
-                this.reporter.appendReport(new ReportDataObject(
-                        tmpAtomContainer,
-                        tmpAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString(),
-                        tmpAtomContainer.getProperty(this.optionalIDPropertyName).toString(),
-                        null,
-                        this.getClass(),
-                        ErrorCodes.CLONE_ERROR
-                ));
+                this.appendReportToReporter(tmpAtomContainer, ErrorCodes.CLONE_ERROR);
             }
         }
         if (tmpCloneNotSupportedExceptionsCount > 0) {
@@ -157,6 +173,81 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                     " thereby were excluded from the returned atom container set.");
         }
         return tmpCloneOfGivenACSet;
+    }
+
+    /**
+     * Appends a report to the reporter by creating a ReportDataObject instance according to the given data and passing
+     * it to the reporter instance. If the given atom container is not null, it is expected to have a property with the
+     * name {@link #MOL_ID_PROPERTY_NAME} and with a value not null; otherwise an NullPointerException gets thrown.
+     *
+     * @param anAtomContainer atom container instance the issue refers to
+     * @param anErrorCode error code of the reported issue
+     * @throws NullPointerException if the given ErrorCodes constant is null; if the value returned by {@link
+     * #getMolIDString(IAtomContainer)} is null while anAtomContainer not being null
+     */
+    protected void appendReportToReporter(IAtomContainer anAtomContainer, ErrorCodes anErrorCode) throws NullPointerException {
+        Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
+        //get the identifiers of the atom container if the atom container is not null
+        String tmpMolIDString = ((anAtomContainer != null) ? this.getMolIDString(anAtomContainer) : null);
+        String tmpOptionalIDString = ((anAtomContainer != null) ? this.getOptionalIDString(anAtomContainer) : null);
+        //append new report data object to the reporter
+        this.reporter.appendReport(new ReportDataObject(
+                anAtomContainer,
+                tmpMolIDString,
+                tmpOptionalIDString,
+                null,
+                this.getClass(),
+                anErrorCode
+        ));
+    }
+
+    /**
+     * Returns the string representation of the structure's MolID or null, if the MolID is null or no property with
+     * the name {@link #MOL_ID_PROPERTY_NAME} exists.
+     *
+     * @param anAtomContainer atom container to get the MolID from
+     * @return string representation of the MolID of the given structure or null
+     * @throws NullPointerException if the given IAtomContainer instance is null
+     */
+    protected String getMolIDString(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        String tmpMolIDString;
+        try {
+            Object tmpMolID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+            tmpMolIDString = ((tmpMolID != null) ?
+                    anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString()
+                    : null);
+        } catch (NullPointerException aNullPointerException) {
+            tmpMolIDString = null;
+        }
+        return tmpMolIDString;
+    }
+
+    /**
+     * Returns the string representation of the structure's optional second identifier or null, if {@link
+     * #getOptionalIDPropertyName()} is null, an atom container property with the respective name does not exist or the
+     * optional ID is null.
+     *
+     * @param anAtomContainer atom container to get the optional second identifier from
+     * @return string representation of the optional second identifier of the given structure or null
+     * @throws NullPointerException if the given IAtomContainer instance is null
+     */
+    protected String getOptionalIDString(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        String tmpOptionalIDString;
+        if (this.optionalIDPropertyName == null) {
+            tmpOptionalIDString = null;
+        } else {
+            try {
+                Object tmpOptionalID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+                tmpOptionalIDString = ((tmpOptionalID != null) ?
+                        anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString()
+                        : null);
+            } catch (NullPointerException aNullPointerException) {
+                tmpOptionalIDString = null;
+            }
+        }
+        return tmpOptionalIDString;
     }
 
     /**
@@ -185,6 +276,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NullPointerException if the given instance of IReporter is null   TODO: use the default reporter instead?
      */
     @Override
     public void setReporter(IReporter aReporter) throws NullPointerException {
@@ -195,6 +288,9 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * {@inheritDoc}
+     * This field needs to be set manually / by the superordinate pipeline. If the index differs from null (default),
+     * the {@link #process(IAtomContainerSet, boolean, boolean)} method of this processing step expects a superordinate
+     * entity to call the {@link IReporter#report()} method of this instance's reporter.
      */
     @Override
     public String getIndexOfStepInPipeline() {
@@ -203,6 +299,9 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * {@inheritDoc}
+     *  If the index is set to anything else than null (default), the {@link #process(IAtomContainerSet, boolean,
+     *  boolean)} method of this processing step expects a superordinate entity to call the {@link IReporter#report()}
+     *  method of this instance's reporter.
      */
     @Override
     public void setIndexOfStepInPipeline(String anIndexString) {

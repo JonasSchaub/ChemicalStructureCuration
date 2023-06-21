@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.filter.filters;
 
+import de.unijena.cheminf.curation.ErrorCodes;
 import de.unijena.cheminf.curation.filter.BaseFilter;
 import de.unijena.cheminf.curation.filter.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -70,13 +71,47 @@ public class MaxAtomCountFilter extends BaseFilter {
 
     /**
      * {@inheritDoc}
+     * <br>
      * Atom containers that equal the max atom count do not get filtered.
+     *
+     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @throws IllegalArgumentException if the filter has an illegal max atom count threshold value  TODO: should not happen
      */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        //
-        return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.maxAtomCount + 1, this.considerImplicitHydrogens);
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
+        return this.isFiltered(anAtomContainer, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <br>
+     * Atom containers that equal the max atom count do not get filtered.
+     *
+     * @throws NullPointerException if the given IAtomContainer instance is null and issues do not get reported to the
+     * reporter
+     * @throws IllegalArgumentException if the filter has an illegal max atom count threshold value  TODO: should not happen
+     */
+    @Override
+    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException, IllegalArgumentException {
+        try {
+            Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+            //
+            return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.maxAtomCount + 1, this.considerImplicitHydrogens);
+        } catch (Exception anException) {
+            if (aReportToReporter) {
+                ErrorCodes tmpErrorCode;
+                //TODO: is it possible to do this using a switch?
+                if (NullPointerException.class.equals(anException.getClass())) {
+                    tmpErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
+                } else {
+                    tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
+                }
+                this.appendReportToReporter(anAtomContainer, tmpErrorCode);
+                return true;
+            } else {
+                throw anException;
+            }
+        }
     }
 
     /**

@@ -42,48 +42,29 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 public class AtomicNumberValidityFiltersTest {
 
     /**
-     * Tests whether the public constructor of both classes initializes the respective class field with the given
-     * parameter; test 1.
+     * Tests whether the public constructors of both classes initializes the respective class field with the given
+     * parameter.
      */
     @Test
     public void publicConstructorTests_bothInitializeClassVarWithGivenParam_test1() {
+        //test 1
         boolean tmpWildcardAtomicNumberAsValid = true;
         HasAllValidAtomicNumbersFilter tmpFilter1 = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid);
         Assertions.assertTrue(tmpFilter1.wildcardAtomicNumberIsValid);
         HasInvalidAtomicNumbersFilter tmpFilter2 = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid);
         Assertions.assertTrue(tmpFilter2.wildcardAtomicNumberIsValid);
-    }
-
-    /**
-     * Tests whether the public constructor of both classes initializes the respective class field with the given
-     * parameter; test 2.
-     */
-    @Test
-    public void publicConstructorTests_bothInitializeClassVarWithGivenParam_test2() {
-        boolean tmpWildcardAtomicNumberAsValid = false;
-        HasAllValidAtomicNumbersFilter tmpFilter1 = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid);
+        //test 2
+        tmpWildcardAtomicNumberAsValid = false;
+        tmpFilter1 = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid);
         Assertions.assertFalse(tmpFilter1.wildcardAtomicNumberIsValid);
-        HasInvalidAtomicNumbersFilter tmpFilter2 = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid);
+        tmpFilter2 = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid);
         Assertions.assertFalse(tmpFilter2.wildcardAtomicNumberIsValid);
     }
 
     /**
-     * Tests whether method .isFiltered() of both classes returns a boolean value.
-     */
-    @Test
-    public void isFilteredMethodTest_returnsBoolean() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        boolean tmpWildcardAtomicNumberIsValid = true;
-        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-        tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-    }
-
-    /**
      * Tests whether method .isFiltered() of class HasAllValidAtomicNumbersFilter returns false if given atom containers
-     * with all valid atomic numbers and .isFiltered() of class HasInvalidAtomicNumbersFilter returns the opposite,
-     * true; the boolean parameter aWildcardAtomicNumberIsValid is without influence here.
+     * with all valid atomic numbers and .isFiltered() of class HasInvalidAtomicNumbersFilter returns true; the boolean
+     * parameter aWildcardAtomicNumberIsValid is without influence here.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
@@ -112,8 +93,8 @@ public class AtomicNumberValidityFiltersTest {
 
     /**
      * Tests whether method .isFiltered() of class HasAllValidAtomicNumbersFilter returns true if given atom containers
-     * with invalid atomic numbers and .isFiltered() of class HasInvalidAtomicNumbersFilter returns the opposite, false;
-     * the boolean parameter aWildcardAtomicNumberIsValid is without influence here.
+     * with invalid atomic numbers and .isFiltered() of class HasInvalidAtomicNumbersFilter returns false; the boolean
+     * parameter aWildcardAtomicNumberIsValid is without influence here.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */

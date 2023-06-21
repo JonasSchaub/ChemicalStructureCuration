@@ -36,6 +36,10 @@ import java.util.Objects;
  */
 public class MaxHeavyAtomCountFilter extends BaseFilter {
 
+    /*
+    TODO: handling of issues (reporting)
+     */
+
     /**
      * Integer value of the max heavy atom count threshold.
      */

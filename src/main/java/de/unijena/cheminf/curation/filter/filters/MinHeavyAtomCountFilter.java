@@ -36,6 +36,10 @@ import java.util.Objects;
  */
 public class MinHeavyAtomCountFilter extends BaseFilter {
 
+    /*
+    TODO: handling of issues (reporting)
+     */
+
     /**
      * Integer value of the min heavy atom count threshold.
      */
