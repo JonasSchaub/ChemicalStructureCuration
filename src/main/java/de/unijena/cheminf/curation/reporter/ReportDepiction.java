@@ -16,8 +16,6 @@ import java.util.Base64;
 
 /**
  * class to depict the molecules that caused an error in the pipeline to then show them in the report
- * @throws //CDKExpetion
- * @returns imageString String to show the actual image in the markdown file
  */
 public class ReportDepiction {
 

@@ -143,7 +143,7 @@ public class ReportDataObject {
     /**
      * Returns the runtime class of the IProcessingStep instance the reported problem occurred in.
      *
-     * @return instance of Class<? extends IProcessingStep>
+     * @return instance of Class&lt;? extends IProcessingStep&gt;
      */
     public Class<? extends IProcessingStep> getClassOfProcessingStep() {
         return classOfProcessingStep;

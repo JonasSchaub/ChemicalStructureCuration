@@ -38,8 +38,8 @@ public interface IReporter {
      * TODO
      * (method might not be necessary / be replaced with a method that just switches the file destination)
      *
-     * @param aFileDestination
-     * @throws IOException
+     * @param aFileDestination file path name string
+     * @throws IOException TODO
      */
     public void initializeNewReport(String aFileDestination) throws IOException;
 
@@ -54,6 +54,9 @@ public interface IReporter {
     /**
      * TODO
      * (creates the report file at the chosen destination)
+     *
+     * @throws CDKException TODO
+     * @throws IOException TODO
      */
     public void report() throws CDKException, IOException;
 

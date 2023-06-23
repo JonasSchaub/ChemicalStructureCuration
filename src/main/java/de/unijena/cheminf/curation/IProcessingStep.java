@@ -54,7 +54,8 @@ public interface IProcessingStep {
      * to the original data, use the option of cloning the given atom container set before the processing (by setting
      * the first boolean parameter to true).
      * <ul>
-     * <b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before processing.
+     * <li><b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
+     * processing.</li>
      * </ul>
      * To make modifications to and possible issues with structures the most traceable, it is advised to set the second
      * boolean parameter to true to automatically assign a MolID, an atom container property with the name

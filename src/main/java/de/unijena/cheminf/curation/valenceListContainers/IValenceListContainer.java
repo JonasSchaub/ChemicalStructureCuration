@@ -35,15 +35,15 @@ public interface IValenceListContainer {
      * configurations of atoms with regard to atomic number, charge, number of π bonds, number of σ bonds and the
      * maximum number of implicit hydrogens. The index of an entry equals its line in the imported valence list file
      * minus two. The entries in the list are sorted by their atomic number.
-     * <p>
+     * <br>
      * For the entry with the index x in the valence list, the values specifying the respective atom configuration may
      * be accessed via:
      * <ul>
-     *      (x, 0) -> atomic number<p>
-     *      (x, 1) -> charge<p>
-     *      (x, 2) -> number of π bonds<p>
-     *      (x, 3) -> number of σ bonds<p>
-     *      (x, 4) -> maximum number of implicit hydrogens.
+     *      <li>(x, 0) -> atomic number</li>
+     *      <li>(x, 1) -> charge</li>
+     *      <li>(x, 2) -> number of π bonds</li>
+     *      <li>(x, 3) -> number of σ bonds</li>
+     *      <li>(x, 4) -> maximum number of implicit hydrogens.</li>
      * </ul>
      * For iterating over the entries of the valence list, use the method {@link #getLengthOfValenceList()} to receive
      * the total count of entries in the list. To directly access list entries regarding a specific chemical element,
@@ -66,20 +66,20 @@ public interface IValenceListContainer {
      * configuration of an atom with regard to atomic number, charge, number of π bonds, number of σ bonds and the
      * maximum number of implicit hydrogens. The index of an entry equals its line in the file minus two. The entries
      * in the list are sorted by their atomic number.
-     * <p>
+     * <br>
      * The values contained by each of the five integer long arrays are:
      * <ul>
-     *      [0] -> atomic number,
-     *      [1] -> charge,
-     *      [2] -> number of π bonds,
-     *      [3] -> number of σ bonds,
-     *      [4] -> maximum number of implicit hydrogens.
+     *      <li>[0] -> atomic number,</li>
+     *      <li>[1] -> charge,</li>
+     *      <li>[2] -> number of π bonds,</li>
+     *      <li>[3] -> number of σ bonds,</li>
+     *      <li>[4] -> maximum number of implicit hydrogens.</li>
      * </ul>
      * To get the length of the valence list matrix (which equals the number of valid valences and configurations of
      * atoms contained by the valence list), use the method {@link #getLengthOfValenceList()}. To directly access
      * list entries regarding a specific chemical element, the methods {@link #getValenceListElementPointer(int)} and
      * {@link #getAtomConfigurationsCountOfElement(int)} might be used.
-     * <p>
+     * <br>
      * To avoid changes to the original data, the returned array is a clone of the original array.
      *
      * @param aValenceListEntryIndex index of the valence list entry to be returned
@@ -108,7 +108,7 @@ public interface IValenceListContainer {
      * may be accessed via the methods {@link #getValenceListEntry}. To receive the count of how many entries in the
      * list regard the specific element, use the method {@link #getAtomConfigurationsCountOfElement(int)}. The entries
      * in the list are sorted by their atomic number.
-     * <p>
+     * <br>
      * The given atomic number is not checked for validity. If the given atomic number is not present in the valence
      * list, -1 is returned.
      *
@@ -125,7 +125,7 @@ public interface IValenceListContainer {
      * may be accessed via the methods {@link #getValenceListEntry}. To get a pointer pointing at the first entry
      * regarding the specific element, use the method {@link #getValenceListElementPointer(int)}. The entries in the
      * list are sorted by their atomic number.
-     * <p>
+     * <br>
      * The given atomic number is not checked for validity. If the given atomic number is not included in the valence
      * list, zero is returned.
      *

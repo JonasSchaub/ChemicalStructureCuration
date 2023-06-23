@@ -56,6 +56,12 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /**
      * Constructor. TODO: what shall I type in a constructor that just calls the super? @Felix, @Jonas
+     *
+     * @param aReporter reporter to report to when processing; if null is given, an instance of the default reporter
+     *                 is used
+     * @param anOptionalIDPropertyName null or the name string of an atom container property containing an optional
+     *                                 second identifier of structures to be used at the reporting of a processing
+     *                                 process; if null is given, no second identifier is used
      */
     public BaseFilter(IReporter aReporter, String anOptionalIDPropertyName) {
         super(aReporter, anOptionalIDPropertyName);

@@ -41,8 +41,8 @@ public interface IFilter extends IProcessingStep {
     /**
      * {@inheritDoc}
      * <ul>
-     * <b>Note:</b> Classes implementing {@link IFilter} are not meant to cause any modifications to the provided
-     * atom containers themself.
+     * <li><b>Note:</b> Classes implementing {@link IFilter} are not meant to cause any modifications to the provided
+     * atom containers themself.</li>
      * </ul>
      */
     public IAtomContainerSet process(
