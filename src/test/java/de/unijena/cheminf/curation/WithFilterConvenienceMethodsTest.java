@@ -46,6 +46,9 @@ import org.openscience.cdk.interfaces.IBond;
 
 /**
  * Test class of CurationPipeline methods to add specific filters to the pipeline.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class WithFilterConvenienceMethodsTest {
 
@@ -864,7 +867,7 @@ public class WithFilterConvenienceMethodsTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
-        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
         Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
@@ -889,7 +892,7 @@ public class WithFilterConvenienceMethodsTest {
 
     /**
      * Tests whether the MaxMolecularMassFilter added to the listOfPipelineSteps by the .withMaxMolecularMassFilter()
-     * method of the class CurationPipeline with no MassComputation.Flavours parameter has {@link MassComputation.Flavours#MolWeight}
+     * method of the class CurationPipeline with no MassComputationFlavours parameter has {@link MassComputationFlavours#MOL_WEIGHT}
      * set as mass computation flavour.
      */
     @Test
@@ -897,7 +900,7 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
-                MassComputation.Flavours.MolWeight,
+                MassComputationFlavours.MOL_WEIGHT,
                 ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
@@ -912,7 +915,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -0.1;
-                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -926,7 +929,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .withMaxMolecularMassFilter() method of the class CurationPipeline with MassComputation.Flavours
+     * Tests whether the .withMaxMolecularMassFilter() method of the class CurationPipeline with MassComputationFlavours
      * parameter throws a NullPointerException if the given mass computation flavour is null.
      */
     @Test
@@ -935,7 +938,7 @@ public class WithFilterConvenienceMethodsTest {
                 NullPointerException.class,
                 () -> {
                     double tmpThresholdValue = 10.0;
-                    MassComputation.Flavours tmpFlavour = null;
+                    MassComputationFlavours tmpFlavour = null;
                     new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -953,7 +956,7 @@ public class WithFilterConvenienceMethodsTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline();
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
-        MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+        MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
         Assertions.assertSame(tmpCurationPipeline, tmpReturnedPipeline);
         Assertions.assertEquals(tmpInitialListSize + 1, tmpReturnedPipeline.getListOfPipelineSteps().size());
@@ -978,7 +981,7 @@ public class WithFilterConvenienceMethodsTest {
 
     /**
      * Tests whether the MinMolecularMassFilter added to the listOfPipelineSteps by the .withMinMolecularMassFilter()
-     * method of the class CurationPipeline with no computation flavour parameter has {@link MassComputation.Flavours#MolWeight}
+     * method of the class CurationPipeline with no computation flavour parameter has {@link MassComputationFlavours#MOL_WEIGHT}
      * set as mass computation flavour.
      */
     @Test
@@ -986,7 +989,7 @@ public class WithFilterConvenienceMethodsTest {
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
-                MassComputation.Flavours.MolWeight,
+                MassComputationFlavours.MOL_WEIGHT,
                 ((MaxMolecularMassFilter) tmpCurationPipeline.getListOfPipelineSteps().getLast()).getMassComputationFlavour()
         );
     }
@@ -1001,7 +1004,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -0.1;
-                    MassComputation.Flavours tmpFlavour = MassComputation.Flavours.MolWeight;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1015,7 +1018,7 @@ public class WithFilterConvenienceMethodsTest {
     }
 
     /**
-     * Tests whether the .withMinMolecularMassFilter() method of the class CurationPipeline with MassComputation.Flavours
+     * Tests whether the .withMinMolecularMassFilter() method of the class CurationPipeline with MassComputationFlavours
      * parameter throws a NullPointerException if the given mass computation flavour is null.
      */
     @Test
@@ -1024,7 +1027,7 @@ public class WithFilterConvenienceMethodsTest {
                 NullPointerException.class,
                 () -> {
                     double tmpThresholdValue = 10.0;
-                    MassComputation.Flavours tmpFlavour = null;
+                    MassComputationFlavours tmpFlavour = null;
                     new CurationPipeline().withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );

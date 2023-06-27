@@ -33,6 +33,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
  * Interface of all processing steps. A processing step takes, processes and returns a set of structures and reports
  * encountered issues to a reporter. Furthermore, processing steps provide everything needed to use them as part of
  * a pipeline of multiple processing steps.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public interface IProcessingStep {
 

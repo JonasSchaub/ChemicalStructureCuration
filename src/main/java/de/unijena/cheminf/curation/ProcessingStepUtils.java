@@ -31,7 +31,11 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import java.util.Objects;
 
 /**
- * Util class of the processing steps.
+ * Util class of the processing steps; contains methods for assigning, retrieving and removing MolIDs from / to atom
+ * containers.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class ProcessingStepUtils {
 
@@ -130,10 +134,11 @@ public class ProcessingStepUtils {
      */
     public static String getAssignedMolID(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        if (anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME) == null) {
+        final Object tmpMolID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+        if (tmpMolID == null) {
             throw new IllegalArgumentException("The given IAtomContainer instance has no MolID assigned.");
         }
-        return anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString();
+        return tmpMolID.toString();
     }
 
 }

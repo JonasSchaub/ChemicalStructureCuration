@@ -25,7 +25,8 @@
 
 package de.unijena.cheminf.curation.filter.filters;
 
-import de.unijena.cheminf.curation.MassComputation;
+import de.unijena.cheminf.curation.ChemUtils;
+import de.unijena.cheminf.curation.MassComputationFlavours;
 import de.unijena.cheminf.curation.filter.BaseFilter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
@@ -47,23 +48,23 @@ public class MaxMolecularMassFilter extends BaseFilter {
     protected final double maxMolecularMass;
 
     /**
-     * MassComputation.Flavours constant that switches the computation type of the mass calculation.
+     * MassComputationFlavours constant that switches the computation type of the mass calculation.
      */
-    protected final MassComputation.Flavours massComputationFlavour;
+    protected final MassComputationFlavours massComputationFlavour;
 
     /**
      * Constructor of the MaxMolecularMassFilter class. Atom containers that equal the given max molecular mass do not
      * get filtered.
      *
      * @param aMaxMolecularMass double value of the max molecular mass to filter by
-     * @param aFlavour MassComputation.Flavours constant that switches the computation type of the mass calculation;
-     *                 see: {@link MassComputation.Flavours},
+     * @param aFlavour MassComputationFlavours constant that switches the computation type of the mass calculation;
+     *                 see: {@link MassComputationFlavours},
      *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given max molecular mass is less than zero
      */
-    public MaxMolecularMassFilter(double aMaxMolecularMass, MassComputation.Flavours aFlavour) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(aFlavour, "aFlavour (MassComputation.Flavours constant) is null.");
+    public MaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aFlavour, "aFlavour (MassComputationFlavours constant) is null.");
         if (aMaxMolecularMass < 0) {    //TODO: would not harm the code but makes no sense
             throw new IllegalArgumentException("aMaxMolecularMass (double value) was < than 0.");
         }
@@ -73,7 +74,7 @@ public class MaxMolecularMassFilter extends BaseFilter {
 
     /**
      * Constructor of the MaxMolecularMassFilter class. This constructor takes no specification of the 'mass flavour'
-     * that switches the computation type of the mass calculation; {@link MassComputation.Flavours#MolWeight} is used
+     * that switches the computation type of the mass calculation; {@link MassComputationFlavours#MOL_WEIGHT} is used
      * by default.
      * Atom containers that equal the given max molecular mass do not get filtered.
      *
@@ -81,7 +82,7 @@ public class MaxMolecularMassFilter extends BaseFilter {
      * @throws IllegalArgumentException if the given max molecular mass is less than zero
      */
     public MaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
-        this(aMaxMolecularMass, MassComputation.Flavours.MolWeight);
+        this(aMaxMolecularMass, MassComputationFlavours.MOL_WEIGHT);
     }
 
     /**
@@ -92,7 +93,7 @@ public class MaxMolecularMassFilter extends BaseFilter {
     protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         //
-        return MassComputation.getMass(anAtomContainer, this.massComputationFlavour) > this.maxMolecularMass;
+        return ChemUtils.getMass(anAtomContainer, this.massComputationFlavour) > this.maxMolecularMass;
     }
 
     /**
@@ -107,9 +108,9 @@ public class MaxMolecularMassFilter extends BaseFilter {
     /**
      * Returns the mass computation flavour that is used to compute the mass of a molecule.
      *
-     * @return MassComputation.Flavours constant
+     * @return MassComputationFlavours constant
      */
-    public MassComputation.Flavours getMassComputationFlavour() {
+    public MassComputationFlavours getMassComputationFlavour() {
         return this.massComputationFlavour;
     }
 

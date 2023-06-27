@@ -37,8 +37,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Abstract class BaseFilter - implements IFilter. Reduces the number of abstract methods to the protected method
- * {@link #isFiltered(IAtomContainer, boolean)}.
+ * Abstract class belonging to IFilter, the interface of processing steps that filter individual molecules from a
+ * bigger set according to a defined molecular descriptor value. The abstract class reduces the number of abstract
+ * methods to one.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
+ * @see IFilter
  */
 public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
@@ -48,17 +53,17 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     private static final Logger LOGGER = Logger.getLogger(BaseFilter.class.getName());
 
     /**
-     * Convenience constructor. Calls the main constructor with both params set to null.
+     * Constructor, calls the main constructor with both params set to null.
      */
     public BaseFilter() {   //TODO: view all the filters constructors!!
         this(null, null);
     }
 
     /**
-     * Constructor. TODO: what shall I type in a constructor that just calls the super? @Felix, @Jonas
+     * Constructor; calls the super constructor with the given reporter and optional ID property name string.
      *
      * @param aReporter reporter to report to when processing; if null is given, an instance of the default reporter
-     *                 is used
+     *                  is used
      * @param anOptionalIDPropertyName null or the name string of an atom container property containing an optional
      *                                 second identifier of structures to be used at the reporting of a processing
      *                                 process; if null is given, no second identifier is used
@@ -72,8 +77,8 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
      * #isFiltered(IAtomContainer, boolean)}.
      *
      * @throws NullPointerException  if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
-     * without causing an issue)
+     * does not possess a MolID (this will only cause an exception, if the processing of the atom container causes an
+     * issue)
      */
     @Override
     protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
@@ -106,7 +111,7 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * Checks whether the filter applies on a given IAtomContainer instance. True is returned, if the given atom
+     * Checks whether the filter applies to a given IAtomContainer instance. True is returned, if the given atom
      * container gets filtered; returns false if the atom container passes the filter. This implementation takes a
      * second, boolean parameter that specifies whether to report issues with the given structure to the reporter
      * or to throw an exceptions instead. If an issue gets reported, true is returned.

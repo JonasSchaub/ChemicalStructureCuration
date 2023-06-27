@@ -56,6 +56,9 @@ import java.util.logging.Logger;
  * Use the {@link #addProcessingStep(IProcessingStep)} method to add processing steps to the pipeline no convenience
  * method exists for.
  * ...
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class CurationPipeline extends BaseProcessingStep {
 
@@ -334,17 +337,17 @@ public class CurationPipeline extends BaseProcessingStep {
      * molecular mass value do not get filtered.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
-     * @param aMassComputationFlavour MassComputation.Flavours constant that switches the computation type of the mass
+     * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
      *                                calculation
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given max molecular mass is of a negative value
-     * @see MassComputation.Flavours
+     * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputation.Flavours aMassComputationFlavour)
+    public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aMassComputationFlavour)
             throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputation.Flavours constant) is null.");
+        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
         if (aMaxMolecularMass < 0) {
             throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
         }
@@ -355,13 +358,13 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * Adds a max molecular mass filter with the given max molecular mass value to the curation pipeline. This method
-     * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputation.Flavours
+     * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputationFlavours
      * #MolWeight} is used. Atom containers that equal the given max molecular mass value do not get filtered.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max molecular mass is of a negative value
-     * @see MassComputation.Flavours
+     * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
     public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
@@ -379,17 +382,17 @@ public class CurationPipeline extends BaseProcessingStep {
      * molecular mass value do not get filtered.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
-     * @param aMassComputationFlavour MassComputation.Flavours constant that switches the computation type of the mass
+     * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
      *                                calculation
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given min molecular mass is of a negative value
-     * @see MassComputation.Flavours
+     * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
-    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputation.Flavours aMassComputationFlavour)
+    public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass, MassComputationFlavours aMassComputationFlavour)
             throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputation.Flavours constant) is null.");
+        Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
         if (aMinMolecularMass < 0) {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
         }
@@ -400,13 +403,13 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * Adds a min molecular mass filter with the given min molecular mass value to the curation pipeline. This method
-     * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputation.Flavours
+     * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputationFlavours
      * #MolWeight} is used. Atom containers that equal the given min molecular mass value do not get filtered.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min molecular mass is of a negative value
-     * @see MassComputation.Flavours
+     * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
     public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {

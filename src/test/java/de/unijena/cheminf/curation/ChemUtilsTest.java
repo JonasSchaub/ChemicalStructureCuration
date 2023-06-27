@@ -34,22 +34,17 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IElement;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
  * Test class for methods of class ChemUtils.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class ChemUtilsTest {
 
-    /**
-     * Tests whether the .countAtoms() method of the class ChemUtils returns an integer value.
-     */
-    @Test
-    public void countAtomsTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens));
-    }
-
+    //<editor-fold desc="countAtoms() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms of benzene correct
      * considering implicit hydrogen atoms.
@@ -123,16 +118,9 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .countImplicitHydrogens() method of the class ChemUtils returns an integer value.
-     */
-    @Test
-    public void countImplicitHydrogensTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.countImplicitHydrogens(tmpAtomContainer));
-    }
-
+    //<editor-fold desc="countImplicitHydrogens() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .countImplicitHydrogens() method of the class ChemUtils returns 6 when given an atom
      * container with 6 implicit hydrogen atoms.
@@ -172,16 +160,9 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .countExplicitHydrogens() method of the class ChemUtils returns an integer value.
-     */
-    @Test
-    public void countExplicitHydrogensTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.countExplicitHydrogens(tmpAtomContainer));
-    }
-
+    //<editor-fold desc="countExplicitHydrogens() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .countExplicitHydrogens() method of the class ChemUtils returns 6 when given an atom
      * container with 6 explicit hydrogen atoms.
@@ -221,17 +202,9 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .countBonds() method of class ChemUtils returns an integer value.
-     */
-    @Test
-    public void countBondsMethodTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
-    }
-
+    //<editor-fold desc="countBonds() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .countBonds() method of class ChemUtils returns the correct bond count not considering
      * implicit hydrogen atoms; test 1.
@@ -255,7 +228,7 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsMethodTest_notConsideringImplicitHydrogens_test2_5Bond() throws InvalidSmilesException {
+    public void countBondsMethodTest_notConsideringImplicitHydrogens_test2_5Bonds() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString(
                 "C1CCCC1"   //5
         );
@@ -294,7 +267,7 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsMethodTest_consideringImplicitHydrogens_test1_7Bond() throws InvalidSmilesException {
+    public void countBondsMethodTest_consideringImplicitHydrogens_test1_7Bonds() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString(
                 "CC"    //7
         );
@@ -310,7 +283,7 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsMethodTest_consideringImplicitHydrogens_test2_15Bond() throws InvalidSmilesException {
+    public void countBondsMethodTest_consideringImplicitHydrogens_test2_15Bonds() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString(
                 "C1CCCC1"   //15
         );
@@ -356,18 +329,9 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .countBondsOfSpecificOrder() method of class ChemUtils returns an integer value.
-     */
-    @Test
-    public void countBondsOfSpecificOrderMethodTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
-    }
-
+    //<editor-fold desc="countBondsOfSpecificOrder() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .countBondsOfSpecificOrder() method of class ChemUtils returns the correct result when
      * counting bonds with bond order single not considering bonds to implicit hydrogen atoms.
@@ -582,16 +546,9 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .countAtomsOfAtomicNumbers() method of class ChemUtils returns an integer value.
-     */
-    @Test
-    public void countAtomsOfAtomicNumbersMethodTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer));
-    }
-
+    //<editor-fold desc="countAtomsOfAtomicNumbers() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .countAtomsOfAtomicNumbers() method of class ChemUtils accepts a varying amount of integer
      * value parameters.
@@ -845,16 +802,9 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .getHeavyAtomsCount() method of class ChemUtils returns an integer value.
-     */
-    @Test
-    public void getHeavyAtomsCountMethodTest_returnsIntegerValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        Assertions.assertInstanceOf(Integer.class, ChemUtils.getHeavyAtomsCount(tmpAtomContainer));
-    }
-
+    //<editor-fold desc="getHeavyAtomCount() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .getHeavyAtomsCount() method of class ChemUtils returns the count of heavy atoms
      * (non-hydrogen atoms); multiple tests.
@@ -895,5 +845,109 @@ public class ChemUtilsTest {
                 }
         );
     }
+    //</editor-fold>
+
+    //<editor-fold desc="getMass() method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the values returned by the .getMass() method of class ChemUtils equal the mass calculated
+     * by the .getMass() method of class AtomContainerManipulator.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @see AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    @Test
+    public void getMassMethodTest_calculatedValuesEqualAtomContainerManipulatorMethodGetMassResults_withDiffFlavours()
+            throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CCO",
+                "NCC(=O)O",
+                "C",
+                "CH",
+                "HCH"
+        );
+        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
+                MassComputationFlavours.MOL_WEIGHT,
+                MassComputationFlavours.MOL_WEIGHT_IGNORE_SPECIFIED,
+                MassComputationFlavours.MONO_ISOTOPIC,
+                MassComputationFlavours.MOST_ABUNDANT
+        };
+        for (MassComputationFlavours tmpFlavour :
+                tmpFlavoursArray) {
+            for (IAtomContainer tmpAtomContainer :
+                    tmpAtomContainerSet.atomContainers()) {
+                Assertions.assertEquals(
+                        AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue()),
+                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour)
+                );
+            }
+        }
+    }
+
+    /**
+     * Tests whether the values returned by the .getMass() method of class ChemUtils equal the masses calculated
+     * by the .getMass() method of class AtomContainerManipulator if atoms have a specified mass.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @see AtomContainerManipulator#getMass(IAtomContainer, int)
+     */
+    @Test
+    public void getMassMethodTest_calculatedValuesEqualAtomContainerManipulatorMethodGetMassResults_withDiffFlavours_withSpecifiedMass()
+            throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "CCO",
+                "CCO"
+        );
+        tmpAtomContainerSet.getAtomContainer(1).getAtom(0).setExactMass(13.0);
+        tmpAtomContainerSet.getAtomContainer(1).getAtom(2).setExactMass(18.0);
+        MassComputationFlavours[] tmpFlavoursArray = new MassComputationFlavours[]{
+                MassComputationFlavours.MOL_WEIGHT,
+                MassComputationFlavours.MOL_WEIGHT_IGNORE_SPECIFIED,
+                MassComputationFlavours.MONO_ISOTOPIC,
+                MassComputationFlavours.MOST_ABUNDANT
+        };
+        for (MassComputationFlavours tmpFlavour :
+                tmpFlavoursArray) {
+            for (IAtomContainer tmpAtomContainer :
+                    tmpAtomContainerSet.atomContainers()) {
+                Assertions.assertEquals(
+                        AtomContainerManipulator.getMass(tmpAtomContainer, tmpFlavour.getAssociatedIntegerValue()),
+                        ChemUtils.getMass(tmpAtomContainer, tmpFlavour)
+                );
+            }
+        }
+    }
+
+    /**
+     * Tests whether the .getMass() method of class ChemUtils throws a NullPointerException if the given
+     * IAtomContainer instance is null.
+     */
+    @Test
+    public void getMassMethodTest_atomContainerNull_throwsNullPointerException() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = null;
+                    MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
+                    ChemUtils.getMass(tmpAtomContainer, tmpFlavour);
+                }
+        );
+    }
+
+    /**
+     * Tests whether the .getMass() method of class ChemUtils throws a NullPointerException if the given
+     * MassComputationFlavours constant is null.
+     */
+    @Test
+    public void getMassMethodTest_massComputationFlavourNull_throwsNullPointerException() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IAtomContainer tmpAtomContainer = new AtomContainer();
+                    MassComputationFlavours tmpFlavour = null;
+                    ChemUtils.getMass(tmpAtomContainer, tmpFlavour);
+                }
+        );
+    }
+    //</editor-fold>
 
 }

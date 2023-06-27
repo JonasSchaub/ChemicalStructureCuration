@@ -30,11 +30,13 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
- * IFilter interface.
- * Classes implementing this interface are supposed to answer a true or false question regarding atom containers based
- * on a (molecular) descriptor.These questions shall be answerable separately for every atom container - without
- * knowledge of any other atom containers. The processing, the filtering of a set of atom containers, should happen
- * based on the response to this question and without modifying any information held by one of the atom containers.
+ * Filters are processing steps that filter individual molecules from a bigger set according to a defined molecular
+ * descriptor value. The filtering process shall not modify any information held by one of the atom containers. Whether
+ * an atom container passes a filter or not should be determinable without knowledge of any other atom containers,
+ * hence this interface is not meant for tasks like e.g. filtering duplicates.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public interface IFilter extends IProcessingStep {
 
@@ -42,7 +44,7 @@ public interface IFilter extends IProcessingStep {
      * {@inheritDoc}
      * <ul>
      * <li><b>Note:</b> Classes implementing {@link IFilter} are not meant to cause any modifications to the provided
-     * atom containers themself.</li>
+     * atom containers.</li>
      * </ul>
      */
     public IAtomContainerSet process(
@@ -52,11 +54,9 @@ public interface IFilter extends IProcessingStep {
     ) throws NullPointerException;
 
     /**
-     * Checks whether the filter applies on a given IAtomContainer instance. Returns true, if the given atom
+     * Checks whether the filter applies to a given IAtomContainer instance. Returns true, if the given atom
      * container gets filtered; returns false, if the atom container passes the filter; throws an exception if there
-     * is an issue with the structure.
-     * TODO: still not that happy with the naming
-     *  suggestions: getsFiltered / passesFilter / ... ?!
+     * is an issue with the structure. Min and max threshold values are inclusive.
      *
      * @param anAtomContainer IAtomContainer instance to be checked
      * @return true if the structure does not pass the filter

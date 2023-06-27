@@ -33,6 +33,9 @@ import java.util.Objects;
 
 /**
  * Object that stores all data necessary for an entry in a report file.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class ReportDataObject {
 
@@ -68,17 +71,45 @@ public class ReportDataObject {
     private final ErrorCodes errorCode;
 
     /**
-     * Constructor. Creates a new report data object that stores all data needed for an entry in the report file.
+     * Constructor. Creates a new report data object without taking an atom container as parameter. This constructor
+     * is ought to be used if the atom container the reported issue refers to is null.
      *
-     * @param anAtomContainer atom container of the structure
-     * @param anIdentifier identifier string of the structure; may only be null if the given atom container is null
-     * @param anOptionalIdentifier optional second identifier string of the structure or null if there is none
-     * @param anIndexOfProcessingStepInPipeline string of the index of the processing step the in the pipeline or null
-     *                                          if the is not part of a pipeline
+     * @param anIndexOfProcessingStepInPipeline string of the index of the processing step in the pipeline or null
+     *                                          if it is not part of a pipeline
      * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
      * @param anErrorCode error code of the reported problem
-     * @throws NullPointerException if the given aClassOfProcessingStep or anErrorCode is null; if anIdentifier is null
-     *                              when anAtomContainer is not null
+     * @throws NullPointerException if the given aClassOfProcessingStep or anErrorCode is null
+     * @see #ReportDataObject(IAtomContainer, String, String, String, Class, ErrorCodes)
+     */
+    public ReportDataObject(
+            String anIndexOfProcessingStepInPipeline,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
+            ErrorCodes anErrorCode
+    ) throws NullPointerException {
+        Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
+                " IProcessingStep>) is null.");
+        Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
+        this.atomContainer = null;
+        this.identifier = null;
+        this.optionalIdentifier = null;
+        this.indexOfProcessingStepInPipeline = anIndexOfProcessingStepInPipeline;
+        this.classOfProcessingStep = aClassOfProcessingStep;
+        this.errorCode = anErrorCode;
+    }
+
+    /**
+     * Constructor. Creates a new report data object that stores all data needed for an entry in the report file. The
+     * reported atom container may not be null.
+     *
+     * @param anAtomContainer atom container of the structure
+     * @param anIdentifier identifier string of the structure
+     * @param anOptionalIdentifier optional second identifier string of the structure or null if there is none
+     * @param anIndexOfProcessingStepInPipeline string of the index of the processing step in the pipeline or null
+     *                                          if it is not part of a pipeline
+     * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
+     * @param anErrorCode error code of the reported problem
+     * @throws NullPointerException if anAtomContainer, anIdentifier, aClassOfProcessingStep or anErrorCode is null
+     * @see #ReportDataObject(String, Class, ErrorCodes)
      */
     public ReportDataObject(
             IAtomContainer anAtomContainer,
@@ -88,10 +119,8 @@ public class ReportDataObject {
             Class<? extends IProcessingStep> aClassOfProcessingStep,
             ErrorCodes anErrorCode
     ) throws NullPointerException {
-        //TODO: accept the atom container to be null? (case: ATOM_CONTAINER_NULL_ERROR)
-        if (anAtomContainer == null) {
-            Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
-        }
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
         Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
                 " IProcessingStep>) is null.");
         Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");

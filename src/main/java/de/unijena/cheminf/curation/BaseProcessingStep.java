@@ -43,6 +43,9 @@ import java.util.logging.Logger;
  * Essentially, this abstract class works as a wrapper class for methods that take, process and return a set of atom
  * containers, and thereby may be used to easily create workers that can be used as part of a pipeline (see {@link
  * CurationPipeline}).
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public abstract class BaseProcessingStep implements IProcessingStep {
 
