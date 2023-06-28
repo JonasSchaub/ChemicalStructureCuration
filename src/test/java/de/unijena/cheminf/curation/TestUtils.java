@@ -25,8 +25,9 @@
 
 package de.unijena.cheminf.curation;
 
-import de.unijena.cheminf.curation.filter.BaseFilter;
-import de.unijena.cheminf.curation.filter.IFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.BaseFilter;
+import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
+import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
 import org.junit.jupiter.api.Assertions;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;

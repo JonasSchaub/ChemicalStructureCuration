@@ -25,8 +25,8 @@
 
 package de.unijena.cheminf.curation.reporter;
 
-import de.unijena.cheminf.curation.ErrorCodes;
-import de.unijena.cheminf.curation.IProcessingStep;
+import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
