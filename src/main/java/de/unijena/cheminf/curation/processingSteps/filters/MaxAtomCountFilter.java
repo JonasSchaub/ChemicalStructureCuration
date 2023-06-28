@@ -36,14 +36,10 @@ import java.util.Objects;
  */
 public class MaxAtomCountFilter extends BaseFilter {
 
-    /*
-    TODO: rename maxAtomCount to maxAtomCountThreshold?
-     */
-
     /**
-     * Integer value of the max atom count threshold.
+     * Integer value of the atom count threshold.
      */
-    protected final int maxAtomCount;
+    protected final int atomCountThresholdValue;    //TODO: remove the "...Value" ?
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
@@ -55,26 +51,26 @@ public class MaxAtomCountFilter extends BaseFilter {
      * Constructor of the MaxAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
      * containers that equal the given max atom count do not get filtered.
      *
-     * @param aMaxAtomCount integer value of the max atom count to filter by
+     * @param anAtomCountThresholdValue  integer value of the max atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                  calculating an atom containers atom count
-     * @throws IllegalArgumentException if the given max atom count is less than zero
+     *                                   calculating an atom containers atom count
+     * @throws IllegalArgumentException if the given max atom count threshold value is less than zero
      */
-    public MaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxAtomCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
+    public MaxAtomCountFilter(int anAtomCountThresholdValue, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (anAtomCountThresholdValue < 0) {
+            throw new IllegalArgumentException("anAtomCountThresholdValue (integer value) is less than 0.");
         }
-        this.maxAtomCount = aMaxAtomCount;
+        this.atomCountThresholdValue = anAtomCountThresholdValue;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
     /**
      * {@inheritDoc}
      * <br>
-     * Atom containers that equal the max atom count do not get filtered.
+     * Atom containers that equal the atom count threshold value do not get filtered.
      *
      * @throws NullPointerException if the given IAtomContainer instance is null
-     * @throws IllegalArgumentException if the filter has an illegal max atom count threshold value  TODO: should not happen
+     * @throws IllegalArgumentException if the filter has an illegal atom count threshold value  TODO: should not happen
      */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
@@ -84,18 +80,18 @@ public class MaxAtomCountFilter extends BaseFilter {
     /**
      * {@inheritDoc}
      * <br>
-     * Atom containers that equal the max atom count do not get filtered.
+     * Atom containers that equal the atom count threshold value do not get filtered.
      *
      * @throws NullPointerException if the given IAtomContainer instance is null and issues do not get reported to the
      * reporter
-     * @throws IllegalArgumentException if the filter has an illegal max atom count threshold value  TODO: should not happen
+     * @throws IllegalArgumentException if the filter has an illegal atom count threshold value  TODO: should not happen
      */
     @Override
     protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException, IllegalArgumentException {
         try {
             Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
             //
-            return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.maxAtomCount + 1, this.considerImplicitHydrogens);
+            return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.atomCountThresholdValue + 1, this.considerImplicitHydrogens);
         } catch (Exception anException) {
             if (aReportToReporter) {
                 ErrorCodes tmpErrorCode;
@@ -114,12 +110,12 @@ public class MaxAtomCountFilter extends BaseFilter {
     }
 
     /**
-     * Returns the max atom count.
+     * Returns the atom count threshold value.
      *
      * @return Integer value
      */
-    public int getMaxAtomCount() {
-        return this.maxAtomCount;
+    public int getAtomCountThresholdValue() {
+        return this.atomCountThresholdValue;
     }
 
     /**

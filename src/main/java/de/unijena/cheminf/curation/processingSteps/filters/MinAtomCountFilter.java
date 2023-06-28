@@ -34,61 +34,32 @@ import java.util.Objects;
 /**
  * Min atom count filter for filtering atom containers based on a minimum atom count.
  */
-public class MinAtomCountFilter extends BaseFilter {
-
-    /**
-     * Integer value of the min atom count threshold.
-     */
-    protected final int minAtomCount;
-
-    /**
-     * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
-     * count.
-     */
-    protected final boolean considerImplicitHydrogens;
+public class MinAtomCountFilter extends MaxAtomCountFilter {
 
     /**
      * Constructor of the MinAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
      * containers that equal the given min atom count do not get filtered.
      *
-     * @param aMinAtomCount integer value of the min atom count to filter by
+     * @param anAtomCountThresholdValue  integer value of the min atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                  calculating an atom containers atom count
-     * @throws IllegalArgumentException if the given min atom count is less than zero
+     *                                   calculating an atom containers atom count
+     * @throws IllegalArgumentException if the given min atom count threshold value is less than zero
      */
-    public MinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinAtomCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
-        }
-        this.minAtomCount = aMinAtomCount;
-        this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+    public MinAtomCountFilter(int anAtomCountThresholdValue, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        super(anAtomCountThresholdValue, aConsiderImplicitHydrogens);
     }
 
-    /**
-     * {@inheritDoc}
-     * <br>
-     * Atom containers that equal the max atom count do not get filtered.
-     *
-     * @throws NullPointerException if the given IAtomContainer instance is null
-     * @throws IllegalArgumentException if the filter has an illegal min atom count threshold value  TODO: should not happen
-     */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
-        return this.isFiltered(anAtomContainer, false);   //TODO: directly call .isFiltered(IAtomContainer, boolean) of this class?
+        return this.isFiltered(anAtomContainer, false);
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the min atom count do not get filtered.
-     *
-     * @throws IllegalArgumentException  if the filter has an illegal min atom count threshold value  TODO: should not happen
-     */
     @Override
     protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException, IllegalArgumentException {
         try {
             Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
             //
-            return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.minAtomCount, this.considerImplicitHydrogens);
+            return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.atomCountThresholdValue, this.considerImplicitHydrogens);
         } catch (Exception anException) {
             if (aReportToReporter) {
                 ErrorCodes tmpErrorCode;
@@ -103,24 +74,6 @@ public class MinAtomCountFilter extends BaseFilter {
                 throw anException;
             }
         }
-    }
-
-    /**
-     * Returns the min atom count.
-     *
-     * @return Integer value
-     */
-    public int getMinAtomCount() {
-        return this.minAtomCount;
-    }
-
-    /**
-     * Returns whether implicit hydrogen atoms do get considered.
-     *
-     * @return Boolean value
-     */
-    public boolean isConsiderImplicitHydrogens() {
-        return this.considerImplicitHydrogens;
     }
 
 }

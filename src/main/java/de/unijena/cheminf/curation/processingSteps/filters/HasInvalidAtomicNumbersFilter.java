@@ -35,12 +35,7 @@ import java.util.Objects;
  * Has invalid atomic numbers filter to filter atom containers with atoms with invalid atomic numbers out of a set of
  * atom containers.
  */
-public class HasInvalidAtomicNumbersFilter extends BaseFilter {
-
-    /**
-     * Boolean value whether to consider the wildcard atomic number zero as a valid atomic number.
-     */
-    protected final boolean wildcardAtomicNumberIsValid;
+public class HasInvalidAtomicNumbersFilter extends HasAllValidAtomicNumbersFilter {
 
     /**
      * Constructor of the HasInvalidAtomicNumbersFilter class. The wildcard atomic number zero may or may not be
@@ -50,7 +45,7 @@ public class HasInvalidAtomicNumbersFilter extends BaseFilter {
      *                                     as a valid atomic number
      */
     public HasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
-        this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
+        super(aWildcardAtomicNumberIsValid);
     }
 
     /**
@@ -101,15 +96,6 @@ public class HasInvalidAtomicNumbersFilter extends BaseFilter {
                 throw anException;
             }
         }
-    }
-
-    /**
-     * Returns whether the wildcard atomic number zero is considered as valid atomic number.
-     *
-     * @return Boolean value
-     */
-    public boolean isWildcardAtomicNumberIsValid() {
-        return this.wildcardAtomicNumberIsValid;
     }
 
 }
