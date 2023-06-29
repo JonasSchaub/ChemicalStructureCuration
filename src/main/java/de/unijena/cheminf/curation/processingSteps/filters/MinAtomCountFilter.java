@@ -25,7 +25,6 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
-import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -37,13 +36,13 @@ import java.util.Objects;
 public class MinAtomCountFilter extends MaxAtomCountFilter {
 
     /**
-     * Constructor of the MinAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
-     * containers that equal the given min atom count do not get filtered.
+     * Constructor; initializes the class fields with the given values. Implicit hydrogen atoms may or may not be
+     * considered; atom containers that equal the given atom count threshold value do not get filtered.
      *
      * @param anAtomCountThresholdValue  integer value of the min atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                   calculating an atom containers atom count
-     * @throws IllegalArgumentException if the given min atom count threshold value is less than zero
+     *                                   calculating the atom count of an atom container
+     * @throws IllegalArgumentException if the given atom count threshold value is less than zero
      */
     public MinAtomCountFilter(int anAtomCountThresholdValue, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         super(anAtomCountThresholdValue, aConsiderImplicitHydrogens);
@@ -51,29 +50,13 @@ public class MinAtomCountFilter extends MaxAtomCountFilter {
 
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
-        return this.isFiltered(anAtomContainer, false);
-    }
-
-    @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException, IllegalArgumentException {
-        try {
-            Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-            //
-            return !FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.atomCountThresholdValue, this.considerImplicitHydrogens);
-        } catch (Exception anException) {
-            if (aReportToReporter) {
-                ErrorCodes tmpErrorCode;
-                if (NullPointerException.class.equals(anException.getClass())) {
-                    tmpErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
-                } else {
-                    tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
-                }
-                this.appendReportToReporter(anAtomContainer, tmpErrorCode);
-                return true;
-            } else {
-                throw anException;
-            }
-        }
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        //
+        return !FilterUtils.exceedsOrEqualsAtomCount(
+                anAtomContainer,
+                this.atomCountThresholdValue,
+                this.considerImplicitHydrogens
+        );
     }
 
 }

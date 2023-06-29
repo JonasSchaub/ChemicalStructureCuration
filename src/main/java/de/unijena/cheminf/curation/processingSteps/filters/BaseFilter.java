@@ -26,14 +26,12 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.processingSteps.BaseProcessingStep;
-import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -74,56 +72,41 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /**
      * Filters the atom containers of the given atom container set according to the values returned by {@link
-     * #isFiltered(IAtomContainer, boolean)}.
+     * #isFiltered(IAtomContainer)}.
      *
      * @throws NullPointerException  if the given IAtomContainerSet instance is null or an atom container of the set
      * does not possess a MolID (this will only cause an exception, if the processing of the atom container causes an
      * issue)
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Override
-    protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer :
                 anAtomContainerSet.atomContainers()) {
             //apply filter
             try {
-                if (!this.isFiltered(tmpAtomContainer, true)) {
+                if (!this.isFiltered(tmpAtomContainer)) {
                     tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
                 }
-            } catch (Exception anUnexpectedException) {
-                //reports and logs any unexpected exception; the structure does not pass the filter
-                this.appendReportToReporter(tmpAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
-                BaseFilter.LOGGER.log(Level.SEVERE, anUnexpectedException.toString(), anUnexpectedException);
+            } catch (Exception anException) {
+                //appends report to the reporter; the structure does not pass the filter
+                this.reportIssue(tmpAtomContainer, anException);
             }
         }
         return tmpFilteredACSet;
     }
 
     /**
-     * {@inheritDoc}
+     * Handles the given exception by appending a report to the reporter; rethrows the exception, if it is considered
+     * as fatal.
      *
-     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @param anAtomContainer the atom container the issue refers to
+     * @param anException the thrown exception
+     * @throws NullPointerException if the given atom container (if it is not null) does not possess a MolID
+     * @throws Exception if the given exception is considered as fatal
      */
-    @Override
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
-        return this.isFiltered(anAtomContainer, false);
-    }
-
-    /**
-     * Checks whether the filter applies to a given IAtomContainer instance. True is returned, if the given atom
-     * container gets filtered; returns false if the atom container passes the filter. This implementation takes a
-     * second, boolean parameter that specifies whether to report issues with the given structure to the reporter
-     * or to throw an exceptions instead. If an issue gets reported, true is returned.
-     *
-     * @param anAtomContainer   IAtomContainer instance to be checked
-     * @param aReportToReporter boolean value whether to report issues with the given structure to the reporter
-     *                          or throw exceptions instead
-     * @return true if the structure does not pass the filter or has issues that were reported to the reporter;
-     *         false if the structure passes the criteria of the filter
-     * @throws NullPointerException if the given IAtomContainer instance is null and issues do not get reported to the
-     * reporter
-     */
-    protected abstract boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException;
+    protected abstract void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws NullPointerException, Exception;
 
 }

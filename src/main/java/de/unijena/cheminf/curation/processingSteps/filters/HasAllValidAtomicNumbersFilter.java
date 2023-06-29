@@ -70,7 +70,7 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
      * {@inheritDoc}
      * <br>
      * The class field wildcardAtomicNumberIsValid decides whether zero is considered as a valid atomic number. An
-     * atomic number being null is considered as invalid.
+     * atomic number being null is considered as an invalid atomic number.
      *
      * @throws NullPointerException if the given IAtomContainer instance or an IAtom instance contained by it is null
      * and issues do not get reported to the reporter
@@ -95,7 +95,7 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
                 } else {
                     tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
                 }
-                this.appendReportToReporter(anAtomContainer, tmpErrorCode);
+                this.appendToReporter(anAtomContainer, tmpErrorCode);
                 return true;
             } else {
                 throw anException;

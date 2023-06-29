@@ -42,19 +42,19 @@ public class MaxAtomCountFilter extends BaseFilter {
     protected final int atomCountThresholdValue;    //TODO: remove the "...Value" ?
 
     /**
-     * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers atom
-     * count.
+     * Boolean value whether implicit hydrogen atoms should be considered when calculating the atom count of an atom
+     * container.
      */
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor of the MaxAtomCountFilter class. Implicit hydrogen atoms may or may not be considered; atom
-     * containers that equal the given max atom count do not get filtered.
+     * Constructor; initializes the class fields with the given values. Implicit hydrogen atoms may or may not be
+     * considered; atom containers that equal the given atom count threshold value do not get filtered.
      *
      * @param anAtomCountThresholdValue  integer value of the max atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                   calculating an atom containers atom count
-     * @throws IllegalArgumentException if the given max atom count threshold value is less than zero
+     *                                   calculating the atom count of an atom container
+     * @throws IllegalArgumentException if the given atom count threshold value is less than zero
      */
     public MaxAtomCountFilter(int anAtomCountThresholdValue, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (anAtomCountThresholdValue < 0) {
@@ -64,48 +64,32 @@ public class MaxAtomCountFilter extends BaseFilter {
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
-    /**
-     * {@inheritDoc}
-     * <br>
-     * Atom containers that equal the atom count threshold value do not get filtered.
-     *
-     * @throws NullPointerException if the given IAtomContainer instance is null
-     * @throws IllegalArgumentException if the filter has an illegal atom count threshold value  TODO: should not happen
-     */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
-        return this.isFiltered(anAtomContainer, false);
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        //
+        return FilterUtils.exceedsOrEqualsAtomCount(
+                anAtomContainer,
+                this.atomCountThresholdValue + 1,
+                this.considerImplicitHydrogens
+        );
     }
 
-    /**
-     * {@inheritDoc}
-     * <br>
-     * Atom containers that equal the atom count threshold value do not get filtered.
-     *
-     * @throws NullPointerException if the given IAtomContainer instance is null and issues do not get reported to the
-     * reporter
-     * @throws IllegalArgumentException if the filter has an illegal atom count threshold value  TODO: should not happen
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException, IllegalArgumentException {
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+        String tmpExceptionMessageString = anException.getMessage();
         try {
-            Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-            //
-            return FilterUtils.exceedsOrEqualsAtomCount(anAtomContainer, this.atomCountThresholdValue + 1, this.considerImplicitHydrogens);
-        } catch (Exception anException) {
-            if (aReportToReporter) {
-                ErrorCodes tmpErrorCode;
-                //TODO: is it possible to do this using a switch?
-                if (NullPointerException.class.equals(anException.getClass())) {
-                    tmpErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
-                } else {
-                    tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
-                }
-                this.appendReportToReporter(anAtomContainer, tmpErrorCode);
-                return true;
-            } else {
-                throw anException;
-            }
+            // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+            ErrorCodes tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+            this.appendToReporter(anAtomContainer, tmpErrorCode);
+        } catch (Exception aFatalException) {
+            /*
+             the message string of the given exception did not match the name of an ErrorCodes enum's constant or the
+             given atom container did not possess a MolID; the exception is considered as fatal and therefore rethrown
+             */
+            // the threshold value being of an illegal value is also considered as fatal
+            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            throw anException;
         }
     }
 

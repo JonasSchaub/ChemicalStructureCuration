@@ -83,6 +83,7 @@ public interface IProcessingStep {
      * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
      * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
      * without causing an issue)
+     * @throws Exception if an unexpected, fatal exception occurred
      * @see #getReporter()
      * @see #setReporter(IReporter)
      * @see #setIndexOfStepInPipeline(String)
@@ -95,7 +96,7 @@ public interface IProcessingStep {
             IAtomContainerSet anAtomContainerSet,
             boolean aCloneBeforeProcessing,
             boolean anAssignIdentifiers
-    ) throws NullPointerException;
+    ) throws NullPointerException, Exception;
 
     /**
      * Returns the name string of the atom container property containing an optional second identifier (example given

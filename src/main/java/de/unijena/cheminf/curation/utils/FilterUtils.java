@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.utils;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -47,11 +48,13 @@ public class FilterUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is less than zero
      */
-    public static boolean exceedsOrEqualsAtomCount(IAtomContainer anAtomContainer, int aThresholdValue,
-                                                   boolean aConsiderImplicitHydrogens) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
+    public static boolean exceedsOrEqualsAtomCount(IAtomContainer anAtomContainer,
+                                                   int aThresholdValue,
+                                                   boolean aConsiderImplicitHydrogens)
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         if (aThresholdValue < 0) {
-            throw new IllegalArgumentException("aThresholdValue (Integer value) is < than 0.");
+            throw new IllegalArgumentException("aThresholdValue (Integer value) is less than 0.");
         }
         final int tmpAtomCount = ChemUtils.countAtoms(anAtomContainer, aConsiderImplicitHydrogens);
         return tmpAtomCount >= aThresholdValue;

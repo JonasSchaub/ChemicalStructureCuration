@@ -104,24 +104,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         this.optionalIDPropertyName = anOptionalIDPropertyName;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
-     * without causing an issue)
-     * @see #getReporter()
-     * @see #setReporter(IReporter)
-     * @see #setIndexOfStepInPipeline(String)
-     * @see #MOL_ID_PROPERTY_NAME
-     * @see ProcessingStepUtils#assignMolIdToAtomContainers(IAtomContainerSet)
-     * @see ProcessingStepUtils#getAssignedMolID(IAtomContainer)
-     * @see ProcessingStepUtils#getArrayOfAssignedMolIDs(IAtomContainerSet)
-     */
     @Override
     public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet,
                                      boolean aCloneBeforeProcessing,
-                                     boolean anAssignIdentifiers) throws NullPointerException {
+                                     boolean anAssignIdentifiers) throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         if (anAssignIdentifiers) {
             ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
@@ -147,8 +133,9 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
      * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
      * without causing an issue)
+     * @throws Exception if an unexpected, fatal exception occurred
      */
-    protected abstract IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException;
+    protected abstract IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception;
 
     /**
      * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
@@ -169,7 +156,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                 tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
             } catch (CloneNotSupportedException aCloneNotSupportedException) {
                 tmpCloneNotSupportedExceptionsCount++;
-                this.appendReportToReporter(tmpAtomContainer, ErrorCodes.CLONE_ERROR);
+                this.appendToReporter(tmpAtomContainer, ErrorCodes.CLONE_ERROR);
             }
         }
         if (tmpCloneNotSupportedExceptionsCount > 0) {
@@ -190,7 +177,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @throws NullPointerException if the given ErrorCodes constant is null; if the value returned by {@link
      * #getMolIDString(IAtomContainer)} is null while anAtomContainer not being null
      */
-    protected void appendReportToReporter(IAtomContainer anAtomContainer, ErrorCodes anErrorCode) throws NullPointerException {
+    protected void appendToReporter(IAtomContainer anAtomContainer, ErrorCodes anErrorCode) throws NullPointerException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
         //get the identifiers of the atom container if the atom container is not null
         String tmpMolIDString = ((anAtomContainer != null) ? this.getMolIDString(anAtomContainer) : null);
@@ -255,35 +242,21 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         return tmpOptionalIDString;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getOptionalIDPropertyName() {
         return this.optionalIDPropertyName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
         this.optionalIDPropertyName = anOptionalIDPropertyName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IReporter getReporter() {
         return this.reporter;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws NullPointerException if the given instance of IReporter is null   TODO: use the default reporter instead?
-     */
     @Override
     public void setReporter(IReporter aReporter) throws NullPointerException {
         //TODO: just check for not null? / use the default reporter instead?

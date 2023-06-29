@@ -25,11 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
-import de.unijena.cheminf.curation.enums.ErrorCodes;
-import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
-
-import java.util.Objects;
 
 /**
  * Has invalid atomic numbers filter to filter atom containers with atoms with invalid atomic numbers out of a set of
@@ -48,54 +44,14 @@ public class HasInvalidAtomicNumbersFilter extends HasAllValidAtomicNumbersFilte
         super(aWildcardAtomicNumberIsValid);
     }
 
-    /**
-     * {@inheritDoc}
-     * <br>
-     * The class field wildcardAtomicNumberIsValid decides whether zero is considered as a valid atomic number. An
-     * atomic number being null is considered as an invalid atomic number.
-     *
-     * @throws NullPointerException if the given IAtomContainer instance or an IAtom instance contained by it is null
-     */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
-        return this.isFiltered(anAtomContainer, false);
+        return !super.isFiltered(anAtomContainer, false);
     }
 
-    /**
-     * {@inheritDoc}
-     * <br>
-     * The class field wildcardAtomicNumberIsValid decides whether zero is considered as a valid atomic number. An
-     * atomic number being null is considered as an invalid atomic number.
-     *
-     * @throws NullPointerException if the given IAtomContainer instance or an IAtom instance contained by it is null
-     * and issues do not get reported to the reporter
-     */
     @Override
     protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        try {
-            Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-            //
-            //does not catch NullPointerException
-            try {
-                return FilterUtils.hasAllValidAtomicNumbers(anAtomContainer, this.wildcardAtomicNumberIsValid);
-            } catch (IllegalArgumentException anIllegalArgumentException) {
-                //atomic number being null is considered as invalid
-                return false;
-            }
-        } catch (Exception anException) {
-            if (aReportToReporter) {
-                ErrorCodes tmpErrorCode;
-                if (NullPointerException.class.equals(anException.getClass())) {
-                    tmpErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
-                } else {
-                    tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
-                }
-                this.appendReportToReporter(anAtomContainer, tmpErrorCode);
-                return true;
-            } else {
-                throw anException;
-            }
-        }
+        return !super.isFiltered(anAtomContainer, aReportToReporter);
     }
 
 }

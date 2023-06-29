@@ -51,17 +51,19 @@ public interface IFilter extends IProcessingStep {
             IAtomContainerSet anAtomContainerSet,
             boolean aCloneBeforeProcessing,
             boolean anAssignIdentifiers
-    ) throws NullPointerException;
+    ) throws NullPointerException, Exception;
 
     /**
-     * Checks whether the filter applies to a given IAtomContainer instance. Returns true, if the given atom
-     * container gets filtered; returns false, if the atom container passes the filter; throws an exception if there
-     * is an issue with the structure. Min and max threshold values are inclusive.
+     * Checks whether the filter applies to a given IAtomContainer instance. Returns true, if the given atom container
+     * gets filtered; returns false, if the atom container passes the filter; throws an exception if there is an issue
+     * with the structure. In case of min and max threshold values, these values are considered as inclusive and
+     * respective atom containers pass the filter.
      *
      * @param anAtomContainer IAtomContainer instance to be checked
      * @return true if the structure does not pass the filter
      * @throws NullPointerException if the given IAtomContainer instance is null
+     * @throws Exception any other, filter specific exception
      */
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException;
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, Exception;
 
 }
