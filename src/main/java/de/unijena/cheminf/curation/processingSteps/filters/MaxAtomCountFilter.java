@@ -66,7 +66,7 @@ public class MaxAtomCountFilter extends BaseFilter {
 
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
         return FilterUtils.exceedsOrEqualsAtomCount(
                 anAtomContainer,
