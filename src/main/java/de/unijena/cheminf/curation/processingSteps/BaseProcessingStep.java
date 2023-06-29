@@ -170,7 +170,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     /**
      * Appends a report to the reporter by creating a ReportDataObject instance according to the given data and passing
      * it to the reporter instance. If the given atom container is not null, it is expected to have a property with the
-     * name {@link #MOL_ID_PROPERTY_NAME} and with a value not null; otherwise an NullPointerException gets thrown.
+     * name {@link #MOL_ID_PROPERTY_NAME} and with a value not null; otherwise an NullPointerException is thrown.
      *
      * @param anAtomContainer atom container instance the issue refers to
      * @param anErrorCode error code of the reported issue
@@ -179,18 +179,29 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     protected void appendToReporter(IAtomContainer anAtomContainer, ErrorCodes anErrorCode) throws NullPointerException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
-        //get the identifiers of the atom container if the atom container is not null
-        String tmpMolIDString = ((anAtomContainer != null) ? this.getMolIDString(anAtomContainer) : null);
-        String tmpOptionalIDString = ((anAtomContainer != null) ? this.getOptionalIDString(anAtomContainer) : null);
-        //append new report data object to the reporter
-        this.reporter.appendReport(new ReportDataObject(
-                anAtomContainer,
-                tmpMolIDString,
-                tmpOptionalIDString,
-                null,
-                this.getClass(),
-                anErrorCode
-        ));
+        ReportDataObject tmpReportDataObject;
+        if (anAtomContainer == null) {
+            //create report data object for atom container being null
+            tmpReportDataObject = new ReportDataObject(
+                    this.indexOfStepInPipeline,
+                    this.getClass(),
+                    anErrorCode
+            );
+        } else {
+            //get the identifiers of the atom container if the atom container is not null
+            String tmpMolIDString = this.getMolIDString(anAtomContainer);
+            String tmpOptionalIDString = this.getOptionalIDString(anAtomContainer);
+            //create report data object for atom container not being null
+            tmpReportDataObject = new ReportDataObject(
+                    anAtomContainer,
+                    tmpMolIDString,
+                    tmpOptionalIDString,
+                    this.indexOfStepInPipeline,
+                    this.getClass(),
+                    anErrorCode
+            );
+        }
+        this.reporter.appendReport(tmpReportDataObject);
     }
 
     /**
