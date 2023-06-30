@@ -26,7 +26,6 @@
 package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.TestUtils;
-import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.utils.ProcessingStepUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -51,9 +50,11 @@ public class CurationPipelineTest {
      * TODO: modified
      * Tests whether all the atom containers of the atom container set given to the .curate() method of the class
      * CurationPipeline are preserved if no filter is applied.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_noFilterSelected_checksIfAllElementsArePreserved() {
+    public void filterMethodTest_noFilterSelected_checksIfAllElementsArePreserved() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -71,9 +72,11 @@ public class CurationPipelineTest {
      * Tests whether all the atom containers of the atom container set returned by the .filter() method of the class
      * FilterPipeline have a valid MolID attached. The ID should be attached as property and should be greater or equal
      * to zero.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_checksIfAllACsOfFilteredACSetHaveMolIDsAttached() {
+    public void filterMethodTest_checksIfAllACsOfFilteredACSetHaveMolIDsAttached() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -89,9 +92,11 @@ public class CurationPipelineTest {
      * TODO: modified
      * Tests whether the atom containers preserved by the .filter() method of the class FilterPipeline preserved its
      * respective MolID.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_noFilterSelected_checkIfAllElementsPreservedTheirCorrectMolID() {
+    public void filterMethodTest_noFilterSelected_checkIfAllElementsPreservedTheirCorrectMolID() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         Assertions.assertEquals(3, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -215,27 +220,33 @@ public class CurationPipelineTest {
 
     /**
      * Tests whether the return value of the .filter() method of class FilterPipeline is not null.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_returnsNotNull() {
+    public void filterMethodTest_returnsNotNull() throws Exception {
         Assertions.assertNotNull(new CurationPipeline().process(new AtomContainerSet(), true, true));
     }
 
     /**
      * Tests whether the return value of the .filter() method of class FilterPipeline is an instance of
      * IAtomContainerSet.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_returnsInstanceOfIAtomContainerSet() {
+    public void filterMethodTest_returnsInstanceOfIAtomContainerSet() throws Exception {
         Assertions.assertInstanceOf(IAtomContainerSet.class, new CurationPipeline().process(new AtomContainerSet(), true, true));
     }
 
     /**
      * Tests whether the atom container set returned by the .filter() method of class FilterPipeline contains equal or
      * less atom containers than the atom container set given to the method.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_returnedAtomContainerSetContainsEqualOrLessAtomContainersThanTheGivenACS() {
+    public void filterMethodTest_returnedAtomContainerSetContainsEqualOrLessAtomContainersThanTheGivenACS() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline().process(tmpAtomContainerSet, true, true);
         Assertions.assertTrue(tmpAtomContainerSet.getAtomContainerCount() >= tmpFilteredAtomContainerSet.getAtomContainerCount());
@@ -244,9 +255,11 @@ public class CurationPipelineTest {
     /**
      * Tests whether every atom container returned by the .filter() method of class FilterPipeline has an MolID (atom
      * container property "Filter.MolID") assigned.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDSet() {
+    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDSet() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline().process(tmpAtomContainerSet, true, true);
         for (IAtomContainer tmpAtomContainer :
@@ -258,9 +271,11 @@ public class CurationPipelineTest {
     /**
      * Tests whether the MolIDs (atom container property "Filter.MolID") assigned to every atom container returned by
      * the .filter() method of class FilterPipeline are of data type Integer.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDOfTypeInteger() {
+    public void filterMethodTest_everyAtomContainerInTheReturnedSetHasPropertyMolIDOfTypeInteger() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline().process(tmpAtomContainerSet, true, true);
         for (IAtomContainer tmpAtomContainer :
@@ -272,9 +287,11 @@ public class CurationPipelineTest {
     /**
      * Tests whether every atom container of the atom container set given to the .filter() method of class
      * FilterPipeline gets a MolID (atom container property "Filter.MolID") assigned during the filtering process.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDSetAfterwards() {
+    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDSetAfterwards() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
@@ -290,10 +307,12 @@ public class CurationPipelineTest {
     /**
      * Tests whether the MolIDs (atom container property "Filter.MolID") assigned to every atom container of the atom
      * container set given to the .filter() method of class FilterPipeline are of data type Integer.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
     @Disabled
-    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDOfTypeIntegerAfterwards() {
+    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDOfTypeIntegerAfterwards() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
@@ -309,9 +328,11 @@ public class CurationPipelineTest {
     /**
      * Tests whether every atom container of the atom container set returned by the .filter() method of class
      * FilterPipeline is present in the set given to it.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_everyMolIDInFilteredAtomContainerSetIsPresentInTheGivenACS() {
+    public void filterMethodTest_everyMolIDInFilteredAtomContainerSetIsPresentInTheGivenACS() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline().process(tmpAtomContainerSet, true, true);
         boolean tmpMolIdIsPresent;
@@ -345,9 +366,11 @@ public class CurationPipelineTest {
 
     /**
      * Tests whether applying a filter that does not filter results in no atom container of the set being filtered.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withAnEmptyFilter_sameAtomContainerCountBeforeAsAfter() {
+    public void filterMethodTest_withAnEmptyFilter_sameAtomContainerCountBeforeAsAfter() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline()
                 .addProcessingStep(TestUtils.getAllTrueOrFalseFilter(false))
@@ -360,9 +383,11 @@ public class CurationPipelineTest {
      * Tests whether applying a filter that does not filter results in an atom container set containing the atom
      * containers with the same MolID in the same order as the original atom container set.
      * This should be the final form for applying a filter on an atom container set.
+     *
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withAnEmptyFilter_everyACOfTheOriginalSetIsContainedInTheFilteredSet() {
+    public void filterMethodTest_withAnEmptyFilter_everyACOfTheOriginalSetIsContainedInTheFilteredSet() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline()
                 .addProcessingStep(TestUtils.getAllTrueOrFalseFilter(false))
@@ -379,9 +404,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMaxAtomCountFilter_14_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_14_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -400,9 +426,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -420,9 +447,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_3ACs_AC1Filtered() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_10_considerImplHs_3ACs_AC1Filtered() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //12 - filtered
                 "CCO",      //9
@@ -445,9 +473,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMaxAtomCountFilter_6_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_6_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -466,9 +495,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMaxAtomCountFilter_4_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_4_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -486,9 +516,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMaxAtomCountFilter_5_notConsiderImplHs_3ACs_AC2Filtered() throws InvalidSmilesException {
+    public void filterMethodTest_withMaxAtomCountFilter_5_notConsiderImplHs_3ACs_AC2Filtered() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //5
                 "c1ccccc1", //6 - filtered
@@ -511,9 +542,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMinAtomCountFilter_10_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMinAtomCountFilter_10_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -532,9 +564,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMinAtomCountFilter_14_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMinAtomCountFilter_14_considerImplHs_singleAcWith12Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("c1ccccc1");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -552,9 +585,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMinAtomCountFilter_10_considerImplHs_3ACs_AC2Filtered() throws InvalidSmilesException {
+    public void filterMethodTest_withMinAtomCountFilter_10_considerImplHs_3ACs_AC2Filtered() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //12
                 "CCO",      //9 - filtered
@@ -577,9 +611,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMinAtomCountFilter_4_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMinAtomCountFilter_4_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -598,9 +633,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMinAtomCountFilter_6_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException {
+    public void filterMethodTest_withMinAtomCountFilter_6_notConsiderImplHs_singleAcWith5Atoms() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings("NCC(=O)O");
         Assertions.assertEquals(1, tmpAtomContainerSet.getAtomContainerCount());
         //
@@ -618,9 +654,10 @@ public class CurationPipelineTest {
      * This should be the final form for applying a filter on an atom container set.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_withMinAtomCountFilter_5_notConsiderImplHs_3ACs_AC3Filtered() throws InvalidSmilesException {
+    public void filterMethodTest_withMinAtomCountFilter_5_notConsiderImplHs_3ACs_AC3Filtered() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //5
                 "c1ccccc1", //6
@@ -642,9 +679,10 @@ public class CurationPipelineTest {
      * 2 and 4 should be filtered; 0, 1, 3 and 5 not.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_combiningTwoFilters_withMaxAtomCountFilterConsiderImplHs_12_withMinAtomCountFilterConsiderImplHs_9() throws InvalidSmilesException {
+    public void filterMethodTest_combiningTwoFilters_withMaxAtomCountFilterConsiderImplHs_12_withMinAtomCountFilterConsiderImplHs_9() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //10 (5)
                 "c1ccccc1", //12 (6)
@@ -665,10 +703,11 @@ public class CurationPipelineTest {
      * container 2, 3 and 4 should be filtered; 0, 1 and 5 not.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
     public void filterMethodTest_combiningThreeFilters_withMaxAtomCountFilterConsImplHs_12_withMinAtomCountFilterConsImplHs_9_withMaxAtomCountFilterNotConsImplHs_5()
-            throws InvalidSmilesException {
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //10 (5)
                 "c1ccccc1", //12 (6) - filtered
@@ -691,10 +730,11 @@ public class CurationPipelineTest {
      * 1, 2, 3 and 4 should be filtered; 0 and 5 not.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
     public void filterMethodTest_combiningFourFilters_withMaxAtomCountFilterConsImplHs_12_withMinAtomCountFilterConsImplHs_9_withMaxAtomCountFilterNotConsImplHs_5_withMinAtomCountFilterNotConsImplHs_5()
-            throws InvalidSmilesException {
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "NCC(=O)O", //10 (5)
                 "c1ccccc1", //12 (6) - filtered
@@ -718,9 +758,10 @@ public class CurationPipelineTest {
      * the applied filters.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if an unexpected, fatal exception occurred
      */
     @Test
-    public void filterMethodTest_combiningFourFilters_resultIsIndependentOfTheFiltersOrder() throws InvalidSmilesException {
+    public void filterMethodTest_combiningFourFilters_resultIsIndependentOfTheFiltersOrder() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C1CCCC1",  //15 (5) - filtered
                 "NCC(=O)O", //10 (5)
