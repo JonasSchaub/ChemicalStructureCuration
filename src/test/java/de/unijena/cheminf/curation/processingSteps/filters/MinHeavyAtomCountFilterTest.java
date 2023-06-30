@@ -45,7 +45,7 @@ public class MinHeavyAtomCountFilterTest {
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test1() {
         int tmpMinHeavyAtomCount = 5;
         MinHeavyAtomCountFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
-        Assertions.assertEquals(tmpMinHeavyAtomCount, tmpMinHeavyAtomCountFilter.minHeavyAtomCount);
+        Assertions.assertEquals(tmpMinHeavyAtomCount, tmpMinHeavyAtomCountFilter.heavyAtomCountThreshold);
     }
 
     /**
@@ -55,7 +55,7 @@ public class MinHeavyAtomCountFilterTest {
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test2() {
         int tmpMinHeavyAtomCount = 10;
         MinHeavyAtomCountFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount);
-        Assertions.assertEquals(tmpMinHeavyAtomCount, tmpMinHeavyAtomCountFilter.minHeavyAtomCount);
+        Assertions.assertEquals(tmpMinHeavyAtomCount, tmpMinHeavyAtomCountFilter.heavyAtomCountThreshold);
     }
 
     /**

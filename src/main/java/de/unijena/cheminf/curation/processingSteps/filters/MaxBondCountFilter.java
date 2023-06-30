@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -35,14 +36,10 @@ import java.util.Objects;
  */
 public class MaxBondCountFilter extends BaseFilter {
 
-    /*
-    TODO: handling of issues (reporting)
-     */
-
     /**
-     * Integer value of the max bond count threshold.
+     * Integer value of the bond count threshold.
      */
-    protected final int maxBondCount;
+    protected final int bondCountThreshold;
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers bond
@@ -51,40 +48,59 @@ public class MaxBondCountFilter extends BaseFilter {
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor of the MaxBondCountFilter class. Bonds to implicit hydrogen atoms may or may not be considered; atom
-     * containers that equal the given max bond count do not get filtered.
+     * Constructor; initializes the class fields with the given values. Bonds to implicit hydrogen atoms may or may not
+     * be considered; atom containers that equal the given max bond count do not get filtered.
      *
-     * @param aMaxBondCount integer value of the max bond count to filter by
+     * @param aBondCountThreshold integer value of the max bond count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                  calculating an atom containers bond count
-     * @throws IllegalArgumentException if the given max bond count is less than zero
+     *                                   calculating an atom containers bond count
+     * @throws IllegalArgumentException if the given bond count threshold value is less than zero
      */
-    public MaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxBondCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
+    public MaxBondCountFilter(int aBondCountThreshold, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (aBondCountThreshold < 0) {
+            throw new IllegalArgumentException("aBondCountThreshold (integer value) was < than 0.");
         }
-        this.maxBondCount = aMaxBondCount;
+        this.bondCountThreshold = aBondCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the max bond count do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return FilterUtils.exceedsOrEqualsBondCount(anAtomContainer, this.maxBondCount + 1, this.considerImplicitHydrogens);
+        return FilterUtils.exceedsOrEqualsBondCount(
+                anAtomContainer,
+                this.bondCountThreshold + 1,
+                this.considerImplicitHydrogens
+        );
+    }
+
+    @Override
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+        String tmpExceptionMessageString = anException.getMessage();
+        ErrorCodes tmpErrorCode;
+        try {
+            // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+            tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+        } catch (Exception aFatalException) {
+            /*
+             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
+             * exception is considered as fatal and re-thrown
+             */
+            // the threshold value being of an illegal value is also considered as fatal
+            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            throw anException;
+        }
+        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**
-     * Returns the max bond count.
+     * Returns the bond count threshold value.
      *
      * @return Integer value
      */
-    public int getMaxBondCount() {
-        return this.maxBondCount;
+    public int getBondCountThreshold() {
+        return this.bondCountThreshold;
     }
 
     /**

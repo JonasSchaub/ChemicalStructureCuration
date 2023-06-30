@@ -46,7 +46,7 @@ public class MaxBondCountFilterTest {
         int tmpMaxBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
         MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.maxBondCount);
+        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.bondCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondCountFilter.considerImplicitHydrogens);
     }
 
@@ -58,7 +58,7 @@ public class MaxBondCountFilterTest {
         int tmpMaxBondCount = 10;
         boolean tmpConsiderImplicitHydrogens = false;
         MaxBondCountFilter tmpMaxBondCountFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.maxBondCount);
+        Assertions.assertEquals(tmpMaxBondCount, tmpMaxBondCountFilter.bondCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxBondCountFilter.considerImplicitHydrogens);
     }
 

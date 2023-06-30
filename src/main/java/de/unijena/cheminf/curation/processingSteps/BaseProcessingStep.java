@@ -194,7 +194,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             //create report data object for atom container not being null
             tmpReportDataObject = new ReportDataObject(
                     anAtomContainer,
-                    tmpMolIDString,
+                    tmpMolIDString,     //TODO: what if MolID is null?
                     tmpOptionalIDString,
                     this.indexOfStepInPipeline,
                     this.getClass(),

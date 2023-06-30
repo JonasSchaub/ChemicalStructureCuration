@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.ChemUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,14 +38,10 @@ import java.util.Objects;
  */
 public class MaxMolecularMassFilter extends BaseFilter {
 
-    /*
-    TODO: handling of issues (reporting)
-     */
-
     /**
-     * Double value of the max molecular mass threshold.
+     * Double value of the molecular mass threshold.
      */
-    protected final double maxMolecularMass;
+    protected final double molecularMassThreshold;
 
     /**
      * MassComputationFlavours constant that switches the computation type of the mass calculation.
@@ -52,56 +49,70 @@ public class MaxMolecularMassFilter extends BaseFilter {
     protected final MassComputationFlavours massComputationFlavour;
 
     /**
-     * Constructor of the MaxMolecularMassFilter class. Atom containers that equal the given max molecular mass do not
-     * get filtered.
+     * Constructor; initializes the class fields with the given values. Atom containers that equal the given molecular
+     * mass threshold value do not get filtered.
      *
-     * @param aMaxMolecularMass double value of the max molecular mass to filter by
+     * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
      * @param aFlavour MassComputationFlavours constant that switches the computation type of the mass calculation;
      *                 see: {@link MassComputationFlavours},
      *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
      * @throws NullPointerException if the given mass computation flavour is null
-     * @throws IllegalArgumentException if the given max molecular mass is less than zero
+     * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
      */
-    public MaxMolecularMassFilter(double aMaxMolecularMass, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
+    public MaxMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aFlavour, "aFlavour (MassComputationFlavours constant) is null.");
-        if (aMaxMolecularMass < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxMolecularMass (double value) was < than 0.");
+        if (aMolecularMassThreshold < 0) {
+            throw new IllegalArgumentException("aMolecularMassThreshold (double value) was less than 0.");
         }
-        this.maxMolecularMass = aMaxMolecularMass;
+        this.molecularMassThreshold = aMolecularMassThreshold;
         this.massComputationFlavour = aFlavour;
     }
 
     /**
-     * Constructor of the MaxMolecularMassFilter class. This constructor takes no specification of the 'mass flavour'
-     * that switches the computation type of the mass calculation; {@link MassComputationFlavours#MOL_WEIGHT} is used
-     * by default.
-     * Atom containers that equal the given max molecular mass do not get filtered.
+     * Constructor; initializes the class fields with the given value and sets the mass computation type to {@link
+     * MassComputationFlavours#MOL_WEIGHT}. Atom containers that equal the given molecular mass threshold value do not
+     * get filtered.
      *
-     * @param aMaxMolecularMass double value of the max molecular mass to filter by
-     * @throws IllegalArgumentException if the given max molecular mass is less than zero
+     * @param aMolecularMassThreshold double value of the molecular mass threshold value to filter by
+     * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
      */
-    public MaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
-        this(aMaxMolecularMass, MassComputationFlavours.MOL_WEIGHT);
+    public MaxMolecularMassFilter(double aMolecularMassThreshold) throws IllegalArgumentException {
+        this(aMolecularMassThreshold, MassComputationFlavours.MOL_WEIGHT);
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the max molecular mass do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return ChemUtils.getMass(anAtomContainer, this.massComputationFlavour) > this.maxMolecularMass;
+        return ChemUtils.getMass(anAtomContainer, this.massComputationFlavour) > this.molecularMassThreshold;
+    }
+
+    @Override
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+        String tmpExceptionMessageString = anException.getMessage();
+        ErrorCodes tmpErrorCode;
+        try {
+            // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+            tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+        } catch (Exception aFatalException) {
+            /*
+             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
+             * exception is considered as fatal and re-thrown
+             */
+            // the threshold value being of an illegal value is also considered as fatal
+            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            throw anException;
+        }
+        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**
-     * Returns the max molecular mass value.
+     * Returns the molecular mass threshold value.
      *
      * @return double value
      */
-    public double getMaxMolecularMass() {
-        return this.maxMolecularMass;
+    public double getMolecularMassThreshold() {
+        return this.molecularMassThreshold;
     }
 
     /**

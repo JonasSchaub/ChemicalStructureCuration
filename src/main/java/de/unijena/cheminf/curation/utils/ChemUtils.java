@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.utils;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -52,7 +53,7 @@ public class ChemUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int countAtoms(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpAtomCount = anAtomContainer.getAtomCount();
         if (aConsiderImplicitHydrogens) {
             tmpAtomCount += ChemUtils.countImplicitHydrogens(anAtomContainer);
@@ -68,7 +69,7 @@ public class ChemUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int countImplicitHydrogens(IAtomContainer anAtomContainer) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpImplicitHydrogensCount = 0;
         for (IAtom tmpAtom :
                 anAtomContainer.atoms()) {
@@ -85,7 +86,7 @@ public class ChemUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int countExplicitHydrogens(IAtomContainer anAtomContainer) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of AtomContainer) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         return ChemUtils.countAtomsOfAtomicNumbers(anAtomContainer, false, IElement.H);
     }
 
@@ -99,7 +100,7 @@ public class ChemUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int countBonds(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpBondCount = anAtomContainer.getBondCount();
         if (aConsiderImplicitHydrogens) {
             tmpBondCount += ChemUtils.countImplicitHydrogens(anAtomContainer);
@@ -120,11 +121,13 @@ public class ChemUtils {
      * @return Integer number of bonds of the specific bond order in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int countBondsOfSpecificBondOrder(IAtomContainer anAtomContainer, IBond.Order aBondOrder, boolean aConsiderImplicitHydrogens) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public static int countBondsOfSpecificBondOrder(IAtomContainer anAtomContainer,
+                                                    IBond.Order aBondOrder,
+                                                    boolean aConsiderImplicitHydrogens)
+            throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpBondTypeCount = 0;
-        for (IBond tmpBond :
-                anAtomContainer.bonds()) {
+        for (IBond tmpBond : anAtomContainer.bonds()) {
             if (tmpBond.getOrder() == aBondOrder) {
                 tmpBondTypeCount++;
             }
@@ -136,25 +139,18 @@ public class ChemUtils {
     }
 
     /**
-     * Counts the number of atoms in the given IAtomContainer instance with one of the given atomic numbers. When
-     * counting atoms with an atomic number of one, implicit hydrogen atoms are considered.
+     * Counts the number of atoms in the given IAtomContainer instance with one of the given atomic numbers considering
+     * implicit hydrogen atoms as atoms of the atomic number one.
      *
      * @param anAtomContainer IAtomContainer instance to count atoms of
      * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
      * greater than 118)
      */
     public static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, int... anAtomicNumbers)
-            throws NullPointerException, IllegalArgumentException { //TODO: accept the wildcard? (atomic number = 0)
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");   //TODO: do the tests at both stages?
-        for (int tmpAtomicNumber : anAtomicNumbers) {
-            if (tmpAtomicNumber < 0)
-                throw new IllegalArgumentException("A given atomic number is of negative value.");
-            if (tmpAtomicNumber > 118)
-                throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
-        }
+            throws NullPointerException, IllegalArgumentException {
         return ChemUtils.countAtomsOfAtomicNumbers(anAtomContainer, true, anAtomicNumbers);
     }
 
@@ -170,23 +166,24 @@ public class ChemUtils {
      *                                   atoms with an atomic number of one
      * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
      * greater than 118)
      */
     private static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
-            throws NullPointerException, IllegalArgumentException {    //TODO: accept the wildcard? (atomic number = 0)
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         for (int tmpAtomicNumber : anAtomicNumbers) {
             if (tmpAtomicNumber < 0)
-                throw new IllegalArgumentException("A given atomic number is of negative value.");
+                throw new IllegalArgumentException("A given atomic number is of negative value.");  //TODO: create an error code for this?
             if (tmpAtomicNumber > 118)
                 throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
         }
         int tmpAtomsOfAtomicNumbersCount = 0;
-        for (IAtom tmpAtom :
-                anAtomContainer.atoms()) {
-            //TODO: check, whether the IAtom instance has an / a valid atomic number?
+        Integer tmpAtomicNumberOfAtom;
+        for (IAtom tmpAtom : anAtomContainer.atoms()) {
+            tmpAtomicNumberOfAtom = tmpAtom.getAtomicNumber();
+            Objects.requireNonNull(tmpAtomicNumberOfAtom, ErrorCodes.ATOMIC_NUMBER_NULL_ERROR.name());
             for (int tmpAtomicNumber : anAtomicNumbers) {
                 if (tmpAtom.getAtomicNumber() == tmpAtomicNumber) {
                     tmpAtomsOfAtomicNumbersCount++;
@@ -210,7 +207,7 @@ public class ChemUtils {
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int getHeavyAtomsCount(IAtomContainer anAtomContainer) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpExplicitAtomsCount = anAtomContainer.getAtomCount();
         int tmpExplicitHydrogensCount = ChemUtils.countExplicitHydrogens(anAtomContainer);
         return tmpExplicitAtomsCount - tmpExplicitHydrogensCount;
@@ -235,10 +232,9 @@ public class ChemUtils {
      */
     public static double getMass(IAtomContainer anAtomContainer, MassComputationFlavours aFlavour)
             throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavours) is null.");
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
+        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavours) is null.");    //TODO: create an error code for this?
         //TODO: use MolWeight as default if null is given?
-        //TODO: throw an exception if the associated integer is no value between 1 and 4? Added a check to the MassComputationFlavours internal constructor
         return AtomContainerManipulator.getMass(anAtomContainer, aFlavour.getAssociatedIntegerValue());
     }
 

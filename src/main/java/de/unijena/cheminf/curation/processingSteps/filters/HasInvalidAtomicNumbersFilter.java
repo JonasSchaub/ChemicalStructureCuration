@@ -46,12 +46,7 @@ public class HasInvalidAtomicNumbersFilter extends HasAllValidAtomicNumbersFilte
 
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
-        return !super.isFiltered(anAtomContainer, false);
-    }
-
-    @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        return !super.isFiltered(anAtomContainer, aReportToReporter);
+        return !super.isFiltered(anAtomContainer);
     }
 
 }

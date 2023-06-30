@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.ChemUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -35,82 +36,40 @@ import java.util.Objects;
 /**
  * Min molecular mass filter for filtering atom containers based on a minimum molecular mass.
  */
-public class MinMolecularMassFilter extends BaseFilter {
-
-    /*
-    TODO: handling of issues (reporting)
-     */
+public class MinMolecularMassFilter extends MaxMolecularMassFilter {
 
     /**
-     * Double value of the min molecular mass threshold.
-     */
-    protected final double minMolecularMass;
-
-    /**
-     * MassComputationFlavours constant that switches the computation type of the mass calculation.
-     */
-    protected final MassComputationFlavours massComputationFlavour;
-
-    /**
-     * Constructor of the MinMolecularMassFilter class. Atom containers that equal the given min molecular mass do not
-     * get filtered.
+     * Constructor; initializes the class fields with the given values. Atom containers that equal the given molecular
+     * mass threshold value do not get filtered.
      *
-     * @param aMinMolecularMass double value of the min molecular mass to filter by
+     * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
      * @param aFlavour MassComputationFlavours constant that switches the computation type of the mass calculation;
      *                 see: {@link MassComputationFlavours},
      *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
      * @throws NullPointerException if the given mass computation flavour is null
-     * @throws IllegalArgumentException if the given min molecular mass is less than zero
+     * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
      */
-    public MinMolecularMassFilter(double aMinMolecularMass, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(aFlavour, "aFlavour (MassComputationFlavours constant) is null.");
-        if (aMinMolecularMass < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMinMolecularMass (double value) was < than 0.");
-        }
-        this.minMolecularMass = aMinMolecularMass;
-        this.massComputationFlavour = aFlavour;
+    public MinMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
+        super(aMolecularMassThreshold, aFlavour);
     }
 
     /**
-     * Constructor of the MinMolecularMassFilter class. This constructor takes no specification of the 'mass flavour'
-     * that switches the computation type of the mass calculation; {@link MassComputationFlavours#MOL_WEIGHT} is used
-     * by default.
-     * Atom containers that equal the given min molecular mass do not get filtered.
+     * Constructor; initializes the class fields with the given value and sets the mass computation type to {@link
+     * MassComputationFlavours#MOL_WEIGHT}. Atom containers that equal the given molecular mass threshold value do not
+     * get filtered.
      *
-     * @param aMinMolecularMass double value of the min molecular mass to filter by
-     * @throws IllegalArgumentException if the given min molecular mass is less than zero
+     * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
+     * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
      */
-    public MinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
-        this(aMinMolecularMass, MassComputationFlavours.MOL_WEIGHT);
+    public MinMolecularMassFilter(double aMolecularMassThreshold) throws IllegalArgumentException {
+        this(aMolecularMassThreshold, MassComputationFlavours.MOL_WEIGHT);
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the min molecular mass do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return ChemUtils.getMass(anAtomContainer, this.massComputationFlavour) < this.minMolecularMass;
-    }
-
-    /**
-     * Returns the min molecular mass value.
-     *
-     * @return double value
-     */
-    public double getMinMolecularMass() {
-        return this.minMolecularMass;
-    }
-
-    /**
-     * Returns the mass computation flavour that is used to compute the mass of a molecule.
-     *
-     * @return MassComputationFlavours constant
-     */
-    public MassComputationFlavours getMassComputationFlavour() {
-        return this.massComputationFlavour;
+        return ChemUtils.getMass(anAtomContainer, this.massComputationFlavour) < this.molecularMassThreshold;
     }
 
 }

@@ -46,7 +46,7 @@ public class MaxAtomCountFilterTest {
         int tmpMaxAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
         MaxAtomCountFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMaxAtomCount, tmpMaxAtomCountFilter.atomCountThresholdValue);
+        Assertions.assertEquals(tmpMaxAtomCount, tmpMaxAtomCountFilter.atomCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxAtomCountFilter.considerImplicitHydrogens);
     }
 
@@ -58,7 +58,7 @@ public class MaxAtomCountFilterTest {
         int tmpMaxAtomCount = 10;
         boolean tmpConsiderImplicitHydrogens = false;
         MaxAtomCountFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMaxAtomCount, tmpMaxAtomCountFilter.atomCountThresholdValue);
+        Assertions.assertEquals(tmpMaxAtomCount, tmpMaxAtomCountFilter.atomCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMaxAtomCountFilter.considerImplicitHydrogens);
     }
 

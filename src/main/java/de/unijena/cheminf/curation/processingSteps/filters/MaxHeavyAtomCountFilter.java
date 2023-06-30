@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -35,47 +36,58 @@ import java.util.Objects;
  */
 public class MaxHeavyAtomCountFilter extends BaseFilter {
 
-    /*
-    TODO: handling of issues (reporting)
+    /**
+     * Integer value of the heavy atom count threshold value.
      */
+    protected final int heavyAtomCountThreshold;
 
     /**
-     * Integer value of the max heavy atom count threshold.
-     */
-    protected final int maxHeavyAtomCount;
-
-    /**
-     * Constructor of the MaxHeavyAtomCountFilter class. Atom containers that equal the given max atom count do not get
-     * filtered.
+     * Constructor; initializes the class fields with the given values. Atom containers that equal the given max atom
+     * count do not get filtered.
      *
-     * @param aMaxHeavyAtomCount integer value of the max heavy atom count to filter by
-     * @throws IllegalArgumentException if the given max heavy atom count is less than zero
+     * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
+     * @throws IllegalArgumentException if the given heavy atom count threshold value is less than zero
      */
-    public MaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
-        if (aMaxHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
+    public MaxHeavyAtomCountFilter(int aHeavyAtomCountThreshold) throws IllegalArgumentException {
+        if (aHeavyAtomCountThreshold < 0) {
+            throw new IllegalArgumentException("aHeavyAtomCountThreshold (integer value) was less than 0.");
         }
-        this.maxHeavyAtomCount = aMaxHeavyAtomCount;
+        this.heavyAtomCountThreshold = aHeavyAtomCountThreshold;
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the max heavy atom count do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.maxHeavyAtomCount + 1);
+        return FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.heavyAtomCountThreshold + 1);
+    }
+
+    @Override
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+        String tmpExceptionMessageString = anException.getMessage();
+        ErrorCodes tmpErrorCode;
+        try {
+            // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+            tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+        } catch (Exception aFatalException) {
+            /*
+             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
+             * exception is considered as fatal and re-thrown
+             */
+            // the threshold value being of an illegal value is also considered as fatal
+            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            throw anException;
+        }
+        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**
-     * Returns the max heavy atom count.
+     * Returns the heavy atom count threshold value.
      *
      * @return Integer value
      */
-    public int getMaxHeavyAtomCount() {
-        return this.maxHeavyAtomCount;
+    public int getHeavyAtomCountThreshold() {
+        return this.heavyAtomCountThreshold;
     }
 
 }

@@ -63,44 +63,40 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
      */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
-        return this.isFiltered(anAtomContainer, false);
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
+        //
+        try {
+            return !FilterUtils.hasAllValidAtomicNumbers(anAtomContainer, this.wildcardAtomicNumberIsValid);
+        } catch (IllegalArgumentException anIllegalArgumentException) {
+            //check whether it is an ATOMIC_NUMBER_NULL_ERROR; re-throw exception otherwise
+            try {
+                if (ErrorCodes.valueOf(anIllegalArgumentException.getMessage()) == ErrorCodes.ATOMIC_NUMBER_NULL_ERROR) {
+                    //atomic number being null is considered as invalid
+                    return true;
+                }
+            } catch (Exception ignored) {
+                //ignored
+            }
+            throw anIllegalArgumentException;
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     * <br>
-     * The class field wildcardAtomicNumberIsValid decides whether zero is considered as a valid atomic number. An
-     * atomic number being null is considered as an invalid atomic number.
-     *
-     * @throws NullPointerException if the given IAtomContainer instance or an IAtom instance contained by it is null
-     * and issues do not get reported to the reporter
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+        String tmpExceptionMessageString = anException.getMessage();
+        ErrorCodes tmpErrorCode;
         try {
-            Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-            //
-            //does not catch NullPointerException
-            try {
-                return !FilterUtils.hasAllValidAtomicNumbers(anAtomContainer, this.wildcardAtomicNumberIsValid);
-            } catch (IllegalArgumentException anIllegalArgumentException) {
-                //atomic number being null is considered as invalid
-                return true;
-            }
-        } catch (Exception anException) {
-            if (aReportToReporter) {
-                ErrorCodes tmpErrorCode;
-                if (NullPointerException.class.equals(anException.getClass())) {  //TODO: I would love to do this with a switch...
-                    tmpErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
-                } else {
-                    tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
-                }
-                this.appendToReporter(anAtomContainer, tmpErrorCode);
-                return true;
-            } else {
-                throw anException;
-            }
+            // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+            tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+        } catch (Exception aFatalException) {
+            /*
+             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
+             * exception is considered as fatal and re-thrown
+             */
+            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            throw anException;
         }
+        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**

@@ -40,13 +40,13 @@ public class MinAtomCountFilter extends MaxAtomCountFilter {
      * Constructor; initializes the class fields with the given values. Implicit hydrogen atoms may or may not be
      * considered; atom containers that equal the given atom count threshold value do not get filtered.
      *
-     * @param anAtomCountThresholdValue  integer value of the min atom count threshold to filter by
+     * @param anAtomCountThreshold integer value of the min atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                   calculating the atom count of an atom container
      * @throws IllegalArgumentException if the given atom count threshold value is less than zero
      */
-    public MinAtomCountFilter(int anAtomCountThresholdValue, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        super(anAtomCountThresholdValue, aConsiderImplicitHydrogens);
+    public MinAtomCountFilter(int anAtomCountThreshold, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        super(anAtomCountThreshold, aConsiderImplicitHydrogens);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class MinAtomCountFilter extends MaxAtomCountFilter {
         //
         return !FilterUtils.exceedsOrEqualsAtomCount(
                 anAtomContainer,
-                this.atomCountThresholdValue,
+                this.atomCountThreshold,
                 this.considerImplicitHydrogens
         );
     }

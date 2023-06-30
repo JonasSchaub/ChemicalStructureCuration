@@ -51,9 +51,19 @@ public enum ErrorCodes {
     BOND_NULL_ERROR,
 
     /**
+     * An atom has no atomic number; the atomic number is null.
+     */
+    ATOMIC_NUMBER_NULL_ERROR,
+
+    /**
      * The IAtomContainer instance of the structure contains no atoms.
      */
     NO_ATOMS_ERROR,
+
+    /**
+     * A threshold value is considered as illegal; this might be a fatal error.
+     */
+    ILLEGAL_THRESHOLD_VALUE_ERROR,
 
     /**
      * ...

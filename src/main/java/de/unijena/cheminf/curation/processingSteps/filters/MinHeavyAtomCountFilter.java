@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -33,49 +34,24 @@ import java.util.Objects;
 /**
  * Min heavy atom count filter for filtering atom containers based on a minimum non-hydrogen atom count.
  */
-public class MinHeavyAtomCountFilter extends BaseFilter {
-
-    /*
-    TODO: handling of issues (reporting)
-     */
+public class MinHeavyAtomCountFilter extends MaxHeavyAtomCountFilter {
 
     /**
-     * Integer value of the min heavy atom count threshold.
-     */
-    protected final int minHeavyAtomCount;
-
-    /**
-     * Constructor of the MinHeavyAtomCountFilter class. Atom containers that equal the given min atom count do not get
-     * filtered.
+     * Constructor; initializes the class fields with the given values. Atom containers that equal the given min atom
+     * count do not get filtered.
      *
-     * @param aMinHeavyAtomCount integer value of the min heavy atom count to filter by
-     * @throws IllegalArgumentException if the given min heavy atom count is less than zero
+     * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
+     * @throws IllegalArgumentException if the given heavy atom count threshold value is less than zero
      */
-    public MinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
-        if (aMinHeavyAtomCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
-        }
-        this.minHeavyAtomCount = aMinHeavyAtomCount;
+    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold) throws IllegalArgumentException {
+        super(aHeavyAtomCountThreshold);
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the min heavy atom count do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return !FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.minHeavyAtomCount);
-    }
-
-    /**
-     * Returns the min heavy atom count.
-     *
-     * @return Integer value
-     */
-    public int getMinHeavyAtomCount() {
-        return this.minHeavyAtomCount;
+        return !FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.heavyAtomCountThreshold);
     }
 
 }

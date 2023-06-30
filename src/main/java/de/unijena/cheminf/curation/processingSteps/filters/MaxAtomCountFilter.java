@@ -39,7 +39,7 @@ public class MaxAtomCountFilter extends BaseFilter {
     /**
      * Integer value of the atom count threshold.
      */
-    protected final int atomCountThresholdValue;    //TODO: remove the "...Value" ?
+    protected final int atomCountThreshold;
 
     /**
      * Boolean value whether implicit hydrogen atoms should be considered when calculating the atom count of an atom
@@ -51,16 +51,16 @@ public class MaxAtomCountFilter extends BaseFilter {
      * Constructor; initializes the class fields with the given values. Implicit hydrogen atoms may or may not be
      * considered; atom containers that equal the given atom count threshold value do not get filtered.
      *
-     * @param anAtomCountThresholdValue  integer value of the max atom count threshold to filter by
+     * @param anAtomCountThreshold integer value of the max atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                   calculating the atom count of an atom container
      * @throws IllegalArgumentException if the given atom count threshold value is less than zero
      */
-    public MaxAtomCountFilter(int anAtomCountThresholdValue, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (anAtomCountThresholdValue < 0) {
-            throw new IllegalArgumentException("anAtomCountThresholdValue (integer value) is less than 0.");
+    public MaxAtomCountFilter(int anAtomCountThreshold, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (anAtomCountThreshold < 0) {
+            throw new IllegalArgumentException("anAtomCountThreshold (integer value) is less than 0.");
         }
-        this.atomCountThresholdValue = anAtomCountThresholdValue;
+        this.atomCountThreshold = anAtomCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
@@ -70,7 +70,7 @@ public class MaxAtomCountFilter extends BaseFilter {
         //
         return FilterUtils.exceedsOrEqualsAtomCount(
                 anAtomContainer,
-                this.atomCountThresholdValue + 1,
+                this.atomCountThreshold + 1,
                 this.considerImplicitHydrogens
         );
     }
@@ -78,19 +78,20 @@ public class MaxAtomCountFilter extends BaseFilter {
     @Override
     protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
         String tmpExceptionMessageString = anException.getMessage();
+        ErrorCodes tmpErrorCode;
         try {
             // the message of the exception is expected to match the name of an ErrorCodes enum's constant
-            ErrorCodes tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
-            this.appendToReporter(anAtomContainer, tmpErrorCode);
+            tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
         } catch (Exception aFatalException) {
             /*
-             the message string of the given exception did not match the name of an ErrorCodes enum's constant or the
-             given atom container did not possess a MolID; the exception is considered as fatal and therefore rethrown
+             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
+             * exception is considered as fatal and re-thrown
              */
             // the threshold value being of an illegal value is also considered as fatal
             this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
             throw anException;
         }
+        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**
@@ -98,8 +99,8 @@ public class MaxAtomCountFilter extends BaseFilter {
      *
      * @return Integer value
      */
-    public int getAtomCountThresholdValue() {
-        return this.atomCountThresholdValue;
+    public int getAtomCountThreshold() {
+        return this.atomCountThreshold;
     }
 
     /**

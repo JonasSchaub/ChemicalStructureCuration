@@ -46,7 +46,7 @@ public class MinBondCountFilterTest {
         int tmpMinBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
         MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.minBondCount);
+        Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.bondCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondCountFilter.considerImplicitHydrogens);
     }
 
@@ -58,7 +58,7 @@ public class MinBondCountFilterTest {
         int tmpMinBondCount = 10;
         boolean tmpConsiderImplicitHydrogens = false;
         MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.minBondCount);
+        Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.bondCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondCountFilter.considerImplicitHydrogens);
     }
 

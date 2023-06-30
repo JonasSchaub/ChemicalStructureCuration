@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -37,55 +38,70 @@ import java.util.Objects;
  */
 public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
 
-    /*
-    TODO: handling of issues (reporting)
-     */
-
     /**
      * IBond.Order of bonds to count and filter on.
      */
     protected final IBond.Order bondOrderOfInterest;
 
     /**
-     * Integer value of the max bond count threshold.
+     * Integer value of the bond count threshold of bonds of specific bond order.
      */
-    protected final int maxSpecificBondCount;
+    protected final int specificBondCountThreshold;
 
     /**
-     * Boolean value whether implicit hydrogen atoms should be considered when counting bonds of bond order single of
-     * given atom containers.
+     * Boolean value whether implicit hydrogen atoms should be considered when counting bonds of bond order single.
      */
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor of the MaxBondsOfSpecificBondOrderFilter class. When filtering on the count of bonds with bond order
-     * single, bonds to implicit hydrogen atoms may or may not be considered; atom containers that equal the given max
-     * specific bond count do not get filtered.
+     * Constructor; initializes the class fields with the given values. When filtering on the count of bonds with bond
+     * order single, bonds to implicit hydrogen atoms may or may not be considered; atom containers that equal the given
+     * max specific bond count do not get filtered.
      *
      * @param aBondOrder bond order of bonds to count and filter on
-     * @param aMaxSpecificBondCount integer value of the max specific bond count to filter by
+     * @param aSpecificBondCountThreshold integer value of the specific bond count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                  counting an atom containers bonds with bond order single
+     *                                   counting bonds of bond order single
      * @throws IllegalArgumentException if the given max specific bond count is less than zero
      */
-    public MaxBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMaxSpecificBondCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
+    public MaxBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder, int aSpecificBondCountThreshold,
+                                             boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        if (aSpecificBondCountThreshold < 0) {
+            throw new IllegalArgumentException("aSpecificBondCountThreshold (integer value) is less than 0.");
         }
         this.bondOrderOfInterest = aBondOrder;
-        this.maxSpecificBondCount = aMaxSpecificBondCount;
+        this.specificBondCountThreshold = aSpecificBondCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the max specific bond count do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(anAtomContainer, this.bondOrderOfInterest, this.maxSpecificBondCount + 1, this.considerImplicitHydrogens);
+        return FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                anAtomContainer, this.bondOrderOfInterest,
+                this.specificBondCountThreshold + 1,
+                this.considerImplicitHydrogens
+        );
+    }
+
+    @Override
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+        String tmpExceptionMessageString = anException.getMessage();
+        ErrorCodes tmpErrorCode;
+        try {
+            // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+            tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+        } catch (Exception aFatalException) {
+            /*
+             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
+             * exception is considered as fatal and re-thrown
+             */
+            // the threshold value being of an illegal value is also considered as fatal
+            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            throw anException;
+        }
+        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**
@@ -98,12 +114,12 @@ public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
     }
 
     /**
-     * Returns the max bond count.
+     * Returns the bond count threshold of bonds of specific bond order.
      *
      * @return Integer value
      */
-    public int getMaxSpecificBondCount() {
-        return this.maxSpecificBondCount;
+    public int getSpecificBondCountThreshold() {
+        return this.specificBondCountThreshold;
     }
 
     /**

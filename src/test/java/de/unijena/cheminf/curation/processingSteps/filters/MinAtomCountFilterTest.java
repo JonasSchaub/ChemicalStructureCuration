@@ -46,7 +46,7 @@ public class MinAtomCountFilterTest {
         int tmpMinAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
         MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMinAtomCount, tmpMinAtomCountFilter.atomCountThresholdValue);
+        Assertions.assertEquals(tmpMinAtomCount, tmpMinAtomCountFilter.atomCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinAtomCountFilter.considerImplicitHydrogens);
     }
 
@@ -58,7 +58,7 @@ public class MinAtomCountFilterTest {
         int tmpMinAtomCount = 10;
         boolean tmpConsiderImplicitHydrogens = false;
         MinAtomCountFilter tmpMinAtomCountFilter = new MinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(tmpMinAtomCount, tmpMinAtomCountFilter.atomCountThresholdValue);
+        Assertions.assertEquals(tmpMinAtomCount, tmpMinAtomCountFilter.atomCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinAtomCountFilter.considerImplicitHydrogens);
     }
 

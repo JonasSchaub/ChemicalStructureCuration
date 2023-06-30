@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -33,67 +34,30 @@ import java.util.Objects;
 /**
  * Min bond count filter for filtering atom containers based on a minimum bond count.
  */
-public class MinBondCountFilter extends BaseFilter {
-
-    /*
-    TODO: handling of issues (reporting)
-     */
+public class MinBondCountFilter extends MaxBondCountFilter {
 
     /**
-     * Integer value of the min bond count threshold.
-     */
-    protected final int minBondCount;
-
-    /**
-     * Boolean value whether implicit hydrogen atoms should be considered when calculating an atom containers bond
-     * count.
-     */
-    protected final boolean considerImplicitHydrogens;
-
-    /**
-     * Constructor of the MinBondCountFilter class. Bonds to implicit hydrogen atoms may or may not be considered; atom
-     * containers that equal the given min bond count do not get filtered.
+     * Constructor; initializes the class fields with the given values. Bonds to implicit hydrogen atoms may or may not
+     * be considered; atom containers that equal the given min bond count do not get filtered.
      *
-     * @param aMinBondCount integer value of the min bond count to filter by
+     * @param aBondCountThreshold integer value of the min bond count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                  calculating an atom containers bond count
-     * @throws IllegalArgumentException if the given min bond count is less than zero
+     *                                   calculating an atom containers bond count
+     * @throws IllegalArgumentException if the given bond count threshold value is less than zero
      */
-    public MinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinBondCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
-        }
-        this.minBondCount = aMinBondCount;
-        this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+    public MinBondCountFilter(int aBondCountThreshold, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        super(aBondCountThreshold, aConsiderImplicitHydrogens);
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the min bond count do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return !FilterUtils.exceedsOrEqualsBondCount(anAtomContainer, this.minBondCount, this.considerImplicitHydrogens);
-    }
-
-    /**
-     * Returns the min bond count.
-     *
-     * @return Integer value
-     */
-    public int getMinBondCount() {
-        return this.minBondCount;
-    }
-
-    /**
-     * Returns whether bonds to implicit hydrogen atoms are taken into account.
-     *
-     * @return Boolean value
-     */
-    public boolean isConsiderImplicitHydrogens() {
-        return this.considerImplicitHydrogens;
+        return !FilterUtils.exceedsOrEqualsBondCount(
+                anAtomContainer,
+                this.bondCountThreshold,
+                this.considerImplicitHydrogens
+        );
     }
 
 }

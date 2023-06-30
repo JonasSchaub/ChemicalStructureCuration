@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -35,84 +36,34 @@ import java.util.Objects;
  * Min bonds of specific bond order filter for filtering atom containers based on a minimum count of bonds of a
  * specific bond order.
  */
-public class MinBondsOfSpecificBondOrderFilter extends BaseFilter {
-
-    /*
-    TODO: handling of issues (reporting)
-     */
+public class MinBondsOfSpecificBondOrderFilter extends MaxBondsOfSpecificBondOrderFilter {
 
     /**
-     * IBond.Order of bonds to count and filter on.
-     */
-    protected final IBond.Order bondOrderOfInterest;
-
-    /**
-     * Integer value of the min bond count threshold.
-     */
-    protected final int minSpecificBondCount;
-
-    /**
-     * Boolean value whether implicit hydrogen atoms should be considered when counting bonds of bond order single of
-     * given atom containers.
-     */
-    protected final boolean considerImplicitHydrogens;
-
-    /**
-     * Constructor of the MinBondsOfSpecificBondOrderFilter class. When filtering on the count of bonds with bond order
-     * single, bonds to implicit hydrogen atoms may or may not be considered; atom containers that equal the given min
-     * specific bond count do not get filtered.
+     * Constructor; initializes the class fields with the given values. When filtering on the count of bonds with bond
+     * order single, bonds to implicit hydrogen atoms may or may not be considered; atom containers that equal the given
+     * min specific bond count do not get filtered.
      *
      * @param aBondOrder bond order of bonds to count and filter on
-     * @param aMinSpecificBondCount integer value of the min specific bond count to filter by
+     * @param aSpecificBondCountThreshold integer value of the min specific bond count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
-     *                                  counting an atom containers bonds with bond order single
+     *                                   counting bonds of bond order single
      * @throws IllegalArgumentException if the given min specific bond count is less than zero
      */
-    public MinBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
-        if (aMinSpecificBondCount < 0) {    //TODO: would not harm the code but makes no sense
-            throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
-        }
-        this.bondOrderOfInterest = aBondOrder;
-        this.minSpecificBondCount = aMinSpecificBondCount;
-        this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+    public MinBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder, int aSpecificBondCountThreshold,
+                                             boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+        super(aBondOrder, aSpecificBondCountThreshold, aConsiderImplicitHydrogens);
     }
 
-    /**
-     * {@inheritDoc}
-     * Atom containers that equal the min specific bond count do not get filtered.
-     */
     @Override
-    protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return !FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(anAtomContainer, this.bondOrderOfInterest, this.minSpecificBondCount, this.considerImplicitHydrogens);
-    }
-
-    /**
-     * Returns the bond order of the bonds to count and filter on.
-     *
-     * @return IBond.Order constant
-     */
-    public IBond.Order getBondOrderOfInterest() {
-        return this.bondOrderOfInterest;
-    }
-
-    /**
-     * Returns the min bond count.
-     *
-     * @return Integer value
-     */
-    public int getMinSpecificBondCount() {
-        return this.minSpecificBondCount;
-    }
-
-    /**
-     * Returns whether bonds to implicit hydrogen atoms are taken into account.
-     *
-     * @return Boolean value
-     */
-    public boolean isConsiderImplicitHydrogens() {
-        return this.considerImplicitHydrogens;
+        return !FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
+                anAtomContainer,
+                this.bondOrderOfInterest,
+                this.specificBondCountThreshold,
+                this.considerImplicitHydrogens
+        );
     }
 
 }
