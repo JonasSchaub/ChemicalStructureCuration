@@ -34,11 +34,10 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Base class of all processing steps. Reduces the number of abstract methods to the protected method {@link #process(
+ * Base class of all processing steps. Reduces the number of abstract methods to the protected method {@link #applyLogic(
  * IAtomContainerSet)}. In addition to overwriting this one method, processing steps extending this base class possibly
  * need constructors initializing the fields specific to the processing step and respective getters.
  * <br>
@@ -61,7 +60,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         - make the destination of the report-file adjustable without the need to set a new reporter?
      */
 
-    /**
+    /** TODO: might be removed in the end
      * Logger of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(BaseProcessingStep.class.getName());
@@ -76,7 +75,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * String is null (default) or the reported atom containers do not have a respective property, no second identifier
      * is used at the reporting of the processing.
      */
-    private String optionalIDPropertyName = null;
+    private String optionalIDPropertyName;
 
     /**
      * String with the index of the processing step in the pipeline (if it is part of a pipeline), or null if it is not
@@ -112,11 +111,15 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         if (anAssignIdentifiers) {
             ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
         } //TODO: else: check existence of MolIDs ?
+        //clone the given atom container set if so desired
+        IAtomContainerSet tmpACSetToProcess;
         if (aCloneBeforeProcessing) {
-            IAtomContainerSet tmpClonedACSet = this.cloneAtomContainerSet(anAtomContainerSet);
-            return this.process(tmpClonedACSet);
+            tmpACSetToProcess = this.cloneAtomContainerSet(anAtomContainerSet);
+        } else {
+            tmpACSetToProcess = anAtomContainerSet;
         }
-        IAtomContainerSet tmpResultingACSet = this.process(anAtomContainerSet);
+        //apply the logic of the processing step on the atom container set
+        IAtomContainerSet tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
         if (this.indexOfStepInPipeline == null) {
             //generate the report file only if the processing step is not part of a pipeline
             //this.reporter.report();   //TODO: default reporter necessary
@@ -135,12 +138,12 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * without causing an issue)
      * @throws Exception if an unexpected, fatal exception occurred
      */
-    protected abstract IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception;
+    protected abstract IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception;
 
     /**
      * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
-     * appended to the given reporter and excluded from the returned atom container set. The total count of atom
-     * containers failing the cloning-process is being logged.
+     * appended to the given reporter and excluded from the returned atom container set. This method is not part of an
+     * utils class since it reports issues to this processing step's reporter.
      *
      * @param anAtomContainerSet atom container set to be cloned
      * @return a clone of the given atom container set
@@ -149,20 +152,12 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
-        int tmpCloneNotSupportedExceptionsCount = 0;
-        for (IAtomContainer tmpAtomContainer :
-                anAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
             try {
                 tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
             } catch (CloneNotSupportedException aCloneNotSupportedException) {
-                tmpCloneNotSupportedExceptionsCount++;
                 this.appendToReporter(tmpAtomContainer, ErrorCodes.CLONE_ERROR);
             }
-        }
-        if (tmpCloneNotSupportedExceptionsCount > 0) {
-            BaseProcessingStep.LOGGER.log(Level.WARNING, tmpCloneNotSupportedExceptionsCount + " of " + //TODO: logging level?
-                    anAtomContainerSet.getAtomContainerCount() + " given atom containers could not be cloned and" +
-                    " thereby were excluded from the returned atom container set.");
         }
         return tmpCloneOfGivenACSet;
     }

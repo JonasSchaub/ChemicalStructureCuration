@@ -128,7 +128,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * without causing an issue)
      */
     @Override
-    protected IAtomContainerSet process(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpACSetToProcess;
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
