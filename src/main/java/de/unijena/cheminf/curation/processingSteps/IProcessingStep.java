@@ -53,7 +53,7 @@ public interface IProcessingStep {
      */
     public static final String MOL_ID_PROPERTY_NAME = "Processing_MolID";
 
-    /**
+    /** TODO
      * Processes the given atom container set according to the processing step. To avoid any changes or modifications
      * to the original data, use the option of cloning the given atom container set before the processing (by setting
      * the first boolean parameter to true).
@@ -68,11 +68,11 @@ public interface IProcessingStep {
      * do get overwritten. If the second boolean parameter is set to false, every atom container of the given set is
      * expected to have a MolID assigned; an exception might be thrown if this is not the case.<br>
      * <br>
-     * By the end of the processing and if the index of this processing step has not been set (via
-     * {@link #setIndexOfStepInPipeline(String)}) to anything else than null (default), a report file containing info
-     * on issues with structures is created. If the index differs from null, a supervisory entity is expected to
-     * execute the {@link IReporter#report()} method of the reporter. The reporter can be accessed via the respective
-     * getter and setter to change the (type of) reporter or modify the location to create the report file at.
+     * By the end of the processing and if {@link #isReporterSelfContained()} is set to true, a report file containing
+     * info on issues with structures is created. If not so, issues are only appended to the reporter and can later on
+     * be reported manually or by a supervisory pipeline (see {@link CurationPipeline}). The reporter can be accessed
+     * via the respective getter and setter methods to change the (type of) reporter or modify the location to create
+     * the report file at.
      *
      * @param anAtomContainerSet atom container set to process
      * @param aCloneBeforeProcessing boolean value, whether to process the original data or to clone the given atom
@@ -86,7 +86,7 @@ public interface IProcessingStep {
      * @throws Exception if an unexpected, fatal exception occurred
      * @see #getReporter()
      * @see #setReporter(IReporter)
-     * @see #setIndexOfStepInPipeline(String)
+     * @see #setPipelineProcessingStepID(String)
      * @see #MOL_ID_PROPERTY_NAME
      * @see ProcessingStepUtils#assignMolIdToAtomContainers(IAtomContainerSet)
      * @see ProcessingStepUtils#getAssignedMolID(IAtomContainer)
@@ -127,25 +127,45 @@ public interface IProcessingStep {
     public IReporter getReporter();
 
     /**
-     * Sets the reporter of the instance.
+     * Sets the reporter of the instance; a default reporter shall be used if null is given.    TODO: or just don't accept aReporter to be null?
+     * The field may never be null.
      *
      * @param aReporter IReporter instance
-     * @throws NullPointerException if the given instance of IReporter is null   TODO: use the default reporter instead?
      */
-    public void setReporter(IReporter aReporter) throws NullPointerException;
+    public void setReporter(IReporter aReporter);
 
     /**
-     * Gets the index of the processing step in a superordinate pipeline.
+     * Returns whether the reporter instance of this processing step is self-contained; depending on this, the {@link
+     * #process} method calls the reporter's {@link IReporter#report()} method.
+     *
+     * @return boolean value
+     */
+    public boolean isReporterSelfContained();
+
+    /**
+     * Sets whether the reporter instance of this processing step is self-contained; depending on this, the {@link
+     * #process} method calls the reporter's {@link IReporter#report()} method.
+     *
+     * @param anIsSelfContained boolean value
+     */
+    public void setIsReporterSelfContained(boolean anIsSelfContained);
+
+    /**
+     * Gets the identifier of the processing step which should equal the index of the processing step in a superordinate
+     * pipeline and may be null if the processing step is not part of a pipeline. It is stored as string to enable
+     * subordinate IDs (e.g. "1.1").
      *
      * @return String instance or null, if the processing step is not part of a pipeline
      */
-    public String getIndexOfStepInPipeline();
+    public String getPipelineProcessingStepID();
 
     /**
-     * Sets which index the processing step has in a superordinate pipeline.
+     * Sets the identifier of the processing step which should equal the index of the processing step in a superordinate
+     * pipeline and may be null if the processing step is not part of a pipeline. It is stored as string to enable
+     * subordinate IDs (e.g. "1.1").
      *
-     * @param anIndexString String instance or null, if the processing step is not part of a pipeline
+     * @param aProcessingStepID String instance or null, if the processing step is not part of a pipeline
      */
-    public void setIndexOfStepInPipeline(String anIndexString);
+    public void setPipelineProcessingStepID(String aProcessingStepID);
 
 }

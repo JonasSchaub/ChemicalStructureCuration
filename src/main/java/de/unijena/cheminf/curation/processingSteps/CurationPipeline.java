@@ -40,6 +40,7 @@ import de.unijena.cheminf.curation.processingSteps.filters.MinBondsOfSpecificBon
 import de.unijena.cheminf.curation.processingSteps.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinMolecularMassFilter;
 import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
@@ -53,7 +54,7 @@ import java.util.logging.Logger;
  * A high-level API for curating, standardizing and filtering sets of molecules in a pipeline of multiple processing
  * steps.
  * TODO (use the DepictionGenerator as guideline)
- * TODO: demonstrate usage of pipeline examplary
+ * TODO: demonstrate usage of pipeline exemplary
  * Use the {@link #addProcessingStep(IProcessingStep)} method to add processing steps to the pipeline no convenience
  * method exists for.
  * ...
@@ -89,7 +90,7 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Linked list that contains all processing steps (instances of IProcessingStep) that were added to the pipeline.
      */
-    private final LinkedList<IProcessingStep> listOfPipelineSteps;  //TODO: change type to <? extends IProcessingStep> ?  @Felix, @Jonas
+    private final LinkedList<IProcessingStep> listOfPipelineSteps;
 
     /**
      * Constructor. Initializes the curation pipeline.
@@ -145,11 +146,8 @@ public class CurationPipeline extends BaseProcessingStep {
                     " exception: " + anUnexpectedException.toString(), anUnexpectedException);
             //TODO: treat NullPointerException separately? (case: previous processing step returned null)? - I do not have a clear opinion on this so far
             //TODO: create some kind of notification / message to append to the report file - discuss with Max (or Felix, Jonas)
-            //this.getReporter().report();  //TODO: uncomment when default reporter and a handling of the report-files exist
             return null;
         }
-        //
-        //this.getReporter().report();    //TODO: uncomment when default reporter exists
         return tmpResultingACSet;
     }
 
@@ -439,6 +437,28 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
+     * Adds the given processing step to the list of processing steps and sets its fields optionalIDPropertyName and
+     * reporter to the ones of the pipeline; sets the field of the processing step whether the reporter is
+     * self-contained to false; sets the identifier of the processing step to the respective ID of the pipeline added
+     * by the index of the new step in the pipeline.
+     *
+     * @param aProcessingStep IProcessingStep to add to the list
+     * @throws NullPointerException if the given IProcessingStep instance is null
+     */
+    private void addToListOfProcessingSteps(IProcessingStep aProcessingStep) throws NullPointerException {
+        Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
+        this.listOfPipelineSteps.add(aProcessingStep);
+        aProcessingStep.setOptionalIDPropertyName(this.getOptionalIDPropertyName());
+        aProcessingStep.setReporter(this.getReporter());
+        aProcessingStep.setIsReporterSelfContained(false);
+        aProcessingStep.setPipelineProcessingStepID(
+                ((this.getPipelineProcessingStepID() == null) ?
+                        "" : this.getPipelineProcessingStepID() + ".") +
+                        (this.listOfPipelineSteps.size() - 1)
+        );
+    }
+
+    /**
      * Returns the list that contains all processing steps that were added to the pipeline.
      *
      * @return LinkedList of IProcessingStep instances
@@ -461,56 +481,38 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Sets the reporter of the pipeline and of every processing step in the pipeline.
+     * Sets the reporter of the pipeline and of every processing step in the pipeline; if given null, an instance of
+     * {@link MarkDownReporter} is used by default.
      *
      * @param aReporter IReporter instance
-     * @throws NullPointerException if the given instance of IReporter is null
      */
     @Override
-    public void setReporter(IReporter aReporter) throws NullPointerException {
+    public void setReporter(IReporter aReporter) {
         super.setReporter(aReporter);
         this.listOfPipelineSteps.forEach(aProcessingStep -> {
-            aProcessingStep.setReporter(aReporter);
+            aProcessingStep.setReporter(this.getReporter());
         });
     }
 
     /**
-     * Sets the index the pipeline has in a superordinate pipeline and - in combination with the respective index of
-     * the step in this pipeline - to every processing step that is part of this pipeline.
+     * Sets the identifier of the pipeline and - in combination with the respective index of the step in this pipeline
+     * - to every processing step that is part of this pipeline. The identifier should equal the index the pipeline has
+     * in a superordinate pipeline and may be null if there is no superordinate pipeline.
      *
-     * @param anIndexString String with the index or null if it is not part of a pipeline
+     * @param aProcessingStepID String with the index or null if it is not part of a pipeline
      */
     @Override
-    public void setIndexOfStepInPipeline(String anIndexString) {
-        super.setIndexOfStepInPipeline(anIndexString);
+    public void setPipelineProcessingStepID(String aProcessingStepID) {
+        super.setPipelineProcessingStepID(aProcessingStepID);
         String tmpSubordinateID;
-        if (anIndexString != null) {
-            tmpSubordinateID = anIndexString + ".";
+        if (aProcessingStepID != null) {
+            tmpSubordinateID = aProcessingStepID + ".";
         } else {
             tmpSubordinateID = "";
         }
         for (int i = 0; i < this.listOfPipelineSteps.size(); i++) {
-            this.listOfPipelineSteps.get(i).setIndexOfStepInPipeline(tmpSubordinateID + i);
+            this.listOfPipelineSteps.get(i).setPipelineProcessingStepID(tmpSubordinateID + i);
         }
-    }
-
-    /**
-     * Adds the given processing step to the list of processing steps and sets its fields optionalIDPropertyName and
-     * reporter.
-     *
-     * @param aProcessingStep IProcessingStep to add to the list
-     * @throws NullPointerException if the given IProcessingStep instance is null
-     */
-    private void addToListOfProcessingSteps(IProcessingStep aProcessingStep) throws NullPointerException {
-        Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
-        this.listOfPipelineSteps.add(aProcessingStep);
-        aProcessingStep.setOptionalIDPropertyName(this.getOptionalIDPropertyName());
-        aProcessingStep.setReporter(this.getReporter());
-        aProcessingStep.setIndexOfStepInPipeline(
-                ((this.getIndexOfStepInPipeline() == null) ?
-                        "" : this.getIndexOfStepInPipeline() + ".") +
-                        (this.listOfPipelineSteps.size() - 1)
-        );
     }
 
 }

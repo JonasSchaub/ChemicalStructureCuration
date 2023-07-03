@@ -27,6 +27,7 @@ package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.reporter.ReportDataObject;
 import de.unijena.cheminf.curation.utils.ProcessingStepUtils;
 import org.openscience.cdk.AtomContainerSet;
@@ -66,7 +67,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private static final Logger LOGGER = Logger.getLogger(BaseProcessingStep.class.getName());
 
     /**
-     * Reporter of this processing step.
+     * Reporter of this processing step. The reporter may never be null; the
      */
     private IReporter reporter;
 
@@ -78,28 +79,31 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private String optionalIDPropertyName;
 
     /**
-     * String with the index of the processing step in the pipeline (if it is part of a pipeline), or null if it is not
-     * part of a pipeline. It is stored as string to enable subordinate IDs (e.g. "1.1"). If the index differs from
-     * null (default), the {@link #process(IAtomContainerSet, boolean, boolean)} method expects a superordinate entity
-     * to call the {@link IReporter#report()} method of this instance's reporter.
+     * Identifier string of the processing step in the pipeline (if it is part of a pipeline), or null if it is not
+     * part of a pipeline (default). It should equal the index of the processing step in the respective pipeline and
+     * is stored as string to enable subordinate IDs (e.g. "1.1").
      */
-    private String indexOfStepInPipeline = null;
+    private String pipelineProcessingStepID = null;
 
     /**
-     * Constructor. Initializes the fields {@link #reporter} and {@link #optionalIDPropertyName}.
+     * Boolean value whether the reporter of this instance is self-contained and does not belong to a superordinate
+     * entity like a pipeline ({@link CurationPipeline}); if false, calls of the {@link IReporter#report()} method are
+     * suppressed.
+     */
+    private boolean isReporterSelfContained = true;
+
+    /**
+     * Constructor; initializes the fields {@link #reporter} and {@link #optionalIDPropertyName}.
      *
-     * @param aReporter reporter to report to when processing; if null is given, an instance of the default reporter
-     *                  is used
-     * @param anOptionalIDPropertyName null or the name string of an atom container property containing an optional
-     *                                 second identifier of structures to be used at the reporting of a processing
-     *                                 process; if null is given, no second identifier is used
+     * @param aReporter reporter to report to when processing; if null is given, the class field is initialized with an
+     *                  instance of the default reporter ({@link MarkDownReporter})
+     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     *                                 identifier (e.g. the name of the structure) for each structure that is to be
+     *                                 processed by this processing step; if null is given, no second identifier is used
      */
     public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) {
-        if (aReporter == null) {
-            //TODO: initialize with default reporter
-        } else {
-            this.reporter = aReporter;
-        }
+        //if given reporter is null, the field is initialized with an instance of MarkDownReporter
+        this.reporter = Objects.requireNonNullElseGet(aReporter, MarkDownReporter::new);
         this.optionalIDPropertyName = anOptionalIDPropertyName;
     }
 
@@ -108,6 +112,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                                      boolean aCloneBeforeProcessing,
                                      boolean anAssignIdentifiers) throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        //assign MolIDs to the given structures if so desired
         if (anAssignIdentifiers) {
             ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
         } //TODO: else: check existence of MolIDs ?
@@ -120,16 +125,19 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         }
         //apply the logic of the processing step on the atom container set
         IAtomContainerSet tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
-        if (this.indexOfStepInPipeline == null) {
-            //generate the report file only if the processing step is not part of a pipeline
-            //this.reporter.report();   //TODO: default reporter necessary
+        //
+        //flush all data appended to the reporter, but only if the reporter is self-contained by this processing step
+        if (this.isReporterSelfContained()) {
+            this.reporter.report();
         }
+        //
         return tmpResultingACSet;
     }
 
     /**
-     * Processes the given atom container set according to the processing step. Does not clone the given data; expects
-     * all atom containers to have a MolID (atom container property with the name {@link #MOL_ID_PROPERTY_NAME}).
+     * Processes the given atom container set according to the logic of the processing step. Does not clone the given
+     * data; expects all atom containers to have a MolID (atom container property with the name {@link
+     * #MOL_ID_PROPERTY_NAME}).
      *
      * @param anAtomContainerSet atom container set to process
      * @return the processed atom container set
@@ -141,13 +149,12 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     protected abstract IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception;
 
     /**
-     * Clones the given atom container set. Atom containers that cause a CloneNotSupportedException to be thrown are
-     * appended to the given reporter and excluded from the returned atom container set. This method is not part of an
-     * utils class since it reports issues to this processing step's reporter.
+     * Clones the given atom container set and reports issues with the cloning of individual atom containers to the
+     * reporter (therefore it is not part of an utils class so far).
      *
      * @param anAtomContainerSet atom container set to be cloned
      * @return a clone of the given atom container set
-     * @throws NullPointerException if the given IAtomContainerSet or IReporter instance is null
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
      */
     private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
@@ -178,7 +185,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         if (anAtomContainer == null) {
             //create report data object for atom container being null
             tmpReportDataObject = new ReportDataObject(
-                    this.indexOfStepInPipeline,
+                    this.pipelineProcessingStepID,
                     this.getClass(),
                     anErrorCode
             );
@@ -191,7 +198,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
                     anAtomContainer,
                     tmpMolIDString,     //TODO: what if MolID is null?
                     tmpOptionalIDString,
-                    this.indexOfStepInPipeline,
+                    this.pipelineProcessingStepID,
                     this.getClass(),
                     anErrorCode
             );
@@ -263,34 +270,45 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         return this.reporter;
     }
 
+    /**
+     * Sets the reporter of this processing step; uses a default reporter (instance of {@link MarkDownReporter}) if the
+     * given IReporter instance is null.
+     *
+     * @param aReporter IReporter instance
+     */
     @Override
-    public void setReporter(IReporter aReporter) throws NullPointerException {
-        //TODO: just check for not null? / use the default reporter instead?
-        //Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");  //TODO: would cause problems with too many test methods at the moment
-        this.reporter = aReporter;
+    public void setReporter(IReporter aReporter){
+        //if the given reporter is null, the reporter is initialized with an instance of MarkDownReporter
+        this.reporter = Objects.requireNonNullElseGet(aReporter, MarkDownReporter::new);
+    }
+
+    @Override
+    public boolean isReporterSelfContained() {
+        return isReporterSelfContained;
+    }
+
+    @Override
+    public void setIsReporterSelfContained(boolean anIsSelfContained) {
+        this.isReporterSelfContained = anIsSelfContained;
     }
 
     /**
      * {@inheritDoc}
-     * This field needs to be set manually / by the superordinate pipeline. If the index differs from null (default),
-     * the {@link #process(IAtomContainerSet, boolean, boolean)} method of this processing step expects a superordinate
-     * entity to call the {@link IReporter#report()} method of this instance's reporter.
+     * This field needs to be set manually / by the superordinate pipeline.
      */
     @Override
-    public String getIndexOfStepInPipeline() {
-        return this.indexOfStepInPipeline;
+    public String getPipelineProcessingStepID() {
+        return this.pipelineProcessingStepID;
     }
 
     /**
      * {@inheritDoc}
-     *  If the index is set to anything else than null (default), the {@link #process(IAtomContainerSet, boolean,
-     *  boolean)} method of this processing step expects a superordinate entity to call the {@link IReporter#report()}
-     *  method of this instance's reporter.
+     *  This field needs to be set manually / by the superordinate pipeline.
      */
     @Override
-    public void setIndexOfStepInPipeline(String anIndexString) {
+    public void setPipelineProcessingStepID(String aProcessingStepID) {
         //TODO: accept empty or blank Strings?
-        this.indexOfStepInPipeline = anIndexString;
+        this.pipelineProcessingStepID = aProcessingStepID;
     }
 
 }

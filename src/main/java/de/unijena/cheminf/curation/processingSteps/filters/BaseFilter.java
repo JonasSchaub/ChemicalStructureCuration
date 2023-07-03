@@ -83,8 +83,7 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
-        for (IAtomContainer tmpAtomContainer :
-                anAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
             //apply filter
             try {
                 if (!this.isFiltered(tmpAtomContainer)) {
