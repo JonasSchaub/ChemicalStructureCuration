@@ -26,7 +26,6 @@
 package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.TestUtils;
-import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;
@@ -41,6 +40,9 @@ import org.openscience.cdk.interfaces.IElement;
 
 /**
  * Test class for methods of class FilterUtils.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class FilterUtilsTest {
 

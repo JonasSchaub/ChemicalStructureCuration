@@ -39,6 +39,9 @@ import java.util.Objects;
 
 /**
  * Test class for the core methods and functions of class FilterPipeline.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class CurationPipelineTest {
 

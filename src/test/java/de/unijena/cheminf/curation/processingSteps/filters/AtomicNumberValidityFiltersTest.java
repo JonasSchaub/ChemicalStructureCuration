@@ -37,6 +37,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * Test class of the filters HasAllValidAtomicNumbersFilter and HasInvalidAtomicNumbersFilter.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class AtomicNumberValidityFiltersTest {
 
@@ -66,9 +69,10 @@ public class AtomicNumberValidityFiltersTest {
      * parameter aWildcardAtomicNumberIsValid is without influence here.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersWithAllValidAtomicNumbers() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersWithAllValidAtomicNumbers() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C",
@@ -96,9 +100,10 @@ public class AtomicNumberValidityFiltersTest {
      * parameter aWildcardAtomicNumberIsValid is without influence here.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersWithInvalidAtomicNumbers() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersWithInvalidAtomicNumbers() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C",
@@ -129,9 +134,10 @@ public class AtomicNumberValidityFiltersTest {
      * opposite, true, if the wildcard atomic number zero is considered as valid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersWithAllValidAtomicNumbers_zeroIsValid() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersWithAllValidAtomicNumbers_zeroIsValid() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",
                 "c1ccccc1",
@@ -163,9 +169,10 @@ public class AtomicNumberValidityFiltersTest {
      * returns the opposite, false, if the wildcard atomic number zero is considered as invalid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersWithAllValidAtomicNumbers_zeroIsInvalid() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersWithAllValidAtomicNumbers_zeroIsInvalid() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",
                 "c1ccccc1",
@@ -197,9 +204,10 @@ public class AtomicNumberValidityFiltersTest {
      * false; the boolean parameter aWildcardAtomicNumberIsValid is without influence here.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersWithAnAtomicNumberBeingNull() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersWithAnAtomicNumberBeingNull() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",
                 "c1ccccc1",
@@ -282,9 +290,10 @@ public class AtomicNumberValidityFiltersTest {
      * considered as valid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_test1_zeroIsValid() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_test1_zeroIsValid() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",
                 "C",
@@ -336,9 +345,10 @@ public class AtomicNumberValidityFiltersTest {
      * considered as invalid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_test2_zeroIsInvalid() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_test2_zeroIsInvalid() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C=CC=C",

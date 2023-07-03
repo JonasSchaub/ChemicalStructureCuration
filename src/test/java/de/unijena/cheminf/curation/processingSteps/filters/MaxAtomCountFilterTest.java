@@ -35,6 +35,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * Test class for class MaxAtomCountFilter.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxAtomCountFilterTest {
 
@@ -79,25 +82,14 @@ public class MaxAtomCountFilterTest {
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxAtomCountFilter returns a boolean value.
-     */
-    @Test
-    public void isFilteredMethodTest_returnsBoolean() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpMaxAtomCount = 0;
-        boolean tmpConsiderImplicitHydrogens = true;
-        IFilter tmpFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-    }
-
-    /**
      * Tests whether method .isFiltered() of class MaxAtomCountFilter returns false if an AC does not exceed the max
      * atom count considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_considerImplicitHydrogens() throws InvalidSmilesException, Exception {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //9 atoms
         int tmpMaxAtomCount = 9;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -110,9 +102,10 @@ public class MaxAtomCountFilterTest {
      * count considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrue_considerImplicitHydrogens() throws InvalidSmilesException, Exception {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //9 atoms
         int tmpMaxAtomCount = 8;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -125,9 +118,10 @@ public class MaxAtomCountFilterTest {
      * atom count not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_notConsiderImplicitHydrogens() throws InvalidSmilesException, Exception {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //3 atoms
         int tmpMaxAtomCount = 3;
         boolean tmpConsiderImplicitHydrogens = false;
@@ -140,9 +134,10 @@ public class MaxAtomCountFilterTest {
      * count not considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws InvalidSmilesException, Exception {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //3 atoms
         int tmpMaxAtomCount = 2;
         boolean tmpConsiderImplicitHydrogens = false;
@@ -169,9 +164,11 @@ public class MaxAtomCountFilterTest {
 
     /**
      * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
+     *
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_returnsIAtomContainerSetNotNull() {
+    public void filterMethodTest_returnsIAtomContainerSetNotNull() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMaxAtomCount = 5;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -185,9 +182,10 @@ public class MaxAtomCountFilterTest {
      * Tests whether the .filter() method filters as expected.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_test1() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_test1() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",   //10 (4)
                 "c1ccccc1", //12 (6) - filtered
@@ -209,9 +207,10 @@ public class MaxAtomCountFilterTest {
      * Tests whether the .filter() method filters as expected.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_test2() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_test2() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //12 (6) - filtered
                 "CCO",      // 9 (3)

@@ -27,7 +27,6 @@ package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
-import de.unijena.cheminf.curation.utils.ChemUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;

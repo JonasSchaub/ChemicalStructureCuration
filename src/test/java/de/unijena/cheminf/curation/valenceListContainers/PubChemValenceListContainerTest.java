@@ -38,6 +38,8 @@ import java.io.IOException;
 /**
  * Test class of class PubChemValenceListContainer.
  *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  * @see PubChemValenceListContainer
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

@@ -37,6 +37,9 @@ import org.openscience.cdk.interfaces.IBond;
 
 /**
  * Test class of class MinBondsOfSpecificBondOrderFilter.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MinBondsOfSpecificBondOrderFilterTest {
 
@@ -88,27 +91,15 @@ public class MinBondsOfSpecificBondOrderFilterTest {
     }
 
     /**
-     * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns a boolean value.
-     */
-    @Test
-    public void isFilteredMethodTest_returnsBoolean() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        int tmpMinSpecificBondCount = 0;
-        boolean tmpConsiderImplicitHydrogens = true;
-        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-    }
-
-    /**
      * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if an AC does not
      * exceed the min specific bond count for bonds with bond order single considering bonds to implicit hydrogen atoms
      * and whether it returns true if it does exceed.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsFalse_bondOrderSingle_considerImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalse_bondOrderSingle_considerImplicitHydrogens() throws InvalidSmilesException, Exception {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 bonds
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -132,9 +123,10 @@ public class MinBondsOfSpecificBondOrderFilterTest {
      * atoms and whether it returns true if it does exceed.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_bondOrderSingle_notConsiderImplicitHydrogens() throws InvalidSmilesException {
+    public void isFilteredMethodTest_bondOrderSingle_notConsiderImplicitHydrogens() throws InvalidSmilesException, Exception {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //2 bonds
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         boolean tmpConsiderImplicitHydrogens = false;
@@ -156,9 +148,11 @@ public class MinBondsOfSpecificBondOrderFilterTest {
      * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if a given atom
      * container is below or equals the threshold and true if the atom container exceeds the threshold; tests for bond
      * order being double.
+     *
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_bondOrderDouble() {
+    public void isFilteredMethodTest_bondOrderDouble() throws Exception {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         int tmpThresholdValue = 1;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
@@ -180,9 +174,11 @@ public class MinBondsOfSpecificBondOrderFilterTest {
      * Tests whether method .isFiltered() of class MinBondsOfSpecificBondOrderFilter returns false if a given atom
      * container is below or equals the threshold and true if the atom container exceeds the threshold; tests for bond
      * order being triple, quadruple, quintuple, unset and null.
+     *
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() {
+    public void isFilteredMethodTest_returnsTrue_notConsiderImplicitHydrogens() throws Exception {
         IBond.Order[] tmpBondOrderArray = new IBond.Order[]{
                 IBond.Order.DOUBLE,
                 IBond.Order.TRIPLE,
@@ -238,9 +234,11 @@ public class MinBondsOfSpecificBondOrderFilterTest {
 
     /**
      * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
+     *
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_returnsIAtomContainerSetNotNull() {
+    public void filterMethodTest_returnsIAtomContainerSetNotNull() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpMinSpecificBondCount = 5;
@@ -257,9 +255,10 @@ public class MinBondsOfSpecificBondOrderFilterTest {
      * Tests whether the .filter() method filters as expected; test for bond order double.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderDouble() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderDouble() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",   // 2
                 "c1ccccc1", // 3
@@ -285,9 +284,10 @@ public class MinBondsOfSpecificBondOrderFilterTest {
      * hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderSingle_considerImplHs() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderSingle_considerImplHs() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",   // 7
                 "CC(=O)O",  // 6 - filtered
@@ -313,9 +313,10 @@ public class MinBondsOfSpecificBondOrderFilterTest {
      * implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderSingle_notConsiderImplHs() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_exemplaryForBondOrderSingle_notConsiderImplHs() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 3
                 "C=CC=C",   // 1 - filtered

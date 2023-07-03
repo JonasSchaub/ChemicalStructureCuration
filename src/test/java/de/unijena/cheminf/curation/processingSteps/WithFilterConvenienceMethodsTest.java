@@ -173,9 +173,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxBondCountFilter considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxBondCountFilter_considerImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondCountFilter_considerImplHs_multipleMolecules()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 7 (3)
                 "c1ccccc1", //12 (6) - filtered
@@ -201,9 +203,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxBondCountFilter not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxBondCountFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondCountFilter_notConsiderImplHs_multipleMolecules()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //12 (6) - filtered
                 "CC(=O)O",  // 7 (3)
@@ -306,9 +310,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxBondsOfSpecificBondOrderFilter with bond order single and considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3) - filtered
                 "CC(=O)O",  // 6 (2)
@@ -334,9 +340,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxBondsOfSpecificBondOrderFilter with bond order single and not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3) - filtered
                 "CC(=O)O",  // 6 (2) - filtered
@@ -362,9 +370,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxBondsOfSpecificBondOrderFilter with bond order double; test is exemplary for filtering on other bond orders.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
+    public void processMethodTest_withMaxBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 1
                 "c1ccccc1", // 3 - filtered
@@ -430,9 +440,11 @@ public class WithFilterConvenienceMethodsTest {
      * MinBondsOfSpecificBondOrderFilter with bond order single and considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs() throws InvalidSmilesException {
+    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderSingle_considerImplHs()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3)
                 "CC(=O)O",  // 6 (2) - filtered
@@ -458,9 +470,11 @@ public class WithFilterConvenienceMethodsTest {
      * MinBondsOfSpecificBondOrderFilter with bond order single and not considering bonds to implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules() throws InvalidSmilesException {
+    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_notConsiderImplHs_multipleMolecules()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", // 9 (3)
                 "CC(=O)O",  // 6 (2)
@@ -486,9 +500,11 @@ public class WithFilterConvenienceMethodsTest {
      * MinBondsOfSpecificBondOrderFilter with bond order double; test is exemplary for filtering on other bond orders.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders() throws InvalidSmilesException {
+    public void processMethodTest_withMinBondsOfSpecificBondOrderFilter_bondOrderDouble_exemplaryForFilteringOnOtherBondOrders()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 1 - filtered
                 "c1ccccc1", // 3
@@ -546,9 +562,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxHeavyAtomCountFilter; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
+    public void processMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test1()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4
                 "c1ccccc1", // 6 - filtered
@@ -573,9 +591,11 @@ public class WithFilterConvenienceMethodsTest {
      * MaxHeavyAtomCountFilter; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
+    public void processMethodTest_withMaxHeavyAtomCountFilter_multipleMolecules_test2()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4 - filtered
                 "c1ccccc1", // 6 - filtered
@@ -632,9 +652,11 @@ public class WithFilterConvenienceMethodsTest {
      * MinHeavyAtomCountFilter; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test1() throws InvalidSmilesException {
+    public void processMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test1()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4 - filtered
                 "c1ccccc1", // 6
@@ -659,9 +681,11 @@ public class WithFilterConvenienceMethodsTest {
      * MinHeavyAtomCountFilter; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test2() throws InvalidSmilesException {
+    public void processMethodTest_withMinHeavyAtomCountFilter_multipleMolecules_test2()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",  // 4
                 "c1ccccc1", // 6
@@ -703,9 +727,11 @@ public class WithFilterConvenienceMethodsTest {
      * HasAllValidAtomicNumbersFilter; test 2; wildcard atomic number is considered as valid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
+    public void processMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",
                 "C",
@@ -739,9 +765,11 @@ public class WithFilterConvenienceMethodsTest {
      * HasAllValidAtomicNumbersFilter; test 2; wildcard atomic number is considered as invalid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
+    public void processMethodTest_withHasAllValidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C=CC=C",
@@ -792,9 +820,11 @@ public class WithFilterConvenienceMethodsTest {
      * HasInvalidAtomicNumbersFilter; test 2; wildcard atomic number is considered as valid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid() throws InvalidSmilesException {
+    public void processMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test1_zeroIsValid()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",
                 "C",
@@ -828,9 +858,11 @@ public class WithFilterConvenienceMethodsTest {
      * HasInvalidAtomicNumbersFilter; test 2; wildcard atomic number is considered as invalid.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid() throws InvalidSmilesException {
+    public void processMethodTest_withHasInvalidAtomicNumbersFilter_multipleMolecules_test2_zeroIsInvalid()
+            throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1",
                 "C=CC=C",

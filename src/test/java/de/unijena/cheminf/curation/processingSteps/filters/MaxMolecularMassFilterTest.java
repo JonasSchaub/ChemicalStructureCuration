@@ -36,6 +36,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * Test class of class MaxMolecularMassFilter.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxMolecularMassFilterTest {
 
@@ -84,9 +87,10 @@ public class MaxMolecularMassFilterTest {
      * atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersExceedingMaxMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersExceedingMaxMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -123,9 +127,10 @@ public class MaxMolecularMassFilterTest {
      * atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersFallingShortOfMaxMass_testedWithDiffFlavours() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersFallingShortOfMaxMass_testedWithDiffFlavours() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -162,9 +167,10 @@ public class MaxMolecularMassFilterTest {
      * containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_atomContainersEqualingMaxMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException {
+    public void isFilteredMethodTest_atomContainersEqualingMaxMass_returnsTrue_testedWithDiffFlavours() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",
                 "CCO",
@@ -217,9 +223,10 @@ public class MaxMolecularMassFilterTest {
      * MolWeight; test 1.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test1() throws InvalidSmilesException {
+    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test1() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",        //approx. 16
                 "C=CC=C",   //approx. 54 - filtered
@@ -241,9 +248,10 @@ public class MaxMolecularMassFilterTest {
      * Tests whether the .process() method filters as expected; exemplary tested with 'mass flavour' MolWeight; test 2.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test2() throws InvalidSmilesException {
+    public void processMethodTest_multipleACs_massFlavourMolWeight_processesAsExpected_test2() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C",        //approx. 16
                 "C=CC=C",   //approx. 54 - filtered

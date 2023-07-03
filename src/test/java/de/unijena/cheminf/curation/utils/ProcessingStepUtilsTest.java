@@ -28,7 +28,6 @@ package de.unijena.cheminf.curation.utils;
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
-import de.unijena.cheminf.curation.utils.ProcessingStepUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
@@ -38,6 +37,8 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 /**
  * Test class of the ProcessingStepUtils class.
  *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  * @see ProcessingStepUtils
  */
 public class ProcessingStepUtilsTest {

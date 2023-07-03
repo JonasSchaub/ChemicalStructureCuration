@@ -35,6 +35,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * Test class for class MaxHeavyAtomCountFilter.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxHeavyAtomCountFilterTest {
 
@@ -74,24 +77,14 @@ public class MaxHeavyAtomCountFilterTest {
     }
 
     /**
-     * Tests whether method .isFiltered() of class MaxHeavyAtomCountFilter returns a boolean value.
-     */
-    @Test
-    public void isFilteredMethodTest_returnsBoolean() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpMaxHeavyAtomCount = 0;
-        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
-        Assertions.assertInstanceOf(Boolean.class, tmpFilter.isFiltered(tmpAtomContainer));
-    }
-
-    /**
      * Tests whether method .isFiltered() of class MaxHeavyAtomCountFilter returns true if an AC exceeds the
      * max heavy atom count; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerExceedsTheMaxHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerExceedsTheMaxHeavyAtomCount() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms
@@ -110,9 +103,10 @@ public class MaxHeavyAtomCountFilterTest {
      * max heavy atom count; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsFalseIfGivenAtomContainerFallsShortOfTheMaxHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsFalseIfGivenAtomContainerFallsShortOfTheMaxHeavyAtomCount() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms
@@ -131,9 +125,10 @@ public class MaxHeavyAtomCountFilterTest {
      * atom count; tested with multiple atom containers.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMaxHeavyAtomCount() throws InvalidSmilesException {
+    public void isFilteredMethodTest_returnsTrueIfGivenAtomContainerEqualsTheMaxHeavyAtomCount() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 atoms
                 "C1CCCC1",  //5 atoms
@@ -165,9 +160,11 @@ public class MaxHeavyAtomCountFilterTest {
 
     /**
      * Tests whether the return value of the .filter() method is not null and an instance of IAtomContainerSet.
+     *
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_returnsIAtomContainerSetNotNull() {
+    public void filterMethodTest_returnsIAtomContainerSetNotNull() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMaxHeavyAtomCount = 5;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount);
@@ -180,9 +177,10 @@ public class MaxHeavyAtomCountFilterTest {
      * Tests whether the .filter() method filters as expected.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_test1() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_test1() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "C=CC=C",   //4
                 "c1ccccc1", //6 - filtered
@@ -203,9 +201,10 @@ public class MaxHeavyAtomCountFilterTest {
      * Tests whether the .filter() method filters as expected.
      *
      * @throws InvalidSmilesException if a SMILES string could not be parsed
+     * @throws Exception if something went wrong
      */
     @Test
-    public void filterMethodTest_filtersAsExpected_test2() throws InvalidSmilesException {
+    public void filterMethodTest_filtersAsExpected_test2() throws InvalidSmilesException, Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "c1ccccc1", //6 - filtered
                 "CCO",      //3

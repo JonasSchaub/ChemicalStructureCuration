@@ -41,6 +41,9 @@ import java.util.Objects;
 
 /**
  * Collection of utils for different test classes.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class TestUtils {
 
@@ -126,9 +129,20 @@ public class TestUtils {
              * @throws NullPointerException if the given IAtomContainer instance is null
              */
             @Override
-            protected boolean isFiltered(IAtomContainer anAtomContainer, boolean aReportToReporter) throws NullPointerException {
+            public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
                 Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
                 return aIsFilteredReturnValue;
+            }
+            //
+            /**
+             * Does nothing.
+             *
+             * @param anAtomContainer the atom container the issue refers to
+             * @param anException the thrown exception
+             */
+            @Override
+            protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) {
+                //empty method
             }
         };
     }
@@ -145,10 +159,11 @@ public class TestUtils {
      * @throws NullPointerException if one of the given parameters is null
      * @throws IllegalArgumentException if the length of the given boolean array does not equal the count of atom
      * containers in the given atom container set
+     * @throws Exception if something unexpected went wrong
      */
     public static void curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
             IFilter aFilter, IAtomContainerSet anAtomContainerSet, boolean[] anIsFilteredBooleanArray
-    ) throws NullPointerException, IllegalArgumentException {
+    ) throws NullPointerException, IllegalArgumentException, Exception {
         Objects.requireNonNull(aFilter, "aFilter (instance of Filter) is null.");
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         Objects.requireNonNull(anIsFilteredBooleanArray, "anIsFilteredBooleanArray (instance of boolean[]) is null.");
