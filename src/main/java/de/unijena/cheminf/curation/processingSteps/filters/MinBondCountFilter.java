@@ -33,6 +33,9 @@ import java.util.Objects;
 
 /**
  * Min bond count filter for filtering atom containers based on a minimum bond count.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MinBondCountFilter extends MaxBondCountFilter {
 

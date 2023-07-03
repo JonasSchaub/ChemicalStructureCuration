@@ -30,6 +30,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 /**
  * Has invalid atomic numbers filter to filter atom containers with atoms with invalid atomic numbers out of a set of
  * atom containers.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class HasInvalidAtomicNumbersFilter extends HasAllValidAtomicNumbersFilter {
 

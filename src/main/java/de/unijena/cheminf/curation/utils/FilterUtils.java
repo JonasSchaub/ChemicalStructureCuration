@@ -34,6 +34,9 @@ import java.util.Objects;
 
 /**
  * Class of utils for filtering sets of atom containers based on molecular descriptors.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class FilterUtils {
 

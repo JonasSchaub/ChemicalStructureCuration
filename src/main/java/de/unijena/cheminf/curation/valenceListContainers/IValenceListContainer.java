@@ -27,6 +27,9 @@ package de.unijena.cheminf.curation.valenceListContainers;
 
 /**
  * IValenceListContainer interface.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public interface IValenceListContainer {
 

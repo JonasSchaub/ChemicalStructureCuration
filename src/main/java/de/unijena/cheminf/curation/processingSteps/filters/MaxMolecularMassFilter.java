@@ -35,6 +35,9 @@ import java.util.Objects;
 
 /**
  * Max molecular mass filter for filtering atom containers based on a maximum molecular mass.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxMolecularMassFilter extends BaseFilter {
 

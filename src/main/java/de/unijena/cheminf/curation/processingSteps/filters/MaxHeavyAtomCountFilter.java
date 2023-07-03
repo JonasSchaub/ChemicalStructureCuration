@@ -33,6 +33,9 @@ import java.util.Objects;
 
 /**
  * Max heavy atom count filter for filtering atom containers based on a maximum non-hydrogen atom count.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxHeavyAtomCountFilter extends BaseFilter {
 

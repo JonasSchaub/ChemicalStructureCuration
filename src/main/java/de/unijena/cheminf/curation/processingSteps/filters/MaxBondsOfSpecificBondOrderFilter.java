@@ -35,6 +35,9 @@ import java.util.Objects;
 /**
  * Max bonds of specific bond order filter for filtering atom containers based on a maximum count of bonds of a
  * specific bond order.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
 

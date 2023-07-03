@@ -27,6 +27,9 @@ package de.unijena.cheminf.curation.enums;
 
 /**
  * The enum defines the errors (issues with structures) encountered in the processing of structures.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public enum ErrorCodes {
 

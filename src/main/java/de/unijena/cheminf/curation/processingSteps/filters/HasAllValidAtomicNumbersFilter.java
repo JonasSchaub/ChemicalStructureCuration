@@ -34,6 +34,9 @@ import java.util.Objects;
 /**
  * Has all valid atomic numbers filter to filter atom containers with all valid atomic numbers out of a set of atom
  * containers.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class HasAllValidAtomicNumbersFilter extends BaseFilter {
 

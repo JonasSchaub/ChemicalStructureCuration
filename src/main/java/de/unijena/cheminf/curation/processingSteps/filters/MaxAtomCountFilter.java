@@ -33,6 +33,9 @@ import java.util.Objects;
 
 /**
  * Max atom count filter for filtering atom containers based on a maximum atom count.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MaxAtomCountFilter extends BaseFilter {
 

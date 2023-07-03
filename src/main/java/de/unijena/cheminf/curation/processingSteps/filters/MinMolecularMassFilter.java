@@ -35,6 +35,9 @@ import java.util.Objects;
 
 /**
  * Min molecular mass filter for filtering atom containers based on a minimum molecular mass.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MinMolecularMassFilter extends MaxMolecularMassFilter {
 

@@ -33,6 +33,9 @@ import java.util.Objects;
 
 /**
  * Min atom count filter for filtering atom containers based on a minimum atom count.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class MinAtomCountFilter extends MaxAtomCountFilter {
 

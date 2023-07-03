@@ -31,6 +31,9 @@ import java.io.IOException;
 
 /**
  * Interface of all reporter classes.
+ *
+ * @author Samuel Behr, Maximilian Schaten
+ * @version 1.0.0.0
  */
 public interface IReporter {
 

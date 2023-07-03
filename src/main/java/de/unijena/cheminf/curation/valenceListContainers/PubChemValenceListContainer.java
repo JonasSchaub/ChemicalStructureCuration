@@ -33,6 +33,9 @@ import java.io.IOException;
  * <p>
  * The class follows the Singleton pattern. To receive an instance of the class, the method {@link #getInstance()} may
  * be used.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class PubChemValenceListContainer extends BaseValenceListContainer {
 

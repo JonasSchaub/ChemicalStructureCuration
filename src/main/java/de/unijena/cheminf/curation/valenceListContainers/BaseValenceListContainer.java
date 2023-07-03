@@ -33,6 +33,9 @@ import java.util.Objects;
 
 /**
  * Abstract class BaseValenceListContainer - implements IValenceListContainer.
+ *
+ * @author Samuel Behr
+ * @version 1.0.0.0
  */
 public class BaseValenceListContainer implements IValenceListContainer {
 
