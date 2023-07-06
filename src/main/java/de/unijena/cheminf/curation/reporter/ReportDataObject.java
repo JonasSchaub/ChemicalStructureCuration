@@ -55,10 +55,10 @@ public class ReportDataObject {
     private final String optionalIdentifier;
 
     /**
-     * String with the index of the processing step instance in which the reported problem occurred in the pipeline, or
-     * null if the processing step is not part of a pipeline.
+     * String with the identifier of the processing step instance the reported problem occurred in, or null, if the
+     * processing step has no ID (as it might be the case if it is not part of a pipeline).
      */
-    private final String indexOfProcessingStepInPipeline;
+    private final String processingStepID;
 
     /**
      * Runtime class of the IProcessingStep instance the reported problem occurred in.
@@ -92,7 +92,7 @@ public class ReportDataObject {
         this.atomContainer = null;
         this.identifier = null;
         this.optionalIdentifier = null;
-        this.indexOfProcessingStepInPipeline = anIndexOfProcessingStepInPipeline;
+        this.processingStepID = anIndexOfProcessingStepInPipeline;
         this.classOfProcessingStep = aClassOfProcessingStep;
         this.errorCode = anErrorCode;
     }
@@ -127,7 +127,7 @@ public class ReportDataObject {
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
         this.optionalIdentifier = anOptionalIdentifier;
-        this.indexOfProcessingStepInPipeline = anIndexOfProcessingStepInPipeline;
+        this.processingStepID = anIndexOfProcessingStepInPipeline;
         this.classOfProcessingStep = aClassOfProcessingStep;
         this.errorCode = anErrorCode;
     }
@@ -138,7 +138,7 @@ public class ReportDataObject {
      * @return atom container
      */
     public IAtomContainer getAtomContainer() {
-        return atomContainer;
+        return this.atomContainer;
     }
 
     /**
@@ -147,7 +147,7 @@ public class ReportDataObject {
      * @return String
      */
     public String getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     /**
@@ -156,17 +156,17 @@ public class ReportDataObject {
      * @return integer value or null
      */
     public String getOptionalIdentifier() {
-        return optionalIdentifier;
+        return this.optionalIdentifier;
     }
 
     /**
-     * Returns the index of the processing step in pipeline. This String may be null to state that the processing step
-     * is not part of a pipeline.
+     * Returns the identifier of the processing step instance the reported problem occurred in, or null, if the
+     * processing step has no ID (as it might be the case if it is not part of a pipeline).
      *
      * @return String instance or null
      */
-    public String getIndexOfProcessingStepInPipeline() {
-        return indexOfProcessingStepInPipeline;
+    public String getProcessingStepID() {
+        return this.processingStepID;
     }
 
     /**
@@ -175,7 +175,7 @@ public class ReportDataObject {
      * @return instance of Class&lt;? extends IProcessingStep&gt;
      */
     public Class<? extends IProcessingStep> getClassOfProcessingStep() {
-        return classOfProcessingStep;
+        return this.classOfProcessingStep;
     }
 
     /**
@@ -184,7 +184,7 @@ public class ReportDataObject {
      * @return ErrorCodes constant
      */
     public ErrorCodes getErrorCode() {
-        return errorCode;
+        return this.errorCode;
     }
 
 }

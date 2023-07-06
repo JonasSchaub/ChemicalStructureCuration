@@ -67,11 +67,6 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private static final Logger LOGGER = Logger.getLogger(BaseProcessingStep.class.getName());
 
     /**
-     * Reporter of this processing step. The reporter may never be null; the
-     */
-    private IReporter reporter;
-
-    /**
      * Name string of the atom container property that contains an optional second identifier of type integer. If the
      * String is null (default) or the reported atom containers do not have a respective property, no second identifier
      * is used at the reporting of the processing.
@@ -84,6 +79,11 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * is stored as string to enable subordinate IDs (e.g. "1.1").
      */
     private String pipelineProcessingStepID = null;
+
+    /**
+     * Reporter of this processing step. The field may never be null.
+     */
+    private IReporter reporter;
 
     /**
      * Boolean value whether the reporter of this instance is self-contained and does not belong to a superordinate
@@ -114,7 +114,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         //assign MolIDs to the given structures if so desired
         if (anAssignIdentifiers) {
-            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
+            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);    //TODO: only assign the ID to the clone?
         } //TODO: else: check existence of MolIDs ?
         //clone the given atom container set if so desired
         IAtomContainerSet tmpACSetToProcess;
@@ -284,7 +284,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     @Override
     public boolean isReporterSelfContained() {
-        return isReporterSelfContained;
+        return this.isReporterSelfContained;
     }
 
     @Override

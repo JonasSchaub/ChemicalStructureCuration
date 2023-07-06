@@ -71,8 +71,7 @@ public class ChemUtils {
     public static int countImplicitHydrogens(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpImplicitHydrogensCount = 0;
-        for (IAtom tmpAtom :
-                anAtomContainer.atoms()) {
+        for (IAtom tmpAtom : anAtomContainer.atoms()) {
             tmpImplicitHydrogensCount += tmpAtom.getImplicitHydrogenCount();
         }
         return tmpImplicitHydrogensCount;
@@ -146,7 +145,7 @@ public class ChemUtils {
      * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
      * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
-     * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
+     * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
      * greater than 118)
      */
     public static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, int... anAtomicNumbers)
@@ -167,7 +166,7 @@ public class ChemUtils {
      * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
      * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
-     * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (less than 0 or
+     * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
      * greater than 118)
      */
     private static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)

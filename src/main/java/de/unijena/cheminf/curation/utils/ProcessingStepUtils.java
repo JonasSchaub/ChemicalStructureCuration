@@ -78,8 +78,7 @@ public class ProcessingStepUtils {
         if (anAtomContainerSet == null) {
             return;
         }
-        for (IAtomContainer tmpAtomContainer :
-                anAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
             if (tmpAtomContainer != null) {
                 tmpAtomContainer.removeProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
             }

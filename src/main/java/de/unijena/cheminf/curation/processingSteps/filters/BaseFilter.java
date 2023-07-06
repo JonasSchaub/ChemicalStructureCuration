@@ -72,7 +72,7 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /**
      * Filters the atom containers of the given atom container set according to the values returned by {@link
-     * #isFiltered(IAtomContainer)}.
+     * #isFiltered(IAtomContainer)}. Returns all those atom containers that meet the filter criterion.
      *
      * @throws NullPointerException  if the given IAtomContainerSet instance is null or an atom container of the set
      * does not possess a MolID (this will only cause an exception, if the processing of the atom container causes an
@@ -84,8 +84,8 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
-            //apply filter
             try {
+                //check whether the atom container meets the filter criterion; the structure passes the filter
                 if (!this.isFiltered(tmpAtomContainer)) {
                     tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
                 }
@@ -99,7 +99,8 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
 
     /**
      * Handles the given exception by appending a report to the reporter; rethrows the exception, if it is considered
-     * as fatal.
+     * as fatal. Most implementations expect non-fatal exceptions to have the name of an ErrorCodes enum constant as
+     * message string.
      *
      * @param anAtomContainer the atom container the issue refers to
      * @param anException the thrown exception

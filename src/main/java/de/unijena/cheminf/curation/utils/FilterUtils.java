@@ -42,14 +42,17 @@ public class FilterUtils {
 
     /**
      * Checks whether the atom count of a given atom container exceeds or equals the given threshold. Based on the
-     * boolean parameter, implicit hydrogen atoms are taken into account or not.
+     * boolean parameter, implicit hydrogen atoms are taken into account or not; otherwise only explicit atoms
+     * (including explicit hydrogen atoms) are counted. Use the {@link #exceedsOrEqualsHeavyAtomCount} method to only
+     * count heavy atoms (excluding all hydrogen atoms).
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the atom count threshold
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
-     * @return true, if the atom count of the given atom container equals or exceeds the given threshold
+     * @return true, if the atom count of the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given threshold value is less than zero
+     * @throws IllegalArgumentException if the given threshold value is below zero
+     * @see #exceedsOrEqualsHeavyAtomCount(IAtomContainer, int)
      */
     public static boolean exceedsOrEqualsAtomCount(IAtomContainer anAtomContainer,
                                                    int aThresholdValue,
@@ -69,9 +72,9 @@ public class FilterUtils {
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the heavy atom count threshold
-     * @return true, if the heavy atom count of the given atom container equals or exceeds the given threshold
+     * @return true, if the heavy atom count of the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given threshold value is less than zero
+     * @throws IllegalArgumentException if the given threshold value is below zero
      */
     public static boolean exceedsOrEqualsHeavyAtomCount(IAtomContainer anAtomContainer, int aThresholdValue)
             throws NullPointerException, IllegalArgumentException {
@@ -92,7 +95,7 @@ public class FilterUtils {
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given threshold value is less than zero
+     * @throws IllegalArgumentException if the given threshold value is below zero
      */
     public static boolean exceedsOrEqualsBondCount(IAtomContainer anAtomContainer, int aThresholdValue,
                                                   boolean aConsiderImplicitHydrogens) throws NullPointerException, IllegalArgumentException {
@@ -117,7 +120,7 @@ public class FilterUtils {
      *                                   only relevant when counting bonds of the order one / single
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
-     * @throws IllegalArgumentException if the given threshold value is less than zero
+     * @throws IllegalArgumentException if the given threshold value is below zero
      */
     public static boolean exceedsOrEqualsBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer, IBond.Order aBondOrder, int aThresholdValue,
                                                    boolean aConsiderImplicitHydrogens) throws NullPointerException, IllegalArgumentException {
@@ -152,8 +155,7 @@ public class FilterUtils {
     public static boolean hasAllValidAtomicNumbers(IAtomContainer anAtomContainer, boolean anIncludeWildcardNumber)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
-        for (IAtom tmpAtom :
-                anAtomContainer.atoms()) {
+        for (IAtom tmpAtom : anAtomContainer.atoms()) {
             if (!FilterUtils.hasValidAtomicNumber(tmpAtom, anIncludeWildcardNumber)) {
                 return false;
             }

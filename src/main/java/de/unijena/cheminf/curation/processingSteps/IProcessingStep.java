@@ -32,7 +32,7 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 /**
  * Interface of all processing steps. A processing step takes, processes and returns a set of structures and reports
- * encountered issues to a reporter. Furthermore, processing steps provide everything needed to use them as part of
+ * encountered issues to a reporter. Furthermore, processing steps provide everything needed to be used as part of
  * a pipeline of multiple processing steps.
  *
  * @author Samuel Behr
@@ -46,39 +46,33 @@ public interface IProcessingStep {
      */
 
     /**
-     * Name string of the atom container property that is used to store the MolID. The MolID is an ID that needs to be
-     * assigned to every atom container of a processed atom container set to uniquely identify each single atom
-     * container and enhance the entries of the report file. The MolID is meant to be a String-property to give the
-     * option to extend info on duplicates or parent structures.
+     * Name string of the atom container property that is used to store the MolID. For the processing every atom
+     * container needs to have this ID assigned to track and uniquely identify each single atom container and enhance
+     * the generated report. The MolID is meant to be a String-property to give the option of extending it with
+     * information on duplicates or parent structures.
      */
     public static final String MOL_ID_PROPERTY_NAME = "Processing_MolID";
 
-    /** TODO
-     * Processes the given atom container set according to the processing step. To avoid any changes or modifications
-     * to the original data, use the option of cloning the given atom container set before the processing (by setting
-     * the first boolean parameter to true).
+    /**
+     * Processes the given atom container set according to the logic of the respective processing step. By the end of
+     * the processing, a report containing info on encountered issues with structures is created. The {@link
+     * #isReporterSelfContained()} flag needs to be true for this; if not so, issues are only appended to the reporter
+     * and can later on be reported manually or by a supervisory pipeline (see {@link CurationPipeline}).
      * <ul>
      * <li><b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
-     * processing.</li>
+     * processing. See the respective parameter.</li>
      * </ul>
-     * To make modifications to and possible issues with structures the most traceable, it is advised to set the second
-     * boolean parameter to true to automatically assign a MolID, an atom container property with the name
-     * {@link #MOL_ID_PROPERTY_NAME}, to every atom container in the given set. The MolID is a String containing the
-     * index of the respective atom container in the original data set. Note that in this case formerly assigned values
-     * do get overwritten. If the second boolean parameter is set to false, every atom container of the given set is
-     * expected to have a MolID assigned; an exception might be thrown if this is not the case.<br>
-     * <br>
-     * By the end of the processing and if {@link #isReporterSelfContained()} is set to true, a report file containing
-     * info on issues with structures is created. If not so, issues are only appended to the reporter and can later on
-     * be reported manually or by a supervisory pipeline (see {@link CurationPipeline}). The reporter can be accessed
-     * via the respective getter and setter methods to change the (type of) reporter or modify the location to create
-     * the report file at.
      *
-     * @param anAtomContainerSet atom container set to process
-     * @param aCloneBeforeProcessing boolean value, whether to process the original data or to clone the given atom
-     *                               container set before processing
-     * @param anAssignIdentifiers boolean value, whether to assign a MolID to the atom containers of the given set; in
-     *                            case of false, every atom container in the set is expected to have a MolID assigned
+     * @param anAtomContainerSet the atom container set to process
+     * @param aCloneBeforeProcessing a flag indicating whether to clone the given data before processing; use this
+     *                               option to avoid any changes or modifications to the original data
+     * @param anAssignIdentifiers a flag indicating whether to assign MolIDs (atom container property with name {@link
+     *                            #MOL_ID_PROPERTY_NAME}) to the atom containers of the given set; if true, the assigned
+     *                            MolIDs contain the respective index of the atom container in the set before processing
+     *                            (formerly assigned MolIDs do get overwritten); in case of false, every given atom
+     *                            container is expected to have a MolID assigned and an exception might be thrown if
+     *                            this is not the case; the MolIDs might be extended with further information during the
+     *                            processing (e.g. with info on parent structures or duplicates of the molecule)
      * @return the processed atom container set
      * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
      * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
@@ -100,7 +94,7 @@ public interface IProcessingStep {
 
     /**
      * Returns the name string of the atom container property containing an optional second identifier (example given
-     * the name of the structure) or null, if the field has not been specified via the constructor or the respective
+     * the name of the structure) or null, if the field has not been specified via constructor or the respective
      * setter. The second identifier is used at the reporting of the processing of sets of structures. If the field is
      * null or processed structures do not have this property, no second identifier will be used at reporting.
      *
@@ -127,7 +121,7 @@ public interface IProcessingStep {
     public IReporter getReporter();
 
     /**
-     * Sets the reporter of the instance; a default reporter shall be used if null is given.    TODO: or just don't accept aReporter to be null?
+     * Sets the reporter of the instance; a default reporter shall be used if null is given.
      * The field may never be null.
      *
      * @param aReporter IReporter instance
