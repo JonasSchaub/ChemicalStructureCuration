@@ -1,20 +1,40 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Samuel Behr, Felix Baensch, Jonas Schaub, Christoph Steinbeck, and Achim Zielesny
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package de.unijena.cheminf.curation.reporter;
 
-import de.unijena.cheminf.curation.reporter.ReportDepiction;
-import org.junit.jupiter.api.Disabled;
+import de.unijena.cheminf.curation.TestUtils;
+import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.processingSteps.filters.MinAtomCountFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import org.junit.jupiter.api.Test;
 
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IChemObjectBuilder;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import org.openscience.cdk.smiles.SmilesParser;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 
 /**
@@ -22,82 +42,23 @@ import java.time.format.DateTimeFormatter;
  */
 class CreateMarkdownTest {
 
-
-    /**
-     * provides the depiction of the molecules in the pipeline
-     */
-    private ReportDepiction reportDepiction;
-
-    /**
-     * test class which is provides with depiction and initial strings, which will later be provided by the Report class,
-     * to see if the layout of the report works
-     *
-     * @throws IOException
-     * @throws CDKException
-     */
     @Test
-    @Disabled
     public void CreateCurationPipelineReport() throws IOException, CDKException {
 
-        //create test Atomcontainer to depict a test molecule
-        IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
-        SmilesParser smipar = new SmilesParser(bldr);
-        IAtomContainer atomContainer1 = smipar.parseSmiles("c1(O)ccccc1C(O)=O");
-        reportDepiction = new ReportDepiction();
-
-        String header = "# Curation Pipeline Report\n";
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String timestamp = now.format(formatter);
-
-        StringBuilder errors = new StringBuilder();
-        int numberOfErrors = 1;
-        String errorsNumber = String.valueOf(numberOfErrors);
-        errors.append("\n|Number of Errors|" + errorsNumber + "|\n");
-        errors.append("|------|-------|\n\n");
-        errors.append("<style>\n" +
-                "  table {\n" +
-                "    page-break-inside: avoid;\n" +
-                "  }\n" +
-                "</style>\n");
-
-        StringBuilder CurationPipelineReport = new StringBuilder();
-        CurationPipelineReport.append("## Details\n");
-
-        if (numberOfErrors == 0) {
-            CurationPipelineReport.append("### No errors occured.");
-        } else {
-            for (int i = 1; i <= numberOfErrors; i++) {
-                String tmpDepictionString = reportDepiction.getDepictionAsString(atomContainer1);
-                String tmpId = "Identifier here";
-                String tmpTypeOfError = "add type of error";
-                String tmpErrorLocation = "add location of error";
-                CurationPipelineReport.append("<table>\n\n");
-                CurationPipelineReport.append("\n |Identifier:  " + tmpId + "|\n" +
-                        "|------------------|\n");
-                CurationPipelineReport.append("![Bild](data:image/png;base64," + tmpDepictionString + ")|\n");
-                CurationPipelineReport.append("|"+ tmpErrorLocation + "|");
-                CurationPipelineReport.append("</table>\n");
-            }
-        }
-            try {
-                File tmpFile = new File("C:\\Users\\maxim\\Documents\\ChemicalStructureCuration\\src\\test\\java\\de\\unijena\\cheminf\\reporter\\CurationPipelineReport.md");//TODO das ist mein persönliches Verzeichnis, bin mir noch nicht sicher, wie ich das ändere
-                FileWriter tmpWriter = new FileWriter(tmpFile);
-                tmpWriter.write(header);
-                tmpWriter.write(">created: " + timestamp + " \n");
-                tmpWriter.write(String.valueOf(errors));
-                tmpWriter.write(String.valueOf(CurationPipelineReport));
-                tmpWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new IOException("Error writing to file:" + e.getMessage());
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                throw new NullPointerException("amountOfErrors cannot be NULL" + e.getMessage());
-            }
-
-        }
+        ReportDataObject testReportDataObject = new ReportDataObject(TestUtils.parseSmilesString("CCC"),
+                "Idetifier", "OptionalIdentifier", "1",
+                MinBondCountFilter.class, ErrorCodes.CLONE_ERROR);
+        ReportDataObject testReportDataObject2 = new ReportDataObject(TestUtils.parseSmilesString("CCCCCCCCCCCCCCCC"),
+                "Idetifier2", "OptionalIdentifier2", "1",
+                MinBondCountFilter.class, ErrorCodes.ATOM_CONTAINER_NULL_ERROR);
+        ReportDataObject testReportDataObject3 = new ReportDataObject(TestUtils.parseSmilesString("CN1C=NC2=C1C(=O)N(C(=O)N2C)C"),
+                "Idetifier3", "OptionalIdentifier3", "3",
+                MinAtomCountFilter.class, ErrorCodes.ATOM_CONTAINER_NULL_ERROR);
+        MarkDownReporter tmpMDReporter = new MarkDownReporter();
+        tmpMDReporter.setFilePath("C:\\Users\\maxim\\Documents\\ChemicalStructureCuration\\src\\test\\java\\de\\unijena\\cheminf\\curation\\reporter\\");//TODO
+        tmpMDReporter.appendReport(testReportDataObject);
+        tmpMDReporter.appendReport(testReportDataObject2);
+        tmpMDReporter.appendReport(testReportDataObject3);
+        tmpMDReporter.report();
     }
-
-
-
+}
