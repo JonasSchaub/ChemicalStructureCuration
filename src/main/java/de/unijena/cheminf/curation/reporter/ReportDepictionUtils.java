@@ -45,7 +45,7 @@ import java.util.Base64;
 public class ReportDepictionUtils {
 
     /**
-     * creates a base64 String from a depiction of the molecule in the AtomContainer.
+     * Creates a base64 String from a depiction of the molecule in the AtomContainer.
      *
      * @param anAtomContainer from ReportDataObject to depict for the report
      * @return base64String of the depicted AtomContainer
@@ -64,9 +64,9 @@ public class ReportDepictionUtils {
             byte[] tmpImageBytesArray = tmpOutputStream.toByteArray();
             String tmpBase64ImageString = Base64.getEncoder().encodeToString(tmpImageBytesArray);
             return tmpBase64ImageString;
-        } catch (CDKException aCdkException) {
-            aCdkException.printStackTrace();
-            throw new IOException("Error writing to file:" + aCdkException.getMessage());
+        } catch (CDKException aCDKException) {
+            aCDKException.printStackTrace();
+            throw new IOException("Error writing to file:" + aCDKException.getMessage());
         }
     }
 

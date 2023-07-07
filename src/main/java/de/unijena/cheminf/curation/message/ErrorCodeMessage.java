@@ -47,12 +47,12 @@ public class ErrorCodeMessage {
      */
     public static String getErrorMessage(ErrorCodes anErrorCode) {
         try {
-            Properties properties = new Properties();
-            FileInputStream fileInputStream = new FileInputStream("src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");//TODO
-            properties.load(fileInputStream);
-            String errorMessage = properties.getProperty(String.valueOf(anErrorCode));
-            fileInputStream.close();
-            return errorMessage;
+            Properties tmpProperties = new Properties();
+            FileInputStream tmpFileInputStream = new FileInputStream("src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");//TODO
+            tmpProperties.load(tmpFileInputStream);
+            String tmpErrorMessage = tmpProperties.getProperty(String.valueOf(anErrorCode));
+            tmpFileInputStream.close();
+            return tmpErrorMessage;
         } catch (IOException anIOException) {
             throw new RuntimeException(anIOException);
         }
