@@ -28,10 +28,9 @@ package de.unijena.cheminf.curation.reporter;
 import de.unijena.cheminf.curation.message.ErrorCodeMessage;
 import org.openscience.cdk.exception.CDKException;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,20 +38,23 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * reporter to create the actual report and markdown file for the Curation Pipeline
+ * class to create a report as markdown file for the Curation Pipeline.
+ *
+ * @author Maximilian Schaten
+ * @version 1.0.0.0
  */
 
 public class MarkDownReporter implements IReporter {
 
     private List<ReportDataObject> reportDataObjectList = new ArrayList<>();
-    private String filePath;
+    private String filePath = "Processing_Reports\\";
 
     @Override
     public void initializeNewReport(String aFileDestination) {
     }
 
     /**
-     * appends the ReportDataObjects to the list which is displayed in the markdown report
+     * appends the ReportDataObjects to the list which is displayed in the markdown report.
      *
      * @param aReportDataObject the report to append
      * @throws NullPointerException if the given aReportDataObject is null
@@ -64,13 +66,11 @@ public class MarkDownReporter implements IReporter {
     }
 
     /**
-     * Content to fill the report
-     * a header with timestamp
-     * box with the number of errors
-     * box with processing step followed by tables for every molecule that caused an error in that processing step
+     * Content to fill the report, a header with timestamp, a table with the number of errors
+     * and a table with processing step followed by tables for every molecule that caused an error in that processing step.
      *
-     * @throws CDKException
-     * @throws IOException
+     * @throws CDKException when parsing a SMILES fails.
+     * @throws IOException If an error occurs while accessing or writing the report file.
      */
     @Override
     public void report() throws CDKException, IOException {
@@ -130,17 +130,25 @@ public class MarkDownReporter implements IReporter {
         }
         try {
             String fileName = "Report_" + getTimeStampAsFilename() + ".md";
-            Path filePath = Path.of(getFilePath(),fileName);
-            String markdownContent = header + String.valueOf(errors) + style
-                    + CurationPipelineReport;
-            Files.writeString(filePath, markdownContent, StandardOpenOption.CREATE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            File tmpFile = new File(this.filePath + "\\" + fileName);
+            FileWriter tmpWriter = new FileWriter(tmpFile);
+            tmpWriter.write(String.valueOf(header));
+            tmpWriter.write(String.valueOf(errors));
+            tmpWriter.write(String.valueOf(style));
+            tmpWriter.write(String.valueOf(CurationPipelineReport));
+            tmpWriter.flush();
+            tmpWriter.close();
+        } catch (IOException anIOException) {
+            anIOException.printStackTrace();
+            throw new IOException("Error writing to file:" + anIOException.getMessage());
+        } catch (NullPointerException aNullPointerException) {
+            aNullPointerException.printStackTrace();
+            throw new NullPointerException("amountOfErrors cannot be NULL" + aNullPointerException.getMessage());
         }
     }
 
     /**
-     * method to clear the list of DataObjects
+     * method to clear the list of DataObjects.
      */
     @Override
     public void clear () {
@@ -148,23 +156,26 @@ public class MarkDownReporter implements IReporter {
     }
 
     /**
-     * returns the filepath where the report markodwn file is stored
-     * @return
+     * returns the filepath where the report markdown file is created.
+     *
+     * @return file path as String
      */
     public String getFilePath() {
         return this.filePath;
     }
 
     /**
-     * sets the filepath where the report  markdown file will be stored
-     * @param aFilePath
+     * sets the filepath where the report  markdown file will be stored.
+     *
+     * @param aFilePath The file path to set for creating the markdown file
      */
     public void setFilePath(String aFilePath) {
         this.filePath = aFilePath;
     }
 
     /**
-     * creates a String from timestamp to be used in filename
+     * creates a String from timestamp to be used in filename.
+     *
      * @return timestamp as legit String for filename
      */
     public String getTimeStampAsFilename(){
@@ -173,5 +184,5 @@ public class MarkDownReporter implements IReporter {
         String timeStampForFilename = now.format(formatter);
         return timeStampForFilename;
     }
-    //
+    
 }

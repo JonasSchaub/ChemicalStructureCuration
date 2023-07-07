@@ -39,3 +39,6 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+# Processing reports folder
+Processing_Reports

@@ -30,21 +30,27 @@ import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.processingSteps.filters.MinAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import org.junit.jupiter.api.Test;
-
 import org.openscience.cdk.exception.CDKException;
 
+import java.io.File;
 import java.io.IOException;
 
-
-
 /**
- * test whether the report markdown file gets created
+ * test class for creating a markdown report
+ *
+ * @author Maximilian Schaten
+ * @version 1.0.0.0
  */
 class CreateMarkdownTest {
 
+    /**
+     *Test class for creating a markdown report.
+     *
+     * @throws IOException If an error occurs while accessing or writing the report file
+     * @throws CDKException when parsing a SMILES fails
+     */
     @Test
     public void CreateCurationPipelineReport() throws IOException, CDKException {
-
         ReportDataObject testReportDataObject = new ReportDataObject(TestUtils.parseSmilesString("CCC"),
                 "Idetifier", "OptionalIdentifier", "1",
                 MinBondCountFilter.class, ErrorCodes.CLONE_ERROR);
@@ -55,10 +61,12 @@ class CreateMarkdownTest {
                 "Idetifier3", "OptionalIdentifier3", "3",
                 MinAtomCountFilter.class, ErrorCodes.ATOM_CONTAINER_NULL_ERROR);
         MarkDownReporter tmpMDReporter = new MarkDownReporter();
-        tmpMDReporter.setFilePath("C:\\Users\\maxim\\Documents\\ChemicalStructureCuration\\src\\test\\java\\de\\unijena\\cheminf\\curation\\reporter\\");//TODO
+        new File("Processing_Reports").mkdir();
+        tmpMDReporter.setFilePath("Processing_Reports\\");
         tmpMDReporter.appendReport(testReportDataObject);
         tmpMDReporter.appendReport(testReportDataObject2);
         tmpMDReporter.appendReport(testReportDataObject3);
         tmpMDReporter.report();
     }
+
 }

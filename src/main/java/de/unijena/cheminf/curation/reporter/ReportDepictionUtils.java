@@ -36,20 +36,24 @@ import java.io.IOException;
 import java.util.Base64;
 
 /**
- * class to create a depiction of the molecules that caused an error in the pipeline as a base64 string
- * to then show them in the markdown report
+ * Utility class to create a depiction of the molecules that caused an error in the pipeline as a base64 string
+ * to then show them in the markdown report.
+ *
+ * @author Maximilian Schaten
+ * @version 1.0.0.0
  */
 public class ReportDepictionUtils {
 
     /**
-     * creates a base64 String from a depiction of the molecule in the AtomContainer
+     * creates a base64 String from a depiction of the molecule in the AtomContainer.
+     *
      * @param anAtomContainer from ReportDataObject to depict for the report
      * @return base64String of the depicted AtomContainer
-     * @throws IOException //TODO
+     * @throws IOException If an error occurs while writing the depiction image to a file
      */
     public static String getDepictionAsString(IAtomContainer anAtomContainer) throws IOException {
         try {
-            int tmpNumAtoms = anAtomContainer.getAtomCount(); //TODO
+            int tmpNumAtoms = anAtomContainer.getAtomCount();
             int tmpWidth = tmpNumAtoms * 50;
             int tmpHeight = tmpNumAtoms * 30;
             DepictionGenerator tmpDepictionGenerator = new DepictionGenerator().withAtomColors().withSize(tmpWidth, tmpHeight)

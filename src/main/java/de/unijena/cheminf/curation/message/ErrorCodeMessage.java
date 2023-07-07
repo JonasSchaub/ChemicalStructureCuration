@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Message
+ * Message class for error code descriptions.
  *
  * @author Maximilian Schaten
  * @version 1.0.0.0
@@ -40,20 +40,21 @@ import java.util.Properties;
 public class ErrorCodeMessage {
 
     /**
-     * reaeds properties file return the value of the given key ErrorCode as String
-     * @param errorCode
+     * Reads properties file return the value of the given key ErrorCode as String.
+     *
+     * @param anErrorCode the errorCode to return the description of
      * @return String value of the given ErrorCode
      */
-    public static String getErrorMessage(ErrorCodes errorCode) {
+    public static String getErrorMessage(ErrorCodes anErrorCode) {
         try {
             Properties properties = new Properties();
-            FileInputStream fileInputStream = new FileInputStream("C:\\Users\\maxim\\Documents\\ChemicalStructureCuration\\src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");//TODO
+            FileInputStream fileInputStream = new FileInputStream("src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");//TODO
             properties.load(fileInputStream);
-            String errorMessage = properties.getProperty(String.valueOf(errorCode));
+            String errorMessage = properties.getProperty(String.valueOf(anErrorCode));
             fileInputStream.close();
             return errorMessage;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException anIOException) {
+            throw new RuntimeException(anIOException);
         }
     }
 
