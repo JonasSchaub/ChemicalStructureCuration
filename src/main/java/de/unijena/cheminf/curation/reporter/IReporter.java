@@ -44,7 +44,7 @@ public interface IReporter {
      * @param aFileDestination file path name string
      * @throws IOException TODO
      */
-    public void initializeNewReport(String aFileDestination) throws IOException;
+    public void initializeNewReport(String aFileDestination) throws IOException;    //TODO: remove after MarkDownReporter is finished
 
     /**
      * TODO

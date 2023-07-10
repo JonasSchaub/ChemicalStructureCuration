@@ -74,10 +74,7 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
      * Filters the atom containers of the given atom container set according to the values returned by {@link
      * #isFiltered(IAtomContainer)}. Returns all those atom containers that meet the filter criterion.
      *
-     * @throws NullPointerException  if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the processing of the atom container causes an
-     * issue)
-     * @throws Exception if an unexpected, fatal exception occurred
+     * @return the set of all atom containers that met the filter criterion
      */
     @Override
     protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {

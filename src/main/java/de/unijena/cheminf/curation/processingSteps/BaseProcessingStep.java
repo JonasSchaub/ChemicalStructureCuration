@@ -128,7 +128,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         //
         //flush all data appended to the reporter, but only if the reporter is self-contained by this processing step
         if (this.isReporterSelfContained()) {
-            this.reporter.report();
+            //this.reporter.report();   //TODO: uncomment after merge with markdown-reporter-new branch
         }
         //
         return tmpResultingACSet;
@@ -142,8 +142,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @param anAtomContainerSet atom container set to process
      * @return the processed atom container set
      * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
-     * without causing an issue)
+     * does not possess a MolID (this will only cause an exception, if the processing of the atom container causes an
+     * issue)
      * @throws Exception if an unexpected, fatal exception occurred
      */
     protected abstract IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception;
@@ -216,14 +216,14 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     protected String getMolIDString(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        String tmpMolIDString;
+        String tmpMolIDString = null;
         try {
             Object tmpMolID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
-            tmpMolIDString = ((tmpMolID != null) ?
-                    anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString()
-                    : null);
+            if (tmpMolID != null) {
+                tmpMolIDString = tmpMolID.toString();
+            } //else: tmpMolIDString remains null
         } catch (NullPointerException aNullPointerException) {
-            tmpMolIDString = null;
+            //tmpMolIDString remains null
         }
         return tmpMolIDString;
     }
@@ -239,19 +239,17 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     protected String getOptionalIDString(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        String tmpOptionalIDString;
-        if (this.optionalIDPropertyName == null) {
-            tmpOptionalIDString = null;
-        } else {
+        String tmpOptionalIDString = null;
+        if (this.optionalIDPropertyName != null) {
             try {
                 Object tmpOptionalID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
-                tmpOptionalIDString = ((tmpOptionalID != null) ?
-                        anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME).toString()
-                        : null);
+                if (tmpOptionalID != null) {
+                    tmpOptionalIDString = tmpOptionalID.toString();
+                } //else: tmpOptionalID remains null
             } catch (NullPointerException aNullPointerException) {
-                tmpOptionalIDString = null;
+                //tmpOptionalID remains null
             }
-        }
+        } //else: tmpOptionalID remains null
         return tmpOptionalIDString;
     }
 

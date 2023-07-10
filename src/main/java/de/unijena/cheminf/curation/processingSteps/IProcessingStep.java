@@ -57,11 +57,12 @@ public interface IProcessingStep {
      * Processes the given atom container set according to the logic of the respective processing step. By the end of
      * the processing, a report containing info on encountered issues with structures is created. The {@link
      * #isReporterSelfContained()} flag needs to be true for this; if not so, issues are only appended to the reporter
-     * and can later on be reported manually or by a supervisory pipeline (see {@link CurationPipeline}).
-     * <ul>
-     * <li><b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
-     * processing. See the respective parameter.</li>
-     * </ul>
+     * and can later on be reported manually or by a supervisory pipeline (see {@link CurationPipeline}). Respective
+     * structures are excluded from the returned atom container set.
+     * <p>
+     * <b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
+     * processing. See the respective parameter.
+     * </p>
      *
      * @param anAtomContainerSet the atom container set to process
      * @param aCloneBeforeProcessing a flag indicating whether to clone the given data before processing; use this

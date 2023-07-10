@@ -199,7 +199,7 @@ public class ChemUtils {
     }
 
     /**
-     * Counts the number of heavy atoms in the given IAtomContainer instance.
+     * Counts the number of heavy (non-hydrogen) atoms in the given IAtomContainer instance.
      *
      * @param anAtomContainer IAtomContainer instance to count the heavy atoms of
      * @return integer value of the count of heavy atoms in the given atom container

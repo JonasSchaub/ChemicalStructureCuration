@@ -74,8 +74,6 @@ public class CurationPipeline extends BaseProcessingStep {
     TODO: is one constructor enough or shall there be "convenience constructors"?  @Felix, @Jonas
         at the moment (since there is no reporting) I only use the convenience constructor
     //
-    TODO: possibly overwrite the .process() method to modify the doc comment
-    //
     TODO: remove param checks out of .with...Filter() methods?
     //
     TODO (optional):
@@ -92,7 +90,7 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     private final LinkedList<IProcessingStep> listOfPipelineSteps;
 
-    /**
+    /** TODO
      * Constructor. Initializes the curation pipeline.
      * <br>
      * At the reporting of a curation process, the MolID (assigned to each atom container before or during a curation
@@ -103,7 +101,7 @@ public class CurationPipeline extends BaseProcessingStep {
         this(null, null);
     }
 
-    /**
+    /** TODO
      * Constructor. At reporting of a curation processes, the atom container property with the given name (String
      * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
      * assigned to each atom container during a curation process.
@@ -123,28 +121,41 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * {@inheritDoc}
-     *
-     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
-     * without causing an issue)
+     * <p>
+     * The given atom container set is sequentially processed by all steps of the pipeline. All steps report to the
+     * reporter of the pipeline.
+     * </p>
+     */
+    @Override
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing,
+                                     boolean anAssignIdentifiers) throws Exception {
+        return super.process(anAtomContainerSet, aCloneBeforeProcessing, anAssignIdentifiers);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The given atom container set is sequentially processed by all steps of the pipeline. Issues encountered with
+     * structures are reported to the reporter of this instance.
+     * </p>
      */
     @Override
     protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        IAtomContainerSet tmpACSetToProcess;
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
         //
         try {
             for (IProcessingStep tmpProcessingStep : this.listOfPipelineSteps) {
-                tmpACSetToProcess = tmpResultingACSet;
-                tmpResultingACSet = tmpProcessingStep.process(tmpACSetToProcess, false, false);
+                if (tmpResultingACSet == null || tmpResultingACSet.isEmpty()) {
+                    break;
+                }
+                tmpResultingACSet = tmpProcessingStep.process(tmpResultingACSet, false, false);
                 //TODO: is there a way to set an initial atom container count to fasten the processing?  @Felix, @Jonas
-                // so far I was not able to find one (it is a protected method that does so)
+                // so far I have not been able to find one (it is a protected method that does so)
             }
         } catch (Exception anUnexpectedException) {
             CurationPipeline.LOGGER.log(Level.SEVERE, "The curation process was interrupted by an unexpected" +
                     " exception: " + anUnexpectedException.toString(), anUnexpectedException);
-            //TODO: treat NullPointerException separately? (case: previous processing step returned null)? - I do not have a clear opinion on this so far
             //TODO: create some kind of notification / message to append to the report file - discuss with Max (or Felix, Jonas)
             return null;
         }
@@ -438,7 +449,7 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * Adds the given processing step to the list of processing steps and sets its fields optionalIDPropertyName and
-     * reporter to the ones of the pipeline; sets the field of the processing step whether the reporter is
+     * reporter to the ones of the pipeline; sets the flag of the processing step whether the reporter is
      * self-contained to false; sets the identifier of the processing step to the respective ID of the pipeline added
      * by the index of the new step in the pipeline.
      *
@@ -456,6 +467,18 @@ public class CurationPipeline extends BaseProcessingStep {
                         "" : this.getPipelineProcessingStepID() + ".") +
                         (this.listOfPipelineSteps.size() - 1)
         );
+    }
+
+    /**
+     * Returns the processing step of the pipeline with the specified index.
+     *
+     * @param anIndex the index of the processing step
+     * @return the processing step with the given index
+     * @throws IndexOutOfBoundsException if the index is out of range ({@code index < 0 || index >=
+     * listOfPipelineSteps.size()})
+     */
+    public IProcessingStep getProcessingStepOfIndex(int anIndex) throws IndexOutOfBoundsException {
+        return this.listOfPipelineSteps.get(anIndex);
     }
 
     /**

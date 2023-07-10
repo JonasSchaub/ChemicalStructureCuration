@@ -58,7 +58,7 @@ public class ReportDataObject {
      * String with the identifier of the processing step instance the reported problem occurred in, or null, if the
      * processing step has no ID (as it might be the case if it is not part of a pipeline).
      */
-    private final String processingStepID;
+    private final String processingStepIdentifier;
 
     /**
      * Runtime class of the IProcessingStep instance the reported problem occurred in.
@@ -74,7 +74,7 @@ public class ReportDataObject {
      * Constructor. Creates a new report data object without taking an atom container as parameter. This constructor
      * is ought to be used if the atom container the reported issue refers to is null.
      *
-     * @param anIndexOfProcessingStepInPipeline string of the index of the processing step in the pipeline or null
+     * @param aProcessingStepIdentifier string of the index of the processing step in the pipeline or null  TODO!!
      *                                          if it is not part of a pipeline
      * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
      * @param anErrorCode error code of the reported problem
@@ -82,7 +82,7 @@ public class ReportDataObject {
      * @see #ReportDataObject(IAtomContainer, String, String, String, Class, ErrorCodes)
      */
     public ReportDataObject(
-            String anIndexOfProcessingStepInPipeline,
+            String aProcessingStepIdentifier,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
             ErrorCodes anErrorCode
     ) throws NullPointerException {
@@ -92,7 +92,7 @@ public class ReportDataObject {
         this.atomContainer = null;
         this.identifier = null;
         this.optionalIdentifier = null;
-        this.processingStepID = anIndexOfProcessingStepInPipeline;
+        this.processingStepIdentifier = aProcessingStepIdentifier;
         this.classOfProcessingStep = aClassOfProcessingStep;
         this.errorCode = anErrorCode;
     }
@@ -104,7 +104,7 @@ public class ReportDataObject {
      * @param anAtomContainer atom container of the structure
      * @param anIdentifier identifier string of the structure
      * @param anOptionalIdentifier optional second identifier string of the structure or null if there is none
-     * @param anIndexOfProcessingStepInPipeline string of the index of the processing step in the pipeline or null
+     * @param aProcessingStepIdentifier string of the index of the processing step in the pipeline or null  TODO!!
      *                                          if it is not part of a pipeline
      * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
      * @param anErrorCode error code of the reported problem
@@ -115,7 +115,7 @@ public class ReportDataObject {
             IAtomContainer anAtomContainer,
             String anIdentifier,
             String anOptionalIdentifier,
-            String anIndexOfProcessingStepInPipeline,
+            String aProcessingStepIdentifier,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
             ErrorCodes anErrorCode
     ) throws NullPointerException {
@@ -127,7 +127,7 @@ public class ReportDataObject {
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
         this.optionalIdentifier = anOptionalIdentifier;
-        this.processingStepID = anIndexOfProcessingStepInPipeline;
+        this.processingStepIdentifier = aProcessingStepIdentifier;
         this.classOfProcessingStep = aClassOfProcessingStep;
         this.errorCode = anErrorCode;
     }
@@ -165,8 +165,8 @@ public class ReportDataObject {
      *
      * @return String instance or null
      */
-    public String getProcessingStepID() {
-        return this.processingStepID;
+    public String getProcessingStepIdentifier() {
+        return this.processingStepIdentifier;
     }
 
     /**
