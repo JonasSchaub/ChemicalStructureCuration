@@ -91,20 +91,29 @@ public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
     @Override
     protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
         String tmpExceptionMessageString = anException.getMessage();
+        boolean tmpIsExceptionFatal = false;
         ErrorCodes tmpErrorCode;
         try {
             // the message of the exception is expected to match the name of an ErrorCodes enum's constant
             tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+            if (tmpErrorCode == ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR) {
+                // considered as fatal (should not happen)
+                tmpIsExceptionFatal = true;
+            }
         } catch (Exception aFatalException) {
             /*
              * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
              * exception is considered as fatal and re-thrown
              */
             // the threshold value being of an illegal value is also considered as fatal
-            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
-            throw anException;
+            tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
+            tmpIsExceptionFatal = true;
         }
         this.appendToReporter(anAtomContainer, tmpErrorCode);
+        // re-throw the exception if it is considered as fatal
+        if (tmpIsExceptionFatal) {
+            throw anException;
+        }
     }
 
     /**

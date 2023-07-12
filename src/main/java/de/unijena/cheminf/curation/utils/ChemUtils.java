@@ -77,7 +77,7 @@ public class ChemUtils {
         return tmpImplicitHydrogensCount;
     }
 
-    /** TODO: not used in any filter so far; use countExplicitHydrogens() of AtomContainerManipulator instead?
+    /** TODO: not used in any filter so far
      * Returns the number of explicit hydrogen atoms present in the given atom container.
      *
      * @param anAtomContainer IAtomContainer instance to check
@@ -142,7 +142,8 @@ public class ChemUtils {
      * implicit hydrogen atoms as atoms of the atomic number one.
      *
      * @param anAtomContainer IAtomContainer instance to count atoms of
-     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
+     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count; use the {@link IElement} enum of
+     *                        element symbols to receive the atomic numbers of specific elements
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
      * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
@@ -159,24 +160,24 @@ public class ChemUtils {
      * TODO: implement filter
      * TODO: convenience method/filter that parses element symbols to atomic numbers (see parseAtomSymbol() method of class Atom)
      * TODO: what to do if one and the same atomic number is given twice?
+     * TODO: adapt tests?
      *
      * @param anAtomContainer IAtomContainer instance to count atoms of
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms when counting
      *                                   atoms with an atomic number of one
-     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count
+     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count; use the {@link IElement} enum of
+     *                        element symbols to receive the atomic numbers of specific elements
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
      * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
      * greater than 118)
      */
-    private static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
+    public static int countAtomsOfAtomicNumbers(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         for (int tmpAtomicNumber : anAtomicNumbers) {
-            if (tmpAtomicNumber < 0)
-                throw new IllegalArgumentException("A given atomic number is of negative value.");  //TODO: create an error code for this?
-            if (tmpAtomicNumber > 118)
-                throw new IllegalArgumentException("A given atomic number exceeds a value of 118.");
+            if (tmpAtomicNumber < 0 || tmpAtomicNumber > 118)
+                throw new IllegalArgumentException(ErrorCodes.INVALID_ATOMIC_NUMBER_ERROR.name());
         }
         int tmpAtomsOfAtomicNumbersCount = 0;
         Integer tmpAtomicNumberOfAtom;
@@ -232,7 +233,7 @@ public class ChemUtils {
     public static double getMass(IAtomContainer anAtomContainer, MassComputationFlavours aFlavour)
             throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
-        Objects.requireNonNull(aFlavour, "aFlavour (constant of MassComputationFlavours) is null.");    //TODO: create an error code for this?
+        Objects.requireNonNull(aFlavour, ErrorCodes.FLAVOUR_NULL_ERROR.name());
         //TODO: use MolWeight as default if null is given?
         return AtomContainerManipulator.getMass(anAtomContainer, aFlavour.getAssociatedIntegerValue());
     }

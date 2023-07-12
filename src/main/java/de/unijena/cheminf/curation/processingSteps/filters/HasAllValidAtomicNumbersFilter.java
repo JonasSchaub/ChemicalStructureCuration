@@ -74,7 +74,7 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
             //check whether it is an ATOMIC_NUMBER_NULL_ERROR; re-throw exception otherwise
             try {
                 if (ErrorCodes.valueOf(anIllegalArgumentException.getMessage()) == ErrorCodes.ATOMIC_NUMBER_NULL_ERROR) {
-                    //atomic number being null is considered as invalid
+                    //atomic number being null is considered as an invalid atomic number
                     return true;
                 }
             } catch (Exception ignored) {

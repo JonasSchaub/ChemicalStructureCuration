@@ -51,13 +51,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A high-level API for curating, standardizing and filtering sets of molecules in a pipeline of multiple processing
- * steps.
- * TODO (use the DepictionGenerator as guideline)
- * TODO: demonstrate usage of pipeline exemplary
- * Use the {@link #addProcessingStep(IProcessingStep)} method to add processing steps to the pipeline no convenience
- * method exists for.
- * ...
+ * A high-level API for curating, standardizing and filtering sets of molecules in a pipeline of multiple
+ * processing steps.
+ *
+ * <br>
+ * <b>General Usage</b>
+ * Create a curation pipeline and configure it for respective use cases using {@code .with...()} and
+ * {@code .add...()} methods.
+ * <pre>{@code
+ * CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(20, true)
+ *                 .withMinAtomCountFilter(5, true)
+ *                 .withHasAllValidAtomicNumbersFilter(false);
+ * //
+ * IAtomContainerSet tmpProcessedACSet = tmpCurationPipeline.process(tmpMoleculeSet, true, true);
+ * }</pre>
+ *
+ * <b>One Line Quick Use</b>
+ * For simplified use we can create a pipeline and use it once for a single curation process.
+ * <pre>{@code
+ * new CurationPipeline().withMaxAtomCountFilter(20, true).withMinBondCountFilter(5, false)
+ *                 .process(tmpMoleculeSet, false, true);
+ * }</pre>
+ * For a description of the two boolean parameters of the {@code .process()}-method, see the respective
+ * method description.
+ * <p>
+ * To manually add any instance of {@link IProcessingStep} (including instances of CurationPipeline) to the pipeline,
+ * use the {@code .addProcessingStep()} method. This option might especially be used for processing steps no respective
+ * convenience method exists for.
+ * </p>
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -150,8 +171,6 @@ public class CurationPipeline extends BaseProcessingStep {
                     break;
                 }
                 tmpResultingACSet = tmpProcessingStep.process(tmpResultingACSet, false, false);
-                //TODO: is there a way to set an initial atom container count to fasten the processing?  @Felix, @Jonas
-                // so far I have not been able to find one (it is a protected method that does so)
             }
         } catch (Exception anUnexpectedException) {
             CurationPipeline.LOGGER.log(Level.SEVERE, "The curation process was interrupted by an unexpected" +
@@ -434,8 +453,9 @@ public class CurationPipeline extends BaseProcessingStep {
 
     /**
      * Adds the given processing step to the curation pipeline. This method may be used to manually add
-     * IProcessingStep instances to the pipeline for which no convenience method - in the form of .with...Filter() -
-     * exist. This allows the usage of subsequently implemented IProcessingStep implementations.
+     * IProcessingStep instances to the pipeline for which no convenience method - in the form of a {@code .with...()}
+     * or {@code .add...()} method - exist. This allows the usage of subsequently implemented IProcessingStep
+     * implementations.
      *
      * @param aProcessingStep the IProcessingStep instance that is to be added to the pipeline
      * @return the CurationPipeline instance itself
@@ -467,18 +487,6 @@ public class CurationPipeline extends BaseProcessingStep {
                         "" : this.getPipelineProcessingStepID() + ".") +
                         (this.listOfPipelineSteps.size() - 1)
         );
-    }
-
-    /**
-     * Returns the processing step of the pipeline with the specified index.
-     *
-     * @param anIndex the index of the processing step
-     * @return the processing step with the given index
-     * @throws IndexOutOfBoundsException if the index is out of range ({@code index < 0 || index >=
-     * listOfPipelineSteps.size()})
-     */
-    public IProcessingStep getProcessingStepOfIndex(int anIndex) throws IndexOutOfBoundsException {
-        return this.listOfPipelineSteps.get(anIndex);
     }
 
     /**

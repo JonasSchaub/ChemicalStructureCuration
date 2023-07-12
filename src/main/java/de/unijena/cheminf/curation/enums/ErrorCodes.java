@@ -69,6 +69,16 @@ public enum ErrorCodes {
     ILLEGAL_THRESHOLD_VALUE_ERROR,
 
     /**
+     * An invalid atomic number was detected.
+     */
+    INVALID_ATOMIC_NUMBER_ERROR,
+
+    /**
+     * The given MassComputationFlavours enum constant is null.
+     */
+    FLAVOUR_NULL_ERROR,
+
+    /**
      * ...
      */
     XYZ_ERROR,

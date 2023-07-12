@@ -62,7 +62,8 @@ public class MaxMolecularMassFilter extends BaseFilter {
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
      */
-    public MaxMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
+    public MaxMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour)
+            throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aFlavour, "aFlavour (MassComputationFlavours constant) is null.");
         if (aMolecularMassThreshold < 0) {
             throw new IllegalArgumentException("aMolecularMassThreshold (double value) was less than 0.");
@@ -93,20 +94,26 @@ public class MaxMolecularMassFilter extends BaseFilter {
     @Override
     protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
         String tmpExceptionMessageString = anException.getMessage();
+        boolean tmpIsExceptionFatal = false;
         ErrorCodes tmpErrorCode;
         try {
             // the message of the exception is expected to match the name of an ErrorCodes enum's constant
             tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+            if (tmpErrorCode == ErrorCodes.FLAVOUR_NULL_ERROR) {
+                // considered as fatal (should not happen)
+                tmpIsExceptionFatal = true;
+            }
         } catch (Exception aFatalException) {
-            /*
-             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
-             * exception is considered as fatal and re-thrown
-             */
-            // the threshold value being of an illegal value is also considered as fatal
-            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
-            throw anException;
+            // the message string did not match the name of an ErrorCodes enum's constant; the exception is
+            // unexpected and considered as fatal
+            tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
+            tmpIsExceptionFatal = true;
         }
         this.appendToReporter(anAtomContainer, tmpErrorCode);
+        // re-throw the exception if it is considered as fatal
+        if (tmpIsExceptionFatal) {
+            throw anException;
+        }
     }
 
     /**

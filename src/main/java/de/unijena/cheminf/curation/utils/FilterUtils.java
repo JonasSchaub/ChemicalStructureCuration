@@ -40,6 +40,10 @@ import java.util.Objects;
  */
 public class FilterUtils {
 
+    /*
+    TODO: this class might later on be removed and the code be integrated in the respective filters
+     */
+
     /**
      * Checks whether the atom count of a given atom container exceeds or equals the given threshold. Based on the
      * boolean parameter, implicit hydrogen atoms are taken into account or not; otherwise only explicit atoms

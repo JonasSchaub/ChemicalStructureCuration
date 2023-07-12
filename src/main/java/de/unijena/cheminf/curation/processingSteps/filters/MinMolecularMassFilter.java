@@ -52,7 +52,8 @@ public class MinMolecularMassFilter extends MaxMolecularMassFilter {
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
      */
-    public MinMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
+    public MinMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour)
+            throws NullPointerException, IllegalArgumentException {
         super(aMolecularMassThreshold, aFlavour);
     }
 

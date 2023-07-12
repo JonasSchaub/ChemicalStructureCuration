@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.TestUtils;
+import de.unijena.cheminf.curation.enums.MassComputationFlavours;
+import de.unijena.cheminf.curation.processingSteps.filters.MaxHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.utils.ProcessingStepUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -34,11 +36,12 @@ import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 
 import java.util.Objects;
 
 /**
- * Test class for the core methods and functions of class FilterPipeline.
+ * Test class for the core methods and functions of class CurationPipeline.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -47,7 +50,42 @@ public class CurationPipelineTest {
 
     /*
     open TODOs:
+    TODO: add a / finish the showcase method
      */
+
+    /**
+     * TODO
+     */
+    @Test
+    public void exampleUsage() throws Exception {
+        //TODO: finish this quickly implemented method
+        //TODO: does the exampleUsage test method test things?
+        //
+        // test set of molecules
+        IAtomContainerSet tmpTestACSet = TestUtils.parseSmilesStrings("CCC", "O=C=O", "O=C(O)C(N)CC(=O)N");   //TODO
+        //
+        CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(20, true)
+                .withMinAtomCountFilter(5, true)
+                .withMaxMolecularMassFilter(150.0, MassComputationFlavours.MOL_WEIGHT)
+                .withHasAllValidAtomicNumbersFilter(false);
+        // apply the pipeline on a set of atom containers
+        IAtomContainerSet tmpProcessedACSet = tmpCurationPipeline.process(tmpTestACSet, true, true);
+        //
+        /* further info */
+        // to add processing steps to the pipeline no convenience method exists for, use the following method
+        tmpCurationPipeline.addProcessingStep(new MaxHeavyAtomCountFilter(12));
+        // even curation pipelines themselves are implementations of IProcessingStep and can therefore be added as one
+        // to a superordinate pipeline; this might be done to encapsulate parts of the pipeline or to e.g. group sets
+        // of filters
+        tmpCurationPipeline.addProcessingStep(
+                new CurationPipeline().withMinBondCountFilter(3, false)
+                        .withMinBondsOfSpecificBondOrderFilter(IBond.Order.DOUBLE, 2, false)
+        );
+        // "one line" quick use
+        tmpProcessedACSet = new CurationPipeline().withMaxAtomCountFilter(20, true)
+                .withMinBondCountFilter(5, false)
+                .process(tmpTestACSet, true, true);
+    }
 
     /**
      * TODO: modified
