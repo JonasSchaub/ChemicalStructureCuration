@@ -39,6 +39,9 @@ import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinMolecularMassFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.BasePropertyChecker;
+import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.MolIDChecker;
+import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.OptionalIDChecker;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -55,11 +58,12 @@ import java.util.logging.Logger;
  * processing steps.
  *
  * <br>
- * <b>General Usage</b> TODO: adapt to constructor changes
+ * <b>General Usage</b>
  * Create a curation pipeline and configure it for respective use cases using {@code .with...()} and
  * {@code .add...()} methods.
  * <pre>{@code
- * CurationPipeline tmpCurationPipeline = new CurationPipeline().withMaxAtomCountFilter(20, true)
+ * CurationPipeline tmpCurationPipeline = new CurationPipeline(...)
+ *                 .withMaxAtomCountFilter(20, true)
  *                 .withMinAtomCountFilter(5, true)
  *                 .withHasAllValidAtomicNumbersFilter(false);
  * //
@@ -67,18 +71,45 @@ import java.util.logging.Logger;
  * }</pre>
  *
  * <b>One Line Quick Use</b>
- * For simplified use we can create a pipeline and use it once for a single curation process.
+ * For simplified use, we can create a pipeline and use it once for a single curation process.
  * <pre>{@code
- * new CurationPipeline().withMaxAtomCountFilter(20, true).withMinBondCountFilter(5, false)
+ * new CurationPipeline(...).withMaxAtomCountFilter(20, true)
+ *                 .withMinBondCountFilter(5, false)
  *                 .process(tmpMoleculeSet, false, true);
  * }</pre>
+ *
+ * A curation pipeline can be initialized passing the constructor either an IReporter instance
+ * <pre>{@code
+ * CurationPipeline tmpPipeline = new CurationPipeline(anIReporterInstance);
+ * }</pre>
+ * or a directory path name.
+ * <pre>{@code
+ * CurationPipeline tmpPipeline = new CurationPipeline(aReportFilesDirectoryPathString);
+ * }</pre>
+ * The latter will lead to the reporter of the pipeline being initialized with an instance of {@link MarkDownReporter}.
+ * <br>
+ * <br>
+ * <b>Further Info</b>
+ * In general, every atom container needs a "MolID" to be processed by a processing step. This can be addressed by
+ * setting the second boolean parameter of the {@code .process()} method to true. The first may be used to clone the
+ * given atom containers before processing.
+ * <br>
+ * Since missing identifiers of structures might trouble the report generation or the pipeline itself, the initial
+ * pipeline steps might be used to check for their existence.
+ * <pre>{@code
+ * new CurationPipeline(...).withMolIDChecker()
+ *                          .withOptionalIDChecker();
+ * }</pre>
+ * The existence of the optional IDs only needs to be checked if a respective property name has been given to the
+ * pipeline (see optional second constructor parameter and respective setter).
+ *
+ * <br>
  * For a description of the two boolean parameters of the {@code .process()}-method, see the respective
  * method description.
- * <p>
+ * <br>
  * To manually add any instance of {@link IProcessingStep} (including instances of CurationPipeline) to the pipeline,
  * use the {@code .addProcessingStep()} method. This option might especially be used for processing steps no respective
- * convenience method exists for.
- * </p>
+ * convenience method exists for (including CurationPipeline instances).
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -98,7 +129,7 @@ public class CurationPipeline extends BaseProcessingStep {
         - method to deep copy / clone a CurationPipeline?
     //
     TODO: it may never happen since the reporter of the pipeline shall never be null, but in theory all the methods
-     adding a step to the pipeline could throw a NullPointerException; do I need to handle this?
+     adding a step to the pipeline could throw a NullPointerException; do I need to address this?
      */
 
     /**
@@ -236,6 +267,45 @@ public class CurationPipeline extends BaseProcessingStep {
         }
         return tmpResultingACSet;
     }
+
+    //<editor-fold desc="withPropertyChecker methods" defaultstate="collapsed">
+    /**
+     * Adds a step to the pipeline that checks all given atom containers whether they have a MolID (atom container
+     * property of name {@link #MOL_ID_PROPERTY_NAME}). It appends a report to the reporter for every atom container
+     * that has no MolID and returns only those that have one.
+     * <br>
+     * <b>Note:</b> In cases where it can not be guarantied that every atom container possesses a MolID, it is advised
+     * to add this processing step as initial step of the pipeline to avoid missing MolIDs as cause for exceptions in
+     * the further course of the pipeline.
+     *
+     * @return the CurationPipeline instance itself
+     * @see MolIDChecker
+     */
+    public CurationPipeline withMolIDChecker() {
+        BasePropertyChecker tmpMolIDChecker = new MolIDChecker(this.getReporter());
+        this.addToListOfProcessingSteps(tmpMolIDChecker);
+        return this;
+    }
+
+    /**
+     * Adds a step to the pipeline that checks all given atom containers whether they have a property with the optional
+     * ID property name given to this pipeline ({@link #getOptionalIDPropertyName()}. It appends a report to the
+     * reporter for every atom container that does not possess such a property and returns only those that have one.
+     * <br>
+     * <b>Note:</b> If the pipeline has been given an optional ID property name, it is advised to add this processing
+     * step as one of the initial steps to the pipeline to remove atom containers with missing optional ID from the
+     * given atom container set and manually check them in the generated report.
+     *
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if no optional ID property name has been given to the pipeline
+     * @see MolIDChecker
+     */
+    public CurationPipeline withOptionalIDChecker() throws NullPointerException {
+        BasePropertyChecker tmpOptionalIDChecker = new OptionalIDChecker(this.getReporter(), this.getOptionalIDPropertyName());
+        this.addToListOfProcessingSteps(tmpOptionalIDChecker);
+        return this;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="with...Filter methods" defaultstate="collapsed">
     /**

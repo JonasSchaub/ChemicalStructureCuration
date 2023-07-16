@@ -70,9 +70,9 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * Constructor; calls the super constructor with an instance of {@link MarkDownReporter} - initialized with the
-     * given report files directory path - as default reporter. Since not every filter might give the option to specify
-     * the optional ID property name in the constructor, this parameter is allowed to be null.
+     * Constructor; calls the super constructor that initializes the reporter with an instance of {@link
+     * MarkDownReporter} - initialized with the given report files directory path. Since not every filter might give
+     * the option to specify the optional ID property name in the constructor, this parameter is allowed to be null.
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
      * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
@@ -92,7 +92,7 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
      * Filters the atom containers of the given atom container set according to the values returned by {@link
      * #isFiltered(IAtomContainer)}. Returns all those atom containers that meet the filter criterion.
      *
-     * @return the set of all atom containers that met the filter criterion
+     * @return the set of all atom containers that meet the filter criterion
      */
     @Override
     protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
@@ -113,7 +113,7 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * Handles the given exception by appending a report to the reporter; rethrows the exception, if it is considered
+     * Handles the given exception by appending a report to the reporter; re-throws the exception, if it is considered
      * as fatal. Most implementations expect non-fatal exceptions to have the name of an ErrorCodes enum constant as
      * message string.
      *

@@ -105,9 +105,10 @@ public interface IProcessingStep {
 
     /**
      * Sets the field that contains the name string of the atom container property that stores an optional second
-     * identifier of the structure such as a name or its CAS registry number. If no such property exists, the field
-     * shall be set to null (default). Otherwise, every atom container processed by this processing step is expected to
-     * have a property with the respective name; the info is then used to enrich the generated reports.
+     * identifier. This property may store info such as name or CAS registry number of the respective structures. If no
+     * such property exists, the field shall be set to null (default). Otherwise, every atom container processed by this
+     * processing step is expected to have a property with the respective name; the info is then used to enrich the
+     * generated reports.
      *
      * @param anOptionalIDPropertyName String instance with the name of the atom container property or null
      * @throws IllegalArgumentException if the given string is empty or blank

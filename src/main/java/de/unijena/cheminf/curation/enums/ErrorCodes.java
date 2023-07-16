@@ -79,6 +79,16 @@ public enum ErrorCodes {
     FLAVOUR_NULL_ERROR,
 
     /**
+     *
+     */
+    UNSET_MOL_ID_PROPERTY,
+
+    /**
+     *
+     */
+    UNSET_OPTIONAL_ID_PROPERTY,
+
+    /**
      * ...
      */
     XYZ_ERROR,

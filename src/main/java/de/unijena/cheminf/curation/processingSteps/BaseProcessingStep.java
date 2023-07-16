@@ -111,7 +111,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
         if (anOptionalIDPropertyName != null && anOptionalIDPropertyName.isBlank()) {
-            throw new IllegalArgumentException("anOptionalIDPropertyName (instance of String) may not be empty or blank.");
+            throw new IllegalArgumentException("anOptionalIDPropertyName (instance of String) is empty or blank.");
         }
         this.reporter = aReporter;
         this.optionalIDPropertyName = anOptionalIDPropertyName;
