@@ -66,7 +66,7 @@ public class FilterUtils {
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpAtomCount = ChemUtils.countAtoms(anAtomContainer, aConsiderImplicitHydrogens);
+        final int tmpAtomCount = ChemUtils.getAtomCount(anAtomContainer, aConsiderImplicitHydrogens);
         return tmpAtomCount >= aThresholdValue;
     }
 
@@ -107,7 +107,7 @@ public class FilterUtils {
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpBondCount = ChemUtils.countBonds(anAtomContainer, aConsiderImplicitHydrogens);
+        final int tmpBondCount = ChemUtils.getBondCount(anAtomContainer, aConsiderImplicitHydrogens);
         return tmpBondCount >= aThresholdValue;
     }
 
@@ -132,7 +132,7 @@ public class FilterUtils {
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpBondCount = ChemUtils.countBondsOfSpecificBondOrder(anAtomContainer, aBondOrder, aConsiderImplicitHydrogens);
+        final int tmpBondCount = ChemUtils.getBondsOfSpecificBondOrderCount(anAtomContainer, aBondOrder, aConsiderImplicitHydrogens);
         return tmpBondCount >= aThresholdValue;
     }
 

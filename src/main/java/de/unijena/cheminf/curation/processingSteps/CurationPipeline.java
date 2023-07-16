@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
+import de.unijena.cheminf.curation.processingSteps.filters.ContainsNoPseudoAtomsFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.ContainsPseudoAtomsFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasInvalidAtomicNumbersFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
@@ -574,6 +576,30 @@ public class CurationPipeline extends BaseProcessingStep {
             throw new IllegalArgumentException("aMinMolecularMass (double value) is below zero.");
         }
         IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, this.getReporter());
+        this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a contains pseudo-atoms filter to the curation pipeline.
+     *
+     * @return the CurationPipeline instance itself
+     * @see ContainsPseudoAtomsFilter
+     */
+    public CurationPipeline withContainsPseudoAtomsFilter() {
+        IFilter tmpFilter = new ContainsPseudoAtomsFilter(this.getReporter());
+        this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a contains no pseudo-atoms filter to the curation pipeline.
+     *
+     * @return the CurationPipeline instance itself
+     * @see ContainsNoPseudoAtomsFilter
+     */
+    public CurationPipeline withContainsNoPseudoAtomsFilter() {
+        IFilter tmpFilter = new ContainsNoPseudoAtomsFilter(this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
