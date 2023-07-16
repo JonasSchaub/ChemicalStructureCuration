@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -46,13 +48,32 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
     protected final boolean wildcardAtomicNumberIsValid;
 
     /**
-     * Constructor of the HasAllValidAtomicNumbersFilter class. The wildcard atomic number zero may or may not be
-     * considered as valid atomic number.
+     * Constructor; sets the reporter of the filter and whether the wildcard atomic number zero is to be considered as
+     * a valid atomic number.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
      */
-    public HasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
+    public HasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid, IReporter aReporter) throws NullPointerException {
+        super(aReporter, null);
+        this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
+    }
+
+    /**
+     * Constructor; initializes the reporter of the filter with an instance of {@link MarkDownReporter} and sets whether
+     * the wildcard atomic number zero is to be considered as a valid atomic number.
+     *
+     * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
+     *                                     as a valid atomic number
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given file path is no directory path
+     */
+    public HasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, null);
         this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
     }
 
@@ -96,10 +117,10 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
              * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
              * exception is considered as fatal and re-thrown
              */
-            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            this.appendToReporter(ErrorCodes.UNEXPECTED_EXCEPTION_ERROR, anAtomContainer);
             throw anException;
         }
-        this.appendToReporter(anAtomContainer, tmpErrorCode);
+        this.appendToReporter(tmpErrorCode, anAtomContainer);
     }
 
     /**

@@ -94,10 +94,9 @@ public interface IProcessingStep {
     ) throws NullPointerException, Exception;
 
     /**
-     * Returns the name string of the atom container property containing an optional second identifier (example given
-     * the name of the structure) or null, if the field has not been specified via constructor or the respective
-     * setter. The second identifier is used at the reporting of the processing of sets of structures. If the field is
-     * null or processed structures do not have this property, no second identifier will be used at reporting.
+     * Returns the name string of the atom container property that contains an optional second identifier. The
+     * respective atom container property might store information such as a name of the structure or the CAS registry
+     * number. The field might be null if it has not been specified via constructor or setter.
      *
      * @return String instance with the property name
      * @see #setOptionalIDPropertyName(String)
@@ -105,33 +104,35 @@ public interface IProcessingStep {
     public String getOptionalIDPropertyName();
 
     /**
-     * Sets the name string of the atom container property containing an optional second identifier (example given the
-     * name of the structure) that is to be used when reporting the processing of a set of structures. If null is given
-     * or the processed structures do not have this property, no second identifier will be used at reporting.
+     * Sets the field that contains the name string of the atom container property that stores an optional second
+     * identifier of the structure such as a name or its CAS registry number. If no such property exists, the field
+     * shall be set to null (default). Otherwise, every atom container processed by this processing step is expected to
+     * have a property with the respective name; the info is then used to enrich the generated reports.
      *
-     * @param anOptionalIDPropertyName String instance with the property name
+     * @param anOptionalIDPropertyName String instance with the name of the atom container property or null
+     * @throws IllegalArgumentException if the given string is empty or blank
      * @see #getOptionalIDPropertyName()
      */
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName);
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws IllegalArgumentException;
 
     /**
-     * Returns the reporter of the instance.
+     * Returns the reporter of the processing step.
      *
      * @return IReporter instance
      */
     public IReporter getReporter();
 
     /**
-     * Sets the reporter of the instance; a default reporter shall be used if null is given.
-     * The field may never be null.
+     * Sets the reporter of the processing step.
      *
      * @param aReporter IReporter instance
+     * @throws NullPointerException if given reporter is null
      */
-    public void setReporter(IReporter aReporter);
+    public void setReporter(IReporter aReporter) throws NullPointerException;
 
     /**
      * Returns whether the reporter instance of this processing step is self-contained; depending on this, the {@link
-     * #process} method calls the reporter's {@link IReporter#report()} method.
+     * #process} method calls the reporter's {@link IReporter#report()} method. By default, this flag shall be true.
      *
      * @return boolean value
      */
@@ -139,7 +140,7 @@ public interface IProcessingStep {
 
     /**
      * Sets whether the reporter instance of this processing step is self-contained; depending on this, the {@link
-     * #process} method calls the reporter's {@link IReporter#report()} method.
+     * #process} method of this instance calls the {@code .report()} method of the reporter.
      *
      * @param anIsSelfContained boolean value
      */
@@ -160,7 +161,8 @@ public interface IProcessingStep {
      * subordinate IDs (e.g. "1.1").
      *
      * @param aProcessingStepID String instance or null, if the processing step is not part of a pipeline
+     * @throws IllegalArgumentException if the given string is blank or empty
      */
-    public void setPipelineProcessingStepID(String aProcessingStepID);
+    public void setPipelineProcessingStepID(String aProcessingStepID) throws IllegalArgumentException;
 
 }

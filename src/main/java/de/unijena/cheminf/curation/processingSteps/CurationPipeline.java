@@ -55,7 +55,7 @@ import java.util.logging.Logger;
  * processing steps.
  *
  * <br>
- * <b>General Usage</b>
+ * <b>General Usage</b> TODO: adapt to constructor changes
  * Create a curation pipeline and configure it for respective use cases using {@code .with...()} and
  * {@code .add...()} methods.
  * <pre>{@code
@@ -92,13 +92,13 @@ public class CurationPipeline extends BaseProcessingStep {
         - check the doc-comments
         - new test methods might be necessary
     //
-    TODO: is one constructor enough or shall there be "convenience constructors"?  @Felix, @Jonas
-        at the moment (since there is no reporting) I only use the convenience constructor
-    //
     TODO: remove param checks out of .with...Filter() methods?
     //
     TODO (optional):
         - method to deep copy / clone a CurationPipeline?
+    //
+    TODO: it may never happen since the reporter of the pipeline shall never be null, but in theory all the methods
+     adding a step to the pipeline could throw a NullPointerException; do I need to handle this?
      */
 
     /**
@@ -111,34 +111,90 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     private final LinkedList<IProcessingStep> listOfPipelineSteps;
 
-    /** TODO
-     * Constructor. Initializes the curation pipeline.
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
+    /**
+     * Constructor; initializes the curation pipeline and sets the reporter and the optional ID property name;
+     * initializes the list of pipeline steps.
      * <br>
-     * At the reporting of a curation process, the MolID (assigned to each atom container before or during a curation
-     * process) is used for a unique identification of each atom container; no optional second identifier is used.
-     * The reporting of the curation / processing of a set of atom containers is done using the default reporter.
-     */
-    public CurationPipeline() {
-        this(null, null);
-    }
-
-    /** TODO
-     * Constructor. At reporting of a curation processes, the atom container property with the given name (String
-     * parameter) is used as a second identifier for each atom container in addition to the MolID, an identifier
-     * assigned to each atom container during a curation process.
-     * <br>
-     * The reporting of the curation / processing of a set of atom container is done using the given reporter. If
-     * null is given, the default reporter is used.
+     * The option of the second identifier property might be used if information such as name of the structures or their
+     * CAS registry numbers exists. If this field is set to anything else than null, every atom container processed by
+     * this curation pipeline is expected to have a property with the respective name. The given information is then
+     * included in the report. The reports are generated using the given reporter. To initialize the curation pipeline
+     * with a default reporter (instance of {@link MarkDownReporter}), see the other constructors.
      *
-     * @param aReporter IReporter instance to use for the creation of the report file
-     * @param anOptionalIdentifierPropertyName optional string with the name of the atom container property that
-     *                                         contains an optional second identifier to be used at reporting of a
-     *                                         curation process; if null is given, no second identifier is used
+     * @param aReporter the reporter to generate the reports with when processing sets of structures
+     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); if given
+     *                                 null, no second identifier is used; otherwise every atom container processed by
+     *                                 this processing step is expected to have this property
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if an optional ID property name is given, but it is blank or empty
+     * @see #CurationPipeline(String, String)
+     * @see #CurationPipeline(String)
+     * @see #CurationPipeline(IReporter)
      */
-    public CurationPipeline(IReporter aReporter, String anOptionalIdentifierPropertyName) {
-        super(aReporter, anOptionalIdentifierPropertyName);
+    public CurationPipeline(IReporter aReporter, String anOptionalIDPropertyName)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReporter, anOptionalIDPropertyName);
         this.listOfPipelineSteps = new LinkedList<>();
     }
+
+    /**
+     * Constructor; initializes the curation pipeline by calling {@link #CurationPipeline(IReporter, String)} with the
+     * given reporter and the optional ID property name set to null. See the description of the respective constructor
+     * for more details.
+     *
+     * @param aReporter the reporter to generate the reports with when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
+     * @see #CurationPipeline(IReporter, String)
+     */
+    public CurationPipeline(IReporter aReporter) throws NullPointerException {
+        this(aReporter, null);
+    }
+
+    /**
+     * Constructor; initializes the curation pipeline with a default reporter (instance of {@link MarkDownReporter})
+     * that generates reports in markdown-format at the given directory path.
+     * <br>
+     * The option of the second identifier property might be used if information such as name of the structures or their
+     * CAS registry numbers exists. If this field is set to anything else than null, every atom container processed by
+     * this curation pipeline is expected to have a property with the respective name. The given information is then
+     * included in the report. To initialize the curation pipeline with a specific reporter, see the respective
+     * constructors.
+     *
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); if given
+     *                                 null, no second identifier is used; otherwise every atom container processed by
+     *                                 this processing step is expected to have this property
+     * @throws NullPointerException if the given String containing the directory path is null
+     * @throws IllegalArgumentException if the given file path is no directory path; if a property name string is given,
+     *                                  but it is blank or empty
+     * @see #CurationPipeline(IReporter, String)
+     * @see #CurationPipeline(IReporter)
+     * @see #CurationPipeline(String)
+     */
+    public CurationPipeline(String aReportFilesDirectoryPath, String anOptionalIDPropertyName)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, anOptionalIDPropertyName);
+        this.listOfPipelineSteps = new LinkedList<>();
+    }
+
+    /**
+     * Constructor; initializes the curation pipeline by calling {@link #CurationPipeline(String, String)} with the
+     * given directory path and the optional ID property name set to null. The pipeline is initialized with a default
+     * reporter (instance of {@link MarkDownReporter}) that generates reports in markdown-format at the given directory
+     * path.
+     *
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String containing the directory path is null
+     * @throws IllegalArgumentException if the given file path is no directory path
+     * @see #CurationPipeline(String, String)
+     */
+    public CurationPipeline(String aReportFilesDirectoryPath) throws NullPointerException, IllegalArgumentException {
+        this(aReportFilesDirectoryPath, null);
+    }
+    //</editor-fold>
 
     /**
      * {@inheritDoc}
@@ -193,9 +249,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxAtomCount < 0) {
-            throw new IllegalArgumentException("aMaxAtomCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMaxAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -211,9 +267,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinAtomCount < 0) {
-            throw new IllegalArgumentException("aMinAtomCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMinAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -228,9 +284,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
         if (aMaxHeavyAtomCount < 0) {
-            throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount);
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -245,9 +301,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
         if (aMinHeavyAtomCount < 0) {
-            throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount);
+        IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -263,9 +319,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMaxBondCount < 0) {
-            throw new IllegalArgumentException("aMaxBondCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMaxBondCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -281,9 +337,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
         if (aMinBondCount < 0) {
-            throw new IllegalArgumentException("aMinBondCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMinBondCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -304,9 +360,10 @@ public class CurationPipeline extends BaseProcessingStep {
             IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
         if (aMaxSpecificBondCount < 0) {
-            throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount,
+                aConsiderImplicitHydrogens, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -327,9 +384,10 @@ public class CurationPipeline extends BaseProcessingStep {
             IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens
     ) throws IllegalArgumentException {
         if (aMinSpecificBondCount < 0) {
-            throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was < than 0.");
+            throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount, aConsiderImplicitHydrogens);
+        IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount,
+                aConsiderImplicitHydrogens, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -342,7 +400,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return the CurationPipeline instance itself
      */
     public CurationPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
-        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -355,7 +413,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return the CurationPipeline instance itself
      */
     public CurationPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
-        IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid);
+        IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -378,9 +436,9 @@ public class CurationPipeline extends BaseProcessingStep {
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
         if (aMaxMolecularMass < 0) {
-            throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
+            throw new IllegalArgumentException("aMaxMolecularMass (double value) is below zero.");
         }
-        IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour);
+        IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, aMassComputationFlavour, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -398,9 +456,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMaxMolecularMassFilter(double aMaxMolecularMass) throws IllegalArgumentException {
         if (aMaxMolecularMass < 0) {
-            throw new IllegalArgumentException("aMaxMolecularMass (double value) is < than 0.");
+            throw new IllegalArgumentException("aMaxMolecularMass (double value) is below zero.");
         }
-        IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass);
+        IFilter tmpFilter = new MaxMolecularMassFilter(aMaxMolecularMass, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -423,9 +481,9 @@ public class CurationPipeline extends BaseProcessingStep {
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aMassComputationFlavour, "aMassComputationFlavour (MassComputationFlavours constant) is null.");
         if (aMinMolecularMass < 0) {
-            throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
+            throw new IllegalArgumentException("aMinMolecularMass (double value) is below zero.");
         }
-        IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour);
+        IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, aMassComputationFlavour, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -443,9 +501,9 @@ public class CurationPipeline extends BaseProcessingStep {
      */
     public CurationPipeline withMinMolecularMassFilter(double aMinMolecularMass) throws IllegalArgumentException {
         if (aMinMolecularMass < 0) {
-            throw new IllegalArgumentException("aMinMolecularMass (double value) is < than 0.");
+            throw new IllegalArgumentException("aMinMolecularMass (double value) is below zero.");
         }
-        IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass);
+        IFilter tmpFilter = new MinMolecularMassFilter(aMinMolecularMass, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -480,7 +538,7 @@ public class CurationPipeline extends BaseProcessingStep {
         Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
         this.listOfPipelineSteps.add(aProcessingStep);
         aProcessingStep.setOptionalIDPropertyName(this.getOptionalIDPropertyName());
-        aProcessingStep.setReporter(this.getReporter());
+        aProcessingStep.setReporter(this.getReporter());    //TODO: remove this? or just keep it to make sure?
         aProcessingStep.setIsReporterSelfContained(false);
         aProcessingStep.setPipelineProcessingStepID(
                 ((this.getPipelineProcessingStepID() == null) ?
@@ -501,10 +559,10 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * {@inheritDoc}
      * <br>
-     * This optional identifier property name is also set to every processing step of the pipeline.
+     * This optional identifier property name is also set to every processing step that is part of the pipeline.
      */
     @Override
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws IllegalArgumentException {
         super.setOptionalIDPropertyName(anOptionalIDPropertyName);
         this.listOfPipelineSteps.forEach(aProcessingStep -> {
             aProcessingStep.setOptionalIDPropertyName(anOptionalIDPropertyName);
@@ -512,13 +570,11 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Sets the reporter of the pipeline and of every processing step in the pipeline; if given null, an instance of
-     * {@link MarkDownReporter} is used by default.
-     *
-     * @param aReporter IReporter instance
+     * Sets the reporter of the pipeline and of every processing step in the pipeline. If the reporter has not been
+     * specified via a constructor parameter, it is initialized with an instance of {@link MarkDownReporter} by default.
      */
     @Override
-    public void setReporter(IReporter aReporter) {
+    public void setReporter(IReporter aReporter) throws NullPointerException {
         super.setReporter(aReporter);
         this.listOfPipelineSteps.forEach(aProcessingStep -> {
             aProcessingStep.setReporter(this.getReporter());
@@ -533,16 +589,16 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aProcessingStepID String with the index or null if it is not part of a pipeline
      */
     @Override
-    public void setPipelineProcessingStepID(String aProcessingStepID) {
+    public void setPipelineProcessingStepID(String aProcessingStepID) throws IllegalArgumentException {
         super.setPipelineProcessingStepID(aProcessingStepID);
-        String tmpSubordinateID;
+        String tmpSuperordinateID;
         if (aProcessingStepID != null) {
-            tmpSubordinateID = aProcessingStepID + ".";
+            tmpSuperordinateID = aProcessingStepID + ".";
         } else {
-            tmpSubordinateID = "";
+            tmpSuperordinateID = "";
         }
         for (int i = 0; i < this.listOfPipelineSteps.size(); i++) {
-            this.listOfPipelineSteps.get(i).setPipelineProcessingStepID(tmpSubordinateID + i);
+            this.listOfPipelineSteps.get(i).setPipelineProcessingStepID(tmpSuperordinateID + i);
         }
     }
 

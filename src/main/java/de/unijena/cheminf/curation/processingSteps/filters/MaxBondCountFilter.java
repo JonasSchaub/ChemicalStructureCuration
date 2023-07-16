@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -51,17 +53,45 @@ public class MaxBondCountFilter extends BaseFilter {
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor; initializes the class fields with the given values. Bonds to implicit hydrogen atoms may or may not
-     * be considered; atom containers that equal the given max bond count do not get filtered.
+     * Constructor; initializes the class fields with the given values and sets the reporter. Bonds to implicit hydrogen
+     * atoms may or may not be considered; atom containers that equal the given bond count threshold do not get
+     * filtered.
      *
      * @param aBondCountThreshold integer value of the max bond count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                   calculating an atom containers bond count
-     * @throws IllegalArgumentException if the given bond count threshold value is less than zero
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if the given bond count threshold value is below zero
      */
-    public MaxBondCountFilter(int aBondCountThreshold, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public MaxBondCountFilter(int aBondCountThreshold, boolean aConsiderImplicitHydrogens, IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReporter, null);
         if (aBondCountThreshold < 0) {
-            throw new IllegalArgumentException("aBondCountThreshold (integer value) was < than 0.");
+            throw new IllegalArgumentException("aBondCountThreshold (integer value) is below zero.");
+        }
+        this.bondCountThreshold = aBondCountThreshold;
+        this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+    }
+
+    /**
+     * Constructor; initializes the class fields with the given values; initializes the reporter with an instance of
+     * {@link MarkDownReporter}. Bonds to implicit hydrogen atoms may or may not be considered; atom containers that
+     * equal the given bond count threshold do not get filtered.
+     *
+     * @param aBondCountThreshold integer value of the max bond count threshold to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
+     *                                   calculating an atom containers bond count
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given bond count threshold value is below zero; if the given file path
+     *                                  is no directory path
+     */
+    public MaxBondCountFilter(int aBondCountThreshold, boolean aConsiderImplicitHydrogens, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, null);
+        if (aBondCountThreshold < 0) {
+            throw new IllegalArgumentException("aBondCountThreshold (integer value) is below zero.");
         }
         this.bondCountThreshold = aBondCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
@@ -99,7 +129,7 @@ public class MaxBondCountFilter extends BaseFilter {
             tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
             tmpIsExceptionFatal = true;
         }
-        this.appendToReporter(anAtomContainer, tmpErrorCode);
+        this.appendToReporter(tmpErrorCode, anAtomContainer);
         // re-throw the exception if it is considered as fatal
         if (tmpIsExceptionFatal) {
             throw anException;

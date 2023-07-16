@@ -67,9 +67,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private static final Logger LOGGER = Logger.getLogger(BaseProcessingStep.class.getName());
 
     /**
-     * Name string of the atom container property that contains an optional second identifier of type integer. If the
-     * String is null (default) or the reported atom containers do not have a respective property, no second identifier
-     * is used at the reporting of the processing.
+     * Name string of the atom container property that contains an optional second identifier. The respective atom
+     * container property might store information such as a name of the structure or the CAS registry number. If this
+     * field gets set, every atom container processed by this processing step is expected to have a property with the
+     * respective name; the info is then included in the report.
      */
     private String optionalIDPropertyName;
 
@@ -92,20 +93,51 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     private boolean isReporterSelfContained = true;
 
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
-     * Constructor; initializes the fields {@link #reporter} and {@link #optionalIDPropertyName}.
+     * Constructor; initializes the fields {@link #reporter} and {@link #optionalIDPropertyName}. Since not every
+     * processing step might give the option to specify the optional ID property name in the constructor, this parameter
+     * is allowed to be null.
      *
-     * @param aReporter reporter to report to when processing; if null is given, the class field is initialized with an
-     *                  instance of the default reporter ({@link MarkDownReporter})
+     * @param aReporter the reporter that is to be used when processing sets of structures
      * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
-     *                                 identifier (e.g. the name of the structure) for each structure that is to be
-     *                                 processed by this processing step; if null is given, no second identifier is used
+     *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
+     *                                 field gets specified (not null), every atom container processed by this
+     *                                 processing step is expected to have a property with the respective name; the info
+     *                                 is then included in the report
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if an optional ID property name is given, but it is blank or empty
      */
-    public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) {
-        //if given reporter is null, the field is initialized with an instance of MarkDownReporter
-        this.reporter = Objects.requireNonNullElseGet(aReporter, MarkDownReporter::new);
+    public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
+        if (anOptionalIDPropertyName != null && anOptionalIDPropertyName.isBlank()) {
+            throw new IllegalArgumentException("anOptionalIDPropertyName (instance of String) may not be empty or blank.");
+        }
+        this.reporter = aReporter;
         this.optionalIDPropertyName = anOptionalIDPropertyName;
     }
+
+    /**
+     * Constructor; calls the main constructor with an instance of {@link MarkDownReporter} - initialized with the given
+     * report files directory path - as default reporter. Since not every processing step might give the option to
+     * specify the optional ID property name in the constructor, this parameter is allowed to be null.
+     *
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
+     *                                 field gets specified (not null), every atom container processed by this
+     *                                 processing step is expected to have a property with the respective name; the info
+     *                                 is then included in the report
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given file path is no directory path; if a property name string is given,
+     *                                  but it is blank or empty
+     */
+    public BaseProcessingStep(String aReportFilesDirectoryPath, String anOptionalIDPropertyName)
+            throws NullPointerException, IllegalArgumentException {
+        //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null; check whether it is a directory path
+        this(new MarkDownReporter(), anOptionalIDPropertyName);
+    }
+    //</editor-fold>
 
     @Override
     public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet,
@@ -114,7 +146,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         //assign MolIDs to the given structures if so desired
         if (anAssignIdentifiers) {
-            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);    //TODO: only assign the ID to the clone?
+            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
+            //TODO: assign the MolIDs after the cloning?
+            // pro: avoid ANY changes to the original data
+            // con: the assigned indices might not be correct if the cloning of even a single atom container fails
         } //TODO: else: check existence of MolIDs ?
         //clone the given atom container set if so desired
         IAtomContainerSet tmpACSetToProcess;
@@ -146,7 +181,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * issue)
      * @throws Exception if an unexpected, fatal exception occurred
      */
-    protected abstract IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception;
+    protected abstract IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet)
+            throws NullPointerException, Exception;
 
     /**
      * Clones the given atom container set and reports issues with the cloning of individual atom containers to the
@@ -163,7 +199,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             try {
                 tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
             } catch (CloneNotSupportedException aCloneNotSupportedException) {
-                this.appendToReporter(tmpAtomContainer, ErrorCodes.CLONE_ERROR);
+                this.appendToReporter(ErrorCodes.CLONE_ERROR, tmpAtomContainer);
             }
         }
         return tmpCloneOfGivenACSet;
@@ -171,38 +207,52 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * Appends a report to the reporter by creating a ReportDataObject instance according to the given data and passing
-     * it to the reporter instance. If the given atom container is not null, it is expected to have a property with the
-     * name {@link #MOL_ID_PROPERTY_NAME} and with a value not null; otherwise an NullPointerException is thrown.
+     * it to the reporter instance. If the given atom container is not null, it is expected to have a property with name
+     * {@link #MOL_ID_PROPERTY_NAME}; if an optional ID property name has been set, the respective atom container
+     * property may not be null; otherwise a NullPointerException is thrown.
      *
+     * @param anErrorCode     error code of the reported issue
      * @param anAtomContainer atom container instance the issue refers to
-     * @param anErrorCode error code of the reported issue
-     * @throws NullPointerException if the given ErrorCodes constant is null; if the value returned by {@link
-     * #getMolIDString(IAtomContainer)} is null while anAtomContainer not being null
+     * @throws NullPointerException if the given ErrorCodes constant is null; if an atom container is given, but it
+     *                              possesses no MolID; if an optional ID property name has been set but the respective
+     *                              atom container property is null
      */
-    protected void appendToReporter(IAtomContainer anAtomContainer, ErrorCodes anErrorCode) throws NullPointerException {
+    protected void appendToReporter(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
-        ReportDataObject tmpReportDataObject;
+        byte tmpCase;
         if (anAtomContainer == null) {
-            //create report data object for atom container being null
-            tmpReportDataObject = new ReportDataObject(
-                    this.pipelineProcessingStepID,
-                    this.getClass(),
-                    anErrorCode
-            );
+            if (this.pipelineProcessingStepID == null) {
+                tmpCase = 0;    // case: no atom container; no step ID
+            } else {
+                tmpCase = 1;    // case: no atom container; with step ID
+            }
+        } else if (this.optionalIDPropertyName == null) {
+            if (this.pipelineProcessingStepID == null) {
+                tmpCase = 2;    // case: with atom container; no optional ID; no step ID
+            } else {
+                tmpCase = 3;    // case: with atom container; no optional ID; with step ID
+            }
         } else {
-            //get the identifiers of the atom container if the atom container is not null
-            String tmpMolIDString = this.getMolIDString(anAtomContainer);
-            String tmpOptionalIDString = this.getOptionalIDString(anAtomContainer);
-            //create report data object for atom container not being null
-            tmpReportDataObject = new ReportDataObject(
-                    anAtomContainer,
-                    tmpMolIDString,     //TODO: what if MolID is null?
-                    tmpOptionalIDString,
-                    this.pipelineProcessingStepID,
-                    this.getClass(),
-                    anErrorCode
-            );
+            if (this.pipelineProcessingStepID == null) {
+                tmpCase = 4;    // case: with atom container; with optional ID; no step ID
+            } else {
+                tmpCase = 5;    // case: with atom container; with optional ID; with step ID
+            }
         }
+        ReportDataObject tmpReportDataObject = switch (tmpCase) {
+            // each constructor of ReportDataObject expects all its respective parameters to be non-null
+            case 0 -> new ReportDataObject(anErrorCode, this.getClass());
+            case 1 -> new ReportDataObject(anErrorCode, this.getClass(), this.pipelineProcessingStepID);
+            case 2 -> new ReportDataObject(anErrorCode, this.getClass(), anAtomContainer,
+                    this.getMolIDString(anAtomContainer));
+            case 3 -> new ReportDataObject(anErrorCode, this.getClass(), this.pipelineProcessingStepID,
+                    anAtomContainer, this.getMolIDString(anAtomContainer));
+            case 4 -> new ReportDataObject(anErrorCode, this.getClass(), anAtomContainer,
+                    this.getMolIDString(anAtomContainer), this.getOptionalIDString(anAtomContainer));
+            case 5 -> new ReportDataObject(anErrorCode, this.getClass(), this.pipelineProcessingStepID,
+                    anAtomContainer, this.getMolIDString(anAtomContainer), this.getOptionalIDString(anAtomContainer));
+            default -> throw new IllegalStateException("An illegal state has been reached.");
+        };
         this.reporter.appendReport(tmpReportDataObject);
     }
 
@@ -221,9 +271,9 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             Object tmpMolID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
             if (tmpMolID != null) {
                 tmpMolIDString = tmpMolID.toString();
-            } //else: tmpMolIDString remains null
+            } // else: tmpMolIDString remains null
         } catch (NullPointerException aNullPointerException) {
-            //tmpMolIDString remains null
+            // tmpMolIDString remains null
         }
         return tmpMolIDString;
     }
@@ -259,25 +309,27 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     }
 
     @Override
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) {
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws IllegalArgumentException {
+        if (anOptionalIDPropertyName != null && anOptionalIDPropertyName.isBlank()) {
+            throw new IllegalArgumentException("The given property name (anOptionalIDPropertyName) is empty or blank.");
+        }
         this.optionalIDPropertyName = anOptionalIDPropertyName;
     }
 
+    /**
+     * {@inheritDoc}
+     *  If the reporter has not been specified via a respective constructor, the reporter is an instance of
+     *  {@link MarkDownReporter}.
+     */
     @Override
     public IReporter getReporter() {
         return this.reporter;
     }
 
-    /**
-     * Sets the reporter of this processing step; uses a default reporter (instance of {@link MarkDownReporter}) if the
-     * given IReporter instance is null.
-     *
-     * @param aReporter IReporter instance
-     */
     @Override
     public void setReporter(IReporter aReporter){
-        //if the given reporter is null, the reporter is initialized with an instance of MarkDownReporter
-        this.reporter = Objects.requireNonNullElseGet(aReporter, MarkDownReporter::new);
+        Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
+        this.reporter = aReporter;
     }
 
     @Override
@@ -304,8 +356,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      *  This field needs to be set manually / by the superordinate pipeline.
      */
     @Override
-    public void setPipelineProcessingStepID(String aProcessingStepID) {
-        //TODO: accept empty or blank Strings?
+    public void setPipelineProcessingStepID(String aProcessingStepID) throws IllegalArgumentException {
+        if (aProcessingStepID != null && aProcessingStepID.isBlank()) {
+            throw new IllegalArgumentException("The given processing step identifier may not be empty or blank.");
+        }
         this.pipelineProcessingStepID = aProcessingStepID;
     }
 

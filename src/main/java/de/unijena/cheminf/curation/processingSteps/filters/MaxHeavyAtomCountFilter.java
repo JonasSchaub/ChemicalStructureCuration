@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -45,15 +47,38 @@ public class MaxHeavyAtomCountFilter extends BaseFilter {
     protected final int heavyAtomCountThreshold;
 
     /**
-     * Constructor; initializes the class fields with the given values. Atom containers that equal the given max atom
-     * count do not get filtered.
+     * Constructor; initializes the class fields with the given values and sets the reporter. Atom containers that equal
+     * the given max atom count do not get filtered.
      *
      * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
-     * @throws IllegalArgumentException if the given heavy atom count threshold value is less than zero
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if the given heavy atom count threshold value is below zero
      */
-    public MaxHeavyAtomCountFilter(int aHeavyAtomCountThreshold) throws IllegalArgumentException {
+    public MaxHeavyAtomCountFilter(int aHeavyAtomCountThreshold, IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReporter, null);
         if (aHeavyAtomCountThreshold < 0) {
-            throw new IllegalArgumentException("aHeavyAtomCountThreshold (integer value) was less than 0.");
+            throw new IllegalArgumentException("aHeavyAtomCountThreshold (integer value) is below zero.");
+        }
+        this.heavyAtomCountThreshold = aHeavyAtomCountThreshold;
+    }
+
+    /**
+     * Constructor; initializes the class fields with the given values; initializes the reporter with an instance of
+     * {@link MarkDownReporter}. Atom containers that equal the given max atom count do not get filtered.
+     *
+     * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given heavy atom count threshold value is below zero; if the given file
+     *                                  path is no directory path
+     */
+    public MaxHeavyAtomCountFilter(int aHeavyAtomCountThreshold, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, null);
+        if (aHeavyAtomCountThreshold < 0) {
+            throw new IllegalArgumentException("aHeavyAtomCountThreshold (integer value) is below zero.");
         }
         this.heavyAtomCountThreshold = aHeavyAtomCountThreshold;
     }
@@ -86,7 +111,7 @@ public class MaxHeavyAtomCountFilter extends BaseFilter {
             tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
             tmpIsExceptionFatal = true;
         }
-        this.appendToReporter(anAtomContainer, tmpErrorCode);
+        this.appendToReporter(tmpErrorCode, anAtomContainer);
         // re-throw the exception if it is considered as fatal
         if (tmpIsExceptionFatal) {
             throw anException;

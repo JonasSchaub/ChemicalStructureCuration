@@ -28,6 +28,9 @@ package de.unijena.cheminf.curation;
 import de.unijena.cheminf.curation.processingSteps.filters.BaseFilter;
 import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
@@ -37,6 +40,8 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -46,6 +51,11 @@ import java.util.Objects;
  * @version 1.0.0.0
  */
 public class TestUtils {
+
+    /**
+     * The path name of the directory to create the report files at.
+     */
+    public static final String REPORT_FILES_DIRECTORY_PATH_NAME = "Processing_Reports" + File.separator;
 
     /**
      * Parses a set of given SMILES strings into a set of atom containers.
@@ -120,31 +130,50 @@ public class TestUtils {
      * @return instance of Filter
      */
     public static BaseFilter getAllTrueOrFalseFilter(boolean aIsFilteredReturnValue) {
-        return new BaseFilter() {
-            /**
-             * Returns a boolean value independent of the given atom container.
-             *
-             * @param anAtomContainer IAtomContainer instance to be checked
-             * @return Boolean value
-             * @throws NullPointerException if the given IAtomContainer instance is null
-             */
-            @Override
-            public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
-                Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-                return aIsFilteredReturnValue;
-            }
-            //
-            /**
-             * Does nothing.
-             *
-             * @param anAtomContainer the atom container the issue refers to
-             * @param anException the thrown exception
-             */
-            @Override
-            protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) {
-                //empty method
-            }
-        };
+        return new AllTrueOrFalseFilter(aIsFilteredReturnValue);
+    }
+
+    /**
+     * A filter that always filters or not.
+     */
+    private static class AllTrueOrFalseFilter extends BaseFilter {
+        /**
+         * The boolean value to be returned by the isFiltered() method.
+         */
+        private final boolean isFilteredReturnValue;
+        //
+        /**
+         * Constructor; just sets the return value of the isFiltered() method.
+         *
+         * @param anIsFilteredReturnValue the value that shall be returned by the isFiltered() method
+         */
+        public AllTrueOrFalseFilter(boolean anIsFilteredReturnValue) {
+            super(TestUtils.getDefaultReporterInstance(), null);
+            this.isFilteredReturnValue = anIsFilteredReturnValue;
+        }
+        /**
+         * Returns a boolean value independent of the given atom container.
+         *
+         * @param anAtomContainer IAtomContainer instance to be checked
+         * @return Boolean value
+         * @throws NullPointerException if the given IAtomContainer instance is null
+         */
+        @Override
+        public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
+            Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+            return this.isFilteredReturnValue;
+        }
+        //
+        /**
+         * Does nothing.
+         *
+         * @param anAtomContainer the atom container the issue refers to
+         * @param anException the thrown exception
+         */
+        @Override
+        protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) {
+            //empty method
+        }
     }
 
     /**
@@ -172,7 +201,7 @@ public class TestUtils {
                     "count of atom containers in anAtomContainerSet (instance of IAtomContainerSet).");
         }
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline().addProcessingStep(aFilter);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance()).addProcessingStep(aFilter);
         IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.process(anAtomContainerSet, true, true);
         int tmpIndexInReturnedSet = 0;
         for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
@@ -186,6 +215,35 @@ public class TestUtils {
             tmpIndexInReturnedSet++;
         }
         Assertions.assertEquals(tmpIndexInReturnedSet, tmpReturnedACSet.getAtomContainerCount());
+    }
+
+    /**
+     * Returns an instance of the default reporter. As default, {@link MarkDownReporter} is used, but this might be
+     * changed to test other IReporter implementations. The returned reporter generates its report files at {@link
+     * #REPORT_FILES_DIRECTORY_PATH_NAME}.
+     *
+     * @return instance of IReporter
+     */
+    public static IReporter getDefaultReporterInstance() {
+        IReporter tmpReporter = new MarkDownReporter();
+        //TODO: the option to set a file path is missing in this MarkDownReporter version!
+        return tmpReporter;
+    }
+
+    //TODO: method that gets a "TestReporter":
+    //  creates no file;
+    //  throws exceptions if anything is appended;
+    //  can be given ErrorCodes that are allowed (-> no exception)
+
+    /** TODO: call this method in every test class that creates reports?
+     * Clears the report files directory ({@link #REPORT_FILES_DIRECTORY_PATH_NAME}).
+     *
+     * @throws NullPointerException if the given File is null
+     * @throws IllegalArgumentException if directory does not exist or is not a directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void clearReportFilesDirectory() throws IOException {
+        FileUtils.cleanDirectory(new File(TestUtils.REPORT_FILES_DIRECTORY_PATH_NAME));
     }
 
 }

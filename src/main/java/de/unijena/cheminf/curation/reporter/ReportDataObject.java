@@ -42,23 +42,23 @@ public class ReportDataObject {
     /**
      * Atom container of the structure the report refers to.
      */
-    private final IAtomContainer atomContainer;
+    private IAtomContainer atomContainer;
 
     /**
      * Identifier string of the structure the report refers to.
      */
-    private final String identifier;
+    private String identifier;
 
     /**
      * Optional second identifier string of the structure the report refers to or null if there is none.
      */
-    private final String optionalIdentifier;
+    private String optionalIdentifier;
 
     /**
      * String with the identifier of the processing step instance the reported problem occurred in, or null, if the
      * processing step has no ID (as it might be the case if it is not part of a pipeline).
      */
-    private final String processingStepIdentifier;
+    private String processingStepIdentifier;
 
     /**
      * Runtime class of the IProcessingStep instance the reported problem occurred in.
@@ -70,67 +70,111 @@ public class ReportDataObject {
      */
     private final ErrorCodes errorCode;
 
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
+    //TODO: add javadocs
+    public ReportDataObject(
+            ErrorCodes anErrorCode,
+            Class<? extends IProcessingStep> aClassOfProcessingStep
+    ) throws NullPointerException {
+        Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
+        Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
+                " IProcessingStep>) is null.");
+        this.errorCode = anErrorCode;
+        this.classOfProcessingStep = aClassOfProcessingStep;
+        this.processingStepIdentifier = null;
+        this.atomContainer = null;
+        this.identifier = null;
+        this.optionalIdentifier = null;
+    }
+
     /**
      * Constructor. Creates a new report data object without taking an atom container as parameter. This constructor
      * is ought to be used if the atom container the reported issue refers to is null.
      *
+     * @param anErrorCode               error code of the reported problem
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the problem
      * @param aProcessingStepIdentifier string of the index of the processing step in the pipeline or null  TODO!!
-     *                                          if it is not part of a pipeline
-     * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
-     * @param anErrorCode error code of the reported problem
-     * @throws NullPointerException if the given aClassOfProcessingStep or anErrorCode is null
-     * @see #ReportDataObject(IAtomContainer, String, String, String, Class, ErrorCodes)
+     *                                  if it is not part of a pipeline
+     * @throws NullPointerException if one of the given parameters is null
+     * @see #ReportDataObject(ErrorCodes, Class, String, IAtomContainer, String, String)
      */
     public ReportDataObject(
-            String aProcessingStepIdentifier,
+            ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
-            ErrorCodes anErrorCode
+            String aProcessingStepIdentifier
     ) throws NullPointerException {
-        Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
-                " IProcessingStep>) is null.");
-        Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
-        this.atomContainer = null;
-        this.identifier = null;
-        this.optionalIdentifier = null;
+        this(anErrorCode, aClassOfProcessingStep);
+        Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
+                " is null.");
         this.processingStepIdentifier = aProcessingStepIdentifier;
-        this.classOfProcessingStep = aClassOfProcessingStep;
-        this.errorCode = anErrorCode;
+    }
+
+    public ReportDataObject(
+            ErrorCodes anErrorCode,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
+            IAtomContainer anAtomContainer,
+            String anIdentifier
+    ) throws NullPointerException {
+        this(anErrorCode, aClassOfProcessingStep);
+        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
+        Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
+        this.atomContainer = anAtomContainer;
+        this.identifier = anIdentifier;
+    }
+
+    public ReportDataObject(
+            ErrorCodes anErrorCode,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
+            String aProcessingStepIdentifier,
+            IAtomContainer anAtomContainer,
+            String anIdentifier
+    ) throws NullPointerException {
+        this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier);
+        Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
+                " is null.");
+        this.processingStepIdentifier = aProcessingStepIdentifier;
+    }
+
+    public ReportDataObject(
+            ErrorCodes anErrorCode,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
+            IAtomContainer anAtomContainer,
+            String anIdentifier,
+            String anOptionalIdentifier
+    ) throws NullPointerException {
+        this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier);
+        Objects.requireNonNull(anOptionalIdentifier, "anOptionalIdentifier (instance of String) is null.");
+        this.optionalIdentifier = anOptionalIdentifier;
     }
 
     /**
      * Constructor. Creates a new report data object that stores all data needed for an entry in the report file. The
      * reported atom container may not be null.
      *
-     * @param anAtomContainer atom container of the structure
-     * @param anIdentifier identifier string of the structure
-     * @param anOptionalIdentifier optional second identifier string of the structure or null if there is none
+     * @param anErrorCode               error code of the reported problem
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the problem
      * @param aProcessingStepIdentifier string of the index of the processing step in the pipeline or null  TODO!!
-     *                                          if it is not part of a pipeline
-     * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the problem
-     * @param anErrorCode error code of the reported problem
+     *                                  if it is not part of a pipeline
+     * @param anAtomContainer           atom container of the structure
+     * @param anIdentifier              identifier string of the structure
+     * @param anOptionalIdentifier      optional second identifier string of the structure or null if there is none
      * @throws NullPointerException if anAtomContainer, anIdentifier, aClassOfProcessingStep or anErrorCode is null
-     * @see #ReportDataObject(String, Class, ErrorCodes)
+     * @see #ReportDataObject(ErrorCodes, Class, String)
      */
     public ReportDataObject(
+            ErrorCodes anErrorCode,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
+            String aProcessingStepIdentifier,
             IAtomContainer anAtomContainer,
             String anIdentifier,
-            String anOptionalIdentifier,
-            String aProcessingStepIdentifier,
-            Class<? extends IProcessingStep> aClassOfProcessingStep,
-            ErrorCodes anErrorCode
+            String anOptionalIdentifier
     ) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
-        Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
-                " IProcessingStep>) is null.");
-        Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
-        this.atomContainer = anAtomContainer;
-        this.identifier = anIdentifier;
-        this.optionalIdentifier = anOptionalIdentifier;
+        this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier, anOptionalIdentifier);
+        Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
+                " is null.");
         this.processingStepIdentifier = aProcessingStepIdentifier;
-        this.classOfProcessingStep = aClassOfProcessingStep;
-        this.errorCode = anErrorCode;
     }
+    //</editor-fold>
 
     /**
      * Returns the atom container of the structure the report refers to.

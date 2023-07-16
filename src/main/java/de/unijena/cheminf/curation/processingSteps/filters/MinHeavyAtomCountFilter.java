@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -40,14 +42,32 @@ import java.util.Objects;
 public class MinHeavyAtomCountFilter extends MaxHeavyAtomCountFilter {
 
     /**
-     * Constructor; initializes the class fields with the given values. Atom containers that equal the given min atom
-     * count do not get filtered.
+     * Constructor; initializes the class fields with the given values and sets the reporter. Atom containers that equal
+     * the given min atom count do not get filtered.
      *
      * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
-     * @throws IllegalArgumentException if the given heavy atom count threshold value is less than zero
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if the given heavy atom count threshold value is below zero
      */
-    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold) throws IllegalArgumentException {
-        super(aHeavyAtomCountThreshold);
+    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold, IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        super(aHeavyAtomCountThreshold, aReporter);
+    }
+
+    /**
+     * Constructor; initializes the class fields with the given values; initializes the reporter with an instance of
+     * {@link MarkDownReporter}. Atom containers that equal the given min atom count do not get filtered.
+     *
+     * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given heavy atom count threshold value is below zero; if the given file
+     *                                  path is no directory path
+     */
+    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aHeavyAtomCountThreshold, aReportFilesDirectoryPath);
     }
 
     @Override
