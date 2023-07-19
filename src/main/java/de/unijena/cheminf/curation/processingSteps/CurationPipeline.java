@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.processingSteps;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import de.unijena.cheminf.curation.processingSteps.filters.ContainsNoPseudoAtomsFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.ContainsPseudoAtomsFilter;
@@ -41,8 +42,7 @@ import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinMolecularMassFilter;
-import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.BasePropertyChecker;
-import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.MolIDChecker;
+import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.PropertyChecker;
 import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.OptionalIDChecker;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
@@ -65,54 +65,60 @@ import java.util.logging.Logger;
  * Create a curation pipeline and configure it for respective use cases using {@code .with...()} and
  * {@code .add...()} methods.
  * <pre>{@code
- * CurationPipeline tmpCurationPipeline = new CurationPipeline(...)
+ * IAtomContainerSet tmpMoleculeSet = new AtomContainerSet();
+ * //
+ * CurationPipeline tmpCurationPipeline = new CurationPipeline(*aReportFilesDirectoryPathName*)
  *                 .withMaxAtomCountFilter(20, true)
  *                 .withMinAtomCountFilter(5, true)
  *                 .withHasAllValidAtomicNumbersFilter(false);
  * //
- * IAtomContainerSet tmpProcessedACSet = tmpCurationPipeline.process(tmpMoleculeSet, true, true);
+ * boolean tmpCloneBeforeProcessing = true;
+ * IAtomContainerSet tmpProcessedACSet = tmpCurationPipeline.process(tmpMoleculeSet, tmpCloneBeforeProcessing);
  * }</pre>
  *
  * <b>One Line Quick Use</b>
  * For simplified use, we can create a pipeline and use it once for a single curation process.
  * <pre>{@code
- * new CurationPipeline(...).withMaxAtomCountFilter(20, true)
+ * boolean tmpCloneBeforeProcessing = true;
+ * new CurationPipeline(*aReportFilesDirectoryPathName*)
+ *                 .withMaxAtomCountFilter(20, true)
  *                 .withMinBondCountFilter(5, false)
- *                 .process(tmpMoleculeSet, false, true);
+ *                 .process(tmpMoleculeSet, tmpCloneBeforeProcessing);
+ * // with exemplary values
  * }</pre>
  *
  * A curation pipeline can be initialized passing the constructor either an IReporter instance
  * <pre>{@code
- * CurationPipeline tmpPipeline = new CurationPipeline(anIReporterInstance);
+ * CurationPipeline tmpPipeline = new CurationPipeline(*anIReporterInstance*);
  * }</pre>
  * or a directory path name.
  * <pre>{@code
- * CurationPipeline tmpPipeline = new CurationPipeline(aReportFilesDirectoryPathString);
+ * CurationPipeline tmpPipeline = new CurationPipeline(*aDirectoryPathName*);
  * }</pre>
  * The latter will lead to the reporter of the pipeline being initialized with an instance of {@link MarkDownReporter}.
- * <br>
- * <br>
- * <b>Further Info</b>
- * In general, every atom container needs a "MolID" to be processed by a processing step. This can be addressed by
- * setting the second boolean parameter of the {@code .process()} method to true. The first may be used to clone the
- * given atom containers before processing.
- * <br>
- * Since missing identifiers of structures might trouble the report generation or the pipeline itself, the initial
- * pipeline steps might be used to check for their existence.
- * <pre>{@code
- * new CurationPipeline(...).withMolIDChecker()
- *                          .withOptionalIDChecker();
- * }</pre>
- * The existence of the optional IDs only needs to be checked if a respective property name has been given to the
- * pipeline (see optional second constructor parameter and respective setter).
+ * The reporter is then used for the reporting of encountered issues with structures.
  *
+ * <br><br>
+ * <b>Further Info</b>
+ * As all processing steps, the curation pipeline gives the option to use a second, optional ID such as name or CAS
+ * registry number of the structures. It is then used in the report and complements the "MolID", an automatically
+ * assigned identifier that matches the index the atom container has in the processed atom container set. To prevent
+ * the original data from modifications, an atom container set might be cloned before the processing. This can be
+ * addressed by setting the boolean parameter of the {@link #process} method to true.
  * <br>
- * For a description of the two boolean parameters of the {@code .process()}-method, see the respective
- * method description.
- * <br>
- * To manually add any instance of {@link IProcessingStep} (including instances of CurationPipeline) to the pipeline,
- * use the {@code .addProcessingStep()} method. This option might especially be used for processing steps no respective
- * convenience method exists for (including CurationPipeline instances).
+ * To check the existence of the optional ID or of any other data annotated to the structures via atom container
+ * properties, the following steps might be added to the pipeline:
+ * <pre>{@code
+ * String tmpOptionalIDPropertyName = CDKConstants.CASRN; // exemplary
+ * String tmpNameOfPropertyToCheck = "DataSource";        // exemplary
+ * new CurationPipeline(*aReporter*, tmpOptionalIDPropertyName)
+ *                 .withOptionalIDChecker()
+ *                 .withPropertyChecker(tmpNameOfPropertyToCheck);
+ * }</pre>
+ *
+ * To manually add any instance of {@link IProcessingStep} (including CurationPipeline instances) to the pipeline, the
+ * {@code .addProcessingStep()} method may be used. This option might especially be used for processing steps no
+ * respective {@code CurationPipeline} method exists for (including instances of CurationPipeline).
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -273,21 +279,34 @@ public class CurationPipeline extends BaseProcessingStep {
 
     //<editor-fold desc="withPropertyChecker methods" defaultstate="collapsed">
     /**
-     * Adds a step to the pipeline that checks all given atom containers whether they have a MolID (atom container
-     * property of name {@link #MOL_ID_PROPERTY_NAME}). It appends a report to the reporter for every atom container
-     * that has no MolID and returns only those that have one.
+     * Adds a step to the pipeline that checks all given atom containers whether they have a specific atom container
+     * property. It appends a report to the reporter for every atom container that does not have the respective property
+     * and removes the respective atom containers from the returned set.
      * <br>
-     * <b>Note:</b> In cases where it can not be guarantied that every atom container possesses a MolID, it is advised
-     * to add this processing step as initial step of the pipeline to avoid missing MolIDs as cause for exceptions in
-     * the further course of the pipeline.
+     * <b>Note:</b> This option might be used to ensure a coherent annotation of data sets.
      *
+     * @param aPropertyName the name of the atom container the existence is checked for
+     * @param anErrorCode the error code associated with the non-existence of the property
      * @return the CurationPipeline instance itself
-     * @see MolIDChecker
+     * @see PropertyChecker
      */
-    public CurationPipeline withMolIDChecker() {
-        BasePropertyChecker tmpMolIDChecker = new MolIDChecker(this.getReporter());
-        this.addToListOfProcessingSteps(tmpMolIDChecker);
+    public CurationPipeline withPropertyChecker(String aPropertyName, ErrorCodes anErrorCode) {
+        PropertyChecker tmpPropertyChecker = new PropertyChecker(aPropertyName, anErrorCode, this.getReporter());
+        this.addToListOfProcessingSteps(tmpPropertyChecker);
         return this;
+    }
+
+    /**
+     * Calls {@link #withPropertyChecker(String, ErrorCodes)} with {@code ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY} as
+     * default error code.
+     *
+     * @param aPropertyName the name of the atom container the existence is checked for
+     * @return the CurationPipeline instance itself
+     * @see #withPropertyChecker(String, ErrorCodes)
+     * @see PropertyChecker
+     */
+    public CurationPipeline withPropertyChecker(String aPropertyName) {
+        return this.withPropertyChecker(aPropertyName, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY);
     }
 
     /**
@@ -296,15 +315,17 @@ public class CurationPipeline extends BaseProcessingStep {
      * reporter for every atom container that does not possess such a property and returns only those that have one.
      * <br>
      * <b>Note:</b> If the pipeline has been given an optional ID property name, it is advised to add this processing
-     * step as one of the initial steps to the pipeline to remove atom containers with missing optional ID from the
-     * given atom container set and manually check them in the generated report.
+     * step as the initial step to the pipeline to remove atom containers with missing optional ID from the given atom
+     * container set and manually check them in the generated report.
      *
      * @return the CurationPipeline instance itself
-     * @throws NullPointerException if no optional ID property name has been given to the pipeline
-     * @see MolIDChecker
+     * @throws NullPointerException if the optional ID property name field of the pipeline has not been specified (via
+     *                              constructor or respective setter)
+     * @see OptionalIDChecker
+     * @see #setOptionalIDPropertyName(String)
      */
     public CurationPipeline withOptionalIDChecker() throws NullPointerException {
-        BasePropertyChecker tmpOptionalIDChecker = new OptionalIDChecker(this.getReporter(), this.getOptionalIDPropertyName());
+        PropertyChecker tmpOptionalIDChecker = new OptionalIDChecker(this.getOptionalIDPropertyName(), this.getReporter());
         this.addToListOfProcessingSteps(tmpOptionalIDChecker);
         return this;
     }

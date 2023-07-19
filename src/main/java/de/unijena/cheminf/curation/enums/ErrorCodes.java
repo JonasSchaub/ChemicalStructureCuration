@@ -79,19 +79,14 @@ public enum ErrorCodes {
     FLAVOUR_NULL_ERROR,
 
     /**
-     *
+     * An expected atom container property is unset.
      */
-    UNSET_MOL_ID_PROPERTY,
+    MISSING_ATOM_CONTAINER_PROPERTY,
 
     /**
-     *
+     * The optional ID property is unset.
      */
     UNSET_OPTIONAL_ID_PROPERTY,
-
-    /**
-     * ...
-     */
-    XYZ_ERROR,
 
     /**
      * An unexpected exception occurred. For more information the log / log-file shall be visited.

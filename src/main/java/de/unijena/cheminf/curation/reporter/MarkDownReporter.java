@@ -16,7 +16,7 @@ public class MarkDownReporter implements IReporter {
     private List<ReportDataObject> reportDataObjectList;
 
     @Override
-    public void initializeNewReport(String aFileDestination) throws IOException {
+    public void initializeNewReport() {
 
         //needs a getter to later use it 'report'
 

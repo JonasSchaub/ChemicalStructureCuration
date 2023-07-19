@@ -71,7 +71,12 @@ public class ReportDataObject {
     private final ErrorCodes errorCode;
 
     //<editor-fold desc="Constructors" defaultstate="collapsed">
-    //TODO: add javadocs
+    /**
+     * TODO
+     * @param anErrorCode            TODO
+     * @param aClassOfProcessingStep TODO
+     * @throws NullPointerException TODO
+     */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep
@@ -109,6 +114,14 @@ public class ReportDataObject {
         this.processingStepIdentifier = aProcessingStepIdentifier;
     }
 
+    /**
+     * TODO
+     * @param anErrorCode            TODO
+     * @param aClassOfProcessingStep TODO
+     * @param anAtomContainer        TODO
+     * @param anIdentifier           TODO
+     * @throws NullPointerException TODO
+     */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
@@ -122,6 +135,15 @@ public class ReportDataObject {
         this.identifier = anIdentifier;
     }
 
+    /**
+     * TODO
+     * @param anErrorCode               TODO
+     * @param aClassOfProcessingStep    TODO
+     * @param aProcessingStepIdentifier TODO
+     * @param anAtomContainer           TODO
+     * @param anIdentifier              TODO
+     * @throws NullPointerException TODO
+     */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
@@ -135,6 +157,15 @@ public class ReportDataObject {
         this.processingStepIdentifier = aProcessingStepIdentifier;
     }
 
+    /**
+     * TODO
+     * @param anErrorCode            TODO
+     * @param aClassOfProcessingStep TODO
+     * @param anAtomContainer        TODO
+     * @param anIdentifier           TODO
+     * @param anOptionalIdentifier   TODO
+     * @throws NullPointerException TODO
+     */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep,

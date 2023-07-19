@@ -36,15 +36,14 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import java.util.Objects;
 
 /**
- * Base class of all classes that check all atom containers of a given atom container set for the existence of a
- * specific property. If this is not the case, this is reported and respective atom containers removed from the
- * returned atom container set.
+ * Processing step that checks all atom containers of a given atom container set for the existence of a
+ * specific property. If this is not the case, it is reported and respective atom containers removed from the
+ * returned atom container set. It might be used to check the annotation of data sets.
  *
- * @implNote Note that the constant {@link #errorCode} needs to be adjusted for every single child of this class.
  * @author Samuel Behr
  * @version 1.0.0.0
  */
-public class BasePropertyChecker extends BaseFilter {
+public class PropertyChecker extends BaseFilter {
 
     /**
      * Name string of the atom container property to check for.
@@ -59,13 +58,13 @@ public class BasePropertyChecker extends BaseFilter {
     /**
      * Main constructor; calls the super constructor with the given reporter and no optional ID property name string.
      *
-     * @param aReporter the reporter that is to be used when processing sets of structures
      * @param aNameOfProperty the name of the property to check for
-     * @param anErrorCode the error code belonging to the missing of the property
-     * @throws NullPointerException if the given reporter, property name or error code is null
+     * @param anErrorCode     the error code associated with the non-existence of the property
+     * @param aReporter       the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException     if the given reporter, property name or error code is null
      * @throws IllegalArgumentException if the property name string is blank or empty
      */
-    public BasePropertyChecker(IReporter aReporter, String aNameOfProperty, ErrorCodes anErrorCode)
+    public PropertyChecker(String aNameOfProperty, ErrorCodes anErrorCode, IReporter aReporter)
             throws NullPointerException, IllegalArgumentException {
         super(aReporter, null);
         Objects.requireNonNull(aNameOfProperty, "aNameOfProperty (instance of String) is null.");
@@ -81,18 +80,50 @@ public class BasePropertyChecker extends BaseFilter {
      * Constructor; calls the main constructor with an instance of {@link MarkDownReporter} - initialized with the given
      * report files directory path -, the property name and the error code.
      *
+     * @param aNameOfProperty           the name of the property to check for
+     * @param anErrorCode               the error code belonging to the missing of the property
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
-     * @param aNameOfProperty the name of the property to check for
-     * @param anErrorCode the error code belonging to the missing of the property
-     * @throws NullPointerException if the given directory path, property name or error code is null
+     * @throws NullPointerException     if the given directory path, property name or error code is null
      * @throws IllegalArgumentException if the given file path is no directory path; if the property name string is
      *                                  blank or empty
      */
-    public BasePropertyChecker(String aReportFilesDirectoryPath, String aNameOfProperty, ErrorCodes anErrorCode)
+    public PropertyChecker(String aNameOfProperty, ErrorCodes anErrorCode, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
         //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null;
         // check whether it is a directory path
-        this(new MarkDownReporter(), aNameOfProperty, anErrorCode);
+        this(aNameOfProperty, anErrorCode, new MarkDownReporter());
+    }
+
+    /**
+     * Constructor; calls the main constructor with {@code ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY} as default error
+     * code.
+     *
+     * @param aNameOfProperty the name of the property to check for
+     * @param aReporter       the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException     if the given reporter, property name or error code is null
+     * @throws IllegalArgumentException if the property name string is blank or empty
+     */
+    public PropertyChecker(String aNameOfProperty, IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, aReporter);
+    }
+
+    /**
+     * Constructor; calls the main constructor with an instance of {@link MarkDownReporter} - initialized with the given
+     * report files directory path -, the property name and {@code ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY} as
+     * default error code.
+     *
+     * @param aNameOfProperty           the name of the property to check for
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException     if the given directory path, property name or error code is null
+     * @throws IllegalArgumentException if the given file path is no directory path; if the property name string is
+     *                                  blank or empty
+     */
+    public PropertyChecker(String aNameOfProperty, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null;
+        // check whether it is a directory path
+        this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, new MarkDownReporter());
     }
 
     /**

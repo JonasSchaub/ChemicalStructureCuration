@@ -25,48 +25,82 @@
 
 package de.unijena.cheminf.curation.reporter;
 
+import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
 import org.openscience.cdk.exception.CDKException;
 
 import java.io.IOException;
 
 /**
- * Interface of all reporter classes.
+ * Interface of all reporters. Reporters are meant to generate reports out of data referring to issues with structures.
+ * This data might have its origin in the processing of sets of structures by instances of {@link IProcessingStep}
+ * implementations.
+ * <br>
+ * <br>
+ * <b>Example Usage</b>
+ * <pre>{@code
+ * IReporter tmpReporter = new *AnIReporterImplementation*();
+ * // initialize the report; depending on the reporter, this might not be necessary
+ * tmpReporter.initializeNewReport();
+ * //
+ * // generation of exemplary data
+ * ErrorCodes tmpErrorCode = ErrorCodes.INVALID_ATOMIC_NUMBER_ERROR;
+ * Class<? extends IProcessingStep> tmpClassOfProcessingStep = HasAllValidAtomicNumbersFilter.class;
+ * String tmpProcesingStepIdentifier = "xyz";
+ * IAtomContainer tmpAtomContainer = new AtomContainer();
+ * String tmpMolID = "abc";
+ * String tmpOptionalID = "uvw";
+ * //
+ * // appending a report data object to the reporter (as done by the processing steps)
+ * ReportDataObject tmpReportDataObject = new ReportDataObject(
+ *         tmpErrorCode, tmpClassOfProcessingStep, tmpProcesingStepIdentifier,
+ *         tmpAtomContainer, tmpMolID, tmpOptionalID
+ * );
+ * tmpReporter.appendReport(tmpReportDataObject);
+ * }</pre>
  *
- * @author Samuel Behr, Maximilian Schaten
+ * The final call of
+ * <pre>{@code
+ * tmpReporter.report();
+ * }</pre>
+ * either generates or finalizes the report (depending on the reporter).
+ *
+ * @author Samuel Behr
  * @version 1.0.0.0
  */
 public interface IReporter {
 
     /**
-     * TODO
-     * (method might not be necessary / be replaced with a method that just switches the file destination)
+     * Either initializes the report or does nothing (depending on the reporter). Latter is the case, if the reporter
+     * keeps all data in memory until the {@code .report()} method is called; the previously appended data might be
+     * cleared. If the data is directly written to the report by the {@code .appendReport()} method, this method
+     * initializes the report that is then finalized by the {@code .report()} method.
      *
-     * @param aFileDestination file path name string
-     * @throws IOException TODO
+     * @throws Exception if an exception occurs initializing the report (reporter specific)
      */
-    public void initializeNewReport(String aFileDestination) throws IOException;    //TODO: remove after MarkDownReporter is finished
+    public void initializeNewReport() throws Exception;
 
     /**
-     * TODO
-     * (appends a report data object to a list of report data objects)
+     * Appends the reported data to the reporter. Depending on the reporter, the data is either kept in memory until the
+     * {@link #report()} method is called, or directly written to the report.
      *
-     * @param aReportDataObject the report to append
+     * @param aReportDataObject the data to append to the report
+     * @throws NullPointerException if the given ReportDataObject instance is null
      */
-    public void appendReport(ReportDataObject aReportDataObject);
+    public void appendReport(ReportDataObject aReportDataObject) throws NullPointerException;
 
     /**
-     * TODO
-     * (creates the report file at the chosen destination)
+     * Either generates the report out of all data kept in memory or finalizes the report that has already been
+     * initialized and appended with the reported data (depending on the reporter).
      *
-     * @throws CDKException TODO
-     * @throws IOException TODO
+     * @throws Exception if an exception occurs generating / finalizing the report (reporter specific)
      */
-    public void report() throws CDKException, IOException;
+    public void report() throws Exception;
 
     /**
-     * TODO
-     * (clears the list of appended reports)
+     * Clears all data kept in memory (if the reporter keeps the appended data in memory).
+     *
+     * @throws Exception if the data can not be cleared (reporter specific)
      */
-    public void clear();
+    public void clear() throws Exception;
 
 }
