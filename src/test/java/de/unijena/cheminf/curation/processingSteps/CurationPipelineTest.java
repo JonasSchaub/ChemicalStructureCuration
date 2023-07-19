@@ -65,8 +65,8 @@ public class CurationPipelineTest {
         IAtomContainerSet tmpTestACSet = TestUtils.parseSmilesStrings("CCC", "O=C=O", "O=C(O)C(N)CC(=O)N");   //TODO
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(20, true)
-                .withMinAtomCountFilter(5, true)
+                .withMaxAtomCountFilter(20, true, true)
+                .withMinAtomCountFilter(5, true, true)
                 .withMaxMolecularMassFilter(150.0, MassComputationFlavours.MOL_WEIGHT)
                 .withHasAllValidAtomicNumbersFilter(false);
         // apply the pipeline on a set of atom containers
@@ -74,19 +74,21 @@ public class CurationPipelineTest {
         //
         /* further info */
         // to add processing steps to the pipeline no convenience method exists for, use the following method
-        tmpCurationPipeline.addProcessingStep(new MaxHeavyAtomCountFilter(12, TestUtils.getDefaultReporterInstance()));
+        tmpCurationPipeline.addProcessingStep(new MaxHeavyAtomCountFilter(12, true,
+                TestUtils.getDefaultReporterInstance()));
         // even curation pipelines themselves are implementations of IProcessingStep and can therefore be added as one
         // to a superordinate pipeline; this might be done to encapsulate parts of the pipeline or to e.g. group sets
         // of filters
         tmpCurationPipeline.addProcessingStep(
                 new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                        .withMinBondCountFilter(3, false)
-                        .withMinBondsOfSpecificBondOrderFilter(IBond.Order.DOUBLE, 2, false)
+                        .withMinBondCountFilter(3, false, true)
+                        .withMinBondsOfSpecificBondOrderFilter(IBond.Order.DOUBLE, 2,
+                                false, true)
         );
         // "one line" quick use
         tmpProcessedACSet = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(20, true)
-                .withMinBondCountFilter(5, false)
+                .withMaxAtomCountFilter(20, true, true)
+                .withMinBondCountFilter(5, false, true)
                 .process(tmpTestACSet, true, true);
     }
 
@@ -469,7 +471,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMaxAtomCount = 14;
         boolean tmpConsiderImplicitHydrogen = true;
-        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(1, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -491,7 +495,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMaxAtomCount = 10;
         boolean tmpConsiderImplicitHydrogen = true;
-        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
@@ -516,7 +522,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMaxAtomCount = 10;
         boolean tmpConsiderImplicitHydrogen = true;
-        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"1", "2"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -538,7 +546,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMaxAtomCount = 6;
         boolean tmpConsiderImplicitHydrogen = false;
-        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(1, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -560,7 +570,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMaxAtomCount = 4;
         boolean tmpConsiderImplicitHydrogen = false;
-        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
@@ -585,7 +597,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMaxAtomCount = 5;
         boolean tmpConsiderImplicitHydrogen = false;
-        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0", "2"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -607,7 +621,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMinAtomCount = 10;
         boolean tmpConsiderImplicitHydrogen = true;
-        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(1, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -629,7 +645,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMinAtomCount = 14;
         boolean tmpConsiderImplicitHydrogen = true;
-        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
@@ -654,7 +672,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMinAtomCount = 10;
         boolean tmpConsiderImplicitHydrogen = true;
-        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0", "2"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -676,7 +696,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMinAtomCount = 4;
         boolean tmpConsiderImplicitHydrogen = false;
-        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(1, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -698,7 +720,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMinAtomCount = 6;
         boolean tmpConsiderImplicitHydrogen = false;
-        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(0, tmpFilteredACSet.getAtomContainerCount());
     }
@@ -723,7 +747,9 @@ public class CurationPipelineTest {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
         int tmpMinAtomCount = 5;
         boolean tmpConsiderImplicitHydrogen = false;
-        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen);
+        boolean tmpConsiderPseudoAtoms = true;
+        tmpCurationPipeline = tmpCurationPipeline.withMinAtomCountFilter(tmpMinAtomCount, tmpConsiderImplicitHydrogen,
+                tmpConsiderPseudoAtoms);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0", "1"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -748,7 +774,8 @@ public class CurationPipelineTest {
         );
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(12, true).withMinAtomCountFilter(9, true);
+                .withMaxAtomCountFilter(12, true, true)
+                .withMinAtomCountFilter(9, true, true);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(4, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0", "1", "3", "5"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -774,9 +801,9 @@ public class CurationPipelineTest {
         );
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(12, true)
-                .withMinAtomCountFilter(9, true)
-                .withMaxAtomCountFilter(5, false);
+                .withMaxAtomCountFilter(12, true, true)
+                .withMinAtomCountFilter(9, true, true)
+                .withMaxAtomCountFilter(5, false, true);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(3, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0", "3", "5"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -802,10 +829,10 @@ public class CurationPipelineTest {
         );
         //
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(12, true)
-                .withMinAtomCountFilter(9, true)
-                .withMaxAtomCountFilter(5, false)
-                .withMinAtomCountFilter(4, false);
+                .withMaxAtomCountFilter(12, true, true)
+                .withMinAtomCountFilter(9, true, true)
+                .withMaxAtomCountFilter(5, false, true)
+                .withMinAtomCountFilter(4, false, true);
         IAtomContainerSet tmpFilteredACSet = tmpCurationPipeline.process(tmpAtomContainerSet, true, true);
         Assertions.assertEquals(2, tmpFilteredACSet.getAtomContainerCount());
         Assertions.assertArrayEquals(new String[]{"0", "5"}, ProcessingStepUtils.getArrayOfAssignedMolIDs(tmpFilteredACSet));
@@ -830,15 +857,15 @@ public class CurationPipelineTest {
         );
         //
         CurationPipeline tmpCurationPipeline1 = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(12, true)
-                .withMinAtomCountFilter(9, true)
-                .withMaxAtomCountFilter(5, false)
-                .withMinAtomCountFilter(4, false);
+                .withMaxAtomCountFilter(12, true, true)
+                .withMinAtomCountFilter(9, true, true)
+                .withMaxAtomCountFilter(5, false, true)
+                .withMinAtomCountFilter(4, false, true);
         CurationPipeline tmpCurationPipeline2 = new CurationPipeline(TestUtils.getDefaultReporterInstance())
-                .withMaxAtomCountFilter(5, false)
-                .withMinAtomCountFilter(9, true)
-                .withMinAtomCountFilter(4, false)
-                .withMaxAtomCountFilter(12, true);
+                .withMaxAtomCountFilter(5, false, true)
+                .withMinAtomCountFilter(9, true, true)
+                .withMinAtomCountFilter(4, false, true)
+                .withMaxAtomCountFilter(12, true, true);
         IAtomContainerSet tmpFilteredACSet1 = tmpCurationPipeline1.process(tmpAtomContainerSet, true, true);
         IAtomContainerSet tmpFilteredACSet2 = tmpCurationPipeline2.process(tmpAtomContainerSet, true, true);
         //test for correct and identical length

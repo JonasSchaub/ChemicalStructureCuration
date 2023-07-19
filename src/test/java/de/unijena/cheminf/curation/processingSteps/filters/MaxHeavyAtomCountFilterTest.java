@@ -46,8 +46,9 @@ public class MaxHeavyAtomCountFilterTest {
     @Test
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test1() {
         int tmpMaxHeavyAtomCount = 5;
+        boolean tmpConsiderPseudoAtoms = true;
         MaxHeavyAtomCountFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
         Assertions.assertEquals(tmpMaxHeavyAtomCount, tmpMaxHeavyAtomCountFilter.heavyAtomCountThreshold);
     }
 
@@ -57,8 +58,9 @@ public class MaxHeavyAtomCountFilterTest {
     @Test
     public void publicConstructorTest_initializesClassVarsWithGivenParams_test2() {
         int tmpMaxHeavyAtomCount = 10;
+        boolean tmpConsiderPseudoAtoms = true;
         MaxHeavyAtomCountFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
         Assertions.assertEquals(tmpMaxHeavyAtomCount, tmpMaxHeavyAtomCountFilter.heavyAtomCountThreshold);
     }
 
@@ -72,7 +74,9 @@ public class MaxHeavyAtomCountFilterTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpMaxHeavyAtomCount = -1;
-                    new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, TestUtils.getDefaultReporterInstance());
+                    boolean tmpConsiderPseudoAtoms = true;
+                    new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, tmpConsiderPseudoAtoms,
+                            TestUtils.getDefaultReporterInstance());
                 }
         );
     }
@@ -93,7 +97,9 @@ public class MaxHeavyAtomCountFilterTest {
                 "CC(=O)O"   //4 atoms
         );
         int tmpMaxHeavyAtomCount = 3;
-        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, TestUtils.getDefaultReporterInstance());
+        boolean tmpConsiderPseudoAtoms = true;
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, tmpConsiderPseudoAtoms,
+                TestUtils.getDefaultReporterInstance());
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
             Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
@@ -116,7 +122,9 @@ public class MaxHeavyAtomCountFilterTest {
                 "CC(=O)O"   //4 atoms
         );
         int tmpMaxHeavyAtomCount = 7;
-        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, TestUtils.getDefaultReporterInstance());
+        boolean tmpConsiderPseudoAtoms = true;
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, tmpConsiderPseudoAtoms,
+                TestUtils.getDefaultReporterInstance());
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
             Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
@@ -139,9 +147,11 @@ public class MaxHeavyAtomCountFilterTest {
                 "CC(=O)O"   //4 atoms
         );
         int[] tmpMaxHeavyAtomCountArray = new int[]{6, 5, 4};
+        boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
-            tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCountArray[i], TestUtils.getDefaultReporterInstance());
+            tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCountArray[i], tmpConsiderPseudoAtoms,
+                    TestUtils.getDefaultReporterInstance());
             Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainerSet.getAtomContainer(i)));
         }
     }
@@ -156,8 +166,9 @@ public class MaxHeavyAtomCountFilterTest {
                 NullPointerException.class,
                 () -> {
                     int tmpMaxHeavyAtomCount = 5;
+                    boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                            TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
                     tmpMaxHeavyAtomCountFilter.isFiltered(null);
                 }
         );
@@ -172,8 +183,9 @@ public class MaxHeavyAtomCountFilterTest {
     public void filterMethodTest_returnsIAtomContainerSetNotNull() throws Exception {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
         int tmpMaxHeavyAtomCount = 5;
+        boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
         Object tmpReturnValue = tmpMaxHeavyAtomCountFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -195,8 +207,9 @@ public class MaxHeavyAtomCountFilterTest {
         int[] tmpNotFilteredArray = new int[]{0, 2};
         //
         int tmpMaxHeavyAtomCount = 4;
+        boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMaxHeavyAtomCountFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -221,8 +234,9 @@ public class MaxHeavyAtomCountFilterTest {
         int[] tmpNotFilteredArray = new int[]{1};
         //
         int tmpMaxHeavyAtomCount = 3;
+        boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMaxHeavyAtomCountFilter.process(tmpAtomContainerSet, false, true);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -240,8 +254,9 @@ public class MaxHeavyAtomCountFilterTest {
                 NullPointerException.class,
                 () -> {
                     int tmpMaxHeavyAtomCount = 5;
+                    boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMaxHeavyAtomCountFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount,
-                            TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
                     tmpMaxHeavyAtomCountFilter.process(null, false, true);
                 }
         );

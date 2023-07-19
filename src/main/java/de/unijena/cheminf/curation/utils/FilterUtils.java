@@ -29,6 +29,7 @@ import de.unijena.cheminf.curation.enums.ErrorCodes;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 
 import java.util.Objects;
 
@@ -46,75 +47,87 @@ public class FilterUtils {
 
     /**
      * Checks whether the atom count of a given atom container exceeds or equals the given threshold. Based on the
-     * boolean parameter, implicit hydrogen atoms are taken into account or not; otherwise only explicit atoms
-     * (including explicit hydrogen atoms) are counted. Use the {@link #exceedsOrEqualsHeavyAtomCount} method to only
-     * count heavy atoms (excluding all hydrogen atoms).
+     * boolean parameters, the count of explicit atoms (including explicit hydrogen atoms) is added with the number of
+     * implicit hydrogen atoms or lowered by the number of pseudo-atoms. Use the {@link #exceedsOrEqualsHeavyAtomCount}
+     * method to only count heavy atoms (excluding all hydrogen atoms). Atoms are considered as pseudo-atoms if they are
+     * instances of {@link IPseudoAtom}.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the atom count threshold
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return true, if the atom count of the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is below zero
-     * @see #exceedsOrEqualsHeavyAtomCount(IAtomContainer, int)
+     * @see #exceedsOrEqualsHeavyAtomCount(IAtomContainer, int, boolean)
      */
     public static boolean exceedsOrEqualsAtomCount(IAtomContainer anAtomContainer,
                                                    int aThresholdValue,
-                                                   boolean aConsiderImplicitHydrogens)
+                                                   boolean aConsiderImplicitHydrogens,
+                                                   boolean aConsiderPseudoAtoms)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpAtomCount = ChemUtils.getAtomCount(anAtomContainer, aConsiderImplicitHydrogens);
+        final int tmpAtomCount = ChemUtils.getAtomCount(anAtomContainer, aConsiderImplicitHydrogens, aConsiderPseudoAtoms);
         return tmpAtomCount >= aThresholdValue;
     }
 
     /**
      * Checks whether the heavy atom count, the number of non-hydrogen atoms, of the given atom container equals or
-     * exceeds the given threshold value.
+     * exceeds the given threshold value. Instances of {@link IPseudoAtom} may or may not be taken into account.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the heavy atom count threshold
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return true, if the heavy atom count of the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is below zero
      */
-    public static boolean exceedsOrEqualsHeavyAtomCount(IAtomContainer anAtomContainer, int aThresholdValue)
+    public static boolean exceedsOrEqualsHeavyAtomCount(IAtomContainer anAtomContainer,
+                                                        int aThresholdValue,
+                                                        boolean aConsiderPseudoAtoms)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpHeavyAtomCount = ChemUtils.getHeavyAtomsCount(anAtomContainer);
+        final int tmpHeavyAtomCount = ChemUtils.getHeavyAtomsCount(anAtomContainer, aConsiderPseudoAtoms);
         return tmpHeavyAtomCount >= aThresholdValue;
     }
 
     /**
-     * Checks whether the bond count of a given atom container exceeds or equals the given threshold value. Based on
-     * the boolean parameter, bonds to implicit hydrogen atoms are taken into account or not.
+     * Checks whether the bond count of a given atom container exceeds or equals the given threshold value. Based on the
+     * boolean parameters, bonds to implicit hydrogen atoms and bonds to pseudo-atoms are taken into account or not. If
+     * either of the two boolean parameters is false, bonds to implicit hydrogen atoms of pseudo-atoms are not taken
+     * into account. Pseudo-atoms are expected to be instances of {@link IPseudoAtom}.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aThresholdValue Integer value of the bond count threshold
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is below zero
      */
     public static boolean exceedsOrEqualsBondCount(IAtomContainer anAtomContainer, int aThresholdValue,
-                                                  boolean aConsiderImplicitHydrogens) throws NullPointerException, IllegalArgumentException {
+                                                  boolean aConsiderImplicitHydrogens, boolean aConsiderPseudoAtoms)
+            throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpBondCount = ChemUtils.getBondCount(anAtomContainer, aConsiderImplicitHydrogens);
+        final int tmpBondCount = ChemUtils.getBondCount(anAtomContainer, aConsiderImplicitHydrogens, aConsiderPseudoAtoms);
         return tmpBondCount >= aThresholdValue;
     }
 
     /**
      * Checks whether the count of bonds of a specific bond order of a given atom container exceeds or equals the given
-     * threshold value. Based on the boolean parameter, bonds to implicit hydrogen atoms are taken into account or not
-     * when counting bonds of the order one / single. The given bond order may be IBond.Order.UNSET or null.
+     * threshold value. Based on the boolean parameters, bonds to implicit hydrogen atoms and bonds to pseudo-atoms are
+     * taken into account or not. If either of the two boolean parameters is false, bonds to implicit hydrogen atoms of
+     * pseudo-atoms are not taken into account. Atoms are considered as pseudo-atoms if they are instances of {@link
+     * IPseudoAtom}. The given bond order may be IBond.Order.UNSET or null.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aBondOrder Constant of IBond.Order to specify the bond order of the bonds to be counted; null or
@@ -122,17 +135,23 @@ public class FilterUtils {
      * @param aThresholdValue Integer value of the bond count threshold
      * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
      * @throws NullPointerException if the given instance of IAtomContainer is null
      * @throws IllegalArgumentException if the given threshold value is below zero
      */
-    public static boolean exceedsOrEqualsBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer, IBond.Order aBondOrder, int aThresholdValue,
-                                                   boolean aConsiderImplicitHydrogens) throws NullPointerException, IllegalArgumentException {
+    public static boolean exceedsOrEqualsBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer,
+                                                                       IBond.Order aBondOrder,
+                                                                       int aThresholdValue,
+                                                                       boolean aConsiderImplicitHydrogens,
+                                                                       boolean aConsiderPseudoAtoms)
+            throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpBondCount = ChemUtils.getBondsOfSpecificBondOrderCount(anAtomContainer, aBondOrder, aConsiderImplicitHydrogens);
+        final int tmpBondCount = ChemUtils.getBondsOfSpecificBondOrderCount(anAtomContainer, aBondOrder,
+                aConsiderImplicitHydrogens, aConsiderPseudoAtoms);
         return tmpBondCount >= aThresholdValue;
     }
 

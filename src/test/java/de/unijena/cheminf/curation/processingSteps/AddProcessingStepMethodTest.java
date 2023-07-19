@@ -64,8 +64,9 @@ public class AddProcessingStepMethodTest {
     public void addProcessingStepMethodTest_checksIfListOfSelectedFiltersWasExtendedByGivenFilterInstance_test2() {
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpNewFilter = new MinAtomCountFilter(tmpIntegerParameter, tmpConsiderImplicitHydrogens,
-                TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
                 .addProcessingStep(tmpNewFilter);
         Assertions.assertInstanceOf(IFilter.class, tmpCurationPipeline.getListOfPipelineSteps().getLast());

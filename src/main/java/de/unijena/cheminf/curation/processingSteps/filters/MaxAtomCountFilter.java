@@ -30,6 +30,7 @@ import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 
 import java.util.Objects;
 
@@ -53,18 +54,25 @@ public class MaxAtomCountFilter extends BaseFilter {
     protected final boolean considerImplicitHydrogens;
 
     /**
+     * Boolean value whether instances of {@link IPseudoAtom} should be considered when calculating the atom count.
+     */
+    protected final boolean considerPseudoAtoms;
+
+    /**
      * Constructor; initializes the class fields with the given values and sets the reporter. Implicit hydrogen atoms
-     * may or may not be considered; atom containers that equal the given atom count threshold value do not get
-     * filtered.
+     * and {@link IPseudoAtom} instances may or may not be considered; atom containers that equal the given atom count
+     * threshold value do not get filtered.
      *
      * @param anAtomCountThreshold integer value of the max atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                   calculating the atom count of an atom container
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @param aReporter the reporter that is to be used when processing sets of structures
      * @throws NullPointerException if the given IReporter instance is null
      * @throws IllegalArgumentException if the given atom count threshold value is below zero
      */
-    public MaxAtomCountFilter(int anAtomCountThreshold, boolean aConsiderImplicitHydrogens, IReporter aReporter)
+    public MaxAtomCountFilter(int anAtomCountThreshold, boolean aConsiderImplicitHydrogens,
+                              boolean aConsiderPseudoAtoms, IReporter aReporter)
             throws NullPointerException, IllegalArgumentException {
         super(aReporter, null);
         if (anAtomCountThreshold < 0) {
@@ -72,22 +80,25 @@ public class MaxAtomCountFilter extends BaseFilter {
         }
         this.atomCountThreshold = anAtomCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+        this.considerPseudoAtoms = aConsiderPseudoAtoms;
     }
 
     /**
      * Constructor; initializes the class fields with the given values; initializes the reporter with an instance of
-     * {@link MarkDownReporter}. Implicit hydrogen atoms may or may not be considered; atom containers that equal the
-     * given atom count threshold value do not get filtered.
+     * {@link MarkDownReporter}. Implicit hydrogen atoms and {@link IPseudoAtom} instances may or may not be considered;
+     * atom containers that equal the given atom count threshold value do not get filtered.
      *
      * @param anAtomCountThreshold integer value of the max atom count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                   calculating the atom count of an atom container
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the given String with the directory path is null
      * @throws IllegalArgumentException if the given atom count threshold value is below zero; if the given file path
      *                                  is no directory path
      */
-    public MaxAtomCountFilter(int anAtomCountThreshold, boolean aConsiderImplicitHydrogens, String aReportFilesDirectoryPath)
+    public MaxAtomCountFilter(int anAtomCountThreshold, boolean aConsiderImplicitHydrogens,
+                              boolean aConsiderPseudoAtoms, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
         super(aReportFilesDirectoryPath, null);
         if (anAtomCountThreshold < 0) {
@@ -95,6 +106,7 @@ public class MaxAtomCountFilter extends BaseFilter {
         }
         this.atomCountThreshold = anAtomCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+        this.considerPseudoAtoms = aConsiderPseudoAtoms;
     }
 
     @Override
@@ -104,7 +116,8 @@ public class MaxAtomCountFilter extends BaseFilter {
         return FilterUtils.exceedsOrEqualsAtomCount(
                 anAtomContainer,
                 this.atomCountThreshold + 1,
-                this.considerImplicitHydrogens
+                this.considerImplicitHydrogens,
+                this.considerPseudoAtoms
         );
     }
 
@@ -152,6 +165,15 @@ public class MaxAtomCountFilter extends BaseFilter {
      */
     public boolean isConsiderImplicitHydrogens() {
         return this.considerImplicitHydrogens;
+    }
+
+    /**
+     * Returns whether {@link IPseudoAtom} instances are taken into account.
+     *
+     * @return Boolean value
+     */
+    public boolean isConsiderPseudoAtoms() {
+        return this.considerPseudoAtoms;
     }
 
 }

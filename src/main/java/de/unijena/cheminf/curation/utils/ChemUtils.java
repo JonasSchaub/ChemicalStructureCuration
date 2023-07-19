@@ -45,95 +45,148 @@ import java.util.Objects;
 public class ChemUtils {
 
     /**
-     * Returns the number of atoms present in a given atom container. Based on the boolean parameter, implicit hydrogen
-     * atoms are taken into account or not.
+     * Returns the number of atoms present in a given atom container. Based on the boolean parameters, implicit hydrogen
+     * atoms and pseudo-atoms are taken into account or not. Implicit hydrogen counts assigned to pseudo-atoms are not
+     * taken into account if either of the two boolean parameters is false. Atoms are considered as pseudo-atoms if they
+     * are instances of {@link IPseudoAtom}.
+     * TODO: adjust tests; adjust FilterUtils method; adjust filter
      *
      * @param anAtomContainer IAtomContainer instance to check
-     * @param aConsiderImplicitHydrogens Boolean value whether implicit hydrogen atoms should be considered
+     * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return Integer number of atoms in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int getAtomCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens) throws NullPointerException {
+    public static int getAtomCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens,
+                                   boolean aConsiderPseudoAtoms) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpAtomCount = anAtomContainer.getAtomCount();
         if (aConsiderImplicitHydrogens) {
-            tmpAtomCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer);
+            tmpAtomCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer, aConsiderPseudoAtoms);
+        }
+        if (!aConsiderPseudoAtoms) {
+            for (IAtom tmpAtom : anAtomContainer.atoms()) {
+                if (tmpAtom instanceof IPseudoAtom) {
+                    tmpAtomCount--;
+                }
+            }
         }
         return tmpAtomCount;
     }
 
     /**
-     * Returns the number of implicit hydrogen atoms present in the given atom container.
+     * Returns the number of implicit hydrogen atoms present in the given atom container. The implicit hydrogen count
+     * assigned to instances of {@link IPseudoAtom} may or may not be taken into account.
      *
      * @param anAtomContainer IAtomContainer instance to check
+     * @param aConsiderPseudoAtoms boolean value whether to consider implicit hydrogen counts of IPseudoAtom instances
      * @return Integer value of the count of implicit hydrogen atoms
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int getImplicitHydrogenCount(IAtomContainer anAtomContainer) throws NullPointerException {
+    public static int getImplicitHydrogenCount(IAtomContainer anAtomContainer, boolean aConsiderPseudoAtoms)
+            throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpImplicitHydrogenCount = 0;
-        for (IAtom tmpAtom : anAtomContainer.atoms()) {
-            tmpImplicitHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+        if (!aConsiderPseudoAtoms && ChemUtils.containsPseudoAtoms(anAtomContainer)) {
+            for (IAtom tmpAtom : anAtomContainer.atoms()) {
+                if (tmpAtom instanceof IPseudoAtom) {
+                    continue;
+                }
+                tmpImplicitHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+            }
+        } else {
+            for (IAtom tmpAtom : anAtomContainer.atoms()) {
+                tmpImplicitHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+            }
         }
         return tmpImplicitHydrogenCount;
     }
 
-    /** TODO: not used in any filter so far
-     * Returns the number of explicit hydrogen atoms present in the given atom container.
-     *
-     * @param anAtomContainer IAtomContainer instance to check
-     * @return Integer value of the count of explicit hydrogen atoms
-     * @throws NullPointerException if the given instance of IAtomContainer is null
-     */
-    public static int getExplicitHydrogenCount(IAtomContainer anAtomContainer) throws NullPointerException {
-        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
-        return ChemUtils.getAtomsOfAtomicNumbersCount(anAtomContainer, false, IElement.H);
-    }
-
     /**
-     * Returns the number of bonds present in the given atom container. Based on the boolean parameter, bonds to
-     * implicit hydrogen atoms are taken into account or not.
+     * Returns the number of bonds present in the given atom container. Based on the boolean parameters, bonds to
+     * implicit hydrogen atoms and bonds to pseudo-atoms are taken into account or not. If either of the two boolean
+     * parameters is false, bonds to implicit hydrogen atoms of pseudo-atoms are not taken into account. Pseudo-atoms
+     * are expected to be instances of {@link IPseudoAtom}.
+     * TODO: adjust tests; adjust FilterUtils method; adjust filter
      *
      * @param anAtomContainer IAtomContainer instance to check
-     * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
+     * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms
      * @return Integer number of bonds in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int getBondCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens) throws NullPointerException {
+    public static int getBondCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens,
+                                   boolean aConsiderPseudoAtoms) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpBondCount = anAtomContainer.getBondCount();
         if (aConsiderImplicitHydrogens) {
-            tmpBondCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer);
+            tmpBondCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer, aConsiderPseudoAtoms);
+        }
+        if (!aConsiderPseudoAtoms && ChemUtils.containsPseudoAtoms(anAtomContainer)) {
+            for (IBond tmpBond : anAtomContainer.bonds()) {
+                for (IAtom tmpBondParticipant : tmpBond.atoms()) {
+                    if (tmpBondParticipant instanceof IPseudoAtom) {
+                        tmpBondCount--;
+                        break;
+                    }
+                }
+            }
         }
         return tmpBondCount;
     }
 
     /**
-     * Counts the number of bonds of a specific bond order present in the given atom container. Based on the boolean
-     * parameter, bonds to implicit hydrogen atoms are taken into account or not. The method also counts bonds with a
-     * bond order of IBond.Order.UNSET or null.
+     * Returns the count of bonds of a specific bond order that are present in the given atom container. Based on the
+     * boolean parameters, bonds to implicit hydrogen atoms and bonds to pseudo-atoms are taken into account or not. If
+     * either of the two boolean parameters is false, bonds to implicit hydrogen atoms of pseudo-atoms are not taken
+     * into account. Atoms are considered as pseudo-atoms if they are instances of {@link IPseudoAtom}.
+     * The given bond order may also be {@code IBond.Order.UNSET} or {@code null}.
+     * TODO: adjust tests; adjust FilterUtils method; adjust filter
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aBondOrder Constant of IBond.Order to specify the bond order of the bonds to be counted; null or
      *                   IBond.Order.UNSET are allowed
      * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms; this is
-     *                                  only relevant when counting bonds of the order one / single
+     *                                   only relevant when counting bonds of bond order one / single
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms
      * @return Integer number of bonds of the specific bond order in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
     public static int getBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer,
                                                        IBond.Order aBondOrder,
-                                                       boolean aConsiderImplicitHydrogens)
+                                                       boolean aConsiderImplicitHydrogens,
+                                                       boolean aConsiderPseudoAtoms)
             throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpBondTypeCount = 0;
-        for (IBond tmpBond : anAtomContainer.bonds()) {
-            if (tmpBond.getOrder() == aBondOrder) {
-                tmpBondTypeCount++;
+        if (!aConsiderPseudoAtoms && ChemUtils.containsPseudoAtoms(anAtomContainer)) {
+            boolean tmpIsBondToPseudoAtom;
+            for (IBond tmpBond : anAtomContainer.bonds()) {
+                // check the bond order
+                if (tmpBond.getOrder() == aBondOrder) {
+                    // check whether a pseudo-atom participates
+                    tmpIsBondToPseudoAtom = false;
+                    for (IAtom tmpAtom : tmpBond.atoms()) {
+                        if (tmpAtom instanceof IPseudoAtom) {
+                            tmpIsBondToPseudoAtom = true;
+                            break;
+                        }
+                    }
+                    if (tmpIsBondToPseudoAtom) {
+                        continue;
+                    }
+                    tmpBondTypeCount++;
+                }
+            }
+        } else {
+            for (IBond tmpBond : anAtomContainer.bonds()) {
+                if (tmpBond.getOrder() == aBondOrder) {
+                    tmpBondTypeCount++;
+                }
             }
         }
         if (aBondOrder == IBond.Order.SINGLE && aConsiderImplicitHydrogens) {
-            tmpBondTypeCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer);
+            tmpBondTypeCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer, aConsiderPseudoAtoms);
         }
         return tmpBondTypeCount;
     }
@@ -194,24 +247,32 @@ public class ChemUtils {
         }
         for (int tmpAtomicNumber : anAtomicNumbers) {
             if (tmpAtomicNumber == IElement.H && aConsiderImplicitHydrogens) {
-                return tmpAtomsOfAtomicNumbersCount + ChemUtils.getImplicitHydrogenCount(anAtomContainer);
+                return tmpAtomsOfAtomicNumbersCount + ChemUtils.getImplicitHydrogenCount(anAtomContainer, true);
             }
         }
         return tmpAtomsOfAtomicNumbersCount;
     }
 
     /**
-     * Counts the number of heavy (non-hydrogen) atoms in the given IAtomContainer instance.
+     * Counts the number of heavy (non-hydrogen) atoms in the given IAtomContainer instance. Instances of {@link
+     * IPseudoAtom} may or may not be taken into account.
+     * TODO: adjust tests; adjust FilterUtils method; adjust filter
      *
      * @param anAtomContainer IAtomContainer instance to count the heavy atoms of
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return integer value of the count of heavy atoms in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int getHeavyAtomsCount(IAtomContainer anAtomContainer) throws NullPointerException {
+    public static int getHeavyAtomsCount(IAtomContainer anAtomContainer, boolean aConsiderPseudoAtoms)
+            throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
-        int tmpExplicitAtomsCount = anAtomContainer.getAtomCount();
-        int tmpExplicitHydrogensCount = ChemUtils.getExplicitHydrogenCount(anAtomContainer);
-        return tmpExplicitAtomsCount - tmpExplicitHydrogensCount;
+        int tmpHeavyAtomsCount = anAtomContainer.getAtomCount();
+        for (IAtom tmpAtom : anAtomContainer.atoms()) {
+            if (tmpAtom.getAtomicNumber() == IElement.H || (!aConsiderPseudoAtoms && tmpAtom instanceof IPseudoAtom)) {
+                tmpHeavyAtomsCount--;
+            }
+        }
+        return tmpHeavyAtomsCount;
     }
 
     /**

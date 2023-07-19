@@ -49,6 +49,7 @@ import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -311,37 +312,45 @@ public class CurationPipeline extends BaseProcessingStep {
 
     //<editor-fold desc="with...Filter methods" defaultstate="collapsed">
     /**
-     * Adds a max atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms may or
-     * may not be considered; atom containers that equal the given max atom count do not get filtered.
+     * Adds a max atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms and
+     * {@link IPseudoAtom} instances may or may not be considered; atom containers that equal the given max atom count
+     * do not get filtered.
      *
      * @param aMaxAtomCount integer value of the max atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max atom count has a negative value
      */
-    public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens,
+                                                   boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
         if (aMaxAtomCount < 0) {
             throw new IllegalArgumentException("aMaxAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens, this.getReporter());
+        IFilter tmpFilter = new MaxAtomCountFilter(aMaxAtomCount, aConsiderImplicitHydrogens,
+                aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
     /**
-     * Adds a min atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms may or
-     * may not be considered; atom containers that equal the given min atom count do not get filtered.
+     * Adds a min atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms and
+     * {@link IPseudoAtom} instances may or may not be considered; atom containers that equal the given min atom count
+     * do not get filtered.
      *
      * @param aMinAtomCount integer value of the min atom count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min atom count has a negative value
      */
-    public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens,
+                                                   boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
         if (aMinAtomCount < 0) {
             throw new IllegalArgumentException("aMinAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens, this.getReporter());
+        IFilter tmpFilter = new MinAtomCountFilter(aMinAtomCount, aConsiderImplicitHydrogens,
+                aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -351,14 +360,16 @@ public class CurationPipeline extends BaseProcessingStep {
      * that equal the given max heavy atom count do not get filtered.
      *
      * @param aMaxHeavyAtomCount integer value of the max atom count to filter by
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms in the heavy atoms count
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max heavy atom count has a negative value
      */
-    public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount) throws IllegalArgumentException {
+    public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount, boolean aConsiderPseudoAtoms)
+            throws IllegalArgumentException {
         if (aMaxHeavyAtomCount < 0) {
             throw new IllegalArgumentException("aMaxHeavyAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount, this.getReporter());
+        IFilter tmpFilter = new MaxHeavyAtomCountFilter(aMaxHeavyAtomCount, aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -368,98 +379,118 @@ public class CurationPipeline extends BaseProcessingStep {
      * that equal the given min heavy atom count do not get filtered.
      *
      * @param aMinHeavyAtomCount integer value of the min atom count to filter by
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms in the heavy atoms count
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min heavy atom count has a negative value
      */
-    public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount) throws IllegalArgumentException {
+    public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount, boolean aConsiderPseudoAtoms)
+            throws IllegalArgumentException {
         if (aMinHeavyAtomCount < 0) {
             throw new IllegalArgumentException("aMinHeavyAtomCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount, this.getReporter());
+        IFilter tmpFilter = new MinHeavyAtomCountFilter(aMinHeavyAtomCount, aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
     /**
      * Adds a max bond count filter with the given parameters to the curation pipeline. Bonds to implicit hydrogen atoms
-     * may or may not be considered; atom containers that equal the given max bond count do not get filtered.
+     * and bonds with participation of instances of {@link IPseudoAtom} may or may not be considered. If bonds of
+     * pseudo-atoms are not considered, their bonds to implicit hydrogen atoms are not considered either. Atom
+     * containers that equal the given max bond count do not get filtered.
      *
      * @param aMaxBondCount integer value of the max bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max bond count has a negative value
      */
-    public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens,
+                                                   boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
         if (aMaxBondCount < 0) {
             throw new IllegalArgumentException("aMaxBondCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens, this.getReporter());
+        IFilter tmpFilter = new MaxBondCountFilter(aMaxBondCount, aConsiderImplicitHydrogens,
+                aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
     /**
      * Adds a min bond count filter with the given parameters to the curation pipeline. Bonds to implicit hydrogen atoms
-     * may or may not be considered; atom containers that equal the given min bond count do not get filtered.
+     * and bonds with participation of instances of {@link IPseudoAtom} may or may not be considered. If bonds of
+     * pseudo-atoms are not considered, their bonds to implicit hydrogen atoms are not considered either. Atom
+     * containers that equal the given min bond count do not get filtered.
      *
      * @param aMinBondCount integer value of the min bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min bond count has a negative value
      */
-    public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+    public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens,
+                                                   boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
         if (aMinBondCount < 0) {
             throw new IllegalArgumentException("aMinBondCount (integer value) was below zero.");
         }
-        IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens, this.getReporter());
+        IFilter tmpFilter = new MinBondCountFilter(aMinBondCount, aConsiderImplicitHydrogens,
+                aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
     /**
      * Adds a max bonds of specific bond order filter with the given parameters to the curation pipeline. Bonds to
-     * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single; atom containers
-     * that equal the given max specific bond count do not get filtered.
+     * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single. If the second
+     * boolean parameter is false, instances of {@link IPseudoAtom} and their implicit hydrogen atoms are not taken into
+     * account. Atom containers that equal the given max specific bond count do not get filtered.
      *
      * @param aBondOrder bond order of bonds to count and filter on
      * @param aMaxSpecificBondCount  integer value of the max specific bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max specific bond count has a negative value
      */
-    public CurationPipeline withMaxBondsOfSpecificBondOrderFilter(
-            IBond.Order aBondOrder, int aMaxSpecificBondCount, boolean aConsiderImplicitHydrogens
-    ) throws IllegalArgumentException {
+    public CurationPipeline withMaxBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder,
+                                                                  int aMaxSpecificBondCount,
+                                                                  boolean aConsiderImplicitHydrogens,
+                                                                  boolean aConsiderPseudoAtoms)
+            throws IllegalArgumentException {
         if (aMaxSpecificBondCount < 0) {
             throw new IllegalArgumentException("aMaxSpecificBondCount (integer value) was below zero.");
         }
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(aBondOrder, aMaxSpecificBondCount,
-                aConsiderImplicitHydrogens, this.getReporter());
+                aConsiderImplicitHydrogens, aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
 
     /**
      * Adds a min bonds of specific bond order filter with the given parameters to the curation pipeline. Bonds to
-     * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single; atom containers
-     * that equal the given min specific bond count do not get filtered.
+     * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single. If the second
+     * boolean parameter is false, instances of {@link IPseudoAtom} and their implicit hydrogen atoms are not taken into
+     * account. Atom containers that equal the given min specific bond count do not get filtered.
      *
      * @param aBondOrder bond order of bonds to count and filter on
      * @param aMinSpecificBondCount  integer value of the min specific bond count to filter by
      * @param aConsiderImplicitHydrogens boolean value whether to consider bonds to implicit hydrogen atoms; this is
      *                                   only relevant when counting bonds of the order one / single
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min specific bond count has a negative value
      */
-    public CurationPipeline withMinBondsOfSpecificBondOrderFilter(
-            IBond.Order aBondOrder, int aMinSpecificBondCount, boolean aConsiderImplicitHydrogens
-    ) throws IllegalArgumentException {
+    public CurationPipeline withMinBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder,
+                                                                  int aMinSpecificBondCount,
+                                                                  boolean aConsiderImplicitHydrogens,
+                                                                  boolean aConsiderPseudoAtoms)
+            throws IllegalArgumentException {
         if (aMinSpecificBondCount < 0) {
             throw new IllegalArgumentException("aMinSpecificBondCount (integer value) was below zero.");
         }
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(aBondOrder, aMinSpecificBondCount,
-                aConsiderImplicitHydrogens, this.getReporter());
+                aConsiderImplicitHydrogens, aConsiderPseudoAtoms, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }

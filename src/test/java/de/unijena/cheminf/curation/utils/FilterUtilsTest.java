@@ -47,33 +47,21 @@ import org.openscience.cdk.interfaces.IElement;
 public class FilterUtilsTest {
 
     /**
-     * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns a boolean value.
-     */
-    @Test
-    public void exceedsOrEqualsAtomCountTest_returnsBooleanValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpAtomCountThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(
-                Boolean.class,
-                FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens)
-        );
-    }
-
-    /**
      * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
      * exceeds the given threshold considering implicit hydrogen atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsAtomCountTest_returnsTrue_10AtomsThresholdConsideringImplicitHs_12Atoms() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_10AtomsThresholdConsideringImplicitHs_12Atoms()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(
-                tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         );
         Assertions.assertTrue(tmpResult);
     }
@@ -85,12 +73,15 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsAtomCountTest_returnsFalse_15AtomsThresholdConsideringImplicitHs_12Atoms() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsFalse_15AtomsThresholdConsideringImplicitHs_12Atoms()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 15;
         boolean tmpConsiderImplicitHydrogens = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        boolean tmpConsiderPseudoAtoms = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
         Assertions.assertFalse(tmpResult);
     }
 
@@ -101,12 +92,15 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsAtomCountTest_returnsTrue_12AtomsThresholdConsideringImplicitHs_12Atoms() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_12AtomsThresholdConsideringImplicitHs_12Atoms()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 12;
         boolean tmpConsiderImplicitHydrogens = true;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        boolean tmpConsiderPseudoAtoms = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
         Assertions.assertTrue(tmpResult);
     }
 
@@ -117,12 +111,15 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsAtomCountTest_returnsTrue_4AtomsThresholdNotConsideringImplicitHs_6Atoms() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_4AtomsThresholdNotConsideringImplicitHs_6Atoms()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 4;
         boolean tmpConsiderImplicitHydrogens = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        boolean tmpConsiderPseudoAtoms = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
         Assertions.assertTrue(tmpResult);
     }
 
@@ -133,12 +130,15 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsAtomCountTest_returnsFalse_10AtomsThresholdNotConsideringImplicitHs_6Atoms() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsFalse_10AtomsThresholdNotConsideringImplicitHs_6Atoms()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        boolean tmpConsiderPseudoAtoms = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
         Assertions.assertFalse(tmpResult);
     }
 
@@ -149,12 +149,15 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsAtomCountTest_returnsTrue_6AtomsThresholdNotConsideringImplicitHs_6Atoms() throws InvalidSmilesException {
+    public void exceedsOrEqualsAtomCountTest_returnsTrue_6AtomsThresholdNotConsideringImplicitHs_6Atoms()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
         int tmpAtomCountThresholdValue = 6;
         boolean tmpConsiderImplicitHydrogens = false;
-        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue, tmpConsiderImplicitHydrogens);
+        boolean tmpConsiderPseudoAtoms = true;
+        boolean tmpResult = FilterUtils.exceedsOrEqualsAtomCount(tmpAtomContainer, tmpAtomCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
         Assertions.assertTrue(tmpResult);
     }
 
@@ -167,7 +170,8 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsAtomCount(null, 10, true);
+                    FilterUtils.exceedsOrEqualsAtomCount(null, 10,
+                            true, true);
                 }
         );
     }
@@ -181,21 +185,9 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsAtomCount(new AtomContainer(), -1, true);
+                    FilterUtils.exceedsOrEqualsAtomCount(new AtomContainer(), -1,
+                            true, true);
                 }
-        );
-    }
-
-    /**
-     * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils returns a boolean value.
-     */
-    @Test
-    public void exceedsOrEqualsHeavyAtomCountTest_returnsBooleanValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpSomeThresholdValue = 10;
-        Assertions.assertInstanceOf(
-                Boolean.class,
-                FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpSomeThresholdValue)
         );
     }
 
@@ -206,16 +198,19 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsHeavyAtomCountTest_returnsTrueIfAnAtomContainerExceedsTheThreshold() throws InvalidSmilesException {
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsTrueIfAnAtomContainerExceedsTheThreshold()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",
                 "O=C=O",
                 "c1ccccc1"
         );
         int tmpThresholdValue = 2;
+        boolean tmpConsiderPseudoAtoms = true;
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue));
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue,
+                    tmpConsiderPseudoAtoms));
         }
     }
 
@@ -226,16 +221,19 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsHeavyAtomCountTest_returnsFalseIfAnAtomContainerFallsShortOfTheThreshold() throws InvalidSmilesException {
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsFalseIfAnAtomContainerFallsShortOfTheThreshold()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",
                 "O=C=O",
                 "c1ccccc1"
         );
         int tmpThresholdValue = 7;
+        boolean tmpConsiderPseudoAtoms = true;
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertFalse(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue));
+            Assertions.assertFalse(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue,
+                    tmpConsiderPseudoAtoms));
         }
     }
 
@@ -246,17 +244,20 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsHeavyAtomCountTest_returnsTrueIfAnAtomContainerEqualsTheThreshold() throws InvalidSmilesException {
+    public void exceedsOrEqualsHeavyAtomCountTest_returnsTrueIfAnAtomContainerEqualsTheThreshold()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CC(=O)O",
                 "O=C=O",
                 "c1ccccc1"
         );
         int[] tmpThresholdValueArray = new int[]{4, 3, 6};
+        boolean tmpConsiderPseudoAtoms = true;
         IAtomContainer tmpAtomContainer;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValueArray[i]));
+            Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValueArray[i],
+                    tmpConsiderPseudoAtoms));
         }
     }
 
@@ -269,7 +270,7 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsHeavyAtomCount(null, 10);
+                    FilterUtils.exceedsOrEqualsHeavyAtomCount(null, 10, true);
                 }
         );
     }
@@ -284,21 +285,11 @@ public class FilterUtilsTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpSomeNegativeInteger = -1;
-                    FilterUtils.exceedsOrEqualsHeavyAtomCount(new AtomContainer(), tmpSomeNegativeInteger);
+                    boolean tmpConsiderPseudoAtoms = true;
+                    FilterUtils.exceedsOrEqualsHeavyAtomCount(new AtomContainer(), tmpSomeNegativeInteger,
+                            tmpConsiderPseudoAtoms);
                 }
         );
-    }
-
-    /**
-     * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns a boolean value.
-     */
-    @Test
-    public void exceedsOrEqualsBondCountTest_returnsBooleanValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpBondCountThresholdValue = 10;
-        boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(Boolean.class, FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer,
-                tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
     }
 
     /**
@@ -313,7 +304,9 @@ public class FilterUtilsTest {
         //
         int tmpBondCountThresholdValue = 5;
         boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -328,7 +321,9 @@ public class FilterUtilsTest {
         //
         int tmpBondCountThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -343,7 +338,9 @@ public class FilterUtilsTest {
         //
         int tmpBondCountThresholdValue = 8;
         boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -358,7 +355,9 @@ public class FilterUtilsTest {
         //
         int tmpBondCountThresholdValue = 3;
         boolean tmpConsiderImplicitHydrogens = false;
-        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -373,7 +372,9 @@ public class FilterUtilsTest {
         //
         int tmpBondCountThresholdValue = 5;
         boolean tmpConsiderImplicitHydrogens = false;
-        Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -388,7 +389,9 @@ public class FilterUtilsTest {
         //
         int tmpBondCountThresholdValue = 4;
         boolean tmpConsiderImplicitHydrogens = false;
-        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondCount(tmpAtomContainer, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -400,7 +403,8 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsBondCount(null, 10, true);
+                    FilterUtils.exceedsOrEqualsBondCount(null, 10,
+                            true, true);
                 }
         );
     }
@@ -414,27 +418,9 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsBondCount(new AtomContainer(), -1, true);
+                    FilterUtils.exceedsOrEqualsBondCount(new AtomContainer(), -1,
+                            true, true);
                 }
-        );
-    }
-
-
-
-    /**
-     * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns a boolean
-     * value.
-     */
-    @Test
-    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsBooleanValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        int tmpBondCountThresholdValue = 10;
-        IBond.Order tmpBondOrder = IBond.Order.UNSET;
-        boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertInstanceOf(
-                Boolean.class,
-                FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(tmpAtomContainer, tmpBondOrder,
-                        tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens)
         );
     }
 
@@ -446,19 +432,23 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_singleBonds_thresholdExceeded() throws InvalidSmilesException {
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_singleBonds_thresholdExceeded()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 (2)
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         //
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         int tmpBondCountThresholdValue = 5;
         Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         ));
         tmpConsiderImplicitHydrogens = false;
         tmpBondCountThresholdValue = 1;
         Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         ));
     }
 
@@ -470,19 +460,23 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsFalse_singleBonds_thresholdNotExceeded() throws InvalidSmilesException {
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsFalse_singleBonds_thresholdNotExceeded()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 (2)
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         //
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         int tmpBondCountThresholdValue = 10;
         Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         ));
         tmpConsiderImplicitHydrogens = false;
         tmpBondCountThresholdValue = 4;
         Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         ));
     }
 
@@ -494,19 +488,23 @@ public class FilterUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_singleBonds_thresholdEqualed() throws InvalidSmilesException {
+    public void exceedsOrEqualsBondsOfSpecificBondOrderCountTest_returnsTrue_singleBonds_thresholdEqualed()
+            throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CCO");   //8 (2)
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         //
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         int tmpBondCountThresholdValue = 8;
         Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         ));
         tmpConsiderImplicitHydrogens = false;
         tmpBondCountThresholdValue = 2;
         Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue, tmpConsiderImplicitHydrogens
+                tmpAtomContainer, tmpBondOrder, tmpBondCountThresholdValue,
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
         ));
     }
 
@@ -531,20 +529,24 @@ public class FilterUtilsTest {
         tmpAtomContainer.addBond(tmpBond);
         int tmpThresholdValue;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        boolean tmpConsiderPseudoAtoms = true;
         //
         for (IBond.Order tmpBondOrder : tmpBondOrderArray) {
             tmpBond.setOrder(tmpBondOrder);
             tmpThresholdValue = 0;  //exceeded
             Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens
+                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue,
+                    tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
             ));
             tmpThresholdValue = 1;  //equaled
             Assertions.assertTrue(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens
+                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue,
+                    tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
             ));
             tmpThresholdValue = 2;  //not exceeded
             Assertions.assertFalse(FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
-                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue, tmpConsiderImplicitHydrogens
+                    tmpAtomContainer, tmpBondOrder, tmpThresholdValue,
+                    tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms
             ));
         }
     }
@@ -558,7 +560,8 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(null, null, 10, true);
+                    FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(null, null,
+                            10, true, true);
                 }
         );
     }
@@ -572,7 +575,8 @@ public class FilterUtilsTest {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(new AtomContainer(), null, -1, true);
+                    FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(new AtomContainer(), null,
+                            -1, true, true);
                 }
         );
     }
@@ -731,16 +735,6 @@ public class FilterUtilsTest {
                     FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber);
                 }
         );
-    }
-
-    /**
-     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils returns a boolean value.
-     */
-    @Test
-    public void hasAllValidAtomicNumbersTest_returnsBooleanValue() {
-        IAtomContainer tmpAtomContainer = new AtomContainer();
-        boolean tmpIncludeWildcardNumber = true;    //has no impact
-        Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
     }
 
     /**

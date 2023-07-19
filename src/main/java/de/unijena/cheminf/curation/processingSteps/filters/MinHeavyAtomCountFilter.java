@@ -46,13 +46,14 @@ public class MinHeavyAtomCountFilter extends MaxHeavyAtomCountFilter {
      * the given min atom count do not get filtered.
      *
      * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms in the heavy atoms count
      * @param aReporter the reporter that is to be used when processing sets of structures
      * @throws NullPointerException if the given IReporter instance is null
      * @throws IllegalArgumentException if the given heavy atom count threshold value is below zero
      */
-    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold, IReporter aReporter)
+    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold, boolean aConsiderPseudoAtoms, IReporter aReporter)
             throws NullPointerException, IllegalArgumentException {
-        super(aHeavyAtomCountThreshold, aReporter);
+        super(aHeavyAtomCountThreshold, aConsiderPseudoAtoms, aReporter);
     }
 
     /**
@@ -60,21 +61,24 @@ public class MinHeavyAtomCountFilter extends MaxHeavyAtomCountFilter {
      * {@link MarkDownReporter}. Atom containers that equal the given min atom count do not get filtered.
      *
      * @param aHeavyAtomCountThreshold integer value of the heavy atom count threshold to filter by
+     * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms in the heavy atoms count
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the given String with the directory path is null
      * @throws IllegalArgumentException if the given heavy atom count threshold value is below zero; if the given file
      *                                  path is no directory path
      */
-    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold, String aReportFilesDirectoryPath)
+    public MinHeavyAtomCountFilter(int aHeavyAtomCountThreshold, boolean aConsiderPseudoAtoms,
+                                   String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
-        super(aHeavyAtomCountThreshold, aReportFilesDirectoryPath);
+        super(aHeavyAtomCountThreshold, aConsiderPseudoAtoms, aReportFilesDirectoryPath);
     }
 
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return !FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.heavyAtomCountThreshold);
+        return !FilterUtils.exceedsOrEqualsHeavyAtomCount(anAtomContainer, this.heavyAtomCountThreshold,
+                this.considerPseudoAtoms);
     }
 
 }
