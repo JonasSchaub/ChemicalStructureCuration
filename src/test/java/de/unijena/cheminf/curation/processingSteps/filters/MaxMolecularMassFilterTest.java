@@ -242,7 +242,7 @@ public class MaxMolecularMassFilterTest {
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
                 TestUtils.getDefaultReporterInstance());
-        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -268,7 +268,7 @@ public class MaxMolecularMassFilterTest {
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
                 TestUtils.getDefaultReporterInstance());
-        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -288,7 +288,7 @@ public class MaxMolecularMassFilterTest {
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
                             TestUtils.getDefaultReporterInstance());
-                    tmpMaxMolecularMassFilter.process(null, false, true);
+                    tmpMaxMolecularMassFilter.process(null, false);
                 }
         );
     }

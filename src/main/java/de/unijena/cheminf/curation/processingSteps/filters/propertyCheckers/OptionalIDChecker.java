@@ -83,7 +83,8 @@ public class OptionalIDChecker extends PropertyChecker {
      * @throws NullPointerException if the given String is null
      */
     @Override
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws NullPointerException, IllegalArgumentException {
+    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws NullPointerException,
+            IllegalArgumentException {
         Objects.requireNonNull(anOptionalIDPropertyName, "The optional ID passed to the OptionalIDChecker may" +
                 " not be null.");
         super.setOptionalIDPropertyName(anOptionalIDPropertyName);

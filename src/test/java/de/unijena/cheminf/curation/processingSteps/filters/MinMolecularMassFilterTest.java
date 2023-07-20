@@ -242,7 +242,7 @@ public class MinMolecularMassFilterTest {
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
                 TestUtils.getDefaultReporterInstance());
-        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -270,7 +270,7 @@ public class MinMolecularMassFilterTest {
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
                 TestUtils.getDefaultReporterInstance());
-        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -291,7 +291,7 @@ public class MinMolecularMassFilterTest {
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
                             TestUtils.getDefaultReporterInstance());
-                    tmpMinMolecularMassFilter.process(null, false, true);
+                    tmpMinMolecularMassFilter.process(null, false);
                 }
         );
     }

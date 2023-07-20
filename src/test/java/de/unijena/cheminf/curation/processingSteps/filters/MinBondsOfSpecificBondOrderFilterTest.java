@@ -269,7 +269,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance()
         );
-        Object tmpReturnValue = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false, true);
+        Object tmpReturnValue = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -298,7 +298,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance()
         );
-        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -331,7 +331,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance()
         );
-        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -364,7 +364,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
                 tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance()
         );
-        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMinBondsOfSpecificBondOrderFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -388,7 +388,7 @@ public class MinBondsOfSpecificBondOrderFilterTest {
                             tmpBondOrder, tmpMinSpecificBondCount, tmpConsiderImplicitHydrogens,
                             tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance()
                     );
-                    tmpMinBondsOfSpecificBondOrderFilter.process(null, false, true);
+                    tmpMinBondsOfSpecificBondOrderFilter.process(null, false);
                 }
         );
     }

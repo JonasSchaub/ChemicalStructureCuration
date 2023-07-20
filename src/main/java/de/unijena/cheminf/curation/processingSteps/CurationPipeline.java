@@ -138,7 +138,7 @@ public class CurationPipeline extends BaseProcessingStep {
         - method to deep copy / clone a CurationPipeline?
     //
     TODO: it may never happen since the reporter of the pipeline shall never be null, but in theory all the methods
-     adding a step to the pipeline could throw a NullPointerException; do I need to address this?
+     adding a step to the pipeline could throw a NullPointerException; do I need to address that?
      */
 
     /**
@@ -239,40 +239,42 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * {@inheritDoc}
      * <p>
-     * The given atom container set is sequentially processed by all steps of the pipeline. All steps report to the
-     * reporter of the pipeline.
+     * <b>Pipeline specific Info</b> The given atom container set is sequentially processed by all steps of the
+     * pipeline. All steps report to the same reporter (as long as there have been no changes to reporters of the
+     * processing steps after them being added to the pipeline).
      * </p>
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing,
-                                     boolean anAssignIdentifiers) throws Exception {
-        return super.process(anAtomContainerSet, aCloneBeforeProcessing, anAssignIdentifiers);
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing) throws Exception {
+        return super.process(anAtomContainerSet, aCloneBeforeProcessing);
     }
 
     /**
      * {@inheritDoc}
      * <p>
-     * The given atom container set is sequentially processed by all steps of the pipeline. Issues encountered with
-     * structures are reported to the reporter of this instance.
+     * The given atom container set is sequentially processed by all steps of the pipeline. Issues with structures
+     * encountered by processing steps of the pipeline are reported to the reporter of this pipeline (as long as there
+     * have been no changes to reporters of the processing steps after them being added to the pipeline).
      * </p>
      */
     @Override
-    protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
         //
-        try {
-            for (IProcessingStep tmpProcessingStep : this.listOfPipelineSteps) {
-                if (tmpResultingACSet == null || tmpResultingACSet.isEmpty()) {
-                    break;
-                }
-                tmpResultingACSet = tmpProcessingStep.process(tmpResultingACSet, false, false);
+        for (IProcessingStep tmpProcessingStep : this.listOfPipelineSteps) {
+            if (tmpResultingACSet == null || tmpResultingACSet.isEmpty()) {
+                break;
             }
-        } catch (Exception anUnexpectedException) {
-            CurationPipeline.LOGGER.log(Level.SEVERE, "The curation process was interrupted by an unexpected" +
-                    " exception: " + anUnexpectedException.toString(), anUnexpectedException);
-            //TODO: create some kind of notification / message to append to the report file - discuss with Max (or Felix, Jonas)
-            return null;
+            try {
+                tmpResultingACSet = tmpProcessingStep.process(tmpResultingACSet, false);
+            } catch (Exception aFatalException) {
+                // the exception will be re-thrown
+                CurationPipeline.LOGGER.severe(String.format("The processing step of class %s with the" +
+                                " identifier %s was interrupted by an unexpected exception.",
+                        tmpProcessingStep.getClass().getName(), tmpProcessingStep.getPipelineProcessingStepID()));
+                throw aFatalException;
+            }
         }
         return tmpResultingACSet;
     }

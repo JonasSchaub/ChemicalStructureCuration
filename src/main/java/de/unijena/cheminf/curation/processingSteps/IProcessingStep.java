@@ -54,31 +54,34 @@ public interface IProcessingStep {
     public static final String MOL_ID_PROPERTY_NAME = "Processing_MolID";
 
     /**
-     * Processes the given atom container set according to the logic of the respective processing step. By the end of
-     * the processing, a report containing info on encountered issues with structures is created. The {@link
-     * #isReporterSelfContained()} flag needs to be true for this; if not so, issues are only appended to the reporter
-     * and can later on be reported manually or by a supervisory pipeline (see {@link CurationPipeline}). Respective
-     * structures are excluded from the returned atom container set.
-     * <p>
-     * <b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
-     * processing. See the respective parameter.
-     * </p>
+     * String that is used instead of the optional ID if an atom container does not possess the optional ID atom
+     * container property. It is only used, if the processing step has been given an optional ID property name.
+     */
+    public static final String DEFAULT_OPTIONAL_ID_STRING = "[No optional ID]";
+
+    /**
+     * Processes the given atom container set according to the logic of the respective processing step. A report
+     * containing info on issues encountered with structures is generated; respective structures are excluded from the
+     * returned atom container set. A MolID (atom container property of name {@link #MOL_ID_PROPERTY_NAME}) gets
+     * assigned to every atom container; it equals the index of the atom container in the processed atom container set
+     * and may be used to trace down issues. The MolIDs might be extended with info on parent structures or duplicates
+     * during the processing (if the processing step does so).
+     * <p>Both, the reporting and MolID assignment, can be prevented by setting the {@link #isReporterSelfContained()}
+     * flag to false. If so, issues with structures are only appended to the reporter; the {@link IReporter#report()}
+     * method can later be executed manually or by a supervisory pipeline (see {@link CurationPipeline}). Formally
+     * assigned MolID values do not get overwritten.</p>
+     * <p><b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
+     * processing. See the respective parameter.</p>
      *
-     * @param anAtomContainerSet the atom container set to process
+     * @param anAtomContainerSet     the atom container set to process
      * @param aCloneBeforeProcessing a flag indicating whether to clone the given data before processing; use this
-     *                               option to avoid any changes or modifications to the original data
-     * @param anAssignIdentifiers a flag indicating whether to assign MolIDs (atom container property with name {@link
-     *                            #MOL_ID_PROPERTY_NAME}) to the atom containers of the given set; if true, the assigned
-     *                            MolIDs contain the respective index of the atom container in the set before processing
-     *                            (formerly assigned MolIDs do get overwritten); in case of false, every given atom
-     *                            container is expected to have a MolID assigned and an exception might be thrown if
-     *                            this is not the case; the MolIDs might be extended with further information during the
-     *                            processing (e.g. with info on parent structures or duplicates of the molecule)
+     *                               option to avoid any changes or modifications to the original data; the {@link
+     *                               IAtomContainer#clone()} method is used for the cloning of the atom containers
      * @return the processed atom container set
-     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the atom container does not pass the processing
-     * without causing an issue)
-     * @throws Exception if an unexpected, fatal exception occurred
+     * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set does
+     *                              not possess a MolID (this will only cause an exception, if the atom container does
+     *                              not pass the processing without causing an issue)
+     * @throws Exception            if an unexpected, fatal exception occurred
      * @see #getReporter()
      * @see #setReporter(IReporter)
      * @see #setPipelineProcessingStepID(String)
@@ -89,8 +92,7 @@ public interface IProcessingStep {
      */
     public IAtomContainerSet process(
             IAtomContainerSet anAtomContainerSet,
-            boolean aCloneBeforeProcessing,
-            boolean anAssignIdentifiers
+            boolean aCloneBeforeProcessing
     ) throws NullPointerException, Exception;
 
     /**

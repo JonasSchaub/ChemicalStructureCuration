@@ -89,7 +89,8 @@ public enum ErrorCodes {
     UNSET_OPTIONAL_ID_PROPERTY,
 
     /**
-     * An unexpected exception occurred. For more information the log / log-file shall be visited.
+     * An unexpected (probably fatal) exception was encountered. For more information the log / log-file shall be
+     * visited.
      */
     UNEXPECTED_EXCEPTION_ERROR
 

@@ -61,16 +61,16 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         - make the destination of the report-file adjustable without the need to set a new reporter?
      */
 
-    /** TODO: might be removed in the end
+    /**
      * Logger of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(BaseProcessingStep.class.getName());
 
     /**
-     * Name string of the atom container property that contains an optional second identifier. The respective atom
-     * container property might store information such as a name of the structure or the CAS registry number. If this
-     * field gets set, every atom container processed by this processing step is expected to have a property with the
-     * respective name; the info is then included in the report.
+     * Name string of the atom container property that contains an optional second identifier for the structures. The
+     * respective atom container property might store information such as name or the CAS registry number. If the field
+     * is set (not null), every atom container processed by this processing step is expected to have a property with the
+     * respective name or otherwise a default string is used when passing the optional ID to the reporter.
      */
     private String optionalIDPropertyName;
 
@@ -135,38 +135,49 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     public BaseProcessingStep(String aReportFilesDirectoryPath, String anOptionalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
         //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null; check whether it is a directory path
+        //this(new MarkDownReporter(aReportFilesDirectoryPath), anOptionalIDPropertyName);
         this(new MarkDownReporter(), anOptionalIDPropertyName);
     }
     //</editor-fold>
 
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet,
-                                     boolean aCloneBeforeProcessing,
-                                     boolean anAssignIdentifiers) throws NullPointerException, Exception {
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing)
+            throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        //assign MolIDs to the given structures if so desired
-        if (anAssignIdentifiers) {
-            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
-            //TODO: assign the MolIDs after the cloning?
-            // pro: avoid ANY changes to the original data
-            // con: the assigned indices might not be correct if the cloning of even a single atom container fails
-        } //TODO: else: check existence of MolIDs ?
-        //clone the given atom container set if so desired
-        IAtomContainerSet tmpACSetToProcess;
-        if (aCloneBeforeProcessing) {
-            tmpACSetToProcess = this.cloneAtomContainerSet(anAtomContainerSet);
-        } else {
-            tmpACSetToProcess = anAtomContainerSet;
-        }
-        //apply the logic of the processing step on the atom container set
-        IAtomContainerSet tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
         //
-        //flush all data appended to the reporter, but only if the reporter is self-contained by this processing step
-        if (this.isReporterSelfContained()) {
-            //this.reporter.report();   //TODO: uncomment after merge with markdown-reporter-new branch
+        this.reporter.initializeNewReport();
+        try {
+            // assign MolIDs to the given structures if the
+            if (this.isReporterSelfContained) {
+                ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
+            }
+            // clone the given atom container set if so desired
+            IAtomContainerSet tmpACSetToProcess;
+            if (aCloneBeforeProcessing) {
+                tmpACSetToProcess = this.cloneAtomContainerSet(anAtomContainerSet);
+            } else {
+                tmpACSetToProcess = anAtomContainerSet;
+            }
+            // apply the logic of the processing step on the atom container set
+            IAtomContainerSet tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
+            //
+            // flush all data appended to the reporter, but only if the reporter is self-contained by this processing step
+            if (this.isReporterSelfContained()) {
+                //this.reporter.report();   //TODO: uncomment after merge with markdown-reporter-new branch
+            }
+            //
+            return tmpResultingACSet;
+        } catch (Exception aFatalException) {
+            // the exception is considered as fatal and can not be handled
+            BaseProcessingStep.LOGGER.severe("The processing of the given atom container set was interrupted" +
+                    " by an unexpected exception.");
+            // still, if the reporter is self-contained, try to finish the report (otherwise, a higher entity is
+            // expected to finish the report)
+            if (this.isReporterSelfContained) {
+                this.tryToFinishReportAfterFatalException();
+            }
+            throw aFatalException;
         }
-        //
-        return tmpResultingACSet;
     }
 
     /**
@@ -207,15 +218,18 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     /**
      * Appends a report to the reporter by creating a ReportDataObject instance according to the given data and passing
-     * it to the reporter instance. If the given atom container is not null, it is expected to have a property with name
-     * {@link #MOL_ID_PROPERTY_NAME}; if an optional ID property name has been set, the respective atom container
-     * property may not be null; otherwise a NullPointerException is thrown.
+     * it to the reporter instance. If an atom container is given (not null), it is expected to have a MolID (atom
+     * container property of name {@link #MOL_ID_PROPERTY_NAME}); if an optional ID property name has been set, a
+     * default string is used if the respective atom container property is null. The atom container may only be null in
+     * combination with specific error codes.
      *
      * @param anErrorCode     error code of the reported issue
      * @param anAtomContainer atom container instance the issue refers to
      * @throws NullPointerException if the given ErrorCodes constant is null; if an atom container is given, but it
-     *                              possesses no MolID; if an optional ID property name has been set but the respective
-     *                              atom container property is null
+     *                              possesses no MolID
+     * @throws IllegalArgumentException if the atom container is null but the reported issue is not {@link
+     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} or {@link
+     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR}
      */
     protected void appendToReporter(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
@@ -257,8 +271,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     }
 
     /**
-     * Returns the string representation of the structure's MolID or null, if the MolID is null or no property with
-     * the name {@link #MOL_ID_PROPERTY_NAME} exists.
+     * Returns the string representation of the MolID of the structure or null, if the structure has no MolID.
      *
      * @param anAtomContainer atom container to get the MolID from
      * @return string representation of the MolID of the given structure or null
@@ -267,40 +280,51 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     protected String getMolIDString(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         String tmpMolIDString = null;
-        try {
-            Object tmpMolID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
-            if (tmpMolID != null) {
-                tmpMolIDString = tmpMolID.toString();
-            } // else: tmpMolIDString remains null
-        } catch (NullPointerException aNullPointerException) {
-            // tmpMolIDString remains null
-        }
+        Object tmpMolID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+        if (tmpMolID != null) {
+            tmpMolIDString = tmpMolID.toString();
+        } // else: tmpMolIDString remains null
         return tmpMolIDString;
     }
 
     /**
-     * Returns the string representation of the structure's optional second identifier or null, if {@link
-     * #getOptionalIDPropertyName()} is null, an atom container property with the respective name does not exist or the
-     * optional ID is null.
+     * Returns the string representation of the optional second identifier of the structure or a default string, if the
+     * respective atom container property is unset.
      *
      * @param anAtomContainer atom container to get the optional second identifier from
-     * @return string representation of the optional second identifier of the given structure or null
-     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @return string representation of the optional second identifier of the structure or a default string
+     * @throws NullPointerException if the given IAtomContainer instance is null; if {@link #optionalIDPropertyName} is
+     *                              null
      */
     protected String getOptionalIDString(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        String tmpOptionalIDString = null;
-        if (this.optionalIDPropertyName != null) {
-            try {
-                Object tmpOptionalID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
-                if (tmpOptionalID != null) {
-                    tmpOptionalIDString = tmpOptionalID.toString();
-                } //else: tmpOptionalID remains null
-            } catch (NullPointerException aNullPointerException) {
-                //tmpOptionalID remains null
-            }
-        } //else: tmpOptionalID remains null
+        Objects.requireNonNull(this.optionalIDPropertyName, "The optional ID property name of the pipeline is" +
+                " unset.");
+        String tmpOptionalIDString;
+        Object tmpOptionalID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+        if (tmpOptionalID != null) {
+            tmpOptionalIDString = tmpOptionalID.toString();
+        } else {
+            tmpOptionalIDString = IProcessingStep.DEFAULT_OPTIONAL_ID_STRING;
+        }
         return tmpOptionalIDString;
+    }
+
+    /**
+     * Tries to finish the report although the processing ended with a fatal exception. Sets {@link IReporter
+     * #isEndedWithFatalException()} to true, appends a report with error code {@link ErrorCodes
+     * #UNEXPECTED_EXCEPTION_ERROR} and tries to finish the report by calling the {@link  IReporter#report()} method of
+     * the reporter. If any of these steps throws an exception, this exception is ignored and the info that the report
+     * could not be finished is passed to the logger.
+     */
+    protected void tryToFinishReportAfterFatalException() {
+        try {
+            this.reporter.setEndedWithFatalException(true);
+            this.reporter.appendReport(new ReportDataObject(ErrorCodes.UNEXPECTED_EXCEPTION_ERROR, this.getClass()));
+            this.reporter.report();
+        } catch (Exception ignored) {
+            BaseProcessingStep.LOGGER.severe("The report could not be finished.");
+        }
     }
 
     @Override

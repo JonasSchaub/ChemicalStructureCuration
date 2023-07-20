@@ -43,19 +43,19 @@ public interface IFilter extends IProcessingStep {
     /**
      * {@inheritDoc}
      * <p>
+     * <b>Info regarding Filters</b>
      * The atom container set returned by this method contains all the atom containers that meet the criterion of the
      * filter; min and max threshold values are considered as inclusive. Structures causing an exception do not pass
      * the filter. Note that classes implementing {@link IFilter} are not meant to cause any modifications to the
      * provided atom containers.
      * </p>
      *
-     * @return the set of all atom containers that met the filter criterion
+     * @return the set of all atom containers that meet the filter criterion
      * @see #isFiltered(IAtomContainer)
      */
     public IAtomContainerSet process(
             IAtomContainerSet anAtomContainerSet,
-            boolean aCloneBeforeProcessing,
-            boolean anAssignIdentifiers
+            boolean aCloneBeforeProcessing
     ) throws NullPointerException, Exception;
 
     /**

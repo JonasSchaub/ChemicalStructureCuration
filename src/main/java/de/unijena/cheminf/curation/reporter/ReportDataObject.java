@@ -32,7 +32,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import java.util.Objects;
 
 /**
- * Object that stores all data necessary for an entry in a report file.
+ * Object that stores all data necessary for reporting an issue encountered by an {@link IProcessingStep} instance.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -42,23 +42,23 @@ public class ReportDataObject {
     /**
      * Atom container of the structure the report refers to.
      */
-    private IAtomContainer atomContainer;
+    private IAtomContainer atomContainer = null;
 
     /**
      * Identifier string of the structure the report refers to.
      */
-    private String identifier;
+    private String identifier = null;
 
     /**
      * Optional second identifier string of the structure the report refers to or null if there is none.
      */
-    private String optionalIdentifier;
+    private String optionalIdentifier = null;
 
     /**
      * String with the identifier of the processing step instance the reported problem occurred in, or null, if the
      * processing step has no ID (as it might be the case if it is not part of a pipeline).
      */
-    private String processingStepIdentifier;
+    private String processingStepIdentifier = null;
 
     /**
      * Runtime class of the IProcessingStep instance the reported problem occurred in.
@@ -72,36 +72,48 @@ public class ReportDataObject {
 
     //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
-     * TODO
-     * @param anErrorCode            TODO
-     * @param aClassOfProcessingStep TODO
-     * @throws NullPointerException TODO
+     * Constructor; initializes the report data object with an error code and a class of processing step. The given
+     * error code needs to be {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} or {@link
+     * ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} for this constructor to be used; otherwise, report data objects are
+     * expected to contain an atom container instance.
+     *
+     * @param anErrorCode               error code of the reported issue
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
+     * @throws NullPointerException     if any of the given parameters is null
+     * @throws IllegalArgumentException if the reported error code is neither {@link
+     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR} nor {@link
+     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR}
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep
-    ) throws NullPointerException {
+    ) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
         Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
                 " IProcessingStep>) is null.");
+        if (anErrorCode != ErrorCodes.ATOM_CONTAINER_NULL_ERROR
+                && anErrorCode != ErrorCodes.UNEXPECTED_EXCEPTION_ERROR) {
+            throw new IllegalArgumentException("The error code needs to be ErrorCodes.ATOM_CONTAINER_NULL_ERROR or" +
+                    "ErrorCodes.UNEXPECTED_EXCEPTION_ERROR for this constructor to be used.");
+        }
         this.errorCode = anErrorCode;
         this.classOfProcessingStep = aClassOfProcessingStep;
-        this.processingStepIdentifier = null;
-        this.atomContainer = null;
-        this.identifier = null;
-        this.optionalIdentifier = null;
     }
 
     /**
-     * Constructor. Creates a new report data object without taking an atom container as parameter. This constructor
-     * is ought to be used if the atom container the reported issue refers to is null.
+     * Constructor; initializes the report data object with an error code, a class of processing step and the identifier
+     * of the processing step. The given error code needs to be {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} or {@link
+     * ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} for this constructor to be used; otherwise, report data objects are
+     * expected to contain an atom container instance.
      *
-     * @param anErrorCode               error code of the reported problem
-     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the problem
-     * @param aProcessingStepIdentifier string of the index of the processing step in the pipeline or null  TODO!!
-     *                                  if it is not part of a pipeline
-     * @throws NullPointerException if one of the given parameters is null
-     * @see #ReportDataObject(ErrorCodes, Class, String, IAtomContainer, String, String)
+     * @param anErrorCode               error code of the reported issue
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
+     * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
+     *                                  in a pipeline it is part of)
+     * @throws NullPointerException     if any of the given parameters is null
+     * @throws IllegalArgumentException if the reported error code is neither {@link
+     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR} nor {@link
+     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR}
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -115,12 +127,14 @@ public class ReportDataObject {
     }
 
     /**
-     * TODO
-     * @param anErrorCode            TODO
-     * @param aClassOfProcessingStep TODO
-     * @param anAtomContainer        TODO
-     * @param anIdentifier           TODO
-     * @throws NullPointerException TODO
+     * Constructor; initializes the report data object with an error code, a class of processing step, atom container
+     * and identifier.
+     *
+     * @param anErrorCode            error code of the reported issue
+     * @param aClassOfProcessingStep runtime class of the IProcessingStep instance reporting the issue
+     * @param anAtomContainer        atom container of the structure the reported issue refers to
+     * @param anIdentifier           identifier string of the structure
+     * @throws NullPointerException if any of the given parameters is null
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -128,21 +142,28 @@ public class ReportDataObject {
             IAtomContainer anAtomContainer,
             String anIdentifier
     ) throws NullPointerException {
-        this(anErrorCode, aClassOfProcessingStep);
+        Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
+        Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
+                " IProcessingStep>) is null.");
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
+        this.errorCode = anErrorCode;
+        this.classOfProcessingStep = aClassOfProcessingStep;
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
     }
 
     /**
-     * TODO
-     * @param anErrorCode               TODO
-     * @param aClassOfProcessingStep    TODO
-     * @param aProcessingStepIdentifier TODO
-     * @param anAtomContainer           TODO
-     * @param anIdentifier              TODO
-     * @throws NullPointerException TODO
+     * Constructor; initializes the report data object with error code, class of processing step, identifier of
+     * processing step, atom container and identifier.
+     *
+     * @param anErrorCode               error code of the reported issue
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
+     * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
+     *                                  in a pipeline it is part of)
+     * @param anAtomContainer           atom container of the structure the reported issue refers to
+     * @param anIdentifier              identifier string of the structure
+     * @throws NullPointerException if any of the given parameters is null
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -158,13 +179,15 @@ public class ReportDataObject {
     }
 
     /**
-     * TODO
-     * @param anErrorCode            TODO
-     * @param aClassOfProcessingStep TODO
-     * @param anAtomContainer        TODO
-     * @param anIdentifier           TODO
-     * @param anOptionalIdentifier   TODO
-     * @throws NullPointerException TODO
+     * Constructor; initializes the report data object with an error code, a class of processing step, atom container,
+     * identifier and optional identifier.
+     *
+     * @param anErrorCode               error code of the reported issue
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
+     * @param anAtomContainer           atom container of the structure the reported issue refers to
+     * @param anIdentifier              identifier string of the structure
+     * @param anOptionalIdentifier      optional second identifier string of the structure
+     * @throws NullPointerException if any of the given parameters is null
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -179,18 +202,17 @@ public class ReportDataObject {
     }
 
     /**
-     * Constructor. Creates a new report data object that stores all data needed for an entry in the report file. The
-     * reported atom container may not be null.
+     * Constructor; initializes the report data object with error code, class of processing step, identifier of
+     * processing step, atom container, identifier and optional identifier.
      *
-     * @param anErrorCode               error code of the reported problem
-     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the problem
-     * @param aProcessingStepIdentifier string of the index of the processing step in the pipeline or null  TODO!!
-     *                                  if it is not part of a pipeline
-     * @param anAtomContainer           atom container of the structure
+     * @param anErrorCode               error code of the reported issue
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
+     * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
+     *                                  in a pipeline it is part of)
+     * @param anAtomContainer           atom container of the structure the reported issue refers to
      * @param anIdentifier              identifier string of the structure
-     * @param anOptionalIdentifier      optional second identifier string of the structure or null if there is none
-     * @throws NullPointerException if anAtomContainer, anIdentifier, aClassOfProcessingStep or anErrorCode is null
-     * @see #ReportDataObject(ErrorCodes, Class, String)
+     * @param anOptionalIdentifier      optional second identifier string of the structure
+     * @throws NullPointerException if any of the given parameters is null
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,

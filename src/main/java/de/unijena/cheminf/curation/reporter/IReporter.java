@@ -103,4 +103,18 @@ public interface IReporter {
      */
     public void clear() throws Exception;
 
+    /**
+     * Returns whether the processing, that is reported, ended with a fatal exception.
+     *
+     * @return boolean value
+     */
+    public boolean isEndedWithFatalException();
+
+    /**
+     * Sets whether the processing, that is reported, ended with a fatal exception.
+     *
+     * @param anEndedWithFatalException boolean value
+     */
+    public void setEndedWithFatalException(boolean anEndedWithFatalException);
+
 }

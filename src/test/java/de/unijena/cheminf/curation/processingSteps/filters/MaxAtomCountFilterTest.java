@@ -190,7 +190,7 @@ public class MaxAtomCountFilterTest {
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
-        Object tmpReturnValue = tmpMaxAtomCountFilter.process(tmpAtomContainerSet, false, true);
+        Object tmpReturnValue = tmpMaxAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
     }
@@ -215,7 +215,7 @@ public class MaxAtomCountFilterTest {
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
-        IAtomContainerSet tmpFilteredACSet = tmpMaxAtomCountFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -243,7 +243,7 @@ public class MaxAtomCountFilterTest {
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount, tmpConsiderImplicitHydrogens,
                 tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
-        IAtomContainerSet tmpFilteredACSet = tmpMaxAtomCountFilter.process(tmpAtomContainerSet, false, true);
+        IAtomContainerSet tmpFilteredACSet = tmpMaxAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]),
@@ -264,7 +264,7 @@ public class MaxAtomCountFilterTest {
                     boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMaxAtomCountFilter = new MaxAtomCountFilter(tmpMaxAtomCount,
                             tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
-                    tmpMaxAtomCountFilter.process(null, false, true);
+                    tmpMaxAtomCountFilter.process(null, false);
                 }
         );
     }

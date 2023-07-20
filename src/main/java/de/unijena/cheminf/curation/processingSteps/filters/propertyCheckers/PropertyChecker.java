@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
 import de.unijena.cheminf.curation.processingSteps.filters.BaseFilter;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
@@ -91,6 +92,7 @@ public class PropertyChecker extends BaseFilter {
             throws NullPointerException, IllegalArgumentException {
         //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null;
         // check whether it is a directory path
+        //this(aNameOfProperty, anErrorCode, new MarkDownReporter(aReportFilesDirectoryPath));
         this(aNameOfProperty, anErrorCode, new MarkDownReporter());
     }
 
@@ -123,17 +125,22 @@ public class PropertyChecker extends BaseFilter {
             throws NullPointerException, IllegalArgumentException {
         //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null;
         // check whether it is a directory path
+        //this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, new MarkDownReporter(aReportFilesDirectoryPath));
         this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, new MarkDownReporter());
     }
 
     /**
-     * Returns only those atom containers that have the atom container property the respective class is checking for.
-     * Appends a report to the reporter for all the atom containers that do not have this property.
+     * Returns only those atom containers that have the atom container property the that is checking for (see {@link
+     * #nameOfProperty}). Appends a report to the reporter for all the atom containers that have the property unset.
+     * <br>
+     * See the method description in the {@link IProcessingStep} interface for further details on the method.
+     *
+     * @see IProcessingStep#process(IAtomContainerSet, boolean)
      */
     @Override
-    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing,
-                                     boolean anAssignIdentifiers) throws Exception {
-        return super.process(anAtomContainerSet, aCloneBeforeProcessing, anAssignIdentifiers);
+    public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing)
+            throws Exception {
+        return super.process(anAtomContainerSet, aCloneBeforeProcessing);
     }
 
     /**
@@ -156,7 +163,8 @@ public class PropertyChecker extends BaseFilter {
      * @return the set of all atom containers that have the respective atom container property
      */
     @Override
-    protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
+    protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException,
+            Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         final IAtomContainerSet tmpFilteredACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
