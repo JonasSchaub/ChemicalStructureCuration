@@ -27,7 +27,6 @@ package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
-import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasAllValidAtomicNumbersFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasInvalidAtomicNumbersFilter;
@@ -68,7 +67,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMaxAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -91,7 +90,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpNegativeMaxAtomCount = -1;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxAtomCountFilter(tmpNegativeMaxAtomCount, true, true);
                 }
         );
@@ -107,7 +106,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMinAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpThresholdValue = 10;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -130,7 +129,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpNegativeMinAtomCount = -1;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinAtomCountFilter(tmpNegativeMinAtomCount, true, true);
                 }
         );
@@ -146,7 +145,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMaxBondCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpIntegerParameter = 10;
         boolean tmpConsiderImplicitHydrogens = true;
@@ -168,7 +167,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpNegativeMaxBondCount = -1;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxBondCountFilter(tmpNegativeMaxBondCount, true, true);
                 }
         );
@@ -199,7 +198,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -231,7 +230,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxBondCountFilter(tmpMaxBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -246,7 +245,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMinBondCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpIntegerParameter = 10;
         boolean tmpBooleanParameter = true;
@@ -268,7 +267,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     int tmpNegativeMinBondCount = -1;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinBondCountFilter(tmpNegativeMinBondCount, true, true);
                 }
         );
@@ -286,7 +285,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMaxBondsOfSpecificBondOrderFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpIntegerParameter = 10;
@@ -314,7 +313,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
                     int tmpNegativeMaxBondCount = -1;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpNegativeMaxBondCount,
                                     true, true);
                 }
@@ -346,7 +345,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount,
-                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -378,7 +377,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount,
-                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -410,7 +409,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMaxSpecificBondCount,
-                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -425,7 +424,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMinBondsOfSpecificBondOrderFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         int tmpIntegerParameter = 10;
@@ -453,7 +452,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
                     int tmpNegativeMinBondCount = -1;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpNegativeMinBondCount,
                                     true, true);
                 }
@@ -485,7 +484,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount,
-                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -517,7 +516,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount,
-                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -549,7 +548,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpConsiderImplicitHydrogens = true;    //can be ignored
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondsOfSpecificBondOrderFilter(tmpBondOrder, tmpMinSpecificBondCount,
-                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -564,7 +563,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMaxHeavyAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpMaxHeavyAtomCount = 10;
         boolean tmpConsiderPseudoAtoms = true;
@@ -586,7 +585,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     int tmpNegativeMaxHeavyAtomCount = -1;
                     boolean tmpConsiderPseudoAtoms = true;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxHeavyAtomCountFilter(tmpNegativeMaxHeavyAtomCount, tmpConsiderPseudoAtoms);
                 }
         );
@@ -616,7 +615,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMaxHeavyAtomCount = 4;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, tmpConsiderPseudoAtoms,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -647,7 +646,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMaxHeavyAtomCount = 3;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MaxHeavyAtomCountFilter(tmpMaxHeavyAtomCount, tmpConsiderPseudoAtoms,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -662,7 +661,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMinHeavyAtomCountFilterMethodTest_returnsPipelineInstanceItself_addsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         int tmpMinHeavyAtomCount = 10;
         boolean tmpConsiderPseudoAtoms = true;
@@ -684,7 +683,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     int tmpNegativeMinHeavyAtomCount = -1;
                     boolean tmpConsiderPseudoAtoms = true;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinHeavyAtomCountFilter(tmpNegativeMinHeavyAtomCount, tmpConsiderPseudoAtoms);
                 }
         );
@@ -714,7 +713,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinHeavyAtomCount = 5;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount, tmpConsiderPseudoAtoms,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -745,7 +744,7 @@ public class WithFilterConvenienceMethodsTest {
         int tmpMinHeavyAtomCount = 4;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount, tmpConsiderPseudoAtoms,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         //
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
@@ -760,7 +759,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withHasAllValidAtomicNumbersFilterMethodTest_returnsCurationPipelineInstanceItself() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withHasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
@@ -802,7 +801,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
@@ -841,7 +840,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
@@ -855,7 +854,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withHasInvalidAtomicNumbersFilterMethodTest_returnsCurationPipelineInstanceItself() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         boolean tmpWildcardAtomicNumberIsValid = true;
         CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withHasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid);
@@ -897,7 +896,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
@@ -936,7 +935,7 @@ public class WithFilterConvenienceMethodsTest {
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         TestUtils.curationPipeline_processMethodTest_testsBehaviorOfMethodWithSpecificFilter(
                 tmpFilter, tmpAtomContainerSet, tmpIsFilteredArray
         );
@@ -951,7 +950,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMaxMolecularMassFilterMethodTest_withFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
@@ -968,7 +967,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMaxMolecularMassFilterMethodTest_withoutFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMaxMolecularMassFilter(tmpThresholdValue);
@@ -985,7 +984,7 @@ public class WithFilterConvenienceMethodsTest {
     @Test
     public void withMaxMolecularMassFilterMethodTest_noFlavour_newFilterHasMolWeightAsMassComputationFlavour() {
         double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance())
                 .withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
                 MassComputationFlavours.MOL_WEIGHT,
@@ -1004,7 +1003,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     double tmpThresholdValue = -0.1;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1012,7 +1011,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -5.0;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxMolecularMassFilter(tmpThresholdValue);
                 }
         );
@@ -1029,7 +1028,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     double tmpThresholdValue = 10.0;
                     MassComputationFlavours tmpFlavour = null;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMaxMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1044,7 +1043,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_withFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
@@ -1061,7 +1060,7 @@ public class WithFilterConvenienceMethodsTest {
      */
     @Test
     public void withMinMolecularMassFilterMethodTest_withoutFlavour_returnsPipelineInstanceItselfAndAddsFilterToList() {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
         int tmpInitialListSize = tmpCurationPipeline.getListOfPipelineSteps().size();
         double tmpThresholdValue = 10.0;
         CurationPipeline tmpReturnedPipeline = tmpCurationPipeline.withMinMolecularMassFilter(tmpThresholdValue);
@@ -1078,7 +1077,7 @@ public class WithFilterConvenienceMethodsTest {
     @Test
     public void withMinMolecularMassFilterMethodTest_noFlavour_newFilterHasMolWeightAsMassComputationFlavour() {
         double tmpThresholdValue = 10.0;
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance())
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance())
                 .withMaxMolecularMassFilter(tmpThresholdValue);
         Assertions.assertEquals(
                 MassComputationFlavours.MOL_WEIGHT,
@@ -1097,7 +1096,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     double tmpThresholdValue = -0.1;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );
@@ -1105,7 +1104,7 @@ public class WithFilterConvenienceMethodsTest {
                 IllegalArgumentException.class,
                 () -> {
                     double tmpThresholdValue = -5.0;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinMolecularMassFilter(tmpThresholdValue);
                 }
         );
@@ -1122,7 +1121,7 @@ public class WithFilterConvenienceMethodsTest {
                 () -> {
                     double tmpThresholdValue = 10.0;
                     MassComputationFlavours tmpFlavour = null;
-                    new CurationPipeline(TestUtils.getDefaultReporterInstance())
+                    new CurationPipeline(TestUtils.getTestReporterInstance())
                             .withMinMolecularMassFilter(tmpThresholdValue, tmpFlavour);
                 }
         );

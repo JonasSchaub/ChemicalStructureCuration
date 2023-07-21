@@ -53,14 +53,14 @@ public class MinMolecularMassFilterTest {
                 () -> {
                     double tmpMinMolecularMass = -0.1;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour, TestUtils.getDefaultReporterInstance());
+                    new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour, TestUtils.getTestReporterInstance());
                 }
         );
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpMinMolecularMass = -0.1;
-                    new MinMolecularMassFilter(tmpMinMolecularMass, TestUtils.getDefaultReporterInstance());
+                    new MinMolecularMassFilter(tmpMinMolecularMass, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -76,7 +76,7 @@ public class MinMolecularMassFilterTest {
                 () -> {
                     double tmpMinMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = null;
-                    new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour, TestUtils.getDefaultReporterInstance());
+                    new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -115,7 +115,7 @@ public class MinMolecularMassFilterTest {
                 tmpFilter = new MinMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
                         tmpFlavour,
-                        TestUtils.getDefaultReporterInstance()
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -156,7 +156,7 @@ public class MinMolecularMassFilterTest {
                 tmpFilter = new MinMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
                         tmpFlavour,
-                        TestUtils.getDefaultReporterInstance()
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -197,7 +197,7 @@ public class MinMolecularMassFilterTest {
                 tmpFilter = new MinMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour),
                         tmpFlavour,
-                        TestUtils.getDefaultReporterInstance()
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -216,7 +216,7 @@ public class MinMolecularMassFilterTest {
                     double tmpMinMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
-                            TestUtils.getDefaultReporterInstance());
+                            TestUtils.getTestReporterInstance());
                     tmpMinMolecularMassFilter.isFiltered(null);
                 }
         );
@@ -241,7 +241,7 @@ public class MinMolecularMassFilterTest {
         double tmpMinMolecularMass = 30.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -269,7 +269,7 @@ public class MinMolecularMassFilterTest {
         double tmpMinMolecularMass = 50.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMinMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -290,7 +290,7 @@ public class MinMolecularMassFilterTest {
                     double tmpMinMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     IFilter tmpMinMolecularMassFilter = new MinMolecularMassFilter(tmpMinMolecularMass, tmpFlavour,
-                            TestUtils.getDefaultReporterInstance());
+                            TestUtils.getTestReporterInstance());
                     tmpMinMolecularMassFilter.process(null, false);
                 }
         );

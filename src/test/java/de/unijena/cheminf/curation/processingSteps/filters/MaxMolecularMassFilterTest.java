@@ -53,14 +53,14 @@ public class MaxMolecularMassFilterTest {
                 () -> {
                     double tmpMaxMolecularMass = -0.1;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour, TestUtils.getDefaultReporterInstance());
+                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour, TestUtils.getTestReporterInstance());
                 }
         );
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpMaxMolecularMass = -0.1;
-                    new MaxMolecularMassFilter(tmpMaxMolecularMass, TestUtils.getDefaultReporterInstance());
+                    new MaxMolecularMassFilter(tmpMaxMolecularMass, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -76,7 +76,7 @@ public class MaxMolecularMassFilterTest {
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = null;
-                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour, TestUtils.getDefaultReporterInstance());
+                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -115,7 +115,7 @@ public class MaxMolecularMassFilterTest {
                 tmpFilter = new MaxMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
                         tmpFlavour,
-                        TestUtils.getDefaultReporterInstance()
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -156,7 +156,7 @@ public class MaxMolecularMassFilterTest {
                 tmpFilter = new MaxMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
                         tmpFlavour,
-                        TestUtils.getDefaultReporterInstance()
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -197,7 +197,7 @@ public class MaxMolecularMassFilterTest {
                 tmpFilter = new MaxMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour),
                         tmpFlavour,
-                        TestUtils.getDefaultReporterInstance()
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -216,7 +216,7 @@ public class MaxMolecularMassFilterTest {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
-                            TestUtils.getDefaultReporterInstance());
+                            TestUtils.getTestReporterInstance());
                     tmpMaxMolecularMassFilter.isFiltered(null);
                 }
         );
@@ -241,7 +241,7 @@ public class MaxMolecularMassFilterTest {
         double tmpMaxMolecularMass = 50.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -267,7 +267,7 @@ public class MaxMolecularMassFilterTest {
         double tmpMaxMolecularMass = 30.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
         IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -287,7 +287,7 @@ public class MaxMolecularMassFilterTest {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
                     IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
-                            TestUtils.getDefaultReporterInstance());
+                            TestUtils.getTestReporterInstance());
                     tmpMaxMolecularMassFilter.process(null, false);
                 }
         );

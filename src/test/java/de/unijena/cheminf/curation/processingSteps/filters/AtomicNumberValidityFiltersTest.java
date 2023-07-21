@@ -52,18 +52,18 @@ public class AtomicNumberValidityFiltersTest {
         //test 1
         boolean tmpWildcardAtomicNumberAsValid = true;
         HasAllValidAtomicNumbersFilter tmpFilter1 = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         Assertions.assertTrue(tmpFilter1.wildcardAtomicNumberIsValid);
         HasInvalidAtomicNumbersFilter tmpFilter2 = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         Assertions.assertTrue(tmpFilter2.wildcardAtomicNumberIsValid);
         //test 2
         tmpWildcardAtomicNumberAsValid = false;
         tmpFilter1 = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         Assertions.assertFalse(tmpFilter1.wildcardAtomicNumberIsValid);
         tmpFilter2 = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberAsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         Assertions.assertFalse(tmpFilter2.wildcardAtomicNumberIsValid);
     }
 
@@ -85,9 +85,9 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = true;
         IFilter tmpHasAllValidAtomicNumbersFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IFilter tmpHasInvalidAtomicNumbersFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         boolean tmpIsFilteredByHasAllValid;
         boolean tmpIsFilteredByHasInvalid;
         for (IAtomContainer tmpAtomContainer :
@@ -121,9 +121,9 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = true;
         IFilter tmpHasAllValidAtomicNumbersFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IFilter tmpHasInvalidAtomicNumbersFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         boolean tmpIsFilteredByHasAllValid;
         boolean tmpIsFilteredByHasInvalid;
         for (IAtomContainer tmpAtomContainer :
@@ -158,9 +158,9 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = true;
         IFilter tmpHasAllValidAtomicNumbersFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IFilter tmpHasInvalidAtomicNumbersFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         boolean tmpIsFilteredByHasAllValid;
         boolean tmpIsFilteredByHasInvalid;
         for (IAtomContainer tmpAtomContainer :
@@ -195,9 +195,9 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = false;
         IFilter tmpHasAllValidAtomicNumbersFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IFilter tmpHasInvalidAtomicNumbersFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         boolean tmpIsFilteredByHasAllValid;
         boolean tmpIsFilteredByHasInvalid;
         for (IAtomContainer tmpAtomContainer :
@@ -234,9 +234,9 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = true;
         IFilter tmpHasAllValidAtomicNumbersFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         IFilter tmpHasInvalidAtomicNumbersFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         boolean tmpIsFilteredByHasAllValid;
         boolean tmpIsFilteredByHasInvalid;
         for (IAtomContainer tmpAtomContainer :
@@ -261,7 +261,7 @@ public class AtomicNumberValidityFiltersTest {
                     IAtomContainer tmpAtomContainer = null;
                     boolean tmpWildcardAtomicNumberIsValid = true;
                     new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                            TestUtils.getDefaultReporterInstance()).isFiltered(tmpAtomContainer);
+                            TestUtils.getTestReporterInstance()).isFiltered(tmpAtomContainer);
                 }
         );
         Assertions.assertThrows(
@@ -270,7 +270,7 @@ public class AtomicNumberValidityFiltersTest {
                     IAtomContainer tmpAtomContainer = null;
                     boolean tmpWildcardAtomicNumberIsValid = true;
                     new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                            TestUtils.getDefaultReporterInstance()).isFiltered(tmpAtomContainer);
+                            TestUtils.getTestReporterInstance()).isFiltered(tmpAtomContainer);
                 }
         );
     }
@@ -288,7 +288,7 @@ public class AtomicNumberValidityFiltersTest {
                     tmpAtomContainer.addAtom(null);
                     boolean tmpWildcardAtomicNumberIsValid = true;
                     new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                            TestUtils.getDefaultReporterInstance()).isFiltered(tmpAtomContainer);
+                            TestUtils.getTestReporterInstance()).isFiltered(tmpAtomContainer);
                 }
         );
         Assertions.assertThrows(
@@ -298,7 +298,7 @@ public class AtomicNumberValidityFiltersTest {
                     tmpAtomContainer.addAtom(null);
                     boolean tmpWildcardAtomicNumberIsValid = true;
                     new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                            TestUtils.getDefaultReporterInstance()).isFiltered(tmpAtomContainer);
+                            TestUtils.getTestReporterInstance()).isFiltered(tmpAtomContainer);
                 }
         );
     }
@@ -334,7 +334,7 @@ public class AtomicNumberValidityFiltersTest {
         boolean tmpWildcardAtomicNumberIsValid = true;
         //
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                TestUtils.getDefaultReporterInstance());  //TODO: outsource code?
+                TestUtils.getTestReporterInstance());  //TODO: outsource code?
         IAtomContainerSet tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -347,7 +347,7 @@ public class AtomicNumberValidityFiltersTest {
         //tmpIndexInFilteredACSet should now equal the expected count of ACs in the filtered AC set
         Assertions.assertEquals(tmpIndexInFilteredACSet, tmpFilteredACSet.getAtomContainerCount());
         //
-        tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid, TestUtils.getDefaultReporterInstance());
+        tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid, TestUtils.getTestReporterInstance());
         tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
         tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -391,7 +391,7 @@ public class AtomicNumberValidityFiltersTest {
         //
         boolean tmpWildcardAtomicNumberIsValid = false;
         //
-        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid, TestUtils.getDefaultReporterInstance());
+        IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid, TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
         int tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -404,7 +404,7 @@ public class AtomicNumberValidityFiltersTest {
         //tmpIndexInFilteredACSet should now equal the expected count of ACs in the filtered AC set
         Assertions.assertEquals(tmpIndexInFilteredACSet, tmpFilteredACSet.getAtomContainerCount());
         //
-        tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid, TestUtils.getDefaultReporterInstance());
+        tmpFilter = new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid, TestUtils.getTestReporterInstance());
         tmpFilteredACSet = tmpFilter.process(tmpAtomContainerSet, false);
         tmpIndexInFilteredACSet = 0;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
@@ -430,7 +430,7 @@ public class AtomicNumberValidityFiltersTest {
                     IAtomContainer tmpAtomContainer = null;
                     boolean tmpWildcardAtomicNumberIsValid = true;
                     new HasAllValidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                            TestUtils.getDefaultReporterInstance()).isFiltered(tmpAtomContainer);
+                            TestUtils.getTestReporterInstance()).isFiltered(tmpAtomContainer);
                 }
         );
         Assertions.assertThrows(
@@ -439,7 +439,7 @@ public class AtomicNumberValidityFiltersTest {
                     IAtomContainer tmpAtomContainer = null;
                     boolean tmpWildcardAtomicNumberIsValid = true;
                     new HasInvalidAtomicNumbersFilter(tmpWildcardAtomicNumberIsValid,
-                            TestUtils.getDefaultReporterInstance()).isFiltered(tmpAtomContainer);
+                            TestUtils.getTestReporterInstance()).isFiltered(tmpAtomContainer);
                 }
         );
     }

@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.processingSteps.filters.BaseFilter;
 import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
@@ -148,7 +149,7 @@ public class TestUtils {
          * @param anIsFilteredReturnValue the value that shall be returned by the isFiltered() method
          */
         public AllTrueOrFalseFilter(boolean anIsFilteredReturnValue) {
-            super(TestUtils.getDefaultReporterInstance(), null);
+            super(TestUtils.getTestReporterInstance(), null);
             this.isFilteredReturnValue = anIsFilteredReturnValue;
         }
         /**
@@ -201,7 +202,7 @@ public class TestUtils {
                     "count of atom containers in anAtomContainerSet (instance of IAtomContainerSet).");
         }
         //
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance()).addProcessingStep(aFilter);
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance()).addProcessingStep(aFilter);
         IAtomContainerSet tmpReturnedACSet = tmpCurationPipeline.process(anAtomContainerSet, true);
         int tmpIndexInReturnedSet = 0;
         for (int i = 0; i < anIsFilteredBooleanArray.length; i++) {
@@ -218,6 +219,18 @@ public class TestUtils {
     }
 
     /**
+     * Returns an instance of {@link TestReporter} with the given set of allowed error codes. If another IReporter
+     * implementation is desired to be used in the test methods of the processing steps, this may be done via changes
+     * to this method.
+     *
+     * @param aSetOfAllowedErrorCodes any number of allowed error codes
+     * @return instance of IReporter
+     */
+    public static IReporter getTestReporterInstance(ErrorCodes... aSetOfAllowedErrorCodes) {
+        return new TestReporter(aSetOfAllowedErrorCodes);
+    }
+
+    /**
      * Returns an instance of the default reporter. As default, {@link MarkDownReporter} is used, but this might be
      * changed to test other IReporter implementations. The returned reporter generates its report files at {@link
      * #REPORT_FILES_DIRECTORY_PATH_NAME}.
@@ -225,17 +238,13 @@ public class TestUtils {
      * @return instance of IReporter
      */
     public static IReporter getDefaultReporterInstance() {
-        IReporter tmpReporter = new MarkDownReporter();
         //TODO: the option to set a file path is missing in this MarkDownReporter version!
+        //IReporter tmpReporter = new MarkDownReporter(TestUtils.REPORT_FILES_DIRECTORY_PATH_NAME);
+        IReporter tmpReporter = new MarkDownReporter();
         return tmpReporter;
     }
 
-    //TODO: method that gets a "TestReporter":
-    //  creates no file;
-    //  throws exceptions if anything is appended;
-    //  can be given ErrorCodes that are allowed (-> no exception)
-
-    /** TODO: call this method in every test class that creates reports?
+    /**
      * Clears the report files directory ({@link #REPORT_FILES_DIRECTORY_PATH_NAME}).
      *
      * @throws NullPointerException if the given File is null

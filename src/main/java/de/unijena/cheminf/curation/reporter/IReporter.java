@@ -83,7 +83,7 @@ public interface IReporter {
      * Appends the reported data to the reporter. Depending on the reporter, the data is either kept in memory until the
      * {@link #report()} method is called, or directly written to the report.
      *
-     * @param aReportDataObject the data to append to the report
+     * @param aReportDataObject the data referring to the reported issue
      * @throws NullPointerException if the given ReportDataObject instance is null
      */
     public void appendReport(ReportDataObject aReportDataObject) throws NullPointerException;
@@ -104,7 +104,7 @@ public interface IReporter {
     public void clear() throws Exception;
 
     /**
-     * Returns whether the processing, that is reported, ended with a fatal exception.
+     * Returns whether the data processing the report refers to ended with a fatal exception.
      *
      * @return boolean value
      */

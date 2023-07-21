@@ -53,7 +53,6 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 
 import java.util.LinkedList;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

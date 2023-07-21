@@ -48,7 +48,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 5;
         boolean tmpConsiderPseudoAtoms = true;
         MinHeavyAtomCountFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertEquals(tmpMinHeavyAtomCount, tmpMinHeavyAtomCountFilter.heavyAtomCountThreshold);
     }
 
@@ -60,7 +60,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 10;
         boolean tmpConsiderPseudoAtoms = true;
         MinHeavyAtomCountFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertEquals(tmpMinHeavyAtomCount, tmpMinHeavyAtomCountFilter.heavyAtomCountThreshold);
     }
 
@@ -76,7 +76,7 @@ public class MinHeavyAtomCountFilterTest {
                     int tmpMinHeavyAtomCount = -1;
                     boolean tmpConsiderPseudoAtoms = true;
                     new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount, tmpConsiderPseudoAtoms,
-                            TestUtils.getDefaultReporterInstance());
+                            TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -99,7 +99,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 7;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount, tmpConsiderPseudoAtoms,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
             Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
@@ -124,7 +124,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 3;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount, tmpConsiderPseudoAtoms,
-                TestUtils.getDefaultReporterInstance());
+                TestUtils.getTestReporterInstance());
         for (IAtomContainer tmpAtomContainer :
                 tmpAtomContainerSet.atomContainers()) {
             Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
@@ -151,7 +151,7 @@ public class MinHeavyAtomCountFilterTest {
         IFilter tmpFilter;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCountArray[i], tmpConsiderPseudoAtoms,
-                    TestUtils.getDefaultReporterInstance());
+                    TestUtils.getTestReporterInstance());
             Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainerSet.getAtomContainer(i)));
         }
     }
@@ -168,7 +168,7 @@ public class MinHeavyAtomCountFilterTest {
                     int tmpMinHeavyAtomCount = 5;
                     boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
                     tmpMinHeavyAtomCountFilter.isFiltered(null);
                 }
         );
@@ -185,7 +185,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 5;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Object tmpReturnValue = tmpMinHeavyAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -209,7 +209,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 4;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMinHeavyAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -236,7 +236,7 @@ public class MinHeavyAtomCountFilterTest {
         int tmpMinHeavyAtomCount = 6;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMinHeavyAtomCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -256,7 +256,7 @@ public class MinHeavyAtomCountFilterTest {
                     int tmpMinHeavyAtomCount = 5;
                     boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMinHeavyAtomCountFilter = new MinHeavyAtomCountFilter(tmpMinHeavyAtomCount,
-                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
                     tmpMinHeavyAtomCountFilter.process(null, false);
                 }
         );

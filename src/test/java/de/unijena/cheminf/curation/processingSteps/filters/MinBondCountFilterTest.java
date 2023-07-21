@@ -49,7 +49,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.bondCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondCountFilter.considerImplicitHydrogens);
     }
@@ -63,7 +63,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         MinBondCountFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertEquals(tmpMinBondCount, tmpMinBondCountFilter.bondCountThreshold);
         Assertions.assertEquals(tmpConsiderImplicitHydrogens, tmpMinBondCountFilter.considerImplicitHydrogens);
     }
@@ -81,7 +81,7 @@ public class MinBondCountFilterTest {
                     boolean tmpConsiderImplicitHydrogens = true;
                     boolean tmpConsiderPseudoAtoms = true;
                     new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -100,7 +100,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
@@ -118,7 +118,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
@@ -136,7 +136,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
@@ -154,7 +154,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
     }
 
@@ -171,7 +171,7 @@ public class MinBondCountFilterTest {
                     boolean tmpConsiderImplicitHydrogens = true;
                     boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
                     tmpMinBondCountFilter.isFiltered(null);
                 }
         );
@@ -189,7 +189,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         Object tmpReturnValue = tmpMinBondCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertNotNull(tmpReturnValue);
         Assertions.assertInstanceOf(IAtomContainerSet.class, tmpReturnValue);
@@ -214,7 +214,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = true;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMinBondCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -241,7 +241,7 @@ public class MinBondCountFilterTest {
         boolean tmpConsiderImplicitHydrogens = false;
         boolean tmpConsiderPseudoAtoms = true;
         IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
         IAtomContainerSet tmpFilteredACSet = tmpMinBondCountFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
@@ -261,7 +261,7 @@ public class MinBondCountFilterTest {
                     boolean tmpConsiderImplicitHydrogens = true;
                     boolean tmpConsiderPseudoAtoms = true;
                     IFilter tmpMinBondCountFilter = new MinBondCountFilter(tmpMinBondCount, tmpConsiderImplicitHydrogens,
-                            tmpConsiderPseudoAtoms, TestUtils.getDefaultReporterInstance());
+                            tmpConsiderPseudoAtoms, TestUtils.getTestReporterInstance());
                     tmpMinBondCountFilter.process(null, false);
                 }
         );
