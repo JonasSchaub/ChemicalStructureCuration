@@ -269,8 +269,8 @@ public class CurationPipeline extends BaseProcessingStep {
                 tmpResultingACSet = tmpProcessingStep.process(tmpResultingACSet, false);
             } catch (Exception aFatalException) {
                 // the exception will be re-thrown
-                CurationPipeline.LOGGER.severe(String.format("The processing step of class %s with the" +
-                                " identifier %s was interrupted by an unexpected exception.",
+                CurationPipeline.LOGGER.severe(String.format("The processing step of class %s with identifier %s" +
+                                " was interrupted by an unexpected exception.",
                         tmpProcessingStep.getClass().getName(), tmpProcessingStep.getPipelineProcessingStepID()));
                 throw aFatalException;
             }

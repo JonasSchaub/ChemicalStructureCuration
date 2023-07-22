@@ -31,6 +31,7 @@ import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
+import de.unijena.cheminf.curation.reporter.TestReporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openscience.cdk.AtomContainer;

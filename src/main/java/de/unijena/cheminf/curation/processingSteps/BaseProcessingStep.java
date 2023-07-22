@@ -145,12 +145,20 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         //
-        this.reporter.initializeNewReport();
+        //TODO: check with Felix / Jonas where to place try-catch-blocks
         try {
-            // assign MolIDs to the given structures if the
             if (this.isReporterSelfContained) {
+                // if the reporter is self-contained, try to initialize the report
+                try {
+                    this.reporter.initializeNewReport();
+                } catch (Exception aFatalException) {
+                    BaseProcessingStep.LOGGER.severe("The report could not be initialized.");
+                    throw aFatalException;
+                }
+                // assign MolIDs to the given structures
                 ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
             }
+            //
             // clone the given atom container set if so desired
             IAtomContainerSet tmpACSetToProcess;
             if (aCloneBeforeProcessing) {
@@ -158,21 +166,27 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             } else {
                 tmpACSetToProcess = anAtomContainerSet;
             }
-            // apply the logic of the processing step on the atom container set
-            IAtomContainerSet tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
             //
-            // flush all data appended to the reporter, but only if the reporter is self-contained by this processing step
+            // apply the logic of the processing step on the atom container set
+            IAtomContainerSet tmpResultingACSet;
+            try {
+                tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
+            } catch (Exception aFatalException) {
+                BaseProcessingStep.LOGGER.severe("The processing of the atom container set was interrupted by" +
+                        " an unexpected exception.");
+                throw aFatalException;
+            }
+            //
+            // generate / finish the report if the reporter is self-contained by this processing step
             if (this.isReporterSelfContained()) {
-                //this.reporter.report();   //TODO: uncomment after merge with markdown-reporter-new branch
+                this.reporter.report();
             }
             //
             return tmpResultingACSet;
         } catch (Exception aFatalException) {
             // the exception is considered as fatal and can not be handled
-            BaseProcessingStep.LOGGER.severe("The processing of the given atom container set was interrupted" +
-                    " by an unexpected exception.");
-            // still, if the reporter is self-contained, try to finish the report (otherwise, a higher entity is
-            // expected to finish the report)
+            // still try to finish the report if the reporter is self-contained
+            // else: a higher entity is expected to finish the report
             if (this.isReporterSelfContained) {
                 this.tryToFinishReportAfterFatalException();
             }
@@ -202,8 +216,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @param anAtomContainerSet atom container set to be cloned
      * @return a clone of the given atom container set
      * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * @throws Exception if an encountered issue could not be appended to the reporter
      */
-    private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException {
+    private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException,
+            Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
         for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
@@ -230,8 +246,10 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @throws IllegalArgumentException if the atom container is null but the reported issue is not {@link
      *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} or {@link
      *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR}
+     * @throws Exception if the data could not be appended to the reporter
      */
-    protected void appendToReporter(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException {
+    protected void appendToReporter(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException,
+            IllegalArgumentException, Exception {
         Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
         byte tmpCase;
         if (anAtomContainer == null) {

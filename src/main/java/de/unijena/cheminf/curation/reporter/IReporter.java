@@ -26,9 +26,6 @@
 package de.unijena.cheminf.curation.reporter;
 
 import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
-import org.openscience.cdk.exception.CDKException;
-
-import java.io.IOException;
 
 /**
  * Interface of all reporters. Reporters are meant to generate reports out of data referring to issues with structures.
@@ -85,12 +82,15 @@ public interface IReporter {
      *
      * @param aReportDataObject the data referring to the reported issue
      * @throws NullPointerException if the given ReportDataObject instance is null
+     * @throws Exception might throw an exceptions if the report has not been initialized or already generated /
+     *                   finished
      */
-    public void appendReport(ReportDataObject aReportDataObject) throws NullPointerException;
+    public void appendReport(ReportDataObject aReportDataObject) throws NullPointerException, Exception;
 
     /**
      * Either generates the report out of all data kept in memory or finalizes the report that has already been
-     * initialized and appended with the reported data (depending on the reporter).
+     * initialized and appended with the reported data (depending on the reporter). Data kept in memory is cleared in
+     * the end.
      *
      * @throws Exception if an exception occurs generating / finalizing the report (reporter specific)
      */
