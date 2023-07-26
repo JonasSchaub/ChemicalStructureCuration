@@ -117,10 +117,10 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
              * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
              * exception is considered as fatal and re-thrown
              */
-            this.appendToReporter(ErrorCodes.UNEXPECTED_EXCEPTION_ERROR, anAtomContainer);
+            this.appendToReport(ErrorCodes.UNEXPECTED_EXCEPTION_ERROR, anAtomContainer);
             throw anException;
         }
-        this.appendToReporter(tmpErrorCode, anAtomContainer);
+        this.appendToReport(tmpErrorCode, anAtomContainer);
     }
 
     /**

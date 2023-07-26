@@ -173,7 +173,7 @@ public class PropertyChecker extends BaseFilter {
                 if (!this.isFiltered(tmpAtomContainer)) {
                     tmpFilteredACSet.addAtomContainer(tmpAtomContainer);
                 } else {
-                    this.appendToReporter(this.errorCode, tmpAtomContainer);
+                    this.appendToReport(this.errorCode, tmpAtomContainer);
                 }
             } catch (Exception anException) {
                 //appends report to the reporter; the structure does not pass the filter
@@ -202,14 +202,14 @@ public class PropertyChecker extends BaseFilter {
             tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
             if (tmpErrorCode == ErrorCodes.ATOM_CONTAINER_NULL_ERROR) {
                 // not fatal
-                this.appendToReporter(tmpErrorCode, anAtomContainer);
+                this.appendToReport(tmpErrorCode, anAtomContainer);
                 return;
             }
         } catch (Exception aFatalException) {
             tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
         }
         // exception is considered as fatal; append to the reporter and re-throw the exception
-        this.appendToReporter(tmpErrorCode, anAtomContainer);
+        this.appendToReport(tmpErrorCode, anAtomContainer);
         throw anException;
     }
 

@@ -357,28 +357,6 @@ public class CurationPipelineTest {
     }
 
     /**
-     * Tests whether the MolIDs (atom container property "Filter.MolID") assigned to every atom container of the atom
-     * container set given to the .filter() method of class FilterPipeline are of data type Integer.
-     *
-     * @throws Exception if an unexpected, fatal exception occurred
-     */
-    @Test
-    @Disabled
-    public void filterMethodTest_everyAtomContainerInTheGivenACSetHasPropertyMolIDOfTypeIntegerAfterwards() throws Exception {
-        IAtomContainerSet tmpAtomContainerSet = TestUtils.getSetOfEmptyAtomContainers(3);
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
-            Assertions.assertNull(tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME));
-        }
-        IAtomContainerSet tmpFilteredAtomContainerSet = new CurationPipeline(TestUtils.getTestReporterInstance())
-                .process(tmpAtomContainerSet, true);
-        for (IAtomContainer tmpAtomContainer :
-                tmpFilteredAtomContainerSet.atomContainers()) {
-            Assertions.assertInstanceOf(Integer.class, tmpAtomContainer.getProperty(CurationPipeline.MOL_ID_PROPERTY_NAME));
-        }
-    }
-
-    /**
      * Tests whether every atom container of the atom container set returned by the .filter() method of class
      * FilterPipeline is present in the set given to it.
      *

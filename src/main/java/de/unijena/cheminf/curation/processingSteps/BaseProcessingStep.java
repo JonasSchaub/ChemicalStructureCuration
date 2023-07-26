@@ -34,6 +34,7 @@ import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -145,53 +146,48 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         //
-        //TODO: check with Felix / Jonas where to place try-catch-blocks
+        if (this.isReporterSelfContained) {
+            // initialize the report and assign MolIDs to the given structures
+            this.reporter.initializeNewReport();
+            ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
+        }
+        //
+        // clone the given atom container set, if so desired
+        IAtomContainerSet tmpACSetToProcess;
+        if (aCloneBeforeProcessing) {
+            tmpACSetToProcess = this.cloneAtomContainerSet(anAtomContainerSet);
+        } else {
+            tmpACSetToProcess = anAtomContainerSet;
+        }
+        //
+        // apply the logic of the processing step on the atom container set
+        IAtomContainerSet tmpResultingACSet;
         try {
-            if (this.isReporterSelfContained) {
-                // if the reporter is self-contained, try to initialize the report
-                try {
-                    this.reporter.initializeNewReport();
-                } catch (Exception aFatalException) {
-                    BaseProcessingStep.LOGGER.severe("The report could not be initialized.");
-                    throw aFatalException;
-                }
-                // assign MolIDs to the given structures
-                ProcessingStepUtils.assignMolIdToAtomContainers(anAtomContainerSet);
-            }
-            //
-            // clone the given atom container set if so desired
-            IAtomContainerSet tmpACSetToProcess;
-            if (aCloneBeforeProcessing) {
-                tmpACSetToProcess = this.cloneAtomContainerSet(anAtomContainerSet);
-            } else {
-                tmpACSetToProcess = anAtomContainerSet;
-            }
-            //
-            // apply the logic of the processing step on the atom container set
-            IAtomContainerSet tmpResultingACSet;
-            try {
-                tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
-            } catch (Exception aFatalException) {
-                BaseProcessingStep.LOGGER.severe("The processing of the atom container set was interrupted by" +
-                        " an unexpected exception.");
-                throw aFatalException;
-            }
-            //
-            // generate / finish the report if the reporter is self-contained by this processing step
-            if (this.isReporterSelfContained()) {
-                this.reporter.report();
-            }
-            //
-            return tmpResultingACSet;
+            tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
         } catch (Exception aFatalException) {
             // the exception is considered as fatal and can not be handled
-            // still try to finish the report if the reporter is self-contained
-            // else: a higher entity is expected to finish the report
+            BaseProcessingStep.LOGGER.severe("The processing by this processing step was interrupted due to an" +
+                    " unexpected, fatal exception.");
             if (this.isReporterSelfContained) {
-                this.tryToFinishReportAfterFatalException();
+                try {
+                    // try to finish the report; a notification is appended to the report
+                    this.reporter.reportAfterFatalException();
+                } catch (IOException anIOException) {
+                    BaseProcessingStep.LOGGER.warning("The report could not be generated / finished due to an" +
+                            " IOException.");
+                } catch (Exception anException) {
+                    BaseProcessingStep.LOGGER.warning("The report could not be generated / finished.");
+                }
             }
             throw aFatalException;
         }
+        //
+        // generate / finish the report if the reporter is self-contained by this processing step
+        if (this.isReporterSelfContained()) {
+            this.reporter.report();
+        }
+        //
+        return tmpResultingACSet;
     }
 
     /**
@@ -226,30 +222,30 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             try {
                 tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
             } catch (CloneNotSupportedException aCloneNotSupportedException) {
-                this.appendToReporter(ErrorCodes.CLONE_ERROR, tmpAtomContainer);
+                this.appendToReport(ErrorCodes.CLONE_ERROR, tmpAtomContainer);
             }
         }
         return tmpCloneOfGivenACSet;
     }
 
     /**
-     * Appends a report to the reporter by creating a ReportDataObject instance according to the given data and passing
-     * it to the reporter instance. If an atom container is given (not null), it is expected to have a MolID (atom
-     * container property of name {@link #MOL_ID_PROPERTY_NAME}); if an optional ID property name has been set, a
-     * default string is used if the respective atom container property is null. The atom container may only be null in
-     * combination with specific error codes.
+     * Generates a report data object on basis of the given error code and atom container and info respective to the
+     * processing step and passes it to the reporter. The given atom container may only be null in combination with
+     * specific error codes. If it is not null, it is expected to have a MolID (atom container property with name {@link
+     * #MOL_ID_PROPERTY_NAME}) and - if the {@link #optionalIDPropertyName} field has been specified - also to have an
+     * optional ID assigned. If the optional ID is null, a placeholder is used instead.
      *
      * @param anErrorCode     error code of the reported issue
      * @param anAtomContainer atom container instance the issue refers to
-     * @throws NullPointerException if the given ErrorCodes constant is null; if an atom container is given, but it
-     *                              possesses no MolID
-     * @throws IllegalArgumentException if the atom container is null but the reported issue is not {@link
-     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} or {@link
+     * @throws NullPointerException     if the given ErrorCodes constant is null; if an atom container is given, but it
+     *                                  possesses no MolID; if the report has not been initialized (dependent on the
+     *                                  type of reporter)
+     * @throws IllegalArgumentException if the atom container is null but the reported issue is neither {@link
+     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} nor {@link
      *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR}
-     * @throws Exception if the data could not be appended to the reporter
      */
-    protected void appendToReporter(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException,
-            IllegalArgumentException, Exception {
+    protected void appendToReport(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException,
+            IllegalArgumentException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
         byte tmpCase;
         if (anAtomContainer == null) {
@@ -323,26 +319,9 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         if (tmpOptionalID != null) {
             tmpOptionalIDString = tmpOptionalID.toString();
         } else {
-            tmpOptionalIDString = IProcessingStep.DEFAULT_OPTIONAL_ID_STRING;
+            tmpOptionalIDString = IProcessingStep.OPTIONAL_ID_PLACEHOLDER_STRING;
         }
         return tmpOptionalIDString;
-    }
-
-    /**
-     * Tries to finish the report although the processing ended with a fatal exception. Sets {@link IReporter
-     * #isEndedWithFatalException()} to true, appends a report with error code {@link ErrorCodes
-     * #UNEXPECTED_EXCEPTION_ERROR} and tries to finish the report by calling the {@link  IReporter#report()} method of
-     * the reporter. If any of these steps throws an exception, this exception is ignored and the info that the report
-     * could not be finished is passed to the logger.
-     */
-    protected void tryToFinishReportAfterFatalException() {
-        try {
-            this.reporter.setEndedWithFatalException(true);
-            this.reporter.appendReport(new ReportDataObject(ErrorCodes.UNEXPECTED_EXCEPTION_ERROR, this.getClass()));
-            this.reporter.report();
-        } catch (Exception ignored) {
-            BaseProcessingStep.LOGGER.severe("The report could not be finished.");
-        }
     }
 
     @Override

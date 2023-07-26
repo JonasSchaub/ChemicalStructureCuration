@@ -27,6 +27,7 @@ package de.unijena.cheminf.curation.reporter;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
 
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -56,11 +57,6 @@ public class TestReporter implements IReporter {
      * The number of times report data objects with not allowed error codes were appended to the reporter.
      */
     private int notAllowedErrorCodesCount = 0;
-
-    /**
-     * Boolean value whether the data processing the report refers to ended with a fatal exception.
-     */
-    private boolean endedWithFatalException = false;
 
     /**
      * Boolean value whether the report is initialized.
@@ -127,15 +123,13 @@ public class TestReporter implements IReporter {
     }
 
     /**
-     * Checks whether the reporter has been initialized, whether it has not been finished via a call of {@link
-     * IReporter#report()} before and whether only allowed error codes were reported and the processing did not end with
-     * a fatal exception. Throws exceptions otherwise. Sets whether the report has been finished to true. Calls {@link
-     * #clear()} in the end.
+     * Checks whether the reporter has been initialized, whether it has not been finished via a call of {@link IReporter
+     * #report()} before and whether only allowed error codes were reported; throws an exception otherwise. Sets whether
+     * the report has been finished to true. Calls {@link #clear()}.
      *
      * @throws IllegalStateException if the report has not been initialized; if the report has already been finished
-     *                               (via a {@link IReporter#report()} method call) before
-     * @throws Exception             if the not allowed error codes count exceeds zero; if the ended with fatal
-     *                               exception flag is true
+     *                               (via a {@link IReporter#report()} method call) before; if the not allowed error
+     *                               codes count exceeds zero
      */
     @Override
     public void report() throws IllegalStateException, Exception {
@@ -145,11 +139,8 @@ public class TestReporter implements IReporter {
         if (this.reportHasBeenFinished) {
             throw new IllegalStateException("The report has been finished before.");
         }
-        if (this.endedWithFatalException) {
-            throw new Exception("Processing ended with fatal exception.");
-        }
         if (this.notAllowedErrorCodesCount > 0) {
-            throw new Exception("Not allowed error codes were reported.");
+            throw new IllegalStateException("Not allowed error codes were reported.");
         }
         this.reportHasBeenFinished = true;
         //
@@ -157,15 +148,27 @@ public class TestReporter implements IReporter {
     }
 
     /**
-     * Clears the counts of allowed and not allowed error codes by resetting them to zero; resets whether the processing
-     * ended with a fatal exception to false. Does not reset whether the reporter was initialized  and whether the
-     * report has been finished (see {@link #reset()} for this).
+     * Throws an exception if the method is called since it implies that a fatal exception has been thrown. Calls {@link
+     * #clear()} before throwing the exception.
+     *
+     * @throws IllegalStateException always (for a well functioning processing step there should be no reason for this
+     *                               method to be called)
+     */
+    @Override
+    public void reportAfterFatalException() {
+        this.clear();
+        throw new IllegalStateException("The reportAfterFatalException() method has been called which implies that" +
+                "a fatal exception has been thrown.");
+    }
+
+    /**
+     * Clears the counts of allowed and not allowed error codes by setting them to zero. Does not reset whether the
+     * reporter was initialized and whether the report has been finished (see {@link #reset()} for this).
      */
     @Override
     public void clear() {
         this.allowedErrorCodesCount = 0;
         this.notAllowedErrorCodesCount = 0;
-        this.endedWithFatalException = false;
     }
 
     /**
@@ -175,16 +178,6 @@ public class TestReporter implements IReporter {
         this.clear();
         this.reportIsInitialized = false;
         this.reportHasBeenFinished = false;
-    }
-
-    @Override
-    public boolean isEndedWithFatalException() {
-        return this.endedWithFatalException;
-    }
-
-    @Override
-    public void setEndedWithFatalException(boolean anEndedWithFatalException) {
-        this.endedWithFatalException = anEndedWithFatalException;
     }
 
     /**

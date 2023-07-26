@@ -145,7 +145,7 @@ public class MaxBondCountFilter extends BaseFilter {
             tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
             tmpIsExceptionFatal = true;
         }
-        this.appendToReporter(tmpErrorCode, anAtomContainer);
+        this.appendToReport(tmpErrorCode, anAtomContainer);
         // re-throw the exception if it is considered as fatal
         if (tmpIsExceptionFatal) {
             throw anException;

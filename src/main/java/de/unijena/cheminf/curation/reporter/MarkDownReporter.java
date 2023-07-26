@@ -80,15 +80,4 @@ public class MarkDownReporter implements IReporter {
     //either set all the Strings in the table to empty or delete whole markdown file?
     }
 
-    @Override
-    public boolean isEndedWithFatalException() {
-        //TODO
-        return false;
-    }
-
-    @Override
-    public void setEndedWithFatalException(boolean anEndedWithFatalException) {
-        //TODO
-    }
-
 }

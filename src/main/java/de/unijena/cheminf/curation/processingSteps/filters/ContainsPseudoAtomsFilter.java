@@ -89,14 +89,14 @@ public class ContainsPseudoAtomsFilter extends BaseFilter {
             tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
             if (tmpErrorCode == ErrorCodes.ATOM_CONTAINER_NULL_ERROR) {
                 // not fatal
-                this.appendToReporter(tmpErrorCode, anAtomContainer);
+                this.appendToReport(tmpErrorCode, anAtomContainer);
                 return;
             }
         } catch (Exception aFatalException) {
             tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
         }
         // exception is considered as fatal; append to the reporter and re-throw the exception
-        this.appendToReporter(tmpErrorCode, anAtomContainer);
+        this.appendToReport(tmpErrorCode, anAtomContainer);
         throw anException;
     }
 

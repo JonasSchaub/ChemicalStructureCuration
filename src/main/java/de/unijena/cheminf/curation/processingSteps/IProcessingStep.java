@@ -57,7 +57,7 @@ public interface IProcessingStep {
      * String that is used instead of the optional ID if an atom container does not possess the optional ID atom
      * container property. It is only used, if the processing step has been given an optional ID property name.
      */
-    public static final String DEFAULT_OPTIONAL_ID_STRING = "[No optional ID]";
+    public static final String OPTIONAL_ID_PLACEHOLDER_STRING = "[No optional ID]";
 
     /**
      * Processes the given atom container set according to the logic of the respective processing step. A report
@@ -81,7 +81,7 @@ public interface IProcessingStep {
      * @throws NullPointerException if the given IAtomContainerSet instance is null or an atom container of the set does
      *                              not possess a MolID (this will only cause an exception, if the atom container does
      *                              not pass the processing without causing an issue)
-     * @throws Exception            if an unexpected, fatal exception occurred
+     * @throws Exception            if an unexpected, fatal exception occurs
      * @see #getReporter()
      * @see #setReporter(IReporter)
      * @see #setPipelineProcessingStepID(String)

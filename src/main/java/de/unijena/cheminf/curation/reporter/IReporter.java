@@ -27,6 +27,8 @@ package de.unijena.cheminf.curation.reporter;
 
 import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
 
+import java.io.IOException;
+
 /**
  * Interface of all reporters. Reporters are meant to generate reports out of data referring to issues with structures.
  * This data might have its origin in the processing of sets of structures by instances of {@link IProcessingStep}
@@ -53,13 +55,12 @@ import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
  *         tmpAtomContainer, tmpMolID, tmpOptionalID
  * );
  * tmpReporter.appendReport(tmpReportDataObject);
- * }</pre>
- *
- * The final call of
- * <pre>{@code
+ * //
+ * // generating / finalizing the report respectively (depending on the reporter) via
  * tmpReporter.report();
+ * // or (if the reported processing process ended with a fatal exception) via
+ * tmpReporter.reportAfterFatalException();
  * }</pre>
- * either generates or finalizes the report (depending on the reporter).
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -81,20 +82,37 @@ public interface IReporter {
      * {@link #report()} method is called, or directly written to the report.
      *
      * @param aReportDataObject the data referring to the reported issue
-     * @throws NullPointerException if the given ReportDataObject instance is null
-     * @throws Exception might throw an exceptions if the report has not been initialized or already generated /
-     *                   finished
+     * @throws NullPointerException if the given ReportDataObject instance is null; if the report has not been
+     *                              initialized (dependent on the reporter)
      */
-    public void appendReport(ReportDataObject aReportDataObject) throws NullPointerException, Exception;
+    public void appendReport(ReportDataObject aReportDataObject) throws NullPointerException;
 
     /**
      * Either generates the report out of all data kept in memory or finalizes the report that has already been
-     * initialized and appended with the reported data (depending on the reporter). Data kept in memory is cleared in
-     * the end.
+     * initialized and appended with the reported data (depending on the type of reporter). Data kept in memory is
+     * cleared after finishing the report. If the processing ended with a fatal exception, use the {@link
+     * #reportAfterFatalException()} method instead.
      *
-     * @throws Exception if an exception occurs generating / finalizing the report (reporter specific)
+     * @throws IOException if the reporter generates or writes to a file (reporter specific)
+     * @see #reportAfterFatalException()
      */
-    public void report() throws Exception;
+    public void report() throws Exception;  //TODO: change to IOException (the MarkDownReporter should not need to throw a CDKException)
+
+    /**
+     * Tries to generate / finish the report (see {@link #report()}) even though the processing ended with a fatal
+     * exception and appends a respective notification to the report. Data kept in memory is cleared after finishing
+     * the report.
+     *
+     * @throws IOException      if generating / writing to the report file is not possible (if the respective reporter
+     *                          does so)
+     * @throws RuntimeException in case the reported processing-process was interrupted due to a runtime exception, the
+     *                          same reason might hinder the report from being generated / finished
+     * @see #report()
+     */
+    public default void reportAfterFatalException() throws IOException {
+        //TODO: remove default after this method has been implemented in the MarkDownReporter
+        //TODO: adapt the processing steps / the base classes
+    }
 
     /**
      * Clears all data kept in memory (if the reporter keeps the appended data in memory).
@@ -102,19 +120,5 @@ public interface IReporter {
      * @throws Exception if the data can not be cleared (reporter specific)
      */
     public void clear() throws Exception;
-
-    /**
-     * Returns whether the data processing the report refers to ended with a fatal exception.
-     *
-     * @return boolean value
-     */
-    public boolean isEndedWithFatalException();
-
-    /**
-     * Sets whether the processing, that is reported, ended with a fatal exception.
-     *
-     * @param anEndedWithFatalException boolean value
-     */
-    public void setEndedWithFatalException(boolean anEndedWithFatalException);
 
 }

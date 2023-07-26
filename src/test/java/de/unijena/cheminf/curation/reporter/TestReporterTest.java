@@ -89,7 +89,7 @@ public class TestReporterTest {
      * @throws Exception if something went wrong
      */
     @Test
-    public void reportMethodTest_notAllowedErrorCode_throwsException() throws Exception {
+    public void reportMethodTest_notAllowedErrorCode_throwsIllegalStateException() throws Exception {
         IReporter tmpReporter = new TestReporter();
         tmpReporter.initializeNewReport();
         //
@@ -99,36 +99,30 @@ public class TestReporterTest {
         ReportDataObject tmpReportDataObject = new ReportDataObject(tmpNotAllowedErrorCode, tmpExampleClass);
         tmpReporter.appendReport(tmpReportDataObject);
         //
-        Assertions.assertThrows(Exception.class, tmpReporter::report);
+        Assertions.assertThrows(IllegalStateException.class, tmpReporter::report);
     }
 
     /**
-     * Tests whether the .report() method throws an exception if the report has not been initialized before the method
-     * call.
-     *
-     * @throws Exception if something went wrong
+     * Tests whether the .reportAfterFatalException() method throws an illegal state exception.
      */
     @Test
-    public void reportMethodTest_endedWithFatalExceptionIsTrue_throwsException() throws Exception {
+    public void reportAfterFatalExceptionMethodTest_throwsIllegalStateException() {
         IReporter tmpReporter = new TestReporter();
-        tmpReporter.initializeNewReport();
-        tmpReporter.setEndedWithFatalException(true);
-        Assertions.assertThrows(Exception.class, tmpReporter::report);
+        //tmpReporter.initializeNewReport();
+        Assertions.assertThrows(IllegalStateException.class, tmpReporter::reportAfterFatalException);
     }
 
     /**
      * Tests whether the .appendReport() method increases the allowed error codes count if a report data object with an
      * allowed error code is passed.
-     *
-     * @throws Exception if something went wrong
      */
     @Test
-    public void appendReportMethodTest_allowedErrorCode_increasesRespectiveCount() throws Exception {
+    public void appendReportMethodTest_allowedErrorCode_increasesRespectiveCount() {
         ErrorCodes tmpAllowedErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
         TestReporter tmpReporter = new TestReporter(tmpAllowedErrorCode);
         tmpReporter.initializeNewReport();
         int tmpInitialCount = tmpReporter.getAllowedErrorCodesCount();
-        // appending a report data object with an allowed error code
+        // appending a report data object with an error code declared as allowed
         Class<? extends IProcessingStep> tmpExampleClass = IProcessingStep.class;
         ReportDataObject tmpReportDataObject = new ReportDataObject(tmpAllowedErrorCode, tmpExampleClass);
         tmpReporter.appendReport(tmpReportDataObject);
@@ -146,7 +140,7 @@ public class TestReporterTest {
         TestReporter tmpReporter = new TestReporter();
         tmpReporter.initializeNewReport();
         int tmpInitialCount = tmpReporter.getNotAllowedErrorCodesCount();
-        // appending a report data object with an allowed error code
+        // appending a report data object with an error code not declared as allowed
         ErrorCodes tmpNotAllowedErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
         Class<? extends IProcessingStep> tmpExampleClass = IProcessingStep.class;
         ReportDataObject tmpReportDataObject = new ReportDataObject(tmpNotAllowedErrorCode, tmpExampleClass);
@@ -155,11 +149,11 @@ public class TestReporterTest {
     }
 
     /**
-     * Tests whether the .appendReport() method throws an exception if the method is called but the report has not been
-     * initialized.
+     * Tests whether the .appendReport() method throws an illegal state exception if the method is called but the report
+     * has not been initialized.
      */
     @Test
-    public void appendReportMethodTest_reportNotInitialized_throwsException() {
+    public void appendReportMethodTest_reportNotInitialized_throwsIllegalStateException() {
         ErrorCodes tmpAllowedErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
         Class<? extends IProcessingStep> tmpExampleClass = IProcessingStep.class;
         ReportDataObject tmpReportDataObject = new ReportDataObject(tmpAllowedErrorCode, tmpExampleClass);
@@ -169,13 +163,13 @@ public class TestReporterTest {
     }
 
     /**
-     * Tests whether the .appendReport() method throws an exception if the method is called but the report has not been
-     * finished before.
+     * Tests whether the .appendReport() method throws an illegal state exception if the method is called but the report
+     * has not been finished before.
      *
      * @throws Exception if something went wrong
      */
     @Test
-    public void appendReportMethodTest_reportHasBeenFinished_throwsException() throws Exception {
+    public void appendReportMethodTest_reportHasBeenFinished_throwsIllegalStateException() throws Exception {
         ErrorCodes tmpAllowedErrorCode = ErrorCodes.ATOM_CONTAINER_NULL_ERROR;
         Class<? extends IProcessingStep> tmpExampleClass = IProcessingStep.class;
         ReportDataObject tmpReportDataObject = new ReportDataObject(tmpAllowedErrorCode, tmpExampleClass);
