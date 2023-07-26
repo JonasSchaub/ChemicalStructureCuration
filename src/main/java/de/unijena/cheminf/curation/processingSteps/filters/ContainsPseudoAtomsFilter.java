@@ -42,7 +42,7 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 public class ContainsPseudoAtomsFilter extends BaseFilter {
 
     /**
-     * Constructor; calls the respective super passing the given reporter and not specifying the optional ID property
+     * Constructor; calls the respective super passing the given reporter and not specifying the external ID property
      * name.
      *
      * @param aReporter the reporter that is to be used when processing sets of structures
@@ -53,7 +53,7 @@ public class ContainsPseudoAtomsFilter extends BaseFilter {
     }
 
     /**
-     * Constructor; calls the respective super passing the given directory path and not specifying the optional ID
+     * Constructor; calls the respective super passing the given directory path and not specifying the external ID
      * property name. The super initializes the reporter with an instance of {@link MarkDownReporter}.
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at

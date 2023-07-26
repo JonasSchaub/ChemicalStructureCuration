@@ -57,7 +57,7 @@ public class PropertyChecker extends BaseFilter {
     private final ErrorCodes errorCode;
 
     /**
-     * Main constructor; calls the super constructor with the given reporter and no optional ID property name string.
+     * Main constructor; calls the super constructor with the given reporter and no external ID property name string.
      *
      * @param aNameOfProperty the name of the property to check for
      * @param anErrorCode     the error code associated with the non-existence of the property

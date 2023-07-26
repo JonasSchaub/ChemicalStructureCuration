@@ -54,22 +54,23 @@ public interface IProcessingStep {
     public static final String MOL_ID_PROPERTY_NAME = "Processing_MolID";
 
     /**
-     * String that is used instead of the optional ID if an atom container does not possess the optional ID atom
-     * container property. It is only used, if the processing step has been given an optional ID property name.
+     * String that is used instead of the external ID if an atom container does not possess the property that shall
+     * contain this optional, second ID. It is only used, if the processing step has been given a property name for the
+     * external ID.
      */
-    public static final String OPTIONAL_ID_PLACEHOLDER_STRING = "[No optional ID]";
+    public static final String EXTERNAL_ID_PLACEHOLDER_STRING = "[No external ID]";
 
     /**
-     * Processes the given atom container set according to the logic of the respective processing step. A report
-     * containing info on issues encountered with structures is generated; respective structures are excluded from the
+     * Processes the given atom container set according to the logic of the respective processing step and generates
+     * a report containing info on issues encountered with structures; respective structures are excluded from the
      * returned atom container set. A MolID (atom container property of name {@link #MOL_ID_PROPERTY_NAME}) gets
-     * assigned to every atom container; it equals the index of the atom container in the processed atom container set
-     * and may be used to trace down issues. The MolIDs might be extended with info on parent structures or duplicates
-     * during the processing (if the processing step does so).
-     * <p>Both, the reporting and MolID assignment, can be prevented by setting the {@link #isReporterSelfContained()}
-     * flag to false. If so, issues with structures are only appended to the reporter; the {@link IReporter#report()}
-     * method can later be executed manually or by a supervisory pipeline (see {@link CurationPipeline}). Formally
-     * assigned MolID values do not get overwritten.</p>
+     * assigned to every given atom container; it contains the index the atom container has in the processed atom
+     * container set and may be used to trace down issues. During the processing the MolIDs might be extended with info
+     * on parent structures or duplicates (if the processing step does so).
+     * <p>The reporting and MolID assignment can both be prevented by setting the {@link #isReporterSelfContained()}
+     * flag to false. If so, issues with structures are only passed to the reporter; the {@link IReporter#report()}
+     * method to generate / finalize the report can later be executed manually or by a supervisory pipeline (see {@link
+     * CurationPipeline}). Formally assigned MolIDs do not get overwritten.</p>
      * <p><b>WARNING:</b> The given data might be subject to (irreversible) changes if it is not cloned before
      * processing. See the respective parameter.</p>
      *
@@ -84,7 +85,6 @@ public interface IProcessingStep {
      * @throws Exception            if an unexpected, fatal exception occurs
      * @see #getReporter()
      * @see #setReporter(IReporter)
-     * @see #setPipelineProcessingStepID(String)
      * @see #MOL_ID_PROPERTY_NAME
      * @see ProcessingStepUtils#assignMolIdToAtomContainers(IAtomContainerSet)
      * @see ProcessingStepUtils#getAssignedMolID(IAtomContainer)
@@ -96,27 +96,27 @@ public interface IProcessingStep {
     ) throws NullPointerException, Exception;
 
     /**
-     * Returns the name string of the atom container property that contains an optional second identifier. The
-     * respective atom container property might store information such as a name of the structure or the CAS registry
-     * number. The field might be null if it has not been specified via constructor or setter.
+     * Returns the name string of the atom container property structures processed by this processing step are expected
+     * to store a second, external identifier in. The respective atom container property might contain information such
+     * as name or CAS registry number of the structures. The field is null by default.
      *
      * @return String instance with the property name
-     * @see #setOptionalIDPropertyName(String)
+     * @see #setExternalIDPropertyName(String)
      */
-    public String getOptionalIDPropertyName();
+    public String getExternalIDPropertyName();
 
     /**
-     * Sets the field that contains the name string of the atom container property that stores an optional second
-     * identifier. This property may store info such as name or CAS registry number of the respective structures. If no
-     * such property exists, the field shall be set to null (default). Otherwise, every atom container processed by this
-     * processing step is expected to have a property with the respective name; the info is then used to enrich the
-     * generated reports.
+     * Sets the field that contains the name string of the atom container property structures processed by this
+     * processing step are expected to store a second, external identifier in. This property may store info such as name
+     * or CAS registry number of the structures. If no such property exists, this field shall be set to null (default).
+     * Otherwise, every atom container processed by this processing step is expected to have a respective property; the
+     * external identifier is then used to enrich the reports.
      *
-     * @param anOptionalIDPropertyName String instance with the name of the atom container property or null
+     * @param anExternalIDPropertyName  String instance with the name of the atom container property or null
      * @throws IllegalArgumentException if the given string is empty or blank
-     * @see #getOptionalIDPropertyName()
+     * @see #getExternalIDPropertyName()
      */
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws IllegalArgumentException;
+    public void setExternalIDPropertyName(String anExternalIDPropertyName) throws IllegalArgumentException;
 
     /**
      * Returns the reporter of the processing step.

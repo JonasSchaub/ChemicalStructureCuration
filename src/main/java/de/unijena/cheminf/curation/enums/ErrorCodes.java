@@ -84,9 +84,9 @@ public enum ErrorCodes {
     MISSING_ATOM_CONTAINER_PROPERTY,
 
     /**
-     * The optional ID property is unset.
+     * The external ID property is unset.
      */
-    UNSET_OPTIONAL_ID_PROPERTY,
+    UNSET_EXTERNAL_ID_PROPERTY,
 
     /**
      * An unexpected (probably fatal) exception was encountered. For more information the log / log-file shall be

@@ -43,7 +43,7 @@ import de.unijena.cheminf.curation.processingSteps.filters.MinBondsOfSpecificBon
 import de.unijena.cheminf.curation.processingSteps.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinMolecularMassFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.PropertyChecker;
-import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.OptionalIDChecker;
+import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.ExternalIDChecker;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -99,19 +99,19 @@ import java.util.logging.Logger;
  *
  * <br><br>
  * <b>Further Info</b>
- * As all processing steps, the curation pipeline gives the option to use a second, optional ID such as name or CAS
+ * As all processing steps, the curation pipeline gives the option to use a second, external ID such as name or CAS
  * registry number of the structures. It is then used in the report and complements the "MolID", an automatically
  * assigned identifier that matches the index the atom container has in the processed atom container set. To prevent
  * the original data from modifications, an atom container set might be cloned before the processing. This can be
  * addressed by setting the boolean parameter of the {@link #process} method to true.
  * <br>
- * To check the existence of the optional ID or of any other data annotated to the structures via atom container
+ * To check the existence of the external ID or of any other data annotated to the structures via atom container
  * properties, the following steps might be added to the pipeline:
  * <pre>{@code
- * String tmpOptionalIDPropertyName = CDKConstants.CASRN; // exemplary
+ * String tmpExternalIDPropertyName = CDKConstants.CASRN; // exemplary
  * String tmpNameOfPropertyToCheck = "DataSource";        // exemplary
- * new CurationPipeline(*aReporter*, tmpOptionalIDPropertyName)
- *                 .withOptionalIDChecker()
+ * new CurationPipeline(*aReporter*, tmpExternalIDPropertyName)
+ *                 .withExternalIDChecker()
  *                 .withPropertyChecker(tmpNameOfPropertyToCheck);
  * }</pre>
  *
@@ -152,7 +152,7 @@ public class CurationPipeline extends BaseProcessingStep {
 
     //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
-     * Constructor; initializes the curation pipeline and sets the reporter and the optional ID property name;
+     * Constructor; initializes the curation pipeline and sets the reporter and the external ID property name;
      * initializes the list of pipeline steps.
      * <br>
      * The option of the second identifier property might be used if information such as name of the structures or their
@@ -162,25 +162,25 @@ public class CurationPipeline extends BaseProcessingStep {
      * with a default reporter (instance of {@link MarkDownReporter}), see the other constructors.
      *
      * @param aReporter the reporter to generate the reports with when processing sets of structures
-     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
      *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); if given
      *                                 null, no second identifier is used; otherwise every atom container processed by
      *                                 this processing step is expected to have this property
      * @throws NullPointerException if the given IReporter instance is null
-     * @throws IllegalArgumentException if an optional ID property name is given, but it is blank or empty
+     * @throws IllegalArgumentException if an external ID property name is given, but it is blank or empty
      * @see #CurationPipeline(String, String)
      * @see #CurationPipeline(String)
      * @see #CurationPipeline(IReporter)
      */
-    public CurationPipeline(IReporter aReporter, String anOptionalIDPropertyName)
+    public CurationPipeline(IReporter aReporter, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
-        super(aReporter, anOptionalIDPropertyName);
+        super(aReporter, anExternalIDPropertyName);
         this.listOfPipelineSteps = new LinkedList<>();
     }
 
     /**
      * Constructor; initializes the curation pipeline by calling {@link #CurationPipeline(IReporter, String)} with the
-     * given reporter and the optional ID property name set to null. See the description of the respective constructor
+     * given reporter and the external ID property name set to null. See the description of the respective constructor
      * for more details.
      *
      * @param aReporter the reporter to generate the reports with when processing sets of structures
@@ -202,7 +202,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * constructors.
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
-     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
      *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); if given
      *                                 null, no second identifier is used; otherwise every atom container processed by
      *                                 this processing step is expected to have this property
@@ -213,15 +213,15 @@ public class CurationPipeline extends BaseProcessingStep {
      * @see #CurationPipeline(IReporter)
      * @see #CurationPipeline(String)
      */
-    public CurationPipeline(String aReportFilesDirectoryPath, String anOptionalIDPropertyName)
+    public CurationPipeline(String aReportFilesDirectoryPath, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
-        super(aReportFilesDirectoryPath, anOptionalIDPropertyName);
+        super(aReportFilesDirectoryPath, anExternalIDPropertyName);
         this.listOfPipelineSteps = new LinkedList<>();
     }
 
     /**
      * Constructor; initializes the curation pipeline by calling {@link #CurationPipeline(String, String)} with the
-     * given directory path and the optional ID property name set to null. The pipeline is initialized with a default
+     * given directory path and the external ID property name set to null. The pipeline is initialized with a default
      * reporter (instance of {@link MarkDownReporter}) that generates reports in markdown-format at the given directory
      * path.
      *
@@ -311,23 +311,23 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds a step to the pipeline that checks all given atom containers whether they have a property with the optional
-     * ID property name given to this pipeline ({@link #getOptionalIDPropertyName()}. It appends a report to the
+     * Adds a step to the pipeline that checks all given atom containers whether they have a property with the external
+     * ID property name given to this pipeline ({@link #getExternalIDPropertyName()}. It appends a report to the
      * reporter for every atom container that does not possess such a property and returns only those that have one.
      * <br>
-     * <b>Note:</b> If the pipeline has been given an optional ID property name, it is advised to add this processing
-     * step as the initial step to the pipeline to remove atom containers with missing optional ID from the given atom
+     * <b>Note:</b> If the pipeline has been given an external ID property name, it is advised to add this processing
+     * step as the initial step to the pipeline to remove atom containers with missing external ID from the given atom
      * container set and manually check them in the generated report.
      *
      * @return the CurationPipeline instance itself
-     * @throws NullPointerException if the optional ID property name field of the pipeline has not been specified (via
+     * @throws NullPointerException if the external ID property name field of the pipeline has not been specified (via
      *                              constructor or respective setter)
-     * @see OptionalIDChecker
-     * @see #setOptionalIDPropertyName(String)
+     * @see ExternalIDChecker
+     * @see #setExternalIDPropertyName(String)
      */
-    public CurationPipeline withOptionalIDChecker() throws NullPointerException {
-        PropertyChecker tmpOptionalIDChecker = new OptionalIDChecker(this.getOptionalIDPropertyName(), this.getReporter());
-        this.addToListOfProcessingSteps(tmpOptionalIDChecker);
+    public CurationPipeline withExternalIDChecker() throws NullPointerException {
+        PropertyChecker tmpExternalIDChecker = new ExternalIDChecker(this.getExternalIDPropertyName(), this.getReporter());
+        this.addToListOfProcessingSteps(tmpExternalIDChecker);
         return this;
     }
     //</editor-fold>
@@ -675,7 +675,7 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
-     * Adds the given processing step to the list of processing steps and sets its fields optionalIDPropertyName and
+     * Adds the given processing step to the list of processing steps and sets its fields externalIDPropertyName and
      * reporter to the ones of the pipeline; sets the flag of the processing step whether the reporter is
      * self-contained to false; sets the identifier of the processing step to the respective ID of the pipeline added
      * by the index of the new step in the pipeline.
@@ -686,7 +686,7 @@ public class CurationPipeline extends BaseProcessingStep {
     private void addToListOfProcessingSteps(IProcessingStep aProcessingStep) throws NullPointerException {
         Objects.requireNonNull(aProcessingStep, "aProcessingStep (instance of IProcessingStep) is null.");
         this.listOfPipelineSteps.add(aProcessingStep);
-        aProcessingStep.setOptionalIDPropertyName(this.getOptionalIDPropertyName());
+        aProcessingStep.setExternalIDPropertyName(this.getExternalIDPropertyName());
         aProcessingStep.setReporter(this.getReporter());    //TODO: remove this? or just keep it to make sure?
         aProcessingStep.setIsReporterSelfContained(false);
         aProcessingStep.setPipelineProcessingStepID(
@@ -708,13 +708,13 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * {@inheritDoc}
      * <br>
-     * This optional identifier property name is also set to every processing step that is part of the pipeline.
+     * This external identifier property name is also set to every processing step that is part of the pipeline.
      */
     @Override
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws IllegalArgumentException {
-        super.setOptionalIDPropertyName(anOptionalIDPropertyName);
+    public void setExternalIDPropertyName(String anExternalIDPropertyName) throws IllegalArgumentException {
+        super.setExternalIDPropertyName(anExternalIDPropertyName);
         this.listOfPipelineSteps.forEach(aProcessingStep -> {
-            aProcessingStep.setOptionalIDPropertyName(anOptionalIDPropertyName);
+            aProcessingStep.setExternalIDPropertyName(anExternalIDPropertyName);
         });
     }
 

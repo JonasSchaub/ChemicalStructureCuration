@@ -47,12 +47,12 @@ import java.io.IOException;
  * String tmpProcesingStepIdentifier = "xyz";
  * IAtomContainer tmpAtomContainer = new AtomContainer();
  * String tmpMolID = "abc";
- * String tmpOptionalID = "uvw";
+ * String tmpExternalID = "uvw";
  * //
  * // appending a report data object to the reporter (as done by the processing steps)
  * ReportDataObject tmpReportDataObject = new ReportDataObject(
  *         tmpErrorCode, tmpClassOfProcessingStep, tmpProcesingStepIdentifier,
- *         tmpAtomContainer, tmpMolID, tmpOptionalID
+ *         tmpAtomContainer, tmpMolID, tmpExternalID
  * );
  * tmpReporter.appendReport(tmpReportDataObject);
  * //

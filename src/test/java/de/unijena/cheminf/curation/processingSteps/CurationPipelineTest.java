@@ -193,14 +193,14 @@ public class CurationPipelineTest {
     }
 
     /**
-     * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets optionalIDPropertyName
+     * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets externalIDPropertyName
      * to null.
      */
     /*
     @Test
-    public void publicFilterConstructorTest_noParameter_optionalIDPropertyNameIsNull() {
+    public void publicFilterConstructorTest_noParameter_externalIDPropertyNameIsNull() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
-        Assertions.assertNull(tmpCurationPipeline.optionalIDPropertyName);
+        Assertions.assertNull(tmpCurationPipeline.externalIDPropertyName);
     }
     */
 
@@ -229,14 +229,14 @@ public class CurationPipelineTest {
 
     /**
      * Tests the parameter-less, public constructor of the class FilterPipeline whether it sets the field
-     * optionalIDPropertyName to the given String.
+     * externalIDPropertyName to the given String.
      */
     /*
     @Test
-    public void publicFilterConstructorTest_withStringParameter_optionalIDPropertyNameIsSameAsGivenString() {
+    public void publicFilterConstructorTest_withStringParameter_externalIDPropertyNameIsSameAsGivenString() {
         String tmpPropertyNameString = "SomeString";
         CurationPipeline tmpCurationPipeline = new CurationPipeline(tmpPropertyNameString);
-        Assertions.assertSame(tmpPropertyNameString, tmpCurationPipeline.optionalIDPropertyName);
+        Assertions.assertSame(tmpPropertyNameString, tmpCurationPipeline.externalIDPropertyName);
     }
     */
 
@@ -253,14 +253,14 @@ public class CurationPipelineTest {
     }*/
 
     /**
-     * Tests whether the .getOptionalIDPropertyName() method of the class FilterPipeline returns the instances field
-     * optionalIDPropertyName.
+     * Tests whether the .getExternalIDPropertyName() method of the class FilterPipeline returns the instances field
+     * externalIDPropertyName.
      */
     /*
     @Test
-    public void getOptionalIDPropertyNameMethodTest_returnsClassFieldOptionalIDPropertyName() {
+    public void getExternalIDPropertyNameMethodTest_returnsClassFieldExternalIDPropertyName() {
         CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance());
-        Assertions.assertSame(tmpCurationPipeline.optionalIDPropertyName, tmpCurationPipeline.getOptionalIDPropertyName());
+        Assertions.assertSame(tmpCurationPipeline.externalIDPropertyName, tmpCurationPipeline.getExternalIDPropertyName());
     }
     */
 

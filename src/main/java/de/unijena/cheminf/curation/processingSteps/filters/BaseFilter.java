@@ -52,30 +52,30 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     private static final Logger LOGGER = Logger.getLogger(BaseFilter.class.getName());
 
     /**
-     * Constructor; calls the super constructor with the given reporter and optional ID property name string. Since not
-     * every filter might give the option to specify the optional ID property name in the constructor, this parameter
+     * Constructor; calls the super constructor with the given reporter and external ID property name string. Since not
+     * every filter might give the option to specify the external ID property name in the constructor, this parameter
      * is allowed to be null.
      *
      * @param aReporter the reporter that is to be used when processing sets of structures
-     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
      *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
      *                                 field gets specified (not null), every atom container processed by this filter
      *                                 is expected to have a property with the respective name; the info is then
      *                                 included in the report
      * @throws NullPointerException if the given IReporter instance is null
-     * @throws IllegalArgumentException if an optional ID property name is given, but it is blank or empty
+     * @throws IllegalArgumentException if an external ID property name is given, but it is blank or empty
      */
-    public BaseFilter(IReporter aReporter, String anOptionalIDPropertyName) throws NullPointerException, IllegalArgumentException {
-        super(aReporter, anOptionalIDPropertyName);
+    public BaseFilter(IReporter aReporter, String anExternalIDPropertyName) throws NullPointerException, IllegalArgumentException {
+        super(aReporter, anExternalIDPropertyName);
     }
 
     /**
      * Constructor; calls the super constructor that initializes the reporter with an instance of {@link
      * MarkDownReporter} - initialized with the given report files directory path. Since not every filter might give
-     * the option to specify the optional ID property name in the constructor, this parameter is allowed to be null.
+     * the option to specify the external ID property name in the constructor, this parameter is allowed to be null.
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
-     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
      *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
      *                                 field gets specified (not null), every atom container processed by this filter
      *                                 is expected to have a property with the respective name; the info is then
@@ -84,8 +84,8 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
      * @throws IllegalArgumentException if the given file path is no directory path; if a property name string is given,
      *                                  but it is blank or empty
      */
-    public BaseFilter(String aReportFilesDirectoryPath, String anOptionalIDPropertyName) {
-        super(aReportFilesDirectoryPath, anOptionalIDPropertyName);
+    public BaseFilter(String aReportFilesDirectoryPath, String anExternalIDPropertyName) {
+        super(aReportFilesDirectoryPath, anExternalIDPropertyName);
     }
 
     /**

@@ -50,9 +50,9 @@ public class ReportDataObject {
     private String identifier = null;
 
     /**
-     * Optional second identifier string of the structure the report refers to or null if there is none.
+     * Second, external identifier string of the structure the report refers to or null if there is none.
      */
-    private String optionalIdentifier = null;
+    private String externalIdentifier = null;
 
     /**
      * String with the identifier of the processing step instance the reported problem occurred in, or null, if the
@@ -180,13 +180,13 @@ public class ReportDataObject {
 
     /**
      * Constructor; initializes the report data object with an error code, a class of processing step, atom container,
-     * identifier and optional identifier.
+     * identifier and external identifier.
      *
      * @param anErrorCode               error code of the reported issue
      * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
      * @param anAtomContainer           atom container of the structure the reported issue refers to
      * @param anIdentifier              identifier string of the structure
-     * @param anOptionalIdentifier      optional second identifier string of the structure
+     * @param anExternalIdentifier      second, external identifier string of the structure
      * @throws NullPointerException if any of the given parameters is null
      */
     public ReportDataObject(
@@ -194,16 +194,16 @@ public class ReportDataObject {
             Class<? extends IProcessingStep> aClassOfProcessingStep,
             IAtomContainer anAtomContainer,
             String anIdentifier,
-            String anOptionalIdentifier
+            String anExternalIdentifier
     ) throws NullPointerException {
         this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier);
-        Objects.requireNonNull(anOptionalIdentifier, "anOptionalIdentifier (instance of String) is null.");
-        this.optionalIdentifier = anOptionalIdentifier;
+        Objects.requireNonNull(anExternalIdentifier, "anExternalIdentifier (instance of String) is null.");
+        this.externalIdentifier = anExternalIdentifier;
     }
 
     /**
      * Constructor; initializes the report data object with error code, class of processing step, identifier of
-     * processing step, atom container, identifier and optional identifier.
+     * processing step, atom container, identifier and external identifier.
      *
      * @param anErrorCode               error code of the reported issue
      * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
@@ -211,7 +211,7 @@ public class ReportDataObject {
      *                                  in a pipeline it is part of)
      * @param anAtomContainer           atom container of the structure the reported issue refers to
      * @param anIdentifier              identifier string of the structure
-     * @param anOptionalIdentifier      optional second identifier string of the structure
+     * @param anExternalIdentifier      second, external identifier string of the structure
      * @throws NullPointerException if any of the given parameters is null
      */
     public ReportDataObject(
@@ -220,9 +220,9 @@ public class ReportDataObject {
             String aProcessingStepIdentifier,
             IAtomContainer anAtomContainer,
             String anIdentifier,
-            String anOptionalIdentifier
+            String anExternalIdentifier
     ) throws NullPointerException {
-        this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier, anOptionalIdentifier);
+        this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier, anExternalIdentifier);
         Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
                 " is null.");
         this.processingStepIdentifier = aProcessingStepIdentifier;
@@ -248,12 +248,12 @@ public class ReportDataObject {
     }
 
     /**
-     * Returns the optional second identifier string of the structure the report refers to or null if none was given.
+     * Returns the second, external identifier string of the structure the report refers to or null if none was given.
      *
      * @return integer value or null
      */
-    public String getOptionalIdentifier() {
-        return this.optionalIdentifier;
+    public String getExternalIdentifier() {
+        return this.externalIdentifier;
     }
 
     /**

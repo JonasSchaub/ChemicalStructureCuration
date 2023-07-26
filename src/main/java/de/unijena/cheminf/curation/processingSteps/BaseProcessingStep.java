@@ -39,9 +39,9 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * Base class of all processing steps. Reduces the number of abstract methods to the protected method {@link #applyLogic(
- * IAtomContainerSet)}. In addition to overwriting this one method, processing steps extending this base class possibly
- * need constructors initializing the fields specific to the processing step and respective getters.
+ * Base class of all processing steps. Reduces the number of abstract methods to the protected method {@link
+ * #applyLogic( IAtomContainerSet)}. In addition to overwriting this one method, processing steps extending this base
+ * class possibly need constructors initializing the fields specific to the processing step and respective getters.
  * <br>
  * Essentially, this abstract class works as a wrapper class for methods that take, process and return a set of atom
  * containers, and thereby may be used to easily create workers that can be used as part of a pipeline (see {@link
@@ -68,12 +68,13 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     private static final Logger LOGGER = Logger.getLogger(BaseProcessingStep.class.getName());
 
     /**
-     * Name string of the atom container property that contains an optional second identifier for the structures. The
-     * respective atom container property might store information such as name or the CAS registry number. If the field
-     * is set (not null), every atom container processed by this processing step is expected to have a property with the
-     * respective name or otherwise a default string is used when passing the optional ID to the reporter.
+     * Name string of the atom container property structures processed by this processing step are expected to store a
+     * second, external identifier in. The respective atom container property might contain information such as name or
+     * CAS registry number of the structures. If this field is null, no second identifier is used. Otherwise, every atom
+     * container processed by this processing step is expected to have a property with the respective name. A
+     * placeholder is used for structures that leak this property.
      */
-    private String optionalIDPropertyName;
+    private String externalIDPropertyName;
 
     /**
      * Identifier string of the processing step in the pipeline (if it is part of a pipeline), or null if it is not
@@ -96,48 +97,48 @@ public abstract class BaseProcessingStep implements IProcessingStep {
 
     //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
-     * Constructor; initializes the fields {@link #reporter} and {@link #optionalIDPropertyName}. Since not every
-     * processing step might give the option to specify the optional ID property name in the constructor, this parameter
+     * Constructor; initializes the fields {@link #reporter} and {@link #externalIDPropertyName}. Since not every
+     * processing step might give the option to specify the external ID property name in the constructor, this parameter
      * is allowed to be null.
      *
      * @param aReporter the reporter that is to be used when processing sets of structures
-     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
      *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
      *                                 field gets specified (not null), every atom container processed by this
      *                                 processing step is expected to have a property with the respective name; the info
      *                                 is then included in the report
      * @throws NullPointerException if the given IReporter instance is null
-     * @throws IllegalArgumentException if an optional ID property name is given, but it is blank or empty
+     * @throws IllegalArgumentException if an external ID property name is given, but it is blank or empty
      */
-    public BaseProcessingStep(IReporter aReporter, String anOptionalIDPropertyName) throws NullPointerException, IllegalArgumentException {
+    public BaseProcessingStep(IReporter aReporter, String anExternalIDPropertyName) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
-        if (anOptionalIDPropertyName != null && anOptionalIDPropertyName.isBlank()) {
-            throw new IllegalArgumentException("anOptionalIDPropertyName (instance of String) is empty or blank.");
+        if (anExternalIDPropertyName != null && anExternalIDPropertyName.isBlank()) {
+            throw new IllegalArgumentException("anExternalIDPropertyName (instance of String) is empty or blank.");
         }
         this.reporter = aReporter;
-        this.optionalIDPropertyName = anOptionalIDPropertyName;
+        this.externalIDPropertyName = anExternalIDPropertyName;
     }
 
     /**
      * Constructor; calls the main constructor with an instance of {@link MarkDownReporter} - initialized with the given
      * report files directory path - as default reporter. Since not every processing step might give the option to
-     * specify the optional ID property name in the constructor, this parameter is allowed to be null.
+     * specify the external ID property name in the constructor, this parameter is allowed to be null.
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
-     * @param anOptionalIDPropertyName name string of the atom container property containing an optional second
-     *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
-     *                                 field gets specified (not null), every atom container processed by this
-     *                                 processing step is expected to have a property with the respective name; the info
-     *                                 is then included in the report
+     * @param anExternalIDPropertyName  name string of the atom container property containing a second, external
+     *                                  identifier (e.g. the name or CAS registry number) for each structure; if this
+     *                                  field gets specified (not null), every atom container processed by this
+     *                                  processing step is expected to have a property with the respective name; the
+     *                                  info is then included in the report
      * @throws NullPointerException if the given String with the directory path is null
      * @throws IllegalArgumentException if the given file path is no directory path; if a property name string is given,
      *                                  but it is blank or empty
      */
-    public BaseProcessingStep(String aReportFilesDirectoryPath, String anOptionalIDPropertyName)
+    public BaseProcessingStep(String aReportFilesDirectoryPath, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
         //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null; check whether it is a directory path
-        //this(new MarkDownReporter(aReportFilesDirectoryPath), anOptionalIDPropertyName);
-        this(new MarkDownReporter(), anOptionalIDPropertyName);
+        //this(new MarkDownReporter(aReportFilesDirectoryPath), anExternalIDPropertyName);
+        this(new MarkDownReporter(), anExternalIDPropertyName);
     }
     //</editor-fold>
 
@@ -232,8 +233,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * Generates a report data object on basis of the given error code and atom container and info respective to the
      * processing step and passes it to the reporter. The given atom container may only be null in combination with
      * specific error codes. If it is not null, it is expected to have a MolID (atom container property with name {@link
-     * #MOL_ID_PROPERTY_NAME}) and - if the {@link #optionalIDPropertyName} field has been specified - also to have an
-     * optional ID assigned. If the optional ID is null, a placeholder is used instead.
+     * #MOL_ID_PROPERTY_NAME}) and - if the {@link #externalIDPropertyName} field has been specified - also to have an
+     * external ID assigned. If the external ID is null, a placeholder is used instead.
      *
      * @param anErrorCode     error code of the reported issue
      * @param anAtomContainer atom container instance the issue refers to
@@ -254,17 +255,17 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             } else {
                 tmpCase = 1;    // case: no atom container; with step ID
             }
-        } else if (this.optionalIDPropertyName == null) {
+        } else if (this.externalIDPropertyName == null) {
             if (this.pipelineProcessingStepID == null) {
-                tmpCase = 2;    // case: with atom container; no optional ID; no step ID
+                tmpCase = 2;    // case: with atom container; no external ID; no step ID
             } else {
-                tmpCase = 3;    // case: with atom container; no optional ID; with step ID
+                tmpCase = 3;    // case: with atom container; no external ID; with step ID
             }
         } else {
             if (this.pipelineProcessingStepID == null) {
-                tmpCase = 4;    // case: with atom container; with optional ID; no step ID
+                tmpCase = 4;    // case: with atom container; with external ID; no step ID
             } else {
-                tmpCase = 5;    // case: with atom container; with optional ID; with step ID
+                tmpCase = 5;    // case: with atom container; with external ID; with step ID
             }
         }
         ReportDataObject tmpReportDataObject = switch (tmpCase) {
@@ -276,9 +277,9 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             case 3 -> new ReportDataObject(anErrorCode, this.getClass(), this.pipelineProcessingStepID,
                     anAtomContainer, this.getMolIDString(anAtomContainer));
             case 4 -> new ReportDataObject(anErrorCode, this.getClass(), anAtomContainer,
-                    this.getMolIDString(anAtomContainer), this.getOptionalIDString(anAtomContainer));
+                    this.getMolIDString(anAtomContainer), this.getExternalIDString(anAtomContainer));
             case 5 -> new ReportDataObject(anErrorCode, this.getClass(), this.pipelineProcessingStepID,
-                    anAtomContainer, this.getMolIDString(anAtomContainer), this.getOptionalIDString(anAtomContainer));
+                    anAtomContainer, this.getMolIDString(anAtomContainer), this.getExternalIDString(anAtomContainer));
             default -> throw new IllegalStateException("An illegal state has been reached.");
         };
         this.reporter.appendReport(tmpReportDataObject);
@@ -302,39 +303,39 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     }
 
     /**
-     * Returns the string representation of the optional second identifier of the structure or a default string, if the
+     * Returns the string representation of the external identifier of the structure or a default string, if the
      * respective atom container property is unset.
      *
-     * @param anAtomContainer atom container to get the optional second identifier from
-     * @return string representation of the optional second identifier of the structure or a default string
-     * @throws NullPointerException if the given IAtomContainer instance is null; if {@link #optionalIDPropertyName} is
+     * @param anAtomContainer atom container to get the external second identifier from
+     * @return string representation of the external identifier or a placeholder string
+     * @throws NullPointerException if the given IAtomContainer instance is null; if {@link #externalIDPropertyName} is
      *                              null
      */
-    protected String getOptionalIDString(IAtomContainer anAtomContainer) throws NullPointerException {
+    protected String getExternalIDString(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
-        Objects.requireNonNull(this.optionalIDPropertyName, "The optional ID property name of the pipeline is" +
+        Objects.requireNonNull(this.externalIDPropertyName, "The external ID property name of the pipeline is" +
                 " unset.");
-        String tmpOptionalIDString;
-        Object tmpOptionalID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
-        if (tmpOptionalID != null) {
-            tmpOptionalIDString = tmpOptionalID.toString();
+        String tmpExternalIDString;
+        Object tmpExternalID = anAtomContainer.getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME);
+        if (tmpExternalID != null) {
+            tmpExternalIDString = tmpExternalID.toString();
         } else {
-            tmpOptionalIDString = IProcessingStep.OPTIONAL_ID_PLACEHOLDER_STRING;
+            tmpExternalIDString = IProcessingStep.EXTERNAL_ID_PLACEHOLDER_STRING;
         }
-        return tmpOptionalIDString;
+        return tmpExternalIDString;
     }
 
     @Override
-    public String getOptionalIDPropertyName() {
-        return this.optionalIDPropertyName;
+    public String getExternalIDPropertyName() {
+        return this.externalIDPropertyName;
     }
 
     @Override
-    public void setOptionalIDPropertyName(String anOptionalIDPropertyName) throws IllegalArgumentException {
-        if (anOptionalIDPropertyName != null && anOptionalIDPropertyName.isBlank()) {
-            throw new IllegalArgumentException("The given property name (anOptionalIDPropertyName) is empty or blank.");
+    public void setExternalIDPropertyName(String anExternalIDPropertyName) throws IllegalArgumentException {
+        if (anExternalIDPropertyName != null && anExternalIDPropertyName.isBlank()) {
+            throw new IllegalArgumentException("The given property name (anExternalIDPropertyName) is empty or blank.");
         }
-        this.optionalIDPropertyName = anOptionalIDPropertyName;
+        this.externalIDPropertyName = anExternalIDPropertyName;
     }
 
     /**
