@@ -73,9 +73,9 @@ public interface IReporter {
      * cleared. If the data is directly written to the report by the {@code .appendReport()} method, this method
      * initializes the report that is then finalized by the {@code .report()} method.
      *
-     * @throws Exception if an exception occurs initializing the report (reporter specific)
+     * @throws IOException if an IOException occurs initializing the report (dependent on the reporter)
      */
-    public void initializeNewReport() throws Exception;
+    public void initializeNewReport() throws IOException;
 
     /**
      * Appends the reported data to the reporter. Depending on the reporter, the data is either kept in memory until the
@@ -93,7 +93,7 @@ public interface IReporter {
      * cleared after finishing the report. If the processing ended with a fatal exception, use the {@link
      * #reportAfterFatalException()} method instead.
      *
-     * @throws IOException if the reporter generates or writes to a file (reporter specific)
+     * @throws IOException if an IOException occurs generating or writing to the file (dependent on the reporter)
      * @see #reportAfterFatalException()
      */
     public void report() throws Exception;  //TODO: change to IOException (the MarkDownReporter should not need to throw a CDKException)
@@ -116,9 +116,7 @@ public interface IReporter {
 
     /**
      * Clears all data kept in memory (if the reporter keeps the appended data in memory).
-     *
-     * @throws Exception if the data can not be cleared (reporter specific)
      */
-    public void clear() throws Exception;
+    public void clear();
 
 }

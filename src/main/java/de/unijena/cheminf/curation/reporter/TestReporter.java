@@ -132,7 +132,7 @@ public class TestReporter implements IReporter {
      *                               codes count exceeds zero
      */
     @Override
-    public void report() throws IllegalStateException, Exception {
+    public void report() throws IllegalStateException {
         if (!this.reportIsInitialized) {
             throw new IllegalStateException("The report has not been initialized.");
         }
