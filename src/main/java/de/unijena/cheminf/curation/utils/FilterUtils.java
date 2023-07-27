@@ -162,6 +162,7 @@ public class FilterUtils {
     //TODO: method containsWildcardElements()
 
     /**
+     * TODO: adapt according to the new valence model
      * Checks whether the atomic numbers of all IAtom instances contained in an IAtomContainer instance are valid. An
      * atomic number is considered as valid if it is a number between one and 118; the wildcard atomic number zero is
      * considered as valid depending on the given boolean parameter. An IllegalArgumentException is thrown if an unset
@@ -187,6 +188,7 @@ public class FilterUtils {
     }
 
     /**
+     * TODO: adapt according to the new valence model
      * Checks whether the atomic number of an IAtom instance is valid. An atomic number is seen as valid if it is
      * a number between one and 118; the wildcard atomic number zero is considered as valid depending on the given
      * boolean parameter. An IllegalArgumentException is thrown if the given IAtom instance has no atomic number.

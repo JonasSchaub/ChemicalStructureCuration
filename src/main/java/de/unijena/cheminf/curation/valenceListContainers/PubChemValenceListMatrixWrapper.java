@@ -30,6 +30,9 @@ import java.io.IOException;
 /**
  * A container that imports and stores the data contained by the PubChem valence list text file.
  * TODO: link / reference!
+ * The file, a list of valid valences and configurations of atoms with respect to
+ *      * atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ bonds (column 4) and the
+ *      * maximum number of implicit hydrogens (column 5), is wrapped into matrices
  * <p>
  * The class follows the Singleton pattern. To receive an instance of the class, the method {@link #getInstance()} may
  * be used.
@@ -37,17 +40,18 @@ import java.io.IOException;
  * @author Samuel Behr
  * @version 1.0.0.0
  */
-public class PubChemValenceListContainer extends BaseValenceListContainer {
+public class PubChemValenceListMatrixWrapper extends ValenceListMatrixWrapper {
 
     /*
     TODO: add link / reference to the source of the PubChem valence list file
     //
     TODO: implement filter
+    //
+    TODO: rename package
      */
 
     /**
-     * String of the file path of the PubChem valence list text file in this project.
-     * TODO: link / reference!
+     * String of the path to the PubChem valence list text file.
      */
     private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt";
 
@@ -58,52 +62,56 @@ public class PubChemValenceListContainer extends BaseValenceListContainer {
     protected static final int HIGHEST_ATOMIC_NUMBER_IN_LIST = 112;
 
     /**
-     * Integer value of the number of rows contained by the PubChem valence list text file; 981 lines of content + one
+     * Integer value of the number of lines contained by the PubChem valence list text file; 981 lines of content + one
      * headline.
      * @see #VALENCE_LIST_FILE_PATH
      */
-    protected static final int NUMBER_OF_ROWS_IN_FILE = 982;
+    protected static final int NUMBER_OF_LINES_IN_FILE = 982;
 
     /**
-     * Instance of ValenceListContainer; it is initialized at the first call of {@link PubChemValenceListContainer#getInstance()}.
+     * Instance of ValenceListContainer; it is initialized in the static block.
      */
-    protected static PubChemValenceListContainer instance = null;
+    protected static PubChemValenceListMatrixWrapper instance;
 
-    /**
-     * Private constructor. Loads the text file "PubChem_Valence_list.txt", a list of valid valences and configurations
-     * of atoms with respect to atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
-     * bonds (column 4) and the maximum number of implicit hydrogens (column 5).
-     * TODO: link / reference!
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list text file associated with this
-     * class, e.g. the file cannot be found at the expected file path or the file differs from the expected format
-     */
-    private PubChemValenceListContainer() throws IOException {
-        super(
-                PubChemValenceListContainer.VALENCE_LIST_FILE_PATH,
-                PubChemValenceListContainer.NUMBER_OF_ROWS_IN_FILE,
-                PubChemValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST
-        );
+    static {
+        /* initializes the valence list matrix wrapper instance */
+        try {
+            PubChemValenceListMatrixWrapper.instance = new PubChemValenceListMatrixWrapper();
+        } catch (IOException anIOException) {
+            // e.g. the file cannot be found at the expected file path
+            // or the file differs from the expected format
+            throw new RuntimeException(anIOException);
+        }
     }
 
     /**
-     * Returns an IValenceListContainer instance containing the data loaded from the "PubChem_Valence_list.txt"
-     * text file, a list of valid valences and configurations of atoms with respect to atomic number (column 1), charge
-     * (column 2), number of π bonds (column 3), number of σ bonds (column 4) and the maximum number of implicit
-     * hydrogens (column 5).
+     * Private constructor; calls the super constructor passing the file path of the "PubChem_Valence_list.txt" file and
+     * the number of lines in the file. For info on the source and a description of the file, see the class description.
+     *
+     * @throws IOException if a problem occurs loading the data from the valence list text file associated with this
+     * class, e.g. the file cannot be found at the expected file path or the file differs from the expected format
+     * @see #VALENCE_LIST_FILE_PATH
+     */
+    private PubChemValenceListMatrixWrapper() throws IOException {
+        super(PubChemValenceListMatrixWrapper.VALENCE_LIST_FILE_PATH,
+                PubChemValenceListMatrixWrapper.NUMBER_OF_LINES_IN_FILE);
+    }
+
+    /**
+     * Returns a PubChemValenceListMatrixWrapper instance containing the data loaded from the "PubChem_Valence_list.txt"
+     * text file wrapped into two matrices. The file contains a list of valid valences and configurations of atoms with
+     * respect to atomic number, charge, number of π bonds, number of σ bonds and maximum number of implicit hydrogens.
      * <p>
-     * An instance is only generated once.
+     * An instance is only generated once (as the class is loaded).
      *
      * @return ValenceListContainer
-     * @throws IOException if no instance exists so far and a problem occurs generating one by loading the data from
-     * the valence list text file associated with this class (e.g. the file cannot be found at the expected file path
-     * or the file differs from the expected format)
+     * @see PubChemValenceListMatrixWrapper
      */
-    public static PubChemValenceListContainer getInstance() throws IOException {
-        if (PubChemValenceListContainer.instance == null) {
-            PubChemValenceListContainer.instance = new PubChemValenceListContainer();
+    public static PubChemValenceListMatrixWrapper getInstance() {
+        if (PubChemValenceListMatrixWrapper.instance == null) {
+            throw new IllegalStateException("The PubChemValenceListContainer instance has not been initialized.");
         }
-        return PubChemValenceListContainer.instance;
+        return PubChemValenceListMatrixWrapper.instance;
     }
 
 }

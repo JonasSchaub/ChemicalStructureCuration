@@ -25,86 +25,67 @@
 
 package de.unijena.cheminf.curation.valenceListContainers;
 
-import de.unijena.cheminf.curation.valenceListContainers.BaseValenceListContainer;
-import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceListContainer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.io.IOException;
-
 /**
  * Test class of class PubChemValenceListContainer.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
- * @see PubChemValenceListContainer
+ * @see PubChemValenceListMatrixWrapper
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PubChemValenceListContainerTest {
 
     /*
-    TODO: add references to the PubChem valence list?
+    TODO: move tests of extended methods into separate class?
      */
 
     /**
-     * Tests whether the initial call of the .getInstance() method of class PubChemValenceListContainer initializes
-     * the static class variable instance with an instance of PubChemValenceListContainer and returns it.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
+     * Tests whether the static class variable {@link PubChemValenceListMatrixWrapper#instance} gets initialized via
+     * a static block and therefore never is null.
      */
     @Test
     @Order(1)
-    public void getInstanceMethodTest_initializesStaticVarInstanceOnFirstCallAndReturnsIt() throws IOException {
-        Assertions.assertNull(PubChemValenceListContainer.instance);
-        Object tmpReturnedInstance = PubChemValenceListContainer.getInstance();
-        Assertions.assertNotNull(PubChemValenceListContainer.instance);
-        Assertions.assertSame(PubChemValenceListContainer.instance, tmpReturnedInstance);
-        Assertions.assertInstanceOf(PubChemValenceListContainer.class, tmpReturnedInstance);
+    public void staticBlockTest_classVariableInstanceIsNeverNull() {
+        Assertions.assertNotNull(PubChemValenceListMatrixWrapper.instance);
     }
 
     /**
-     * Tests whether the second call of the .getInstance() method of class PubChemValenceListContainer returns the same
-     * instance of PubChemValenceListContainer as the first call.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
+     * Tests whether the .getInstance() method of class PubChemValenceListContainer returns the static class variable
+     * "instance".
      */
     @Test
-    public void getInstanceMethodTest_secondCallReturnsSameInstanceAsFirstCall() throws IOException {
+    public void getInstanceMethodTest_returnsStaticClassVarInstance() {
         Assertions.assertSame(
-                PubChemValenceListContainer.getInstance(),
-                PubChemValenceListContainer.getInstance()
+                PubChemValenceListMatrixWrapper.instance,
+                PubChemValenceListMatrixWrapper.getInstance()
         );
     }
 
     /**
-     * Tests whether the valenceListMatrix of the PubChemValenceListContainer instance returned by the .getInstance()
-     * method of class PubChemValenceListContainer has the same dimensions as the imported valence list (981 x 5).
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
+     * Tests whether the valenceListMatrix has the expected dimensions (981 x 5).
      */
     @Test
-    public void getInstanceMethodTest_valenceListMatrixOfReturnedInstanceHasExpectedDimensions_981x5() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
-        Assertions.assertEquals(PubChemValenceListContainer.NUMBER_OF_ROWS_IN_FILE - 1,
+    public void getInstanceMethodTest_checksDimensionsOfValenceListMatrix_981x5() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
+        Assertions.assertEquals(PubChemValenceListMatrixWrapper.NUMBER_OF_LINES_IN_FILE - 1,
                 tmpValenceListContainer.valenceListMatrix.length);
-        Assertions.assertEquals(BaseValenceListContainer.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE,
+        Assertions.assertEquals(ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE,
                 tmpValenceListContainer.valenceListMatrix[0].length);
     }
 
     /**
-     * Tests whether the valenceListPointerMatrix of the PubChemValenceListContainer instance returned by the
-     * .getInstance() method of class PubChemValenceListContainer has the dimensions: highest atomic number in the
-     * valence list x 2.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
+     * Tests whether the valenceListPointerMatrix has the dimensions: (highest known atomic number + 1) x 2.
      */
     @Test
-    public void getInstanceMethodTest_valenceListPointerMatrixOfReturnedInstanceHasExpectedDimensions_112x2() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
-        Assertions.assertEquals(PubChemValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST,
+    public void getInstanceMethodTest_checksDimensionsOfValenceListPointerMatrix_119x2() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
+        Assertions.assertEquals(ValenceListMatrixWrapper.HIGHEST_KNOWN_ATOMIC_NUMBER + 1,
                 tmpValenceListContainer.valenceListPointerMatrix.length);
         Assertions.assertEquals(2, tmpValenceListContainer.valenceListPointerMatrix[0].length);
     }
@@ -112,13 +93,10 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests exemplary whether the .getValenceListEntry(int, int) method of class PubChemValenceListContainer returns
      * the values imported from the PubChem valence list text file and whether these where imported correctly.
-     * TODO: reference?
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_twoParams_returnsValuesOfPubChemValenceList() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_twoParams_returnsValuesOfPubChemValenceList() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //value 1 of line 2; indices 0, 0; first value of the valence list
         Assertions.assertEquals(1, tmpValenceListContainer.getValenceListEntry(0, 0));
         //value 2 of line 2; indices 0, 1;
@@ -136,12 +114,10 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests whether the .getValenceListEntry(int, int) method of class PubChemValenceListContainer throws an
      * IllegalArgumentException if one of the given parameters is of a negative value.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_twoParams_paramValuesLessThanZero_throwsIllegalArgumentException() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_twoParams_paramValuesLessThanZero_throwsIllegalArgumentException() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> tmpValenceListContainer.getValenceListEntry(-1, 0)
@@ -154,14 +130,12 @@ public class PubChemValenceListContainerTest {
 
     /**
      * Tests whether the .getValenceListEntry(int, int) method of class PubChemValenceListContainer throws an
-     * IllegalArgumentException if the first parameter is of a value greater than or equal to the length of the first
-     * dimension of the valence list matrix; two tests.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
+     * IllegalArgumentException if the first parameter equals or exceeds the length of the first dimension of the
+     * valence list matrix; two tests.
      */
     @Test
-    public void getValenceListEntryMethodTest_twoParams_param1OutOfBounds_throwsIllegalArgumentException() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_twoParams_param1OutOfBounds_throwsIllegalArgumentException() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //test 1: value equals the length
         Assertions.assertThrows(
                 IllegalArgumentException.class,
@@ -179,36 +153,31 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests whether the .getValenceListEntry(int, int) method of class PubChemValenceListContainer throws an
      * IllegalArgumentException if the second parameter is of a value greater than 4; two tests.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_twoParams_param2OutOfBounds_throwsIllegalArgumentException() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_twoParams_param2OutOfBounds_throwsIllegalArgumentException() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //test 1
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> tmpValenceListContainer
-                        .getValenceListEntry(0, BaseValenceListContainer.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE)
+                        .getValenceListEntry(0, ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE)
         );
         //test 2
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> tmpValenceListContainer
-                        .getValenceListEntry(0, BaseValenceListContainer.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE)
+                        .getValenceListEntry(0, ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE)
         );
     }
 
     /**
      * Tests exemplary whether the .getValenceListEntry(int) method of class PubChemValenceListContainer returns
      * the values imported from the PubChem valence list text file and whether these where imported correctly.
-     * TODO: reference?
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_oneParam_returnsValuesOfPubChemValenceList() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_oneParam_returnsValuesOfPubChemValenceList() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //values of line 2; index 0; first line of the valence list
         Assertions.assertArrayEquals(new int[] {1, 1, 0, 0, 0}, tmpValenceListContainer.getValenceListEntry(0));
         //values of line 6; index 4
@@ -225,12 +194,10 @@ public class PubChemValenceListContainerTest {
      * Tests whether an array returned by the .getValenceListEntry(int) method of class PubChemValenceListContainer
      * is a clone of the original array contained by the valence list matrix (-> different pointer, same values);
      * two exemplary tests.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_oneParam_returnsCloneWithSameValues_twoTests() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_oneParam_returnsCloneWithSameValues_twoTests() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //test 1
         int tmpIndex = 10;
         Assertions.assertNotSame(tmpValenceListContainer.valenceListMatrix[tmpIndex],
@@ -248,12 +215,10 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests whether the .getValenceListEntry(int) method of class PubChemValenceListContainer throws an
      * IllegalArgumentException if the given parameter is of a negative value.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_oneParam_param1IsNegative_throwsIllegalArgumentException() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_oneParam_param1IsNegative_throwsIllegalArgumentException() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
@@ -266,12 +231,10 @@ public class PubChemValenceListContainerTest {
      * Tests whether the .getValenceListEntry(int) method of class PubChemValenceListContainer throws an
      * IllegalArgumentException if the parameter is of a value greater than or equal to the length of the first
      * dimension of the valence list matrix; two tests.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListEntryMethodTest_oneParam_param1OutOfBounds_throwsIllegalArgumentException() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListEntryMethodTest_oneParam_param1OutOfBounds_throwsIllegalArgumentException() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //test 1: value equals the length
         Assertions.assertThrows(
                 IllegalArgumentException.class,
@@ -288,26 +251,22 @@ public class PubChemValenceListContainerTest {
      * Tests whether the .getLengthOfValenceList() method of class PubChemValenceListContainer returns the length of
      * the first dimension of the valence list matrix which equals the number of lines in the PubChem valence list text
      * file minus 1.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getLengthOfValenceListMethodTest_returnsLengthOfValenceListMatrix_981() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getLengthOfValenceListMethodTest_returnsLengthOfValenceListMatrix_981() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         int tmpReturnedValue = tmpValenceListContainer.getLengthOfValenceList();
         Assertions.assertEquals(tmpValenceListContainer.valenceListMatrix.length, tmpReturnedValue);
-        Assertions.assertEquals(PubChemValenceListContainer.NUMBER_OF_ROWS_IN_FILE - 1, tmpReturnedValue);
+        Assertions.assertEquals(PubChemValenceListMatrixWrapper.NUMBER_OF_LINES_IN_FILE - 1, tmpReturnedValue);
     }
 
     /**
      * Tests whether the .getValenceListElementPointer() method of class PubChemValenceListContainer returns pointers
      * that each point at an entry in the list with the specific atomic number.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListElementPointerMethodTest_returnedPointersPointAtListEntryWithTheSpecificAtomicNumber() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListElementPointerMethodTest_returnedPointersPointAtListEntryWithTheSpecificAtomicNumber() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         Assertions.assertEquals(112, tmpValenceListContainer.getHighestAtomicNumberInList());
         int tmpPointedIndex;
         for (int tmpAtomicNumber = 1;
@@ -322,12 +281,10 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests exemplary whether the .getValenceListElementPointer() method of class PubChemValenceListContainer returns
      * pointers that each point at the first entry in the list that contains the specific atomic number.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListElementPointerMethodTest_returnedPointersPointAtFirstListEntryWithTheSpecificAtomicNumber() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListElementPointerMethodTest_returnedPointersPointAtFirstListEntryWithTheSpecificAtomicNumber() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         int tmpPointedIndex;
         //
         int tmpAtomicNumber = 2;
@@ -348,12 +305,10 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests whether the .getValenceListElementPointer() method of class PubChemValenceListContainer returns minus one
      * if the given atomic number is not present in the valence list.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getValenceListElementPointerMethodTest_atomicNumberNotInList_returnsMinusOne() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getValenceListElementPointerMethodTest_atomicNumberNotInList_returnsMinusOne() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //
         int tmpAtomicNumber = 0;
         Assertions.assertEquals(-1, tmpValenceListContainer.getValenceListElementPointer(tmpAtomicNumber));
@@ -370,12 +325,10 @@ public class PubChemValenceListContainerTest {
      * count of entries in the valence list that regard to the specific chemical element for atomic numbers that are
      * present in the valence list; this test uses the fact that the entries in the PubChem valence list are sorted
      * according to their atomic number.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getAtomConfigurationsCountOfElementMethodTest_allAtomicNumbersInList_returnsCorrectCount() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getAtomConfigurationsCountOfElementMethodTest_allAtomicNumbersInList_returnsCorrectCount() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         Assertions.assertEquals(112, tmpValenceListContainer.getHighestAtomicNumberInList());
         int tmpPointedIndex;
         int tmpElementRegardingEntriesCount;
@@ -384,10 +337,11 @@ public class PubChemValenceListContainerTest {
              tmpAtomicNumber++) {
             tmpPointedIndex = tmpValenceListContainer.getValenceListElementPointer(tmpAtomicNumber);
             tmpElementRegardingEntriesCount = 0;
-            while (tmpValenceListContainer.getValenceListEntry(tmpPointedIndex + tmpElementRegardingEntriesCount, 0)
-                    == tmpAtomicNumber) {
+            while (tmpValenceListContainer.getValenceListEntry(tmpPointedIndex
+                    + tmpElementRegardingEntriesCount, 0) == tmpAtomicNumber) {
                 tmpElementRegardingEntriesCount++;
-                if (tmpPointedIndex + tmpElementRegardingEntriesCount >= tmpValenceListContainer.getLengthOfValenceList()) {
+                if (tmpPointedIndex + tmpElementRegardingEntriesCount
+                        >= tmpValenceListContainer.getLengthOfValenceList()) {
                     break;
                 }
             }
@@ -401,12 +355,10 @@ public class PubChemValenceListContainerTest {
     /**
      * Tests whether the .getAtomConfigurationsCountOfElement() method of class PubChemValenceListContainer returns
      * zero if the given atomic number is not present in the valence list.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
      */
     @Test
-    public void getAtomConfigurationsCountOfElementMethodTest_atomicNumberNotInList_returnsZero() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
+    public void getAtomConfigurationsCountOfElementMethodTest_atomicNumberNotInList_returnsZero() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         //
         int tmpAtomicNumber = 0;
         Assertions.assertEquals(0, tmpValenceListContainer.getAtomConfigurationsCountOfElement(tmpAtomicNumber));
@@ -420,17 +372,12 @@ public class PubChemValenceListContainerTest {
 
     /**
      * Tests whether the .getHighestAtomicNumberInList() method of class PubChemValenceListContainer returns the highest
-     * atomic number present in the PubChem valence list text file which also equals the length of the first dimension
-     * of the valence list pointer matrix.
-     *
-     * @throws IOException if a problem occurs loading the data from the valence list file
+     * atomic number present in the PubChem valence list text file.
      */
     @Test
-    public void getHighestAtomicNumberInListMethodTest_returnsHighestAtomicNumberInTheValenceList_112() throws IOException {
-        BaseValenceListContainer tmpValenceListContainer = PubChemValenceListContainer.getInstance();
-        Assertions.assertEquals(PubChemValenceListContainer.HIGHEST_ATOMIC_NUMBER_IN_LIST,
-                tmpValenceListContainer.getHighestAtomicNumberInList());
-        Assertions.assertEquals(tmpValenceListContainer.valenceListPointerMatrix.length,
+    public void getHighestAtomicNumberInListMethodTest_returnsHighestAtomicNumberInTheValenceList_112() {
+        ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
+        Assertions.assertEquals(112,
                 tmpValenceListContainer.getHighestAtomicNumberInList());
     }
 

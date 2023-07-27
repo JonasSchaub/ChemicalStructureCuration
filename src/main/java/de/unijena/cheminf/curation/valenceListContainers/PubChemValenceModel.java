@@ -42,11 +42,6 @@ import org.openscience.cdk.interfaces.IAtom;
  */
 public class PubChemValenceModel implements IValenceModel {
 
-    /**
-     * TODO
-     * @param anAtom the atom to check
-     * @return
-     */
     @Override
     public boolean hasValidValence(IAtom anAtom) {
         //TODO
