@@ -25,7 +25,11 @@
 
 package de.unijena.cheminf.curation.valenceListContainers;
 
+import de.unijena.cheminf.curation.utils.ChemUtils;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IElement;
+
+import java.util.Objects;
 
 /**
  * Valence model based on the list of valid valences and atom configurations published with the paper on PubChem
@@ -42,9 +46,55 @@ import org.openscience.cdk.interfaces.IAtom;
  */
 public class PubChemValenceModel implements IValenceModel {
 
+    /*
+    TODO: implement filter
+    TODO: add functionalities
+     */
+
     @Override
-    public boolean hasValidValence(IAtom anAtom) {
-        //TODO
+    public boolean hasValidValence(IAtom anAtom) throws NullPointerException {
+        return this.hasValidValence(anAtom, false);
+    }
+
+    /**
+     * Checks whether the valence of the given atom is considered as valid according to the valence model. Gives the
+     * option to consider atoms with wildcard atomic number (zero) as having a valid valence; otherwise these atoms are
+     * generally considered as having an invalid valence since the wildcard atomic number is not covered by the PubChem
+     * valence model.
+     * TODO: implement tests
+     * TODO: implement filter
+     *
+     * @param anAtom                   the atom to check
+     * @param aConsiderWildcardAsValid boolean value whether to consider atoms with wildcard atomic number (zero) as
+     *                                 having a valid valence
+     * @return true, if the valence is considered as valid
+     * @throws NullPointerException if the atom is null
+     */
+    @Override
+    public boolean hasValidValence(IAtom anAtom, boolean aConsiderWildcardAsValid) throws NullPointerException {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        final int tmpAtomicNumber = anAtom.getAtomicNumber();
+        if (tmpAtomicNumber == IElement.Wildcard) {
+            return aConsiderWildcardAsValid;
+        }
+        final int tmpFormalCharge = anAtom.getFormalCharge();
+        boolean tmpConsiderImplicitHydrogens = true;
+        int[] tmpSigmaAndPiBondCounts = ChemUtils.getSigmaAndPiBondCounts(anAtom, tmpConsiderImplicitHydrogens);
+        final int tmpSigmaBondCount = tmpSigmaAndPiBondCounts[0];
+        final int tmpPiBondCount = tmpSigmaAndPiBondCounts[1];
+        final int tmpImplicitHydrogensCount = anAtom.getImplicitHydrogenCount();
+        //
+        PubChemValenceListMatrixWrapper tmpMatrixWrapper = PubChemValenceListMatrixWrapper.getInstance();
+        int tmpIndexOfFirstEntry = tmpMatrixWrapper.getValenceListElementPointer(tmpAtomicNumber);
+        int tmpNumberOfEntries = tmpMatrixWrapper.getAtomConfigurationsCountOfElement(tmpAtomicNumber);
+        for (int i = 0; i < tmpNumberOfEntries; i++) {
+            if (anAtom.getFormalCharge() == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 1)
+                    && tmpPiBondCount == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 2)
+                    && tmpSigmaBondCount == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 3)
+                    && tmpImplicitHydrogensCount <= tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 4)) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -320,4 +320,149 @@ public class ChemUtils {
         return tmpContainsPseudoAtoms;
     }
 
+    /**
+     * Returns the sigma bond count of the atom.
+     * TODO: tests
+     *
+     * @param anAtom                     the atom to count the sigma bonds of
+     * @param aConsiderImplicitHydrogens boolean value whether to consider the bonds to implicit hydrogen atoms
+     * @return the sigma bond count
+     * @throws NullPointerException if the given IAtom instance is null
+     * @throws IllegalArgumentException if the bond order of a bond is UNSET or null
+     */
+    public static int getSigmaBondCount(IAtom anAtom, boolean aConsiderImplicitHydrogens) throws NullPointerException,
+            IllegalArgumentException {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        int tmpSigmaBondCount = 0;
+        IBond.Order tmpBondOrder;
+        for (IBond tmpBond : anAtom.bonds()) {
+            if ((tmpBondOrder = tmpBond.getOrder()) == null) {
+                throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
+            }
+            switch (tmpBondOrder) {
+                case SINGLE, DOUBLE, TRIPLE, QUADRUPLE, QUINTUPLE, SEXTUPLE -> {
+                    tmpSigmaBondCount++;
+                }
+                case UNSET -> {
+                    throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_UNSET_ERROR.name());
+                }
+                default -> {
+                    // should not happen; the IBond.Order enum needed to be modified for this
+                    throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_UNKNOWN_ERROR.name());
+                }
+            }
+        }
+        if (aConsiderImplicitHydrogens) {
+            tmpSigmaBondCount += anAtom.getImplicitHydrogenCount();
+        }
+        return tmpSigmaBondCount;
+    }
+
+    /**
+     * Returns the pi bond count of the atom.
+     * TODO: tests
+     *
+     * @param anAtom the atom to count the pi bonds of
+     * @return the pi bond count
+     * @throws NullPointerException if the given IAtom instance is null
+     * @throws IllegalArgumentException if the bond order of a bond is UNSET or null
+     */
+    public static int getPiBondCount(IAtom anAtom) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        int tmpPiBondCount = 0;
+        IBond.Order tmpBondOrder;
+        for (IBond tmpBond : anAtom.bonds()) {
+            if ((tmpBondOrder = tmpBond.getOrder()) == null) {
+                throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
+            }
+            switch (tmpBondOrder) {
+                case SINGLE -> {}
+                case DOUBLE -> {
+                    tmpPiBondCount++;
+                }
+                case TRIPLE -> {
+                    tmpPiBondCount += 2;
+                }
+                case QUADRUPLE -> {
+                    tmpPiBondCount += 3;
+                }
+                case QUINTUPLE -> {
+                    tmpPiBondCount += 4;
+                }
+                case SEXTUPLE -> {
+                    tmpPiBondCount += 5;
+                }
+                case UNSET -> {
+                    throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_UNSET_ERROR.name());
+                }
+                default -> {
+                    // should not happen; the IBond.Order enum needed to be modified for this
+                    throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_UNKNOWN_ERROR.name());
+                }
+            }
+        }
+        return tmpPiBondCount;
+    }
+
+    /**
+     * Returns an array containing in the first position the sigma bond count and in the second position the pi bond
+     * count of the atom.
+     * TODO: tests
+     *
+     * @param anAtom                     the atom to count the sigma and pi bonds of
+     * @param aConsiderImplicitHydrogens boolean value whether to consider the bonds to implicit hydrogen atoms
+     * @return an array containing in the sigma bond count (index 0) and the pi bond count (index 1) of the given atom
+     * @throws NullPointerException if the given IAtom instance is null
+     * @throws IllegalArgumentException if the bond order of a bond is UNSET or null
+     */
+    public static int[] getSigmaAndPiBondCounts(IAtom anAtom, boolean aConsiderImplicitHydrogens)
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        // not using getSigmaBondCount() and getPiBondCount() for an increased performance
+        int tmpSigmaBondCount = 0;
+        int tmpPiBondCount = 0;
+        IBond.Order tmpBondOrder;
+        for (IBond tmpBond : anAtom.bonds()) {
+            if ((tmpBondOrder = tmpBond.getOrder()) == null) {
+                throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
+            }
+            switch (tmpBondOrder) {
+                case SINGLE -> {
+                    tmpSigmaBondCount++;
+                }
+                case DOUBLE -> {
+                    tmpSigmaBondCount++;
+                    tmpPiBondCount++;
+                }
+                case TRIPLE -> {
+                    tmpSigmaBondCount++;
+                    tmpPiBondCount += 2;
+                }
+                case QUADRUPLE -> {
+                    tmpSigmaBondCount++;
+                    tmpPiBondCount += 3;
+                }
+                case QUINTUPLE -> {
+                    tmpSigmaBondCount++;
+                    tmpPiBondCount += 4;
+                }
+                case SEXTUPLE -> {
+                    tmpSigmaBondCount++;
+                    tmpPiBondCount += 5;
+                }
+                case UNSET -> {
+                    throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_UNSET_ERROR.name());
+                }
+                default -> {
+                    // should not happen; the IBond.Order enum needed to be modified for this
+                    throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_UNKNOWN_ERROR.name());
+                }
+            }
+        }
+        if (aConsiderImplicitHydrogens) {
+            tmpSigmaBondCount += anAtom.getImplicitHydrogenCount();
+        }
+        return new int[]{tmpSigmaBondCount, tmpPiBondCount};
+    }
+
 }

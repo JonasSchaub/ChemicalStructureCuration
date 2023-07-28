@@ -60,6 +60,7 @@ public class ValenceListMatrixWrapper {
      TODO: Constructor taking no only the list (-> runs threw the list and determines the number of lines in file before
       calling the main constructor)
      TODO: change the type of the thrown exceptions
+     TODO: change the datatype of the arrays? -> byte should be possible
      */
 
     /**
@@ -124,8 +125,8 @@ public class ValenceListMatrixWrapper {
     protected final int[][] valenceListPointerMatrix;
 
     /**
-     * Private constructor. Loads a valence list text file, a file containing a list of valid valences and
-     * configurations of atoms.
+     * Constructor; loads a valence list text file, a file containing a list of valid valences and configurations of
+     * atoms and wraps the imported data into two matrices. The data
      * <br>
      * The list, in which each line stands for one valid atom configuration, is expected to have the following format
      * and contain the following information:
@@ -164,7 +165,21 @@ public class ValenceListMatrixWrapper {
     }
 
     /**
-     * TODO
+     * Constructor; loads a valence list text file, a file containing a list of valid valences and configurations of
+     * atoms and wraps the imported data into two matrices.
+     * <br>
+     * The list, in which each line stands for one valid atom configuration, is expected to have the following format
+     * and contain the following information:
+     * <ul>
+     * <li>one headline;
+     * <li>no empty or blank lines;
+     * <li>five columns per line, separated by a tabulator ("\t");
+     * <li>stored data: atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
+     * bonds (column 4), maximum number of implicit hydrogens (column 5).
+     * </ul>
+     * The list entries must be sorted according to their atomic number, starting with the entries with the lowest
+     * atomic number.
+     *
      * @param aValenceListFilePath
      * @throws NullPointerException
      * @throws IllegalArgumentException if the file contains less than two lines

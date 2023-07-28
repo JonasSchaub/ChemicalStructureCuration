@@ -54,6 +54,21 @@ public enum ErrorCodes {
     BOND_NULL_ERROR,
 
     /**
+     * The order of an IBond instance is UNSET.
+     */
+    BOND_ORDER_UNSET_ERROR,
+
+    /**
+     * The order of an IBond instance is null.
+     */
+    BOND_ORDER_NULL_ERROR,
+
+    /**
+     * The order on an IBond instance is of an unknown type.
+     */
+    BOND_ORDER_UNKNOWN_ERROR,
+
+    /**
      * An atom has no atomic number; the atomic number is null.
      */
     ATOMIC_NUMBER_NULL_ERROR,

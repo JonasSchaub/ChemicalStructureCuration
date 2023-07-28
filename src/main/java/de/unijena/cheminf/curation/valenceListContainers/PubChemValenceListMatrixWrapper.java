@@ -45,8 +45,6 @@ public class PubChemValenceListMatrixWrapper extends ValenceListMatrixWrapper {
     /*
     TODO: add link / reference to the source of the PubChem valence list file
     //
-    TODO: implement filter
-    //
     TODO: rename package
      */
 
@@ -56,15 +54,8 @@ public class PubChemValenceListMatrixWrapper extends ValenceListMatrixWrapper {
     private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt";
 
     /**
-     * Integer value of the highest atomic number contained in the "PubChem_Valence_list.txt".
-     * @see #VALENCE_LIST_FILE_PATH
-     */
-    protected static final int HIGHEST_ATOMIC_NUMBER_IN_LIST = 112;
-
-    /**
      * Integer value of the number of lines contained by the PubChem valence list text file; 981 lines of content + one
      * headline.
-     * @see #VALENCE_LIST_FILE_PATH
      */
     protected static final int NUMBER_OF_LINES_IN_FILE = 982;
 

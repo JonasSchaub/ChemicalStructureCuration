@@ -36,11 +36,26 @@ import org.openscience.cdk.interfaces.IAtom;
 public interface IValenceModel {
 
     /**
-     * Checks whether the valence of the given atom is considered as valid according to the valence model.
+     * Calls {@link #hasValidValence(IAtom, boolean)} with whether to generally consider atoms with wildcard atomic
+     * number as valid set to false.
      *
      * @param anAtom the atom to check
      * @return true, if the valence is considered as valid
+     * @throws NullPointerException if the atom is null
      */
-    public boolean hasValidValence(IAtom anAtom);
+    public boolean hasValidValence(IAtom anAtom) throws NullPointerException;
+
+    /**
+     * Checks whether the valence of the given atom is considered as valid according to the valence model. Atoms with
+     * wildcard atomic number zero may generally be considered to have a valid valence; otherwise atoms with wildcard
+     * atomic number need to be covered by the valence model or are generally considered as invalid.
+     *
+     * @param anAtom                   the atom to check
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return true, if the valence is considered as valid
+     * @throws NullPointerException if the atom is null
+     */
+    public boolean hasValidValence(IAtom anAtom, boolean aConsiderWildcardAsValid) throws NullPointerException;
 
 }
