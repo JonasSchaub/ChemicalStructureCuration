@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
+import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -209,6 +211,54 @@ public class FilterUtils {
                 return anIncludeWildcardNumber;
             }
             return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether the atoms of the given atom container all have valid valences according to the {@link
+     * PubChemValenceModel}. Calls {@link #hasAllValidValences(IAtomContainer, boolean, IValenceModel)} for this.
+     *
+     * @param anAtomContainer          the atom container to check the valences of
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return true, if all atoms of the given atom container have a valence considered as valid
+     * @throws NullPointerException if the given atom container or an atom contained by it is null; if atomic number,
+     *                              formal charge or the implicit hydrogen count of an atom is null; if the bond order
+     *                              of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @see #hasAllValidValences(IAtomContainer, boolean, IValenceModel)
+     * @see PubChemValenceModel
+     */
+    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aConsiderWildcardAsValid)
+            throws NullPointerException {
+        IValenceModel tmpValenceModel = new PubChemValenceModel();
+        return FilterUtils.hasAllValidValences(anAtomContainer, aConsiderWildcardAsValid, tmpValenceModel);
+    }
+
+    /**
+     * Returns whether the atoms of the given atom container all have valid valences according to the given valence
+     * model.
+     *
+     * @param anAtomContainer          the atom container to check the valences of
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @param aValenceModel            the valence model to check the valences for their validity with
+     * @return true, if all atoms of the given atom container have a valence considered as valid
+     * @throws NullPointerException if the given valence model, atom container or an atom contained by the atom
+     *                              container is null; if atomic number, formal charge or the implicit hydrogen count
+     *                              of an atom is null; if the bond order of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     */
+    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aConsiderWildcardAsValid,
+                                              IValenceModel aValenceModel) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
+        Objects.requireNonNull(aValenceModel, ErrorCodes.VALENCE_MODEL_NULL_ERROR.name());
+        //
+        for (IAtom tmpAtom : anAtomContainer.atoms()) {
+            if (!aValenceModel.hasValidValence(tmpAtom, aConsiderWildcardAsValid)) {
+                return false;
+            }
         }
         return true;
     }
