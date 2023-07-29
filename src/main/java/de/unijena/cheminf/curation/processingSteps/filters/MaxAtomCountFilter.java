@@ -109,6 +109,10 @@ public class MaxAtomCountFilter extends BaseFilter {
         this.considerPseudoAtoms = aConsiderPseudoAtoms;
     }
 
+    /**
+     * @throws NullPointerException {@inheritDoc}; if implicit hydrogen atoms are to be considered but the implicit
+     *                              hydrogen count of an atom is null
+     */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());

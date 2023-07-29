@@ -57,7 +57,8 @@ public class FilterUtils {
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return true, if the atom count of the given atom container exceeds or equals the given threshold
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if the implicit hydrogen count of
+     *                              an atom is null
      * @throws IllegalArgumentException if the given threshold value is below zero
      * @see #exceedsOrEqualsHeavyAtomCount(IAtomContainer, int, boolean)
      */
@@ -108,7 +109,8 @@ public class FilterUtils {
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if implicit hydrogen atoms are to
+     *                              be considered but the implicit hydrogen count of an atom is null
      * @throws IllegalArgumentException if the given threshold value is below zero
      */
     public static boolean exceedsOrEqualsBondCount(IAtomContainer anAtomContainer, int aThresholdValue,
@@ -137,7 +139,8 @@ public class FilterUtils {
      *                                   only relevant when counting bonds of the order one / single
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return Boolean value whether the given atom container exceeds or equals the given threshold
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if implicit hydrogen atoms are to
+     *                              be considered but the implicit hydrogen count of an atom is null
      * @throws IllegalArgumentException if the given threshold value is below zero
      */
     public static boolean exceedsOrEqualsBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer,
@@ -165,19 +168,16 @@ public class FilterUtils {
      * TODO: adapt according to the new valence model
      * Checks whether the atomic numbers of all IAtom instances contained in an IAtomContainer instance are valid. An
      * atomic number is considered as valid if it is a number between one and 118; the wildcard atomic number zero is
-     * considered as valid depending on the given boolean parameter. An IllegalArgumentException is thrown if an unset
-     * atomic number is encountered; throws a NullPointerException if the given IAtomContainer instance or an IAtom
-     * instance is null.
+     * considered as valid depending on the given boolean parameter. The atomic numbers may not be null.
      *
      * @param anAtomContainer IAtomContainer to check
      * @param anIncludeWildcardNumber whether to consider zero, the wildcard atomic number, as valid atomic number
      * @return true, if the atomic numbers of all atoms of the given atom container are considered as valid
-     * @throws NullPointerException if the given instance of IAtomContainer or an IAtom instance contained by it is null
-     * @throws IllegalArgumentException if the atomic number of an IAtom instance of the given IAtomContainer instance
-     * is null
+     * @throws NullPointerException if the given atom container is null; if an atom contained by the atom container or
+     *                              the atomic number of an atom is null
      */
     public static boolean hasAllValidAtomicNumbers(IAtomContainer anAtomContainer, boolean anIncludeWildcardNumber)
-            throws NullPointerException, IllegalArgumentException {
+            throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         for (IAtom tmpAtom : anAtomContainer.atoms()) {
             if (!FilterUtils.hasValidAtomicNumber(tmpAtom, anIncludeWildcardNumber)) {
@@ -191,19 +191,18 @@ public class FilterUtils {
      * TODO: adapt according to the new valence model
      * Checks whether the atomic number of an IAtom instance is valid. An atomic number is seen as valid if it is
      * a number between one and 118; the wildcard atomic number zero is considered as valid depending on the given
-     * boolean parameter. An IllegalArgumentException is thrown if the given IAtom instance has no atomic number.
+     * boolean parameter. The atomic number may not be null.
      *
      * @param anAtom IAtom instance to check
      * @param anIncludeWildcardNumber whether to consider zero, the wildcard atomic number, as valid atomic number
      * @return true, if the atomic number of the given atom is considered as valid
-     * @throws NullPointerException if the given instance of IAtom is null
-     * @throws IllegalArgumentException if the atomic number of the given IAtom instance is null
+     * @throws NullPointerException if the given instance of IAtom or its atomic number is null
      */
     public static boolean hasValidAtomicNumber(IAtom anAtom, boolean anIncludeWildcardNumber)
-            throws NullPointerException, IllegalArgumentException {
+            throws NullPointerException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         if (anAtom.getAtomicNumber() == null) {
-            throw new IllegalArgumentException(ErrorCodes.ATOMIC_NUMBER_NULL_ERROR.name());
+            throw new NullPointerException(ErrorCodes.ATOMIC_NUMBER_NULL_ERROR.name());
         }
         if (anAtom.getAtomicNumber() <= 0 || anAtom.getAtomicNumber() > 118) {
             if (anAtom.getAtomicNumber() == 0) {

@@ -46,6 +46,7 @@ import org.openscience.cdk.interfaces.IElement;
  */
 public class FilterUtilsTest {
 
+    //<editor-fold desc="exceedsOrEqualsAtomCount() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .exceedsOrEqualsAtomCount() method of class FilterUtils returns true if given atom container
      * exceeds the given threshold considering implicit hydrogen atoms.
@@ -190,7 +191,9 @@ public class FilterUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="exceedsOrEqualsHeavyAtomCount() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .exceedsOrEqualsHeavyAtomCount() method of class FilterUtils returns true if an atom container
      * exceeds the given threshold; tested with multiple atom containers.
@@ -207,8 +210,7 @@ public class FilterUtilsTest {
         );
         int tmpThresholdValue = 2;
         boolean tmpConsiderPseudoAtoms = true;
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : tmpAtomContainerSet.atomContainers()) {
             Assertions.assertTrue(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue,
                     tmpConsiderPseudoAtoms));
         }
@@ -230,8 +232,7 @@ public class FilterUtilsTest {
         );
         int tmpThresholdValue = 7;
         boolean tmpConsiderPseudoAtoms = true;
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : tmpAtomContainerSet.atomContainers()) {
             Assertions.assertFalse(FilterUtils.exceedsOrEqualsHeavyAtomCount(tmpAtomContainer, tmpThresholdValue,
                     tmpConsiderPseudoAtoms));
         }
@@ -291,7 +292,9 @@ public class FilterUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="exceedsOrEqualsBondCount() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .exceedsOrEqualsBondCount() method of class FilterUtils returns true if given atom container
      * exceeds the given threshold considering bonds to implicit hydrogen atoms.
@@ -423,7 +426,9 @@ public class FilterUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="exceedsOrEqualsBondsOfSpecificBondOrderCount() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .exceedsOrEqualsBondsOfSpecificBondOrderCount() method of class FilterUtils returns true if
      * the given atom container exceeds the given threshold for bonds of bond order single considering and not
@@ -580,37 +585,13 @@ public class FilterUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
-    /**
-     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns a boolean value if given
-     * an atom with an atomic number not null; the boolean param has no impact on this.
-     */
-    @Test
-    public void hasValidAtomicNumberTest_returnsInstanceOfBooleanIfAtomHasAtomicNumber() {
-        IAtom tmpAtom = new Atom(1);
-        boolean tmpIncludeWildcardNumber = true;
-        Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
-        tmpIncludeWildcardNumber = false;
-        Assertions.assertInstanceOf(Boolean.class, FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
-    }
-
+    //<editor-fold desc="hasValidAtomicNumber(IAtom, boolean) method tests" defaultstate="collapsed">
     /**
      * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns true if the given atom has a valid
-     * atomic number; atomic number = 6; whether the wildcard number 0 is included, has no impact on the result here.
-     */
-    @Test
-    public void hasValidAtomicNumberTest_returnsTrueForAtomicNumber6() {
-        IAtom tmpAtom = new Atom(IElement.C);   //atomic number: 6
-        boolean tmpIncludeWildcardNumber = true;
-        Assertions.assertTrue(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
-        tmpIncludeWildcardNumber = false;
-        Assertions.assertTrue(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
-    }
-
-    /**
-     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils returns true if the given atom has a valid
-     * atomic number; tested atomic numbers: 1, 2, 8, 10, 118; whether the wildcard number 0 is included, has no impact
-     * on the results here.
+     * atomic number; tested atomic numbers: 1, 2, 8, 10, 118; it is made sure, that whether the wildcard number 0 is
+     * included, has no impact on the result here.
      */
     @Test
     public void hasValidAtomicNumberTest_returnsTrueForDifferentValidAtomicNumbers() {
@@ -623,8 +604,7 @@ public class FilterUtilsTest {
         };
         IAtom tmpAtom = new Atom();
         boolean tmpIncludeWildcardNumber;
-        for (int tmpAtomicNumber :
-                tmpAtomicNumbersArray) {
+        for (int tmpAtomicNumber : tmpAtomicNumbersArray) {
             tmpAtom.setAtomicNumber(tmpAtomicNumber);
             tmpIncludeWildcardNumber = true;
             Assertions.assertTrue(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
@@ -648,8 +628,7 @@ public class FilterUtilsTest {
         };
         IAtom tmpAtom = new Atom();
         boolean tmpIncludeWildcardNumber;
-        for (int tmpAtomicNumber :
-                tmpAtomicNumbersArray) {
+        for (int tmpAtomicNumber : tmpAtomicNumbersArray) {
             tmpAtom.setAtomicNumber(tmpAtomicNumber);
             tmpIncludeWildcardNumber = true;
             Assertions.assertFalse(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
@@ -673,8 +652,7 @@ public class FilterUtilsTest {
         };
         IAtom tmpAtom = new Atom();
         boolean tmpIncludeWildcardNumber;
-        for (int tmpAtomicNumber :
-                tmpAtomicNumbersArray) {
+        for (int tmpAtomicNumber : tmpAtomicNumbersArray) {
             tmpAtom.setAtomicNumber(tmpAtomicNumber);
             tmpIncludeWildcardNumber = true;
             Assertions.assertFalse(FilterUtils.hasValidAtomicNumber(tmpAtom, tmpIncludeWildcardNumber));
@@ -702,7 +680,7 @@ public class FilterUtilsTest {
      * IAtom instance is null.
      */
     @Test
-    public void hasValidAtomicNumberTest_throwsNullPointerExceptionIfGivenAtomIsNull() {
+    public void hasValidAtomicNumberTest_atomIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -714,13 +692,13 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils throws an IllegalArgumentException if the
-     * atomic number of the given IAtom instance is null; the boolean param has no impact on this.
+     * Tests whether the .hasValidAtomicNumber() method of class FilterUtils throws a NullPointerException if the atomic
+     * number of the given IAtom instance is null; the boolean param has no impact on this.
      */
     @Test
-    public void hasValidAtomicNumberTest_returnsNullIfAtomHasAtomicNumberNull() {
+    public void hasValidAtomicNumberTest_atomicNumberNull_throwsNullPointerException() {
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                NullPointerException.class,
                 () -> {
                     IAtom tmpAtom = new Atom(); //has atomic number null
                     boolean tmpIncludeWildcardNumber = true;
@@ -728,7 +706,7 @@ public class FilterUtilsTest {
                 }
         );
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                NullPointerException.class,
                 () -> {
                     IAtom tmpAtom = new Atom(); //has atomic number null
                     boolean tmpIncludeWildcardNumber = false;
@@ -736,7 +714,9 @@ public class FilterUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
+    //<editor-fold desc="hasValidAtomicNumber(IAtomContainer, boolean) method tests" defaultstate="collapsed">
     /**
      * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils returns true if all atoms of the given
      * atom container have a valid atomic number; whether the wildcard atomic number is included has no impact here.
@@ -751,8 +731,7 @@ public class FilterUtilsTest {
                 "C#N"
         );
         boolean tmpIncludeWildcardNumber;
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : tmpAtomContainerSet.atomContainers()) {
             tmpIncludeWildcardNumber = true;    //has no impact here
             Assertions.assertTrue(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
             tmpIncludeWildcardNumber = false;   //has no impact here
@@ -786,8 +765,7 @@ public class FilterUtilsTest {
         tmpAtomContainerSet.getAtomContainer(2).getAtom(0).setAtomicNumber(-1);
         //
         boolean tmpIncludeWildcardNumber;
-        for (IAtomContainer tmpAtomContainer :
-                tmpAtomContainerSet.atomContainers()) {
+        for (IAtomContainer tmpAtomContainer : tmpAtomContainerSet.atomContainers()) {
             tmpIncludeWildcardNumber = true;    //has no impact
             Assertions.assertFalse(FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber));
             tmpIncludeWildcardNumber = false;   //has no impact
@@ -817,7 +795,7 @@ public class FilterUtilsTest {
      * given IAtomContainer instance is null.
      */
     @Test
-    public void hasAllValidAtomicNumbersTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
+    public void hasAllValidAtomicNumbersTest_atomContainerIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -829,13 +807,13 @@ public class FilterUtilsTest {
     }
 
     /**
-     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils throws an IllegalArgumentException if
-     * the given IAtomContainer instance contains IAtom instances with their atomic number being null.
+     * Tests whether the .hasAllValidAtomicNumbers() method of class FilterUtils throws a NullPointerException if the
+     * given IAtomContainer instance contains IAtom instances with their atomic number being null.
      */
     @Test
-    public void hasAllValidAtomicNumbersTest_throwsIllegalArgumentExceptionIfAnAtomicNumberIsNull() {
+    public void hasAllValidAtomicNumbersTest_atomicNumberIsNull_throwsNullPointerException() {
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                NullPointerException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     IAtom tmpAtom = new Atom(); //has atomic number null
@@ -845,5 +823,6 @@ public class FilterUtilsTest {
                 }
         );
     }
+    //</editor-fold>
 
 }

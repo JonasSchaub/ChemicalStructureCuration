@@ -91,17 +91,17 @@ public class HasAllValidAtomicNumbersFilter extends BaseFilter {
         //
         try {
             return !FilterUtils.hasAllValidAtomicNumbers(anAtomContainer, this.wildcardAtomicNumberIsValid);
-        } catch (IllegalArgumentException anIllegalArgumentException) {
+        } catch (NullPointerException aNullPointerException) {
             //check whether it is an ATOMIC_NUMBER_NULL_ERROR; re-throw exception otherwise
             try {
-                if (ErrorCodes.valueOf(anIllegalArgumentException.getMessage()) == ErrorCodes.ATOMIC_NUMBER_NULL_ERROR) {
+                if (ErrorCodes.valueOf(aNullPointerException.getMessage()) == ErrorCodes.ATOMIC_NUMBER_NULL_ERROR) {
                     //atomic number being null is considered as an invalid atomic number
                     return true;
                 }
             } catch (Exception ignored) {
                 //ignored
             }
-            throw anIllegalArgumentException;
+            throw aNullPointerException;
         }
     }
 
