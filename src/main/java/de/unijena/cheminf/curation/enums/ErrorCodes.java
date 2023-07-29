@@ -74,6 +74,16 @@ public enum ErrorCodes {
     ATOMIC_NUMBER_NULL_ERROR,
 
     /**
+     * An atom has its formal charge (Integer) being null.
+     */
+    FORMAL_CHARGE_NULL_ERROR,
+
+    /**
+     * An atom has its implicit hydrogen count (Integer) being null.
+     */
+    IMPLICIT_HYDROGEN_COUNT_NULL_ERROR,
+
+    /**
      * The IAtomContainer instance of the structure contains no atoms.
      */
     NO_ATOMS_ERROR,
@@ -92,6 +102,11 @@ public enum ErrorCodes {
      * The given MassComputationFlavours enum constant is null.
      */
     FLAVOUR_NULL_ERROR,
+
+    /**
+     * The given valence model (IValenceModel instance) is null.
+     */
+    VALENCE_MODEL_NULL_ERROR,
 
     /**
      * An expected atom container property is unset.

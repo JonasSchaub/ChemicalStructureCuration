@@ -25,6 +25,7 @@
 
 package de.unijena.cheminf.curation.valenceListContainers;
 
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.ChemUtils;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IElement;
@@ -51,8 +52,13 @@ public class PubChemValenceModel implements IValenceModel {
     TODO: add functionalities
      */
 
+    /**
+     * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
+     *                              of an atom is null; if the bond order of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     */
     @Override
-    public boolean hasValidValence(IAtom anAtom) throws NullPointerException {
+    public boolean hasValidValence(IAtom anAtom) throws NullPointerException, IllegalArgumentException {
         return this.hasValidValence(anAtom, false);
     }
 
@@ -62,36 +68,60 @@ public class PubChemValenceModel implements IValenceModel {
      * generally considered as having an invalid valence since the wildcard atomic number is not covered by the PubChem
      * valence model.
      * TODO: implement tests
+     * TODO: other exceptions to be thrown?
+     *  atomic number, formal charge, implicit hydrogen count can be null; bond order can be null and UNSET
      * TODO: implement filter
      *
      * @param anAtom                   the atom to check
      * @param aConsiderWildcardAsValid boolean value whether to consider atoms with wildcard atomic number (zero) as
      *                                 having a valid valence
      * @return true, if the valence is considered as valid
-     * @throws NullPointerException if the atom is null
+     * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
+     *                              of an atom is null; if the bond order of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      */
     @Override
-    public boolean hasValidValence(IAtom anAtom, boolean aConsiderWildcardAsValid) throws NullPointerException {
-        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
-        final int tmpAtomicNumber = anAtom.getAtomicNumber();
-        if (tmpAtomicNumber == IElement.Wildcard) {
-            return aConsiderWildcardAsValid;
+    public boolean hasValidValence(IAtom anAtom, boolean aConsiderWildcardAsValid) throws NullPointerException,
+            IllegalArgumentException {
+        Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
+        Integer tmpNotNullInteger;
+        //<editor-fold desc="atomic number" defaultstate="collapsed">
+        if ((tmpNotNullInteger = anAtom.getAtomicNumber()) == null) {
+            throw new NullPointerException(ErrorCodes.ATOMIC_NUMBER_NULL_ERROR.name());
         }
-        final int tmpFormalCharge = anAtom.getFormalCharge();
+        final int tmpAtomicNumber = tmpNotNullInteger;
+        //</editor-fold>
+        //<editor-fold desc="formal charge" defaultstate="collapsed">
+        if ((tmpNotNullInteger = anAtom.getFormalCharge()) == null) {
+            throw new NullPointerException(ErrorCodes.FORMAL_CHARGE_NULL_ERROR.name());
+        }
+        final int tmpFormalCharge = tmpNotNullInteger;
+        //</editor-fold>
+        //<editor-fold desc="implicit hydrogen count" defaultstate="collapsed">
+        if ((tmpNotNullInteger = anAtom.getImplicitHydrogenCount()) == null) {
+            throw new NullPointerException(ErrorCodes.IMPLICIT_HYDROGEN_COUNT_NULL_ERROR.name());
+        }
+        final int tmpImplicitHydrogenCount = tmpNotNullInteger;
+        //</editor-fold>
+        //<editor-fold desc="sigma and pi bond counts" defaultstate="collapsed">
         boolean tmpConsiderImplicitHydrogens = true;
         int[] tmpSigmaAndPiBondCounts = ChemUtils.getSigmaAndPiBondCounts(anAtom, tmpConsiderImplicitHydrogens);
         final int tmpSigmaBondCount = tmpSigmaAndPiBondCounts[0];
         final int tmpPiBondCount = tmpSigmaAndPiBondCounts[1];
-        final int tmpImplicitHydrogensCount = anAtom.getImplicitHydrogenCount();
+        //</editor-fold>
+        //
+        if (tmpAtomicNumber == IElement.Wildcard) {
+            return aConsiderWildcardAsValid;
+        }
         //
         PubChemValenceListMatrixWrapper tmpMatrixWrapper = PubChemValenceListMatrixWrapper.getInstance();
         int tmpIndexOfFirstEntry = tmpMatrixWrapper.getValenceListElementPointer(tmpAtomicNumber);
         int tmpNumberOfEntries = tmpMatrixWrapper.getAtomConfigurationsCountOfElement(tmpAtomicNumber);
         for (int i = 0; i < tmpNumberOfEntries; i++) {
-            if (anAtom.getFormalCharge() == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 1)
+            if (tmpFormalCharge == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 1)
                     && tmpPiBondCount == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 2)
                     && tmpSigmaBondCount == tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 3)
-                    && tmpImplicitHydrogensCount <= tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 4)) {
+                    && tmpImplicitHydrogenCount <= tmpMatrixWrapper.getValenceListEntry(tmpIndexOfFirstEntry + i, 4)) {
                 return true;
             }
         }

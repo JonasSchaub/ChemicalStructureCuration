@@ -93,7 +93,7 @@ public class FilterUtils {
         if (aThresholdValue < 0) {
             throw new IllegalArgumentException(ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR.name());
         }
-        final int tmpHeavyAtomCount = ChemUtils.getHeavyAtomsCount(anAtomContainer, aConsiderPseudoAtoms);
+        final int tmpHeavyAtomCount = ChemUtils.getHeavyAtomCount(anAtomContainer, aConsiderPseudoAtoms);
         return tmpHeavyAtomCount >= aThresholdValue;
     }
 

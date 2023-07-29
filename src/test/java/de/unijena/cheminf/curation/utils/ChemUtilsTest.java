@@ -29,7 +29,6 @@ import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.PseudoAtom;
@@ -847,7 +846,7 @@ public class ChemUtilsTest {
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             Assertions.assertEquals(
                     tmpExpectedHeavyAtomsCount[i],
-                    ChemUtils.getHeavyAtomsCount(tmpAtomContainerSet.getAtomContainer(i), tmpConsiderPseudoAtoms)
+                    ChemUtils.getHeavyAtomCount(tmpAtomContainerSet.getAtomContainer(i), tmpConsiderPseudoAtoms)
             );
         }
     }
@@ -863,7 +862,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
                     boolean tmpConsiderPseudoAtoms = true;
-                    ChemUtils.getHeavyAtomsCount(tmpAtomContainer, tmpConsiderPseudoAtoms);
+                    ChemUtils.getHeavyAtomCount(tmpAtomContainer, tmpConsiderPseudoAtoms);
                 }
         );
     }
@@ -1050,17 +1049,17 @@ public class ChemUtilsTest {
     }
 
     /**
-     * Tests whether the getSigmaBondCount() method of ChemUtils throws an IllegalArgumentException if the bond order
-     * of a bond is null.
+     * Tests whether the getSigmaBondCount() method of ChemUtils throws a NullPointerException if the bond order of a
+     * bond is null.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void getSigmaBondCountTest_bondOrderNull_throwsIllegalArgumentException() throws InvalidSmilesException {
+    public void getSigmaBondCountTest_bondOrderNull_throwsNullPointerException() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
         tmpAtomContainer.getBond(0).setOrder(null);
         boolean tmpConsiderImplicitHydrogens = true; // irrelevant
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
     }
 
@@ -1076,6 +1075,22 @@ public class ChemUtilsTest {
         tmpAtomContainer.getBond(0).setOrder(IBond.Order.UNSET);
         boolean tmpConsiderImplicitHydrogens = true; // irrelevant
         Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils throws a NullPointerException if implicit hydrogen
+     * atoms are to be considered and the implicit hydrogen count of the atom is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaBondCountTest_considerImplicitHs_hydrogenCountNull_throwsNullPointerException()
+            throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C");
+        tmpAtomContainer.getAtom(0).setImplicitHydrogenCount(null);
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
     }
     //</editor-fold>
@@ -1101,16 +1116,16 @@ public class ChemUtilsTest {
     }
 
     /**
-     * Tests whether the getPiBondCount() method of ChemUtils throws an IllegalArgumentException if the bond order of
-     * a bond is null.
+     * Tests whether the getPiBondCount() method of ChemUtils throws a NullPointerException if the bond order of a bond
+     * is null.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void getPiBondCountTest_bondOrderNull_throwsIllegalArgumentException() throws InvalidSmilesException {
+    public void getPiBondCountTest_bondOrderNull_throwsNullPointerException() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=C");
         tmpAtomContainer.getBond(0).setOrder(null);
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getPiBondCount(tmpAtomContainer.getAtom(0)));
     }
 
@@ -1181,17 +1196,17 @@ public class ChemUtilsTest {
     }
 
     /**
-     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws an IllegalArgumentException if the bond
-     * order of a bond is null.
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws a NullPointerException if the bond order
+     * of a bond is null.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void getSigmaAndPiBondCountsTest_bondOrderNull_throwsIllegalArgumentException() throws InvalidSmilesException {
+    public void getSigmaAndPiBondCountsTest_bondOrderNull_throwsNullPointerException() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
         tmpAtomContainer.getBond(0).setOrder(null);
         boolean tmpConsiderImplicitHydrogens = true; // irrelevant
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
     }
 
@@ -1207,6 +1222,22 @@ public class ChemUtilsTest {
         tmpAtomContainer.getBond(0).setOrder(IBond.Order.UNSET);
         boolean tmpConsiderImplicitHydrogens = true; // irrelevant
         Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws a NullPointerException if implicit
+     * hydrogen atoms are to be considered and the implicit hydrogen count of the atom is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_considerImplicitHs_hydrogenCountNull_throwsNullPointerException()
+            throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C");
+        tmpAtomContainer.getAtom(0).setImplicitHydrogenCount(null);
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
     }
     //</editor-fold>

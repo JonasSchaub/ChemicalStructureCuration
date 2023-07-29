@@ -27,6 +27,8 @@ package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
+import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
+import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -55,7 +57,8 @@ public class ChemUtils {
      * @param aConsiderImplicitHydrogens Boolean value whether to consider implicit hydrogen atoms
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return Integer number of atoms in the given atom container
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if implicit hydrogens are to be
+     *                              considered and the implicit hydrogen count of an atom is null
      */
     public static int getAtomCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens,
                                    boolean aConsiderPseudoAtoms) throws NullPointerException {
@@ -75,31 +78,39 @@ public class ChemUtils {
     }
 
     /**
-     * Returns the number of implicit hydrogen atoms present in the given atom container. The implicit hydrogen count
-     * assigned to instances of {@link IPseudoAtom} may or may not be taken into account.
+     * Returns the total count of implicit hydrogen atoms present in the given atom container. The implicit hydrogen
+     * count assigned to instances of {@link IPseudoAtom} may or may not be taken into account.
      *
      * @param anAtomContainer IAtomContainer instance to check
      * @param aConsiderPseudoAtoms boolean value whether to consider implicit hydrogen counts of IPseudoAtom instances
      * @return Integer value of the count of implicit hydrogen atoms
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if the implicit hydrogen count of
+     *                              an atom is null
      */
     public static int getImplicitHydrogenCount(IAtomContainer anAtomContainer, boolean aConsiderPseudoAtoms)
             throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
-        int tmpImplicitHydrogenCount = 0;
+        int tmpTotalImplicitHydrogenCount = 0;
+        Integer tmpImplicitHydrogenCount;
         if (!aConsiderPseudoAtoms && ChemUtils.containsPseudoAtoms(anAtomContainer)) {
             for (IAtom tmpAtom : anAtomContainer.atoms()) {
                 if (tmpAtom instanceof IPseudoAtom) {
                     continue;
                 }
-                tmpImplicitHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+                if ((tmpImplicitHydrogenCount = tmpAtom.getImplicitHydrogenCount()) == null) {
+                    throw new NullPointerException(ErrorCodes.IMPLICIT_HYDROGEN_COUNT_NULL_ERROR.name());
+                }
+                tmpTotalImplicitHydrogenCount += tmpImplicitHydrogenCount;
             }
         } else {
             for (IAtom tmpAtom : anAtomContainer.atoms()) {
-                tmpImplicitHydrogenCount += tmpAtom.getImplicitHydrogenCount();
+                if ((tmpImplicitHydrogenCount = tmpAtom.getImplicitHydrogenCount()) == null) {
+                    throw new NullPointerException(ErrorCodes.IMPLICIT_HYDROGEN_COUNT_NULL_ERROR.name());
+                }
+                tmpTotalImplicitHydrogenCount += tmpImplicitHydrogenCount;
             }
         }
-        return tmpImplicitHydrogenCount;
+        return tmpTotalImplicitHydrogenCount;
     }
 
     /**
@@ -113,7 +124,8 @@ public class ChemUtils {
      * @param aConsiderImplicitHydrogens Boolean value whether to consider bonds to implicit hydrogen atoms
      * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms
      * @return Integer number of bonds in the given atom container
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if implicit hydrogens are to be
+     *                              considered and the implicit hydrogen count of an atom is null
      */
     public static int getBondCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens,
                                    boolean aConsiderPseudoAtoms) throws NullPointerException {
@@ -150,7 +162,8 @@ public class ChemUtils {
      *                                   only relevant when counting bonds of bond order one / single
      * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms
      * @return Integer number of bonds of the specific bond order in the given atom container
-     * @throws NullPointerException if the given instance of IAtomContainer is null
+     * @throws NullPointerException if the given instance of IAtomContainer is null; if implicit hydrogens are to be
+     *                              considered and the implicit hydrogen count of an atom is null
      */
     public static int getBondsOfSpecificBondOrderCount(IAtomContainer anAtomContainer,
                                                        IBond.Order aBondOrder,
@@ -215,6 +228,7 @@ public class ChemUtils {
      * TODO: convenience method/filter that parses element symbols to atomic numbers (see parseAtomSymbol() method of class Atom)
      * TODO: what to do if one and the same atomic number is given twice?
      * TODO: adapt tests?
+     * TODO: what about pseudo-atoms?
      *
      * @param anAtomContainer IAtomContainer instance to count atoms of
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms when counting
@@ -222,11 +236,14 @@ public class ChemUtils {
      * @param anAtomicNumbers integer values of the atomic numbers of atoms to count; use the {@link IElement} enum of
      *                        element symbols to receive the atomic numbers of specific elements
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
-     * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
+     * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null; if implicit
+     *                              hydrogen atoms are to be considered and the implicit hydrogen count of an atom is
+     *                              null
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
-     * greater than 118)
+     *                                  greater than 118)
      */
-    public static int getAtomsOfAtomicNumbersCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens, int... anAtomicNumbers)
+    public static int getAtomsOfAtomicNumbersCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens,
+                                                   int... anAtomicNumbers)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         for (int tmpAtomicNumber : anAtomicNumbers) {
@@ -263,7 +280,7 @@ public class ChemUtils {
      * @return integer value of the count of heavy atoms in the given atom container
      * @throws NullPointerException if the given instance of IAtomContainer is null
      */
-    public static int getHeavyAtomsCount(IAtomContainer anAtomContainer, boolean aConsiderPseudoAtoms)
+    public static int getHeavyAtomCount(IAtomContainer anAtomContainer, boolean aConsiderPseudoAtoms)
             throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         int tmpHeavyAtomsCount = anAtomContainer.getAtomCount();
@@ -322,22 +339,23 @@ public class ChemUtils {
 
     /**
      * Returns the sigma bond count of the atom.
-     * TODO: tests
      *
      * @param anAtom                     the atom to count the sigma bonds of
      * @param aConsiderImplicitHydrogens boolean value whether to consider the bonds to implicit hydrogen atoms
      * @return the sigma bond count
-     * @throws NullPointerException if the given IAtom instance is null
-     * @throws IllegalArgumentException if the bond order of a bond is UNSET or null
+     * @throws NullPointerException if the given IAtom instance is null; if the bond order of a bond is null; if
+     *                              implicit hydrogens are to be considered and the implicit hydrogen count of an atom
+     *                              is null
+     * @throws IllegalArgumentException if the bond order of a bond is UNSET
      */
     public static int getSigmaBondCount(IAtom anAtom, boolean aConsiderImplicitHydrogens) throws NullPointerException,
             IllegalArgumentException {
-        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         int tmpSigmaBondCount = 0;
         IBond.Order tmpBondOrder;
         for (IBond tmpBond : anAtom.bonds()) {
             if ((tmpBondOrder = tmpBond.getOrder()) == null) {
-                throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
+                throw new NullPointerException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
             }
             switch (tmpBondOrder) {
                 case SINGLE, DOUBLE, TRIPLE, QUADRUPLE, QUINTUPLE, SEXTUPLE -> {
@@ -353,27 +371,30 @@ public class ChemUtils {
             }
         }
         if (aConsiderImplicitHydrogens) {
-            tmpSigmaBondCount += anAtom.getImplicitHydrogenCount();
+            Integer tmpImplicitHydrogenCount = anAtom.getImplicitHydrogenCount();
+            if (tmpImplicitHydrogenCount == null) {
+                throw new NullPointerException(ErrorCodes.IMPLICIT_HYDROGEN_COUNT_NULL_ERROR.name());
+            }
+            tmpSigmaBondCount += tmpImplicitHydrogenCount;
         }
         return tmpSigmaBondCount;
     }
 
     /**
      * Returns the pi bond count of the atom.
-     * TODO: tests
      *
      * @param anAtom the atom to count the pi bonds of
      * @return the pi bond count
-     * @throws NullPointerException if the given IAtom instance is null
-     * @throws IllegalArgumentException if the bond order of a bond is UNSET or null
+     * @throws NullPointerException if the given IAtom instance is null; if the bond order of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is UNSET
      */
     public static int getPiBondCount(IAtom anAtom) throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         int tmpPiBondCount = 0;
         IBond.Order tmpBondOrder;
         for (IBond tmpBond : anAtom.bonds()) {
             if ((tmpBondOrder = tmpBond.getOrder()) == null) {
-                throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
+                throw new NullPointerException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
             }
             switch (tmpBondOrder) {
                 case SINGLE -> {}
@@ -407,24 +428,25 @@ public class ChemUtils {
     /**
      * Returns an array containing in the first position the sigma bond count and in the second position the pi bond
      * count of the atom.
-     * TODO: tests
      *
      * @param anAtom                     the atom to count the sigma and pi bonds of
      * @param aConsiderImplicitHydrogens boolean value whether to consider the bonds to implicit hydrogen atoms
      * @return an array containing in the sigma bond count (index 0) and the pi bond count (index 1) of the given atom
-     * @throws NullPointerException if the given IAtom instance is null
-     * @throws IllegalArgumentException if the bond order of a bond is UNSET or null
+     * @throws NullPointerException if the given IAtom instance is null; if the bond order of a bond is null; if
+     *                              implicit hydrogens are to be considered and the implicit hydrogen count of an atom
+     *                              is null
+     * @throws IllegalArgumentException if the bond order of a bond is UNSET
      */
     public static int[] getSigmaAndPiBondCounts(IAtom anAtom, boolean aConsiderImplicitHydrogens)
             throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(anAtom, "anAtom (instance of IAtom) is null.");
+        Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         // not using getSigmaBondCount() and getPiBondCount() for an increased performance
         int tmpSigmaBondCount = 0;
         int tmpPiBondCount = 0;
         IBond.Order tmpBondOrder;
         for (IBond tmpBond : anAtom.bonds()) {
             if ((tmpBondOrder = tmpBond.getOrder()) == null) {
-                throw new IllegalArgumentException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
+                throw new NullPointerException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
             }
             switch (tmpBondOrder) {
                 case SINGLE -> {
@@ -460,9 +482,61 @@ public class ChemUtils {
             }
         }
         if (aConsiderImplicitHydrogens) {
-            tmpSigmaBondCount += anAtom.getImplicitHydrogenCount();
+            Integer tmpImplicitHydrogenCount = anAtom.getImplicitHydrogenCount();
+            if (tmpImplicitHydrogenCount == null) {
+                throw new NullPointerException(ErrorCodes.IMPLICIT_HYDROGEN_COUNT_NULL_ERROR.name());
+            }
+            tmpSigmaBondCount += tmpImplicitHydrogenCount;
         }
         return new int[]{tmpSigmaBondCount, tmpPiBondCount};
+    }
+
+    /**
+     * Returns whether the atoms of the given atom container all have valid valences according to the {@link
+     * PubChemValenceModel}. Calls {@link #hasAllValidValences(IAtomContainer, boolean, IValenceModel)} for this.
+     *
+     * @param anAtomContainer          the atom container to check the valences of
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return true, if all atoms of the given atom container have a valence considered as valid
+     * @throws NullPointerException if the given atom container or an atom contained by it is null; if atomic number,
+     *                              formal charge or the implicit hydrogen count of an atom is null; if the bond order
+     *                              of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @see #hasAllValidValences(IAtomContainer, boolean, IValenceModel)
+     * @see PubChemValenceModel
+     */
+    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aConsiderWildcardAsValid)
+            throws NullPointerException {
+        IValenceModel tmpValenceModel = new PubChemValenceModel();
+        return ChemUtils.hasAllValidValences(anAtomContainer, aConsiderWildcardAsValid, tmpValenceModel);
+    }
+
+    /**
+     * Returns whether the atoms of the given atom container all have valid valences according to the given valence
+     * model.
+     *
+     * @param anAtomContainer          the atom container to check the valences of
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @param aValenceModel            the valence model to check the valences for their validity with
+     * @return true, if all atoms of the given atom container have a valence considered as valid
+     * @throws NullPointerException if the given valence model, atom container or an atom contained by the atom
+     *                              container is null; if atomic number, formal charge or the implicit hydrogen count
+     *                              of an atom is null; if the bond order of a bond is null
+     * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     */
+    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aConsiderWildcardAsValid,
+                                              IValenceModel aValenceModel) throws NullPointerException {
+        Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
+        Objects.requireNonNull(aValenceModel, ErrorCodes.VALENCE_MODEL_NULL_ERROR.name());
+        //
+        for (IAtom tmpAtom : anAtomContainer.atoms()) {
+            if (!aValenceModel.hasValidValence(tmpAtom, aConsiderWildcardAsValid)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
