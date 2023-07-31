@@ -30,7 +30,9 @@ import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import de.unijena.cheminf.curation.processingSteps.filters.ContainsNoPseudoAtomsFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.ContainsPseudoAtomsFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasAllValidAtomicNumbersFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.HasAllValidValencesFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasInvalidAtomicNumbersFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.HasInvalidValencesFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MaxAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MaxBondCountFilter;
@@ -46,6 +48,8 @@ import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.Prop
 import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.ExternalIDChecker;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
+import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
+import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
@@ -333,6 +337,7 @@ public class CurationPipeline extends BaseProcessingStep {
     //</editor-fold>
 
     //<editor-fold desc="with...Filter methods" defaultstate="collapsed">
+    //<editor-fold desc="withMaxAtomCountFilter" defaultstate="collapsed">
     /**
      * Adds a max atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms and
      * {@link IPseudoAtom} instances may or may not be considered; atom containers that equal the given max atom count
@@ -343,6 +348,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max atom count has a negative value
+     * @see MaxAtomCountFilter
      */
     public CurationPipeline withMaxAtomCountFilter(int aMaxAtomCount, boolean aConsiderImplicitHydrogens,
                                                    boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
@@ -354,7 +360,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinAtomCountFilter" defaultstate="collapsed">
     /**
      * Adds a min atom count filter with the given parameters to the curation pipeline. Implicit hydrogen atoms and
      * {@link IPseudoAtom} instances may or may not be considered; atom containers that equal the given min atom count
@@ -365,6 +373,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min atom count has a negative value
+     * @see MinAtomCountFilter
      */
     public CurationPipeline withMinAtomCountFilter(int aMinAtomCount, boolean aConsiderImplicitHydrogens,
                                                    boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
@@ -376,7 +385,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxHeavyAtomCountFilter" defaultstate="collapsed">
     /**
      * Adds a max heavy atom count filter with the given max heavy atom count to the curation pipeline. Atom containers
      * that equal the given max heavy atom count do not get filtered.
@@ -385,6 +396,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms in the heavy atoms count
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max heavy atom count has a negative value
+     * @see MaxHeavyAtomCountFilter
      */
     public CurationPipeline withMaxHeavyAtomCountFilter(int aMaxHeavyAtomCount, boolean aConsiderPseudoAtoms)
             throws IllegalArgumentException {
@@ -395,7 +407,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinHeavyAtomCountFilter" defaultstate="collapsed">
     /**
      * Adds a min heavy atom count filter with the given min heavy atom count to the curation pipeline. Atom containers
      * that equal the given min heavy atom count do not get filtered.
@@ -404,6 +418,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider pseudo-atoms in the heavy atoms count
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min heavy atom count has a negative value
+     * @see MinHeavyAtomCountFilter
      */
     public CurationPipeline withMinHeavyAtomCountFilter(int aMinHeavyAtomCount, boolean aConsiderPseudoAtoms)
             throws IllegalArgumentException {
@@ -414,7 +429,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxBondCountFilter" defaultstate="collapsed">
     /**
      * Adds a max bond count filter with the given parameters to the curation pipeline. Bonds to implicit hydrogen atoms
      * and bonds with participation of instances of {@link IPseudoAtom} may or may not be considered. If bonds of
@@ -426,6 +443,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max bond count has a negative value
+     * @see MaxBondCountFilter
      */
     public CurationPipeline withMaxBondCountFilter(int aMaxBondCount, boolean aConsiderImplicitHydrogens,
                                                    boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
@@ -437,7 +455,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinBondCountFilter" defaultstate="collapsed">
     /**
      * Adds a min bond count filter with the given parameters to the curation pipeline. Bonds to implicit hydrogen atoms
      * and bonds with participation of instances of {@link IPseudoAtom} may or may not be considered. If bonds of
@@ -449,6 +469,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min bond count has a negative value
+     * @see MinBondCountFilter
      */
     public CurationPipeline withMinBondCountFilter(int aMinBondCount, boolean aConsiderImplicitHydrogens,
                                                    boolean aConsiderPseudoAtoms) throws IllegalArgumentException {
@@ -460,7 +481,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxBondsOfSpecificBondOrderFilter" defaultstate="collapsed">
     /**
      * Adds a max bonds of specific bond order filter with the given parameters to the curation pipeline. Bonds to
      * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single. If the second
@@ -474,6 +497,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max specific bond count has a negative value
+     * @see MaxBondsOfSpecificBondOrderFilter
      */
     public CurationPipeline withMaxBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder,
                                                                   int aMaxSpecificBondCount,
@@ -488,7 +512,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinBondsOfSpecificBondOrderFilter" defaultstate="collapsed">
     /**
      * Adds a min bonds of specific bond order filter with the given parameters to the curation pipeline. Bonds to
      * implicit hydrogen atoms may or may not be considered when counting bonds of bond order single. If the second
@@ -502,6 +528,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min specific bond count has a negative value
+     * @see MinBondsOfSpecificBondOrderFilter
      */
     public CurationPipeline withMinBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder,
                                                                   int aMinSpecificBondCount,
@@ -516,37 +543,44 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withHasAllValidAtomicNumbersFilter" defaultstate="collapsed">
     /**
      * Adds a has all valid atomic numbers filter with the given boolean parameter to the curation pipeline.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
      * @return the CurationPipeline instance itself
+     * @see HasAllValidAtomicNumbersFilter
      */
     public CurationPipeline withHasAllValidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasAllValidAtomicNumbersFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withHasInvalidAtomicNumbersFilter" defaultstate="collapsed">
     /**
      * Adds a has invalid atomic numbers filter with the given boolean parameter to the curation pipeline.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
      * @return the CurationPipeline instance itself
+     * @see HasInvalidAtomicNumbersFilter
      */
     public CurationPipeline withHasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidAtomicNumbersFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMaxMolecularMassFilter" defaultstate="collapsed">
     /**
      * Adds a max molecular mass filter with the given parameters to the curation pipeline. The given mass computation
-     * flavour switches the computation type of the mass calculation; atom containers that equal the given max
-     * molecular mass value do not get filtered.
+     * flavour switches the computation type of the mass calculation. Filters consider threshold values to be inclusive.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
      * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
@@ -554,6 +588,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given max molecular mass is of a negative value
+     * @see MaxMolecularMassFilter
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
@@ -571,11 +606,12 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Adds a max molecular mass filter with the given max molecular mass value to the curation pipeline. This method
      * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputationFlavours
-     * #MolWeight} is used. Atom containers that equal the given max molecular mass value do not get filtered.
+     * #MolWeight} is used. Filters consider threshold values to be inclusive.
      *
      * @param aMaxMolecularMass double value of the max molecular mass value to filter by
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given max molecular mass is of a negative value
+     * @see MaxMolecularMassFilter
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
@@ -587,11 +623,12 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withMinMolecularMassFilter" defaultstate="collapsed">
     /**
      * Adds a min molecular mass filter with the given parameters to the curation pipeline. The given mass computation
-     * flavour switches the computation type of the mass calculation; atom containers that equal the given min
-     * molecular mass value do not get filtered.
+     * flavour switches the computation type of the mass calculation. Filters consider threshold values to be inclusive.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
      * @param aMassComputationFlavour MassComputationFlavours constant that switches the computation type of the mass
@@ -599,6 +636,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given mass computation flavour is null
      * @throws IllegalArgumentException if the given min molecular mass is of a negative value
+     * @see MinMolecularMassFilter
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
@@ -616,11 +654,12 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * Adds a min molecular mass filter with the given min molecular mass value to the curation pipeline. This method
      * takes no mass computation flavour; for the new filter the default 'mass flavour' {@link MassComputationFlavours
-     * #MolWeight} is used. Atom containers that equal the given min molecular mass value do not get filtered.
+     * #MolWeight} is used. Filters consider threshold values to be inclusive.
      *
      * @param aMinMolecularMass double value of the min molecular mass value to filter by
      * @return the CurationPipeline instance itself
      * @throws IllegalArgumentException if the given min molecular mass is of a negative value
+     * @see MinMolecularMassFilter
      * @see MassComputationFlavours
      * @see org.openscience.cdk.tools.manipulator.AtomContainerManipulator#getMass(IAtomContainer, int)
      */
@@ -632,7 +671,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withContainsPseudoAtomsFilter" defaultstate="collapsed">
     /**
      * Adds a contains pseudo-atoms filter to the curation pipeline.
      *
@@ -644,7 +685,9 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="withContainsNoPseudoAtomsFilter" defaultstate="collapsed">
     /**
      * Adds a contains no pseudo-atoms filter to the curation pipeline.
      *
@@ -656,6 +699,79 @@ public class CurationPipeline extends BaseProcessingStep {
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="withHasAllValidValencesFilter" defaultstate="collapsed">
+    /**
+     * Adds a {@link HasAllValidValencesFilter} as step to the curation pipeline. The filter is initialized with the
+     * given valence model and boolean value whether to generally consider atoms with wildcard atomic number (zero) as
+     * having a valid valence.
+     *
+     * @param aValenceModel            the valence model to check the valences for their validity with
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if the given valence model is null
+     * @see HasAllValidValencesFilter
+     */
+    public CurationPipeline withHasAllValidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid)
+            throws NullPointerException {
+        IFilter tmpFilter = new HasAllValidValencesFilter(aValenceModel, aConsiderWildcardAsValid, this.getReporter());
+        this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a {@link HasAllValidValencesFilter} as step to the curation pipeline initializing it with an instance of
+     * {@link PubChemValenceModel} as valence model.
+     *
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return the CurationPipeline instance itself
+     * @see HasAllValidValencesFilter
+     */
+    public CurationPipeline withHasAllValidValencesFilter(boolean aConsiderWildcardAsValid) {
+        IFilter tmpFilter = new HasAllValidValencesFilter(aConsiderWildcardAsValid, this.getReporter());
+        this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="withHasInvalidValencesFilter" defaultstate="collapsed">
+    /**
+     * Adds a {@link HasInvalidValencesFilter} as step to the curation pipeline. The filter is initialized with the
+     * given valence model and boolean value whether to generally consider atoms with wildcard atomic number (zero) as
+     * having a valid valence.
+     *
+     * @param aValenceModel            the valence model to check the valences for their validity with
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if the given valence model is null
+     * @see HasInvalidValencesFilter
+     */
+    public CurationPipeline withHasInvalidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid)
+            throws NullPointerException {
+        IFilter tmpFilter = new HasInvalidValencesFilter(aValenceModel, aConsiderWildcardAsValid, this.getReporter());
+        this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+
+    /**
+     * Adds a {@link HasInvalidValencesFilter} as step to the curation pipeline initializing it with an instance of
+     * {@link PubChemValenceModel} as valence model.
+     *
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @return the CurationPipeline instance itself
+     * @see HasInvalidValencesFilter
+     */
+    public CurationPipeline withHasInvalidValencesFilter(boolean aConsiderWildcardAsValid) {
+        IFilter tmpFilter = new HasInvalidValencesFilter(aConsiderWildcardAsValid, this.getReporter());
+        this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+    //</editor-fold>
     //</editor-fold>
 
     /**

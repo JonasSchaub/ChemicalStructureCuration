@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
 import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
@@ -53,7 +55,73 @@ public class HasAllValidValencesFilter extends BaseFilter {
      */
     private final boolean considerWildcardAsValid;
 
-    //TODO: Constructors
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
+    /**
+     * Constructor; initializes a {@link HasAllValidValencesFilter} with the given valence model and reporter and
+     * whether to generally consider atoms with wildcard atomic number as having a valid valence.
+     *
+     * @param aValenceModel            the valence model to check the valences for their validity with
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @param aReporter                the reporter to do the reporting with
+     * @throws NullPointerException if the given valence model or reporter is null
+     */
+    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid, IReporter aReporter)
+            throws NullPointerException {
+        super(aReporter, null);
+        this.valenceModel = aValenceModel;
+        this.considerWildcardAsValid = aConsiderWildcardAsValid;
+    }
+
+    /**
+     * Constructor; calls {@link #HasAllValidValencesFilter(IValenceModel, boolean, IReporter)} with an instance of
+     * {@link PubChemValenceModel} as valence model.
+     *
+     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                 (zero) as having a valid valence
+     * @param aReporter                the reporter to do the reporting with
+     * @throws NullPointerException if the given reporter is null
+     */
+    public HasAllValidValencesFilter(boolean aConsiderWildcardAsValid, IReporter aReporter)
+            throws NullPointerException {
+        this(new PubChemValenceModel(), aConsiderWildcardAsValid, aReporter);
+    }
+
+    /**
+     * Constructor; initializes a {@link HasAllValidValencesFilter} with an instance of {@link MarkDownReporter}
+     * (initialized with the given directory path), the given valence model and reporter and whether to generally
+     * consider atoms with wildcard atomic number as having a valid valence.
+     *
+     * @param aValenceModel             the valence model to check the valences for their validity with
+     * @param aConsiderWildcardAsValid  boolean value whether to generally consider atoms with wildcard atomic number
+     *                                  (zero) as having a valid valence
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the valence model or the directory path string is null
+     * @throws IllegalArgumentException if the given file path is no directory path
+     */
+    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid,
+                                     String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, null);
+        this.valenceModel = aValenceModel;
+        this.considerWildcardAsValid = aConsiderWildcardAsValid;
+    }
+
+    /**
+     * Constructor; calls {@link #HasAllValidValencesFilter(IValenceModel, boolean, String)} with an instance of {@link
+     * PubChemValenceModel} as valence model.
+     *
+     * @param aConsiderWildcardAsValid  boolean value whether to generally consider atoms with wildcard atomic number
+     *                                  (zero) as having a valid valence
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the directory path string is null
+     * @throws IllegalArgumentException if the given file path is no directory path
+     */
+    public HasAllValidValencesFilter(boolean aConsiderWildcardAsValid, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        this(new PubChemValenceModel(), aConsiderWildcardAsValid, aReportFilesDirectoryPath);
+    }
+    //</editor-fold>
 
      /**
      * {@inheritDoc}

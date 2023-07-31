@@ -35,8 +35,9 @@ import java.util.Objects;
 
 /**
  * Imports a valence list out of a text file and wraps it into two matrices; one containing the data and a second for a
- * faster access on the data stored by the first matrix. It gives multiple methods for easily accessing the imported
- * data. To be imported, valence lists need to have the following format:
+ * faster access on the data stored by the first matrix. To prevent changes on the imported data, the matrices are not
+ * directly accessible. Instead, there are multiple methods for accessing the data stored by them. To be imported,
+ * valence lists need to follow the following format:
  * <ul>
  *     <li>one headline;</li>
  *     <Li>no empty / blank lines;</Li>
@@ -46,11 +47,12 @@ import java.util.Objects;
  *     bonds (column 4) and the maximum number of implicit hydrogens (column 5);</li>
  *     <li>the list entries must be sorted according to their atomic numbers, starting with the lowest.</li>
  * </ul>
- * Exemplary for this format is the valence list published as part of the paper on PubChem standardization approaches
- * (link: <a href="https://doi.org/10.1186/s13321-018-0293-8">https://doi.org/10.1186/s13321-018-0293-8</a>).
+ * Exemplary for this format is the valence list published as part of the paper describing the PubChem standardization
+ * approaches (link: <a href="https://doi.org/10.1186/s13321-018-0293-8">https://doi.org/10.1186/s13321-018-0293-8</a>).
  *
  * @author Samuel Behr
  * @version 1.0.0.0
+ * @see PubChemValenceListMatrixWrapper
  */
 public class ValenceListMatrixWrapper {
 
@@ -143,8 +145,7 @@ public class ValenceListMatrixWrapper {
      * @param aValenceListFilePath String of the file path of the valence list text file
      * @param aNumberOfLinesInFile Integer value of the number of lines in the file (including the headline)
      * @throws NullPointerException if the given file path string is null
-     * @throws IllegalArgumentException if the given number of rows in file or the given value of the highest atomic
-     * number in the list is less than zero
+     * @throws IllegalArgumentException if the file contains less than two lines
      * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format
      */
     public ValenceListMatrixWrapper(String aValenceListFilePath, int aNumberOfLinesInFile)
@@ -164,7 +165,7 @@ public class ValenceListMatrixWrapper {
         this.highestAtomicNumberInList = this.valenceListMatrix[this.valenceListMatrix.length - 1][0];
     }
 
-    /**
+    /** TODO
      * Constructor; loads a valence list text file, a file containing a list of valid valences and configurations of
      * atoms and wraps the imported data into two matrices.
      * <br>
@@ -180,10 +181,10 @@ public class ValenceListMatrixWrapper {
      * The list entries must be sorted according to their atomic number, starting with the entries with the lowest
      * atomic number.
      *
-     * @param aValenceListFilePath
-     * @throws NullPointerException
+     * @param aValenceListFilePath String of the file path of the valence list text file
+     * @throws NullPointerException if the given file path string is null
      * @throws IllegalArgumentException if the file contains less than two lines
-     * @throws IOException
+     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format
      */
     public ValenceListMatrixWrapper(String aValenceListFilePath) throws NullPointerException, IllegalArgumentException,
             IOException {
