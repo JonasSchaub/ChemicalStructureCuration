@@ -165,9 +165,10 @@ public class ValenceListMatrixWrapper {
         this.highestAtomicNumberInList = this.valenceListMatrix[this.valenceListMatrix.length - 1][0];
     }
 
-    /** TODO
-     * Constructor; loads a valence list text file, a file containing a list of valid valences and configurations of
-     * atoms and wraps the imported data into two matrices.
+    /**
+     * Constructor; runs threw the file to detect the lines count and then loads the valence list contained by it and
+     * wraps the imported data into two matrices. The file is expected to be a text file containing a list of valid
+     * valences and configurations of atoms.
      * <br>
      * The list, in which each line stands for one valid atom configuration, is expected to have the following format
      * and contain the following information:
@@ -235,8 +236,12 @@ public class ValenceListMatrixWrapper {
      * @param aValenceListEntryIndex index of the valence list entry to be accessed
      * @param anAtomConfigurationArrayIndex index of the value in the atom configuration array to be returned
      * @return integer value
-     * @throws IllegalArgumentException if the given valence list entry index exceeds {@link #getLengthOfValenceList()}
-     * or the atom configuration array index exceeds the value four or if one of the given indices is of a negative value
+     * @throws IllegalArgumentException if one the given indices is out of bounds for the respective matrix dimension;
+     *                                  the values are in bounds if:
+     *                                  <pre>{@code
+     *                                  (0 <= aValenceListEntryIndex < getLengthOfValenceList())
+     *                                  (0 <= anAtomConfigurationArrayIndex < 5)
+     *                                  }</pre>
      * @see #getValenceListEntry(int)
      * @see #getLengthOfValenceList()
      * @see #getValenceListElementPointer(int)
@@ -248,13 +253,13 @@ public class ValenceListMatrixWrapper {
                     " is of negative value.");
         }
         if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
-            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) exceeds" +
-                    " the length of the first dimension of the valence list matrix (" + this.valenceListMatrix.length
-                    + ").");
+            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is out" +
+                    " of bounds for the first dimension of the valence list matrix (length: "
+                    + this.valenceListMatrix.length + ").");
         }
         if (anAtomConfigurationArrayIndex >= this.valenceListMatrix[0].length) {
-            throw new IllegalArgumentException("The given array index (anAtomConfigurationArrayIndex) exceeds the" +
-                    " length of the second dimension of the valence list matrix (" + this.valenceListMatrix[0].length
+            throw new IllegalArgumentException("The given array index (anAtomConfigurationArrayIndex) is out of bounds" +
+                    " for the second dimension of the valence list matrix (length: " + this.valenceListMatrix[0].length
                     + ").");
         }
         return this.valenceListMatrix[aValenceListEntryIndex][anAtomConfigurationArrayIndex];
@@ -296,8 +301,9 @@ public class ValenceListMatrixWrapper {
                     " negative value.");
         }
         if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
-            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) exceeds" +
-                    " the length of the valence list matrix first dimension.");
+            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is out of" +
+                    " bounds for first dimension of the valence list matrix (length: " +
+                    + this.valenceListMatrix.length + ").");
         }
         return this.valenceListMatrix[aValenceListEntryIndex].clone();
     }
@@ -368,10 +374,7 @@ public class ValenceListMatrixWrapper {
     }
 
     /**
-     * TODO
-     * Returns the highest atomic number present in the valence list. This value may be used as upper bound when
-     * iterating over the valence list element pointers ({@link #getValenceListElementPointer(int)} or the atom
-     * configurations count of elements ({@link #getAtomConfigurationsCountOfElement(int)}.
+     * Returns the highest atomic number present in the valence list..
      *
      * @return integer value
      * @see #getValenceListElementPointer(int)

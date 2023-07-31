@@ -35,6 +35,10 @@ import org.openscience.cdk.interfaces.IAtom;
  */
 public interface IValenceModel {
 
+    /*
+    TODO: extend the models with additional functionalities
+     */
+
     /**
      * Calls {@link #hasValidValence(IAtom, boolean)} with whether to generally consider atoms with wildcard atomic
      * number as valid set to false.

@@ -33,10 +33,11 @@ import org.openscience.cdk.interfaces.IElement;
 import java.util.Objects;
 
 /**
- * Valence model based on the list of valid valences and atom configurations published with the paper on PubChem
- * standardization approaches under the terms of the <a href="http://creativecommons.org/licenses/by/4.0/"> Creative
- * Commons Attribution 4.0 International License </a>. The valid valences and atom configurations are listed with
- * respect to atomic number, charge, number of π bonds, number of σ bonds and the maximum number of implicit hydrogens.
+ * Valence model based on a list of valid valences and atom configurations received from a paper describing the PubChem
+ * standardization approaches, published under the terms of the <a href="http://creativecommons.org/licenses/by/4.0/">
+ * Creative Commons Attribution 4.0 International License </a>. The valid valences and atom configurations are listed
+ * with respect to atomic number, charge, number of π bonds, number of σ bonds and the maximum number of implicit
+ * hydrogens.
  * <p>
  * Source:
  * <a href="https://doi.org/10.1186/s13321-018-0293-8"> "Hähnke, V.D., Kim, S. & Bolton, E.E. PubChem chemical
@@ -46,11 +47,6 @@ import java.util.Objects;
  * @version 1.0.0.0
  */
 public class PubChemValenceModel implements IValenceModel {
-
-    /*
-    TODO: implement filter
-    TODO: add functionalities
-     */
 
     /**
      * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count

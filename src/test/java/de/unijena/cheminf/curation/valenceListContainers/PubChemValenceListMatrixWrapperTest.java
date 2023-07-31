@@ -32,14 +32,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 /**
- * Test class of class PubChemValenceListContainer.
+ * Test class of the PubChemValenceListMatrixWrapper class.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
  * @see PubChemValenceListMatrixWrapper
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PubChemValenceListContainerTest {
+public class PubChemValenceListMatrixWrapperTest {
 
     /*
     TODO: move tests of extended methods into separate class?
@@ -71,7 +71,7 @@ public class PubChemValenceListContainerTest {
      * Tests whether the valenceListMatrix has the expected dimensions (981 x 5).
      */
     @Test
-    public void getInstanceMethodTest_checksDimensionsOfValenceListMatrix_981x5() {
+    public void getInstanceMethodTest_dimensionsOfValenceListMatrix_981x5() {
         ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         Assertions.assertEquals(PubChemValenceListMatrixWrapper.NUMBER_OF_LINES_IN_FILE - 1,
                 tmpValenceListContainer.valenceListMatrix.length);
@@ -83,7 +83,7 @@ public class PubChemValenceListContainerTest {
      * Tests whether the valenceListPointerMatrix has the dimensions: (highest known atomic number + 1) x 2.
      */
     @Test
-    public void getInstanceMethodTest_checksDimensionsOfValenceListPointerMatrix_119x2() {
+    public void getInstanceMethodTest_dimensionsOfValenceListPointerMatrix_119x2() {
         ValenceListMatrixWrapper tmpValenceListContainer = PubChemValenceListMatrixWrapper.getInstance();
         Assertions.assertEquals(ValenceListMatrixWrapper.HIGHEST_KNOWN_ATOMIC_NUMBER + 1,
                 tmpValenceListContainer.valenceListPointerMatrix.length);
@@ -243,7 +243,8 @@ public class PubChemValenceListContainerTest {
         //test 2: value exceeds the length
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> tmpValenceListContainer.getValenceListEntry(tmpValenceListContainer.getLengthOfValenceList() + 1)
+                () -> tmpValenceListContainer
+                        .getValenceListEntry(tmpValenceListContainer.getLengthOfValenceList() + 1)
         );
     }
 
@@ -333,8 +334,8 @@ public class PubChemValenceListContainerTest {
         int tmpPointedIndex;
         int tmpElementRegardingEntriesCount;
         for (int tmpAtomicNumber = 1;
-             tmpAtomicNumber <= tmpValenceListContainer.getHighestAtomicNumberInList();
-             tmpAtomicNumber++) {
+            tmpAtomicNumber <= tmpValenceListContainer.getHighestAtomicNumberInList();
+            tmpAtomicNumber++) {
             tmpPointedIndex = tmpValenceListContainer.getValenceListElementPointer(tmpAtomicNumber);
             tmpElementRegardingEntriesCount = 0;
             while (tmpValenceListContainer.getValenceListEntry(tmpPointedIndex

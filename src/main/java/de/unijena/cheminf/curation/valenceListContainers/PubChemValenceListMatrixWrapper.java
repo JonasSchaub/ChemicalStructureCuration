@@ -28,25 +28,18 @@ package de.unijena.cheminf.curation.valenceListContainers;
 import java.io.IOException;
 
 /**
- * A container that imports and stores the data contained by the PubChem valence list text file.
- * TODO: link / reference!
- * The file, a list of valid valences and configurations of atoms with respect to
- *      * atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ bonds (column 4) and the
- *      * maximum number of implicit hydrogens (column 5), is wrapped into matrices
- * <p>
- * The class follows the Singleton pattern. To receive an instance of the class, the method {@link #getInstance()} may
- * be used.
+ * An extension of the {@link ValenceListMatrixWrapper} that specifically imports the PubChem valence list. This class
+ * follows the Singleton pattern: To receive an instance of the class, the method {@link #getInstance()} is to be used.
+ * An instance is only generated once during the class loading.
+ * <br>
+ * The valence list was received from a paper describing the PubChem standardization approaches. See:
+ * <a href="https://doi.org/10.1186/s13321-018-0293-8"> "Hähnke, V.D., Kim, S. & Bolton, E.E. PubChem chemical
+ * structure standardization. J Cheminform 10, 36 (2018). https://doi.org/10.1186/s13321-018-0293-8" </a>.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
  */
 public class PubChemValenceListMatrixWrapper extends ValenceListMatrixWrapper {
-
-    /*
-    TODO: add link / reference to the source of the PubChem valence list file
-    //
-    TODO: rename package
-     */
 
     /**
      * String of the path to the PubChem valence list text file.
