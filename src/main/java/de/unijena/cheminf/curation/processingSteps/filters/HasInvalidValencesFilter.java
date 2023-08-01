@@ -47,29 +47,29 @@ public class HasInvalidValencesFilter extends HasAllValidValencesFilter {
      * Constructor; initializes a {@link HasInvalidValencesFilter} with the given valence model and reporter and whether
      * to generally consider atoms with wildcard atomic number as having a valid valence.
      *
-     * @param aValenceModel            the valence model to check the valences for their validity with
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
-     * @param aReporter                the reporter to do the reporting with
+     * @param aValenceModel                the valence model to check the valences for their validity with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReporter                    the reporter to do the reporting with
      * @throws NullPointerException if the given valence model or reporter is null
      */
-    public HasInvalidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid, IReporter aReporter)
+    public HasInvalidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid, IReporter aReporter)
             throws NullPointerException {
-        super(aValenceModel, aConsiderWildcardAsValid, aReporter);
+        super(aValenceModel, aWildcardAtomicNumberIsValid, aReporter);
     }
 
     /**
      * Constructor; calls {@link #HasInvalidValencesFilter(IValenceModel, boolean, IReporter)} with an instance of
      * {@link PubChemValenceModel} as valence model.
      *
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
-     * @param aReporter                the reporter to do the reporting with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReporter                    the reporter to do the reporting with
      * @throws NullPointerException if the given reporter is null
      */
-    public HasInvalidValencesFilter(boolean aConsiderWildcardAsValid, IReporter aReporter)
+    public HasInvalidValencesFilter(boolean aWildcardAtomicNumberIsValid, IReporter aReporter)
             throws NullPointerException {
-        this(new PubChemValenceModel(), aConsiderWildcardAsValid, aReporter);
+        this(new PubChemValenceModel(), aWildcardAtomicNumberIsValid, aReporter);
     }
 
     /**
@@ -77,32 +77,32 @@ public class HasInvalidValencesFilter extends HasAllValidValencesFilter {
      * (initialized with the given directory path), the given valence model and reporter and whether to generally
      * consider atoms with wildcard atomic number as having a valid valence.
      *
-     * @param aValenceModel             the valence model to check the valences for their validity with
-     * @param aConsiderWildcardAsValid  boolean value whether to generally consider atoms with wildcard atomic number
-     *                                  (zero) as having a valid valence
-     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param aValenceModel                the valence model to check the valences for their validity with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReportFilesDirectoryPath    the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the valence model or the directory path string is null
      * @throws IllegalArgumentException if the given file path is no directory path
      */
-    public HasInvalidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid,
+    public HasInvalidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid,
                                      String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
-        super(aValenceModel, aConsiderWildcardAsValid, aReportFilesDirectoryPath);
+        super(aValenceModel, aWildcardAtomicNumberIsValid, aReportFilesDirectoryPath);
     }
 
     /**
      * Constructor; calls {@link #HasInvalidValencesFilter(IValenceModel, boolean, String)} with an instance of {@link
      * PubChemValenceModel} as valence model.
      *
-     * @param aConsiderWildcardAsValid  boolean value whether to generally consider atoms with wildcard atomic number
-     *                                  (zero) as having a valid valence
-     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReportFilesDirectoryPath    the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the directory path string is null
      * @throws IllegalArgumentException if the given file path is no directory path
      */
-    public HasInvalidValencesFilter(boolean aConsiderWildcardAsValid, String aReportFilesDirectoryPath)
+    public HasInvalidValencesFilter(boolean aWildcardAtomicNumberIsValid, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
-        this(new PubChemValenceModel(), aConsiderWildcardAsValid, aReportFilesDirectoryPath);
+        this(new PubChemValenceModel(), aWildcardAtomicNumberIsValid, aReportFilesDirectoryPath);
     }
     //</editor-fold>
 

@@ -53,38 +53,38 @@ public class HasAllValidValencesFilter extends BaseFilter {
     /**
      * Boolean value whether to generally consider atoms with wildcard atomic number (zero) as having a valid valence.
      */
-    private final boolean considerWildcardAsValid;
+    private final boolean wildcardAtomicNumberIsValid;
 
     //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
      * Constructor; initializes a {@link HasAllValidValencesFilter} with the given valence model and reporter and
      * whether to generally consider atoms with wildcard atomic number as having a valid valence.
      *
-     * @param aValenceModel            the valence model to check the valences for their validity with
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
-     * @param aReporter                the reporter to do the reporting with
+     * @param aValenceModel                the valence model to check the valences for their validity with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReporter                    the reporter to do the reporting with
      * @throws NullPointerException if the given valence model or reporter is null
      */
-    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid, IReporter aReporter)
+    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid, IReporter aReporter)
             throws NullPointerException {
         super(aReporter, null);
         this.valenceModel = aValenceModel;
-        this.considerWildcardAsValid = aConsiderWildcardAsValid;
+        this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
     }
 
     /**
      * Constructor; calls {@link #HasAllValidValencesFilter(IValenceModel, boolean, IReporter)} with an instance of
      * {@link PubChemValenceModel} as valence model.
      *
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
-     * @param aReporter                the reporter to do the reporting with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReporter                    the reporter to do the reporting with
      * @throws NullPointerException if the given reporter is null
      */
-    public HasAllValidValencesFilter(boolean aConsiderWildcardAsValid, IReporter aReporter)
+    public HasAllValidValencesFilter(boolean aWildcardAtomicNumberIsValid, IReporter aReporter)
             throws NullPointerException {
-        this(new PubChemValenceModel(), aConsiderWildcardAsValid, aReporter);
+        this(new PubChemValenceModel(), aWildcardAtomicNumberIsValid, aReporter);
     }
 
     /**
@@ -92,34 +92,34 @@ public class HasAllValidValencesFilter extends BaseFilter {
      * (initialized with the given directory path), the given valence model and reporter and whether to generally
      * consider atoms with wildcard atomic number as having a valid valence.
      *
-     * @param aValenceModel             the valence model to check the valences for their validity with
-     * @param aConsiderWildcardAsValid  boolean value whether to generally consider atoms with wildcard atomic number
-     *                                  (zero) as having a valid valence
-     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param aValenceModel                the valence model to check the valences for their validity with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReportFilesDirectoryPath    the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the valence model or the directory path string is null
      * @throws IllegalArgumentException if the given file path is no directory path
      */
-    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid,
+    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid,
                                      String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
         super(aReportFilesDirectoryPath, null);
         this.valenceModel = aValenceModel;
-        this.considerWildcardAsValid = aConsiderWildcardAsValid;
+        this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
     }
 
     /**
      * Constructor; calls {@link #HasAllValidValencesFilter(IValenceModel, boolean, String)} with an instance of {@link
      * PubChemValenceModel} as valence model.
      *
-     * @param aConsiderWildcardAsValid  boolean value whether to generally consider atoms with wildcard atomic number
-     *                                  (zero) as having a valid valence
-     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aReportFilesDirectoryPath    the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the directory path string is null
      * @throws IllegalArgumentException if the given file path is no directory path
      */
-    public HasAllValidValencesFilter(boolean aConsiderWildcardAsValid, String aReportFilesDirectoryPath)
+    public HasAllValidValencesFilter(boolean aWildcardAtomicNumberIsValid, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
-        this(new PubChemValenceModel(), aConsiderWildcardAsValid, aReportFilesDirectoryPath);
+        this(new PubChemValenceModel(), aWildcardAtomicNumberIsValid, aReportFilesDirectoryPath);
     }
     //</editor-fold>
 
@@ -139,7 +139,7 @@ public class HasAllValidValencesFilter extends BaseFilter {
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return FilterUtils.hasAllValidValences(anAtomContainer, this.considerWildcardAsValid, this.valenceModel);
+        return FilterUtils.hasAllValidValences(anAtomContainer, this.wildcardAtomicNumberIsValid, this.valenceModel);
     }
 
     @Override
@@ -174,8 +174,8 @@ public class HasAllValidValencesFilter extends BaseFilter {
      *
      * @return boolean value
      */
-    public boolean isConsiderWildcardAsValid() {
-        return this.considerWildcardAsValid;
+    public boolean isWildcardAtomicNumberIsValid() {
+        return this.wildcardAtomicNumberIsValid;
     }
 
 }

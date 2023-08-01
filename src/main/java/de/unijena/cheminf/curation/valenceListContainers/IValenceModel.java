@@ -54,12 +54,12 @@ public interface IValenceModel {
      * wildcard atomic number zero may generally be considered to have a valid valence; otherwise atoms with wildcard
      * atomic number need to be covered by the valence model or are generally considered as invalid.
      *
-     * @param anAtom                   the atom to check
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
+     * @param anAtom                       the atom to check
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
      * @return true, if the valence is considered as valid
      * @throws NullPointerException if the atom or any value accessed by the valence model is null
      */
-    public boolean hasValidValence(IAtom anAtom, boolean aConsiderWildcardAsValid) throws NullPointerException;
+    public boolean hasValidValence(IAtom anAtom, boolean aWildcardAtomicNumberIsValid) throws NullPointerException;
 
 }

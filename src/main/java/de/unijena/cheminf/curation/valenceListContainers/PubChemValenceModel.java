@@ -64,20 +64,17 @@ public class PubChemValenceModel implements IValenceModel {
      * generally considered as having an invalid valence since the wildcard atomic number is not covered by the PubChem
      * valence model.
      * TODO: implement tests
-     * TODO: other exceptions to be thrown?
-     *  atomic number, formal charge, implicit hydrogen count can be null; bond order can be null and UNSET
-     * TODO: implement filter
      *
-     * @param anAtom                   the atom to check
-     * @param aConsiderWildcardAsValid boolean value whether to consider atoms with wildcard atomic number (zero) as
-     *                                 having a valid valence
+     * @param anAtom                       the atom to check
+     * @param aWildcardAtomicNumberIsValid boolean value whether to consider atoms with wildcard atomic number (zero) as
+     *                                     having a valid valence
      * @return true, if the valence is considered as valid
      * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of an atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      */
     @Override
-    public boolean hasValidValence(IAtom anAtom, boolean aConsiderWildcardAsValid) throws NullPointerException,
+    public boolean hasValidValence(IAtom anAtom, boolean aWildcardAtomicNumberIsValid) throws NullPointerException,
             IllegalArgumentException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         Integer tmpNotNullInteger;
@@ -107,7 +104,7 @@ public class PubChemValenceModel implements IValenceModel {
         //</editor-fold>
         //
         if (tmpAtomicNumber == IElement.Wildcard) {
-            return aConsiderWildcardAsValid;
+            return aWildcardAtomicNumberIsValid;
         }
         //
         PubChemValenceListMatrixWrapper tmpMatrixWrapper = PubChemValenceListMatrixWrapper.getInstance();

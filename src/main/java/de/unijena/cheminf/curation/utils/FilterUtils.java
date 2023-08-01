@@ -219,9 +219,9 @@ public class FilterUtils {
      * Returns whether the atoms of the given atom container all have valid valences according to the {@link
      * PubChemValenceModel}. Calls {@link #hasAllValidValences(IAtomContainer, boolean, IValenceModel)} for this.
      *
-     * @param anAtomContainer          the atom container to check the valences of
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
+     * @param anAtomContainer              the atom container to check the valences of
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
      * @return true, if all atoms of the given atom container have a valence considered as valid
      * @throws NullPointerException if the given atom container or an atom contained by it is null; if atomic number,
      *                              formal charge or the implicit hydrogen count of an atom is null; if the bond order
@@ -230,33 +230,33 @@ public class FilterUtils {
      * @see #hasAllValidValences(IAtomContainer, boolean, IValenceModel)
      * @see PubChemValenceModel
      */
-    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aConsiderWildcardAsValid)
+    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid)
             throws NullPointerException {
         IValenceModel tmpValenceModel = new PubChemValenceModel();
-        return FilterUtils.hasAllValidValences(anAtomContainer, aConsiderWildcardAsValid, tmpValenceModel);
+        return FilterUtils.hasAllValidValences(anAtomContainer, aWildcardAtomicNumberIsValid, tmpValenceModel);
     }
 
     /**
      * Returns whether the atoms of the given atom container all have valid valences according to the given valence
      * model.
      *
-     * @param anAtomContainer          the atom container to check the valences of
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
-     * @param aValenceModel            the valence model to check the valences for their validity with
+     * @param anAtomContainer              the atom container to check the valences of
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
+     * @param aValenceModel                the valence model to check the valences for their validity with
      * @return true, if all atoms of the given atom container have a valence considered as valid
      * @throws NullPointerException if the given valence model, atom container or an atom contained by the atom
      *                              container is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of an atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      */
-    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aConsiderWildcardAsValid,
+    public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid,
                                               IValenceModel aValenceModel) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         Objects.requireNonNull(aValenceModel, ErrorCodes.VALENCE_MODEL_NULL_ERROR.name());
         //
         for (IAtom tmpAtom : anAtomContainer.atoms()) {
-            if (!aValenceModel.hasValidValence(tmpAtom, aConsiderWildcardAsValid)) {
+            if (!aValenceModel.hasValidValence(tmpAtom, aWildcardAtomicNumberIsValid)) {
                 return false;
             }
         }

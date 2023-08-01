@@ -95,7 +95,6 @@ public class ValenceListMatrixWrapperTest extends ValenceListMatrixWrapper {
         Assertions.assertEquals(2, this.valenceListPointerMatrix[0].length);
     }
 
-    //TODO: test the second constructor
     @Test
     public void secondConstructorTest_testsLineCount_testsLowestAndHighestAtomicNumber_testsMatrixDimensions()
             throws IOException {

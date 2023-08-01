@@ -707,16 +707,17 @@ public class CurationPipeline extends BaseProcessingStep {
      * given valence model and boolean value whether to generally consider atoms with wildcard atomic number (zero) as
      * having a valid valence.
      *
-     * @param aValenceModel            the valence model to check the valences for their validity with
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
+     * @param aValenceModel                the valence model to check the valences for their validity with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given valence model is null
      * @see HasAllValidValencesFilter
      */
-    public CurationPipeline withHasAllValidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid)
+    public CurationPipeline withHasAllValidValencesFilter(IValenceModel aValenceModel,
+                                                          boolean aWildcardAtomicNumberIsValid)
             throws NullPointerException {
-        IFilter tmpFilter = new HasAllValidValencesFilter(aValenceModel, aConsiderWildcardAsValid, this.getReporter());
+        IFilter tmpFilter = new HasAllValidValencesFilter(aValenceModel, aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -725,13 +726,13 @@ public class CurationPipeline extends BaseProcessingStep {
      * Adds a {@link HasAllValidValencesFilter} as step to the curation pipeline initializing it with an instance of
      * {@link PubChemValenceModel} as valence model.
      *
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
      * @return the CurationPipeline instance itself
      * @see HasAllValidValencesFilter
      */
-    public CurationPipeline withHasAllValidValencesFilter(boolean aConsiderWildcardAsValid) {
-        IFilter tmpFilter = new HasAllValidValencesFilter(aConsiderWildcardAsValid, this.getReporter());
+    public CurationPipeline withHasAllValidValencesFilter(boolean aWildcardAtomicNumberIsValid) {
+        IFilter tmpFilter = new HasAllValidValencesFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -743,16 +744,17 @@ public class CurationPipeline extends BaseProcessingStep {
      * given valence model and boolean value whether to generally consider atoms with wildcard atomic number (zero) as
      * having a valid valence.
      *
-     * @param aValenceModel            the valence model to check the valences for their validity with
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
+     * @param aValenceModel                the valence model to check the valences for their validity with
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given valence model is null
      * @see HasInvalidValencesFilter
      */
-    public CurationPipeline withHasInvalidValencesFilter(IValenceModel aValenceModel, boolean aConsiderWildcardAsValid)
+    public CurationPipeline withHasInvalidValencesFilter(IValenceModel aValenceModel,
+                                                         boolean aWildcardAtomicNumberIsValid)
             throws NullPointerException {
-        IFilter tmpFilter = new HasInvalidValencesFilter(aValenceModel, aConsiderWildcardAsValid, this.getReporter());
+        IFilter tmpFilter = new HasInvalidValencesFilter(aValenceModel, aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
@@ -761,13 +763,13 @@ public class CurationPipeline extends BaseProcessingStep {
      * Adds a {@link HasInvalidValencesFilter} as step to the curation pipeline initializing it with an instance of
      * {@link PubChemValenceModel} as valence model.
      *
-     * @param aConsiderWildcardAsValid boolean value whether to generally consider atoms with wildcard atomic number
-     *                                 (zero) as having a valid valence
+     * @param aWildcardAtomicNumberIsValid boolean value whether to generally consider atoms with wildcard atomic number
+     *                                     (zero) as having a valid valence
      * @return the CurationPipeline instance itself
      * @see HasInvalidValencesFilter
      */
-    public CurationPipeline withHasInvalidValencesFilter(boolean aConsiderWildcardAsValid) {
-        IFilter tmpFilter = new HasInvalidValencesFilter(aConsiderWildcardAsValid, this.getReporter());
+    public CurationPipeline withHasInvalidValencesFilter(boolean aWildcardAtomicNumberIsValid) {
+        IFilter tmpFilter = new HasInvalidValencesFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
         return this;
     }
