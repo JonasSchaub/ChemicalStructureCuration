@@ -119,9 +119,11 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
      *
      * @param anAtomContainer the atom container the issue refers to
      * @param anException the thrown exception
-     * @throws NullPointerException if the given atom container (if it is not null) does not possess a MolID
+     * @throws NullPointerException if the given atom container (if it is not null) does not possess a MolID; if the
+     *                              exception is null
      * @throws Exception if the given exception is considered as fatal
      */
-    protected abstract void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws NullPointerException, Exception;
+    protected abstract void reportIssue(IAtomContainer anAtomContainer, Exception anException)
+            throws NullPointerException, Exception;
 
 }

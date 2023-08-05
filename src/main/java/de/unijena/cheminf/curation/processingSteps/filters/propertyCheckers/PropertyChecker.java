@@ -194,7 +194,8 @@ public class PropertyChecker extends BaseFilter {
      *                   ErrorCodes#ATOM_CONTAINER_NULL_ERROR}
      */
     @Override
-    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws NullPointerException,
+            Exception {
         String tmpExceptionMessageString = anException.getMessage();
         ErrorCodes tmpErrorCode;
         try {
