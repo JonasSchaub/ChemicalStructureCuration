@@ -228,6 +228,7 @@ public class FilterUtils {
      *                              of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      * @see #hasAllValidValences(IAtomContainer, boolean, IValenceModel)
+     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
      * @see PubChemValenceModel
      */
     public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid)
@@ -249,6 +250,8 @@ public class FilterUtils {
      *                              container is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of an atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
+     * @see PubChemValenceModel
      */
     public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid,
                                               IValenceModel aValenceModel) throws NullPointerException {
@@ -257,6 +260,11 @@ public class FilterUtils {
         //
         for (IAtom tmpAtom : anAtomContainer.atoms()) {
             if (!aValenceModel.hasValidValence(tmpAtom, aWildcardAtomicNumberIsValid)) {
+                /* lines for test purposes  //TODO: probably remove
+                int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
+                System.out.printf("%s:\t%d\t%d\t%d\t%d\t%d\n", tmpAtom.getSymbol(), tmpAtom.getAtomicNumber(),
+                        tmpAtom.getFormalCharge(), tmpSigmaAndPiBondsCount[1], tmpSigmaAndPiBondsCount[0],
+                        tmpAtom.getImplicitHydrogenCount());*/
                 return false;
             }
         }

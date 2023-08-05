@@ -26,6 +26,11 @@
 package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.TestUtils;
+import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
+import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel;
+import de.unijena.cheminf.curation.valenceListContainers.ValenceListMatrixWrapper;
+import de.unijena.cheminf.curation.valenceListContainers.ValenceListMatrixWrapperTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;
@@ -37,6 +42,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IElement;
+
+import java.io.IOException;
 
 /**
  * Test class for methods of class FilterUtils.
@@ -822,6 +829,122 @@ public class FilterUtilsTest {
                     FilterUtils.hasAllValidAtomicNumbers(tmpAtomContainer, tmpIncludeWildcardNumber);
                 }
         );
+    }
+    //</editor-fold>
+
+    //<editor-fold desc=" method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the .hasAllValidValences() method of class FilterUtils returns true if all atoms of the given
+     * atom container have a valence considered as valid (according to the valence model).
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidValencesTest_allValidValences_returnsTrue() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "O=[N+]([O-])[O-]", // nitrate
+                "CC(C)(C)C",        // tetravalent carbon
+                "CC(O)=O",          // acetic acid
+                "[O-]H",            // hydroxide
+                "[H+]"              // proton
+        );
+        boolean tmpWildcardAtomicNumberIsValid = false;
+        IValenceModel tmpValenceModel = new PubChemValenceModel();
+        //
+        boolean tmpExpectedValue = true;
+        for (IAtomContainer tmpAtomContainer : tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertEquals(tmpExpectedValue, FilterUtils.hasAllValidValences(tmpAtomContainer,
+                    tmpWildcardAtomicNumberIsValid, tmpValenceModel));
+        }
+    }
+
+    /**
+     * Tests whether the .hasAllValidValences() method of class FilterUtils returns false if an atom of the given
+     * atom container has a valence considered as invalid (according to the valence model).
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidValencesTest_incorrectValences_returnsFalse() throws InvalidSmilesException {
+        IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
+                "O=[N]([O-])[O-]",  // uncharged tetravalent nitrogen
+                "O=N(O)=O",         // pentavalent nitrogen
+                "CC(C)(C)(C)C",     // pentavalent carbon
+                "HFH",              // divalent fluor
+                "[H++]"             // two times positive charged hydrogen
+        );
+        boolean tmpWildcardAtomicNumberIsValid = false;
+        IValenceModel tmpValenceModel = new PubChemValenceModel();
+        //
+        boolean tmpExpectedValue = false;
+        for (IAtomContainer tmpAtomContainer : tmpAtomContainerSet.atomContainers()) {
+            Assertions.assertEquals(tmpExpectedValue, FilterUtils.hasAllValidValences(tmpAtomContainer,
+                    tmpWildcardAtomicNumberIsValid, tmpValenceModel));
+        }
+    }
+
+    /**
+     * Tests whether the .hasAllValidValences() method of class FilterUtils returns true if an atom of the given atom
+     * container contains a pseudo-atom with wildcard atomic number (zero) and atoms with wildcard atomic number are
+     * generally considered as valid.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidValencesTest_considerWildcardAtomicNumberAsValid_structureWithRGroup_returnsTrue()
+            throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)O[R]");
+        boolean tmpWildcardAtomicNumberIsValid = true;
+        IValenceModel tmpValenceModel = new PubChemValenceModel();
+        //
+        boolean tmpExpectedValue = true;
+        Assertions.assertEquals(tmpExpectedValue, FilterUtils.hasAllValidValences(tmpAtomContainer,
+                tmpWildcardAtomicNumberIsValid, tmpValenceModel));
+    }
+
+    /**
+     * Tests whether the .hasAllValidValences() method of class FilterUtils returns false if an atom of the given atom
+     * container contains a pseudo-atom with wildcard atomic number (zero), atoms with wildcard atomic number are
+     * not generally considered as valid and the valence model does not cover the wildcard atomic number.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidValencesTest_notConsiderWildcardAtomicNumberAsValid_structureWithRGroup_returnsFalse()
+            throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)O[R]");
+        boolean tmpWildcardAtomicNumberIsValid = false;
+        IValenceModel tmpValenceModel = new PubChemValenceModel();
+        //
+        boolean tmpExpectedValue = false;
+        Assertions.assertEquals(tmpExpectedValue, FilterUtils.hasAllValidValences(tmpAtomContainer,
+                tmpWildcardAtomicNumberIsValid, tmpValenceModel));
+    }
+
+    /**
+     * Tests whether the .hasAllValidValences() method of class FilterUtils returns true if an atom of the given atom
+     * container contains a pseudo-atom with wildcard atomic number (zero), atoms with wildcard atomic number are
+     * not generally considered as valid but the valence model covers the specific atom configuration with wildcard
+     * atomic number.
+     *
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
+     */
+    @Test
+    public void hasAllValidValencesTest_wildcardInvalid_valenceModelAllowsSingleBondedPseudoAtoms_structureWithRGroup_returnsTrue()
+            throws InvalidSmilesException, IOException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)O[R]");
+        boolean tmpWildcardAtomicNumberIsValid = false;
+        ValenceListMatrixWrapper tmpTestValenceListMatrixWrapper = new ValenceListMatrixWrapper(
+                ValenceListMatrixWrapperTest.TEST_VALENCE_LIST_FILE_PATH_STRING,
+                ValenceListMatrixWrapperTest.NUMBER_OF_LINES_IN_TEST_FILE
+        );
+        IValenceModel tmpValenceModel = new ValenceListBasedValenceModel(tmpTestValenceListMatrixWrapper);
+        //
+        // the test valence list covers atoms with atomic number zero and one sigma bond
+        // therefore the R-group is considered as valid
+        boolean tmpExpectedValue = true;
+        Assertions.assertEquals(tmpExpectedValue, FilterUtils.hasAllValidValences(tmpAtomContainer,
+                tmpWildcardAtomicNumberIsValid, tmpValenceModel));
     }
     //</editor-fold>
 

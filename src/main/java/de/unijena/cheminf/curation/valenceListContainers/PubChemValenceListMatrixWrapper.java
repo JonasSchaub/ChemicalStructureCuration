@@ -33,8 +33,8 @@ import java.io.IOException;
  * An instance is only generated once during the class loading.
  * <br>
  * The valence list was received from a paper describing the PubChem standardization approaches. See:
- * <a href="https://doi.org/10.1186/s13321-018-0293-8"> "Hähnke, V.D., Kim, S. & Bolton, E.E. PubChem chemical
- * structure standardization. J Cheminform 10, 36 (2018). https://doi.org/10.1186/s13321-018-0293-8" </a>.
+ * <a href="https://doi.org/10.1186/s13321-018-0293-8"> "Hähnke, V.D., Kim, S., Bolton, E.E. PubChem chemical structure
+ * standardization. J Cheminform 10, 36 (2018). https://doi.org/10.1186/s13321-018-0293-8" </a>.
  *
  * @author Samuel Behr
  * @version 1.0.0.0

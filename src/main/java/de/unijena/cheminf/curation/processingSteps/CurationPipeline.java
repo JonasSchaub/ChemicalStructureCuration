@@ -713,6 +713,8 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given valence model is null
      * @see HasAllValidValencesFilter
+     * @see PubChemValenceModel
+     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
      */
     public CurationPipeline withHasAllValidValencesFilter(IValenceModel aValenceModel,
                                                           boolean aWildcardAtomicNumberIsValid)
@@ -730,6 +732,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *                                     (zero) as having a valid valence
      * @return the CurationPipeline instance itself
      * @see HasAllValidValencesFilter
+     * @see PubChemValenceModel
      */
     public CurationPipeline withHasAllValidValencesFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasAllValidValencesFilter(aWildcardAtomicNumberIsValid, this.getReporter());
@@ -750,6 +753,8 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return the CurationPipeline instance itself
      * @throws NullPointerException if the given valence model is null
      * @see HasInvalidValencesFilter
+     * @see PubChemValenceModel
+     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
      */
     public CurationPipeline withHasInvalidValencesFilter(IValenceModel aValenceModel,
                                                          boolean aWildcardAtomicNumberIsValid)
@@ -767,6 +772,7 @@ public class CurationPipeline extends BaseProcessingStep {
      *                                     (zero) as having a valid valence
      * @return the CurationPipeline instance itself
      * @see HasInvalidValencesFilter
+     * @see PubChemValenceModel
      */
     public CurationPipeline withHasInvalidValencesFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidValencesFilter(aWildcardAtomicNumberIsValid, this.getReporter());

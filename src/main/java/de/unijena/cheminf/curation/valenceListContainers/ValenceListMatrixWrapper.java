@@ -128,12 +128,13 @@ public class ValenceListMatrixWrapper {
 
     /**
      * Constructor; loads a valence list text file, a file containing a list of valid valences and configurations of
-     * atoms and wraps the imported data into two matrices. The data
+     * atoms and wraps the imported data into two matrices. The number of lines in file parameter fastens the import
+     * process.
      * <br>
      * The list, in which each line stands for one valid atom configuration, is expected to have the following format
      * and contain the following information:
      * <ul>
-     * <li>one headline;
+     * <li>one headline (content is ignored);
      * <li>no empty or blank lines;
      * <li>five columns per line, separated by a tabulator ("\t");
      * <li>stored data: atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
@@ -166,14 +167,14 @@ public class ValenceListMatrixWrapper {
     }
 
     /**
-     * Constructor; runs threw the file to detect the lines count and then loads the valence list contained by it and
-     * wraps the imported data into two matrices. The file is expected to be a text file containing a list of valid
+     * Constructor; runs threw the file to detect the lines count before loading the valence list contained by it and
+     * wrapping the imported data into two matrices. The file is expected to be a text file containing a list of valid
      * valences and configurations of atoms.
      * <br>
      * The list, in which each line stands for one valid atom configuration, is expected to have the following format
      * and contain the following information:
      * <ul>
-     * <li>one headline;
+     * <li>one headline (content is ignored);
      * <li>no empty or blank lines;
      * <li>five columns per line, separated by a tabulator ("\t");
      * <li>stored data: atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
