@@ -260,8 +260,8 @@ public class FilterUtils {
         //
         for (IAtom tmpAtom : anAtomContainer.atoms()) {
             if (!aValenceModel.hasValidValence(tmpAtom, aWildcardAtomicNumberIsValid)) {
-                /* lines for test purposes  //TODO: probably remove
-                int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
+                // lines to analyse detected valence errors
+                /*int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
                 System.out.printf("%s:\t%d\t%d\t%d\t%d\t%d\n", tmpAtom.getSymbol(), tmpAtom.getAtomicNumber(),
                         tmpAtom.getFormalCharge(), tmpSigmaAndPiBondsCount[1], tmpSigmaAndPiBondsCount[0],
                         tmpAtom.getImplicitHydrogenCount());*/

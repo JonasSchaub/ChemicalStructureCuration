@@ -46,30 +46,36 @@ import java.util.Objects;
  */
 public class ValenceListBasedValenceModel implements IValenceModel {
 
+    //<editor-fold desc="private final variable" defaultstate="collapsed">
     /**
      * The valence list matrix wrapper instance containing the valence list based on which the validity of the valences
      * is checked on.
      */
     private final ValenceListMatrixWrapper valenceListMatrixWrapper;
+    //</editor-fold>
 
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
      * Main constructor; initializes the valence model and sets the valence list matrix wrapper instance based on which
      * the validity of the valences is checked on.
      *
-     * @param aValenceListMatrixWrapper the valence list matrix wrapper class instance based on which the validity of
-     *                                  valences shall be checked on
+     * @param aValenceListMatrixWrapper the valence list matrix wrapper instance based on which the validity of valences
+     *                                  shall be checked on
      * @throws NullPointerException if the passed instance is null
+     * @see #ValenceListBasedValenceModel(String, int)
+     * @see #ValenceListBasedValenceModel(String)
      */
     public ValenceListBasedValenceModel(ValenceListMatrixWrapper aValenceListMatrixWrapper)
             throws NullPointerException {
         Objects.requireNonNull(aValenceListMatrixWrapper, "The given valence list matrix wrapper instance" +
-                " is null.");
+                " (aValenceListMatrixWrapper) is null.");
         this.valenceListMatrixWrapper = aValenceListMatrixWrapper;
     }
 
     /**
      * Constructor; calls the main constructor with an instance of {@link ValenceListMatrixWrapper} initialized with
-     * the given file path and number of lines in file value. Passing the lines count fastens the data import.
+     * the given file path and number of lines in file value. Passing the lines count fastens the data import; if it is
+     * unknown, see {@link #ValenceListBasedValenceModel(String)}.
      * <br>
      * The valence list, in which each line is expected to stand for one valid atom configuration, must be structured
      * according to the following format and contain the following information:
@@ -88,6 +94,8 @@ public class ValenceListBasedValenceModel implements IValenceModel {
      * @throws NullPointerException if the given file path string is null
      * @throws IllegalArgumentException if the file contains less than two lines
      * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format
+     * @see #ValenceListBasedValenceModel(String)
+     * @see #ValenceListBasedValenceModel(ValenceListMatrixWrapper)
      */
     public ValenceListBasedValenceModel(String aValenceListFilePath, int aNumberOfLinesInFile)
             throws NullPointerException, IllegalArgumentException, IOException {
@@ -96,7 +104,8 @@ public class ValenceListBasedValenceModel implements IValenceModel {
 
     /**
      * Constructor; calls the main constructor with an instance of {@link ValenceListMatrixWrapper} wrapping the valence
-     * list text file located at the given file path. Passing the lines count would fasten the data import.
+     * list text file located at the given file path. Passing the lines count would fasten the data import (see
+     * respective constructor).
      * <br>
      * The valence list, in which each line is expected to stand for one valid atom configuration, must be structured
      * according to the following format and contain the following information:
@@ -114,15 +123,19 @@ public class ValenceListBasedValenceModel implements IValenceModel {
      * @throws NullPointerException if the given file path string is null
      * @throws IllegalArgumentException if the file contains less than two lines
      * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format
+     * @see #ValenceListBasedValenceModel(String, int)
+     * @see #ValenceListBasedValenceModel(ValenceListMatrixWrapper)
      */
     public ValenceListBasedValenceModel(String aValenceListFilePath)
             throws NullPointerException, IllegalArgumentException, IOException {
         this(new ValenceListMatrixWrapper(aValenceListFilePath));
     }
+    //</editor-fold>
 
+    //<editor-fold desc="public methods" defaultstate="collapsed">
     /**
      * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
-     *                              of an atom is null; if the bond order of a bond is null
+     *                              of the atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      */
     @Override
@@ -132,7 +145,7 @@ public class ValenceListBasedValenceModel implements IValenceModel {
 
     /**
      * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
-     *                              of an atom is null; if the bond order of a bond is null
+     *                              of the atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      */
     @Override
@@ -186,7 +199,9 @@ public class ValenceListBasedValenceModel implements IValenceModel {
         }
         return false;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="public properties" defaultstate="collapsed">
     /**
      * Returns the valence list matrix wrapper instance based on which the validity of the valences is checked on.
      *
@@ -195,5 +210,6 @@ public class ValenceListBasedValenceModel implements IValenceModel {
     public ValenceListMatrixWrapper getValenceListMatrixWrapper() {
         return this.valenceListMatrixWrapper;
     }
+    //</editor-fold>
 
 }

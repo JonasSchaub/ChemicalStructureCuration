@@ -32,23 +32,25 @@ import java.io.IOException;
  * follows the Singleton pattern: To receive an instance of the class, the method {@link #getInstance()} is to be used.
  * An instance is only generated once during the class loading.
  * <br>
- * The valence list was received from a paper describing the PubChem standardization approaches. See:
+ * The valence list was received from the paper describing the PubChem standardization approaches. See:
  * <a href="https://doi.org/10.1186/s13321-018-0293-8"> "Hähnke, V.D., Kim, S., Bolton, E.E. PubChem chemical structure
  * standardization. J Cheminform 10, 36 (2018). https://doi.org/10.1186/s13321-018-0293-8" </a>.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
+ * @see #getInstance()
  */
 public class PubChemValenceListMatrixWrapper extends ValenceListMatrixWrapper {
 
     /**
      * String of the path to the PubChem valence list text file.
      */
-    private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt";
+    private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/" +
+            "PubChem_Valence_list.txt";
 
     /**
-     * Integer value of the number of lines contained by the PubChem valence list text file; 981 lines of content + one
-     * headline.
+     * Integer value of the number of lines contained by the PubChem valence list text file; 981 lines of content plus
+     * one headline.
      */
     protected static final int NUMBER_OF_LINES_IN_FILE = 982;
 

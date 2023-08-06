@@ -36,15 +36,15 @@ import java.util.Objects;
 /**
  * Imports a valence list out of a text file and wraps it into two matrices; one containing the data and a second for a
  * faster access on the data stored by the first matrix. To prevent changes on the imported data, the matrices are not
- * directly accessible. Instead, there are multiple methods for accessing the data stored by them. To be imported,
- * valence lists need to follow the following format:
+ * directly accessible. Instead, there are multiple methods for accessing the data. To be imported, valence lists need
+ * to follow the following format conventions:
  * <ul>
- *     <li>one headline;</li>
+ *     <li>one headline (content is ignored);</li>
  *     <Li>no empty / blank lines;</Li>
  *     <li>each line is the equivalent to one valid atom configuration and contains five columns separated by a
  *     tabulator ("\t");</li>
  *     <li>the columns are: atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ
- *     bonds (column 4) and the maximum number of implicit hydrogens (column 5);</li>
+ *     bonds (column 4), maximum number of implicit hydrogens (column 5);</li>
  *     <li>the list entries must be sorted according to their atomic numbers, starting with the lowest.</li>
  * </ul>
  * Exemplary for this format is the valence list published as part of the paper describing the PubChem standardization
@@ -56,15 +56,7 @@ import java.util.Objects;
  */
 public class ValenceListMatrixWrapper {
 
-    /*
-     TODO: allow wildcard atomic number (-> the atomic number equals the index of the pointer in the second matrix)
-     TODO: Constructor taking the number of lines in file
-     TODO: Constructor taking no only the list (-> runs threw the list and determines the number of lines in file before
-      calling the main constructor)
-     TODO: change the type of the thrown exceptions
-     TODO: change the datatype of the arrays? -> byte should be possible
-     */
-
+    //<editor-fold desc="public static final class constants" defaultstate="collapsed">
     /**
      * Integer value to be set as pointer in the {@link #valenceListPointerMatrix} if the respective element is not
      * present in the valence list.
@@ -76,13 +68,15 @@ public class ValenceListMatrixWrapper {
      * (column 1), charge (column 2), number of π bonds (column 3), number of σ bonds (column 4), maximum number of
      * implicit hydrogens (column 5).
      */
-    protected static final int NUMBER_OF_COLUMNS_PER_LINE_OF_FILE = 5;
+    public static final int NUMBER_OF_COLUMNS_PER_LINE_OF_FILE = 5;
 
     /**
      * Integer value of the highest currently known atomic number (118).
      */
-    protected static final int HIGHEST_KNOWN_ATOMIC_NUMBER = IElement.Og;   // 118
+    public static final int HIGHEST_KNOWN_ATOMIC_NUMBER = IElement.Og;   // 118
+    //</editor-fold>
 
+    //<editor-fold desc="private final variables">
     /**
      * Integer value of the number of lines contained by the valence list text file (including the headline).
      */
@@ -97,7 +91,9 @@ public class ValenceListMatrixWrapper {
      * Integer value of the highest atomic number in the valence list.
      */
     private final int highestAtomicNumberInList;
+    //</editor-fold>
 
+    //<editor-fold desc="protected final variables">
     /**
      * Two-dimensional matrix of integer values that stores the data loaded from a valence list text file. Every element
      * in the upper-level array of the matrix is the equivalent to a line of the text file (except the headline); the
@@ -125,11 +121,13 @@ public class ValenceListMatrixWrapper {
      * }</pre>
      */
     protected final int[][] valenceListPointerMatrix;
+    //</editor-fold>
 
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
      * Constructor; loads a valence list text file, a file containing a list of valid valences and configurations of
-     * atoms and wraps the imported data into two matrices. The number of lines in file parameter fastens the import
-     * process.
+     * atoms, and wraps the imported data into two matrices. The number of lines in file parameter fastens the import
+     * process; if it is unknown, see the respective constructor.
      * <br>
      * The list, in which each line stands for one valid atom configuration, is expected to have the following format
      * and contain the following information:
@@ -147,7 +145,9 @@ public class ValenceListMatrixWrapper {
      * @param aNumberOfLinesInFile Integer value of the number of lines in the file (including the headline)
      * @throws NullPointerException if the given file path string is null
      * @throws IllegalArgumentException if the file contains less than two lines
-     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format
+     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format (see
+     *                     {@link #loadDataFromFile(String)})
+     * @see #ValenceListMatrixWrapper(String)
      */
     public ValenceListMatrixWrapper(String aValenceListFilePath, int aNumberOfLinesInFile)
             throws NullPointerException, IllegalArgumentException, IOException {
@@ -158,8 +158,10 @@ public class ValenceListMatrixWrapper {
         }
         //
         this.numberOfLinesInFile = aNumberOfLinesInFile;
-        this.valenceListMatrix = new int[this.numberOfLinesInFile - 1][ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE];
+        this.valenceListMatrix = new int[this.numberOfLinesInFile - 1]
+                [ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE];
         this.valenceListPointerMatrix = new int[ValenceListMatrixWrapper.HIGHEST_KNOWN_ATOMIC_NUMBER + 1][2];
+        //
         this.loadDataFromFile(aValenceListFilePath);
         //
         this.lowestAtomicNumberInList = this.valenceListMatrix[0][0];
@@ -186,7 +188,8 @@ public class ValenceListMatrixWrapper {
      * @param aValenceListFilePath String of the file path of the valence list text file
      * @throws NullPointerException if the given file path string is null
      * @throws IllegalArgumentException if the file contains less than two lines
-     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format
+     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format (see
+     *                     {@link #loadDataFromFile(String)})
      */
     public ValenceListMatrixWrapper(String aValenceListFilePath) throws NullPointerException, IllegalArgumentException,
             IOException {
@@ -200,29 +203,30 @@ public class ValenceListMatrixWrapper {
         while (tmpBufferedReader.readLine() != null) {
             tmpLinesInFileCount++;
         }
+        tmpFileReader.close();
+        tmpBufferedReader.close();
         if (tmpLinesInFileCount < 2) {
             throw new IllegalArgumentException("The number of lines in file needs to be at least two.");
         }
-        tmpFileReader.close();
-        tmpBufferedReader.close();
         this.numberOfLinesInFile = tmpLinesInFileCount;
         //
-        this.valenceListMatrix = new int[this.numberOfLinesInFile - 1][ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE];
+        this.valenceListMatrix = new int[this.numberOfLinesInFile - 1]
+                [ValenceListMatrixWrapper.NUMBER_OF_COLUMNS_PER_LINE_OF_FILE];
         this.valenceListPointerMatrix = new int[ValenceListMatrixWrapper.HIGHEST_KNOWN_ATOMIC_NUMBER + 1][2];
+        //
         this.loadDataFromFile(aValenceListFilePath);
         //
         this.lowestAtomicNumberInList = this.valenceListMatrix[0][0];
         this.highestAtomicNumberInList = this.valenceListMatrix[this.valenceListMatrix.length - 1][0];
     }
+    //</editor-fold>
 
+    //<editor-fold desc="public methods" defaultstate="collapsed">
     /**
-     * Returns a specific value contained by the valence list matrix, a matrix containing valid valences and
-     * configurations of atoms with regard to atomic number, charge, number of π bonds, number of σ bonds and the
-     * maximum number of implicit hydrogens. The index of an entry equals its line in the imported valence list file
-     * minus two. The entries in the list are sorted by their atomic number.
+     * Returns a specific value contained by the valence list matrix. The index of an entry equals its line in the
+     * imported valence list file minus two. The entries in the list are sorted by their atomic number.
      * <br>
-     * For the entry with the index x in the valence list, the values specifying the respective atom configuration may
-     * be accessed via:
+     * For the entry with the index x, the values specifying the respective atom configuration may be accessed via:
      * <ul>
      *      <li>(x, 0) -> atomic number</li>
      *      <li>(x, 1) -> charge</li>
@@ -238,7 +242,7 @@ public class ValenceListMatrixWrapper {
      * @param anAtomConfigurationArrayIndex index of the value in the atom configuration array to be returned
      * @return integer value
      * @throws IllegalArgumentException if one the given indices is out of bounds for the respective matrix dimension;
-     *                                  the values are in bounds if:
+     *                                  the bounds are:
      *                                  <pre>{@code
      *                                  (0 <= aValenceListEntryIndex < getLengthOfValenceList())
      *                                  (0 <= anAtomConfigurationArrayIndex < 5)
@@ -268,7 +272,7 @@ public class ValenceListMatrixWrapper {
 
     /**
      * Returns an array which is the equivalent to a line in the imported valence list file and contains info on a valid
-     * configuration of an atom with regard to atomic number, charge, number of π bonds, number of σ bonds and the
+     * valence / configuration of an atom with regard to atomic number, charge, number of π bonds, number of σ bonds and
      * maximum number of implicit hydrogens. The index of an entry equals its line in the file minus two. The entries
      * in the list are sorted by their atomic number.
      * <br>
@@ -283,14 +287,14 @@ public class ValenceListMatrixWrapper {
      * To get the length of the valence list matrix (which equals the number of valid valences and configurations of
      * atoms contained by the valence list), use the method {@link #getLengthOfValenceList()}. To directly access
      * list entries regarding a specific chemical element, the methods {@link #getValenceListElementPointer(int)} and
-     * {@link #getAtomConfigurationsCountOfElement(int)} might be used.
+     * {@link #getAtomConfigurationsCountOfElement(int)} may be used.
      * <br>
      * To avoid changes to the original data, the returned array is a clone of the original array.
      *
      * @param aValenceListEntryIndex index of the valence list entry to be returned
      * @return integer array of length five
      * @throws IllegalArgumentException if the given index is of a negative value or exceeds the length of the valence
-     * list ({@link #getLengthOfValenceList()})
+     *                                  list ({@link #getLengthOfValenceList()})
      * @see #getValenceListEntry(int, int)
      * @see #getLengthOfValenceList()
      * @see #getValenceListElementPointer(int)
@@ -303,7 +307,7 @@ public class ValenceListMatrixWrapper {
         }
         if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
             throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is out of" +
-                    " bounds for first dimension of the valence list matrix (length: " +
+                    " bounds for the first dimension of the valence list matrix (length: " +
                     + this.valenceListMatrix.length + ").");
         }
         return this.valenceListMatrix[aValenceListEntryIndex].clone();
@@ -316,13 +320,18 @@ public class ValenceListMatrixWrapper {
      * in the list are sorted by their atomic number.
      * <br>
      * The given atomic number is not checked for validity. If the given atomic number is not present in the valence
-     * list, -1 is returned.
+     * list, the default pointer value is returned ({@link #DEFAULT_POINTER_VALUE}). For the lowest and highest atomic
+     * number contained by the list, see {@link #getLowestAtomicNumberInList()} and {@link
+     * #getHighestAtomicNumberInList()}.
      *
      * @param anAtomicNumber atomic number of the element
-     * @return index of first entry regarding the element or -1 if the atomic number is not present in the list
+     * @return index of first entry regarding the element or the {@link #DEFAULT_POINTER_VALUE} if the atomic number is
+     *         not present in the list
      * @see #getValenceListEntry(int, int)
      * @see #getValenceListEntry(int)
      * @see #getAtomConfigurationsCountOfElement(int)
+     * @see #getLowestAtomicNumberInList()
+     * @see #getHighestAtomicNumberInList()
      */
     public int getValenceListElementPointer(int anAtomicNumber) {
         if (anAtomicNumber < this.lowestAtomicNumberInList || anAtomicNumber > this.highestAtomicNumberInList) {
@@ -333,18 +342,21 @@ public class ValenceListMatrixWrapper {
 
     /**
      * Returns the count of how many entries in the valence list regard to a specific chemical element. The list entries
-     * may be accessed via the methods {@link #getValenceListEntry}. To get a pointer pointing at the first entry
+     * may be accessed via the {@link #getValenceListEntry} methods. To get a pointer pointing at the first entry
      * regarding the specific element, use the method {@link #getValenceListElementPointer(int)}. The entries in the
      * list are sorted by their atomic number.
      * <br>
      * The given atomic number is not checked for validity. If the given atomic number is not included in the valence
-     * list, zero is returned.
+     * list, zero is returned. For the lowest and highest atomic number contained by the list, see {@link
+     * #getLowestAtomicNumberInList()} and {@link #getHighestAtomicNumberInList()}.
      *
      * @param anAtomicNumber atomic number of the element
      * @return count of entries regarding the element
      * @see #getValenceListEntry(int, int)
      * @see #getValenceListEntry(int)
      * @see #getValenceListElementPointer(int)
+     * @see #getLowestAtomicNumberInList()
+     * @see #getHighestAtomicNumberInList()
      */
     public int getAtomConfigurationsCountOfElement(int anAtomicNumber) {
         if (anAtomicNumber < this.lowestAtomicNumberInList || anAtomicNumber > this.highestAtomicNumberInList) {
@@ -362,7 +374,7 @@ public class ValenceListMatrixWrapper {
      * @see #getValenceListEntry(int)
      */
     public int getLengthOfValenceList() {
-        return this.valenceListMatrix.length;
+        return this.numberOfLinesInFile - 1;
     }
 
     /**
@@ -375,33 +387,34 @@ public class ValenceListMatrixWrapper {
     }
 
     /**
-     * Returns the highest atomic number present in the valence list..
+     * Returns the highest atomic number present in the valence list.
      *
      * @return integer value
-     * @see #getValenceListElementPointer(int)
-     * @see #getAtomConfigurationsCountOfElement(int)
      */
     public int getHighestAtomicNumberInList() {
         return this.highestAtomicNumberInList;
     }
+    //</editor-fold>
 
     //<editor-fold desc="private methods" defaultstate="collapsed">
     /**
      * Loads a valence list text file, a file containing a list of valid valences and configurations of atoms with
      * respect to atomic number (column 1), charge (column 2), number of π bonds (column 3), number of σ bonds (column
-     * 4) and the maximum number of implicit hydrogens (column 5). The file needs to have a headline and each of the
+     * 4) and the maximum number of implicit hydrogens (column 5). The imported data is stored in the {@link
+     * #valenceListMatrix} and {@link #valenceListPointerMatrix} The file needs to have a headline and each of the
      * following lines needs to contain the mentioned five columns in the specific order, separated by a tab ("\t").
      * The list entries must be sorted according to their atomic number, starting with the lowest.
-     * <p>
-     * If an atomic number is not present in the valence list, the pointer in the pointer matrix is set to the default
-     * pointer value.
+     * <br>
+     * <b>Note:</b> If an atomic number is not present in the valence list, the pointer in the pointer matrix is set to
+     * the default pointer value ({@link #DEFAULT_POINTER_VALUE}.
      *
      * @param aValenceListFilePath String of the file path of the valence list text file in the project
      * @throws NullPointerException if the given string containing the file path is null
      * @throws IllegalArgumentException if the given number of rows in file is a value less than one
-     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format,
-     * the list entries are not sorted according to their atomic numbers or the highest atomic number in the file
-     * exceeds the length of the valence list pointer matrix
+     * @throws IOException if a problem occurs reading the file, e.g. the file does not fit to the expected format, the
+     *                     list entries are not sorted according to their atomic numbers or the lowest atomic number in
+     *                     the file is below zero or the highest atomic number exceeds the {@link
+     *                     #HIGHEST_KNOWN_ATOMIC_NUMBER}
      */
     private void loadDataFromFile(String aValenceListFilePath) throws NullPointerException,
             IllegalArgumentException, IOException {
@@ -444,7 +457,8 @@ public class ValenceListMatrixWrapper {
                 }
                 tmpCurrentElementAtomicNumber++;
                 while (this.valenceListMatrix[i][0] > tmpCurrentElementAtomicNumber) {
-                    // sets the pointer to -1 if an atomic number is not present in the imported valence list
+                    // respective element is not in the list
+                    // sets the pointer to the default pointer value and the count of atom configurations to zero
                     this.valenceListPointerMatrix[tmpCurrentElementAtomicNumber]
                             = new int[]{ValenceListMatrixWrapper.DEFAULT_POINTER_VALUE, 0};
                     tmpCurrentElementAtomicNumber++;

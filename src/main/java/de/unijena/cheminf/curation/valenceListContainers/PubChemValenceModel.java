@@ -44,23 +44,17 @@ import org.openscience.cdk.interfaces.IAtom;
 public class PubChemValenceModel extends ValenceListBasedValenceModel {
 
     /**
-     * Constructor; creates a valence model based on the PubChem valence list by calling the super passing {@link
-     * PubChemValenceListMatrixWrapper#getInstance()}.
+     * Constructor; creates a valence model based on the PubChem valence list by calling the super passing the {@link
+     * PubChemValenceListMatrixWrapper} instance.
      */
     public PubChemValenceModel() {
         super(PubChemValenceListMatrixWrapper.getInstance());
     }
 
-    @Override
-    public boolean hasValidValence(IAtom anAtom) throws NullPointerException, IllegalArgumentException {
-        return super.hasValidValence(anAtom, false);
-    }
-
     /**
-     * Checks whether the valence of the given atom is considered as valid according to the valence model. Gives the
-     * option to consider atoms with wildcard atomic number (zero) as having a valid valence; otherwise these atoms are
-     * generally considered as having an invalid valence since the wildcard atomic number is not covered by the PubChem
-     * valence model.
+     * {@inheritDoc}
+     * <br>
+     * <b>Note:</b> The PubChem valence model does not cover the wildcard atomic number.
      */
     @Override
     public boolean hasValidValence(IAtom anAtom, boolean aWildcardAtomicNumberIsValid) throws NullPointerException,
