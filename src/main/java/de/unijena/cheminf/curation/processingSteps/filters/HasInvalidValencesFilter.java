@@ -53,8 +53,8 @@ public class HasInvalidValencesFilter extends HasAllValidValencesFilter {
      * @param aReporter                    the reporter to do the reporting with
      * @throws NullPointerException if the given valence model or reporter is null
      */
-    public HasInvalidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid, IReporter aReporter)
-            throws NullPointerException {
+    public HasInvalidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid,
+                                    IReporter aReporter) throws NullPointerException {
         super(aValenceModel, aWildcardAtomicNumberIsValid, aReporter);
     }
 

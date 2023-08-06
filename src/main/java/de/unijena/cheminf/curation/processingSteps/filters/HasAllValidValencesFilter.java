@@ -66,8 +66,8 @@ public class HasAllValidValencesFilter extends BaseFilter {
      * @param aReporter                    the reporter to do the reporting with
      * @throws NullPointerException if the given valence model or reporter is null
      */
-    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid, IReporter aReporter)
-            throws NullPointerException {
+    public HasAllValidValencesFilter(IValenceModel aValenceModel, boolean aWildcardAtomicNumberIsValid,
+                                     IReporter aReporter) throws NullPointerException {
         super(aReporter, null);
         this.valenceModel = aValenceModel;
         this.wildcardAtomicNumberIsValid = aWildcardAtomicNumberIsValid;
@@ -143,7 +143,8 @@ public class HasAllValidValencesFilter extends BaseFilter {
     }
 
     @Override
-    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws NullPointerException, Exception {
+    protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws NullPointerException,
+            Exception {
         String tmpExceptionMessageString = anException.getMessage();
         ErrorCodes tmpErrorCode;
         try {

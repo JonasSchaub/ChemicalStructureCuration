@@ -430,7 +430,7 @@ public class ChemUtils {
      *
      * @param anAtom                     the atom to count the sigma and pi bonds of
      * @param aConsiderImplicitHydrogens boolean value whether to consider the bonds to implicit hydrogen atoms
-     * @return an array containing in the sigma bond count (index 0) and the pi bond count (index 1) of the given atom
+     * @return an array containing the sigma bond count (index 0) and the pi bond count (index 1) of the given atom
      * @throws NullPointerException if the given IAtom instance is null; if the bond order of a bond is null; if
      *                              implicit hydrogens are to be considered and the implicit hydrogen count of an atom
      *                              is null
@@ -439,7 +439,7 @@ public class ChemUtils {
     public static int[] getSigmaAndPiBondCounts(IAtom anAtom, boolean aConsiderImplicitHydrogens)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
-        // not using getSigmaBondCount() and getPiBondCount() for an increased performance
+        // not using getSigmaBondCount() and getPiBondCount() for a better performance
         int tmpSigmaBondCount = 0;
         int tmpPiBondCount = 0;
         IBond.Order tmpBondOrder;
