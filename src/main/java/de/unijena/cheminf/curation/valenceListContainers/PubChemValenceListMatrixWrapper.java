@@ -45,8 +45,8 @@ public class PubChemValenceListMatrixWrapper extends ValenceListMatrixWrapper {
     /**
      * String of the path to the PubChem valence list text file.
      */
-    private static final String VALENCE_LIST_FILE_PATH = "src/main/resources/de/unijena/cheminf/curation/" +
-            "PubChem_Valence_list.txt";
+    private static final String VALENCE_LIST_FILE_PATH
+            = "src/main/resources/de/unijena/cheminf/curation/PubChem_Valence_list.txt";
 
     /**
      * Integer value of the number of lines contained by the PubChem valence list text file; 981 lines of content plus

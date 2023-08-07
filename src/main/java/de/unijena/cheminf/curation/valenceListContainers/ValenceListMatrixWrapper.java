@@ -241,31 +241,32 @@ public class ValenceListMatrixWrapper {
      * @param aValenceListEntryIndex index of the valence list entry to be accessed
      * @param anAtomConfigurationArrayIndex index of the value in the atom configuration array to be returned
      * @return integer value
-     * @throws IllegalArgumentException if one the given indices is out of bounds for the respective matrix dimension;
-     *                                  the bounds are:
-     *                                  <pre>{@code
-     *                                  (0 <= aValenceListEntryIndex < getLengthOfValenceList())
-     *                                  (0 <= anAtomConfigurationArrayIndex < 5)
-     *                                  }</pre>
+     * @throws IndexOutOfBoundsException if one the given indices is out of bounds for the respective matrix dimension;
+     *                                   the bounds are:
+     *                                   <pre>{@code
+     *                                   (0 <= aValenceListEntryIndex < getLengthOfValenceList())
+     *                                   (0 <= anAtomConfigurationArrayIndex < 5)
+     *                                   }</pre>
      * @see #getValenceListEntry(int)
      * @see #getLengthOfValenceList()
      * @see #getValenceListElementPointer(int)
      * @see #getAtomConfigurationsCountOfElement(int)
      */
-    public int getValenceListEntry(int aValenceListEntryIndex, int anAtomConfigurationArrayIndex) throws IllegalArgumentException {
+    public int getValenceListEntry(int aValenceListEntryIndex, int anAtomConfigurationArrayIndex)
+            throws IndexOutOfBoundsException {
         if (aValenceListEntryIndex < 0 || anAtomConfigurationArrayIndex < 0) {
-            throw new IllegalArgumentException("A given index (aValenceListEntryIndex or anAtomConfigurationArrayIndex)" +
-                    " is of negative value.");
+            throw new IndexOutOfBoundsException("A given index (aValenceListEntryIndex or" +
+                    " anAtomConfigurationArrayIndex) has a negative value.");
         }
         if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
-            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is out" +
-                    " of bounds for the first dimension of the valence list matrix (length: "
+            throw new IndexOutOfBoundsException("The given valence list entry index (aValenceListEntryIndex) is" +
+                    " out of bounds for the first dimension of the valence list matrix (length: "
                     + this.valenceListMatrix.length + ").");
         }
         if (anAtomConfigurationArrayIndex >= this.valenceListMatrix[0].length) {
-            throw new IllegalArgumentException("The given array index (anAtomConfigurationArrayIndex) is out of bounds" +
-                    " for the second dimension of the valence list matrix (length: " + this.valenceListMatrix[0].length
-                    + ").");
+            throw new IndexOutOfBoundsException("The given array index (anAtomConfigurationArrayIndex) is out" +
+                    " of bounds for the second dimension of the valence list matrix (length: "
+                    + this.valenceListMatrix[0].length + ").");
         }
         return this.valenceListMatrix[aValenceListEntryIndex][anAtomConfigurationArrayIndex];
     }
@@ -293,21 +294,21 @@ public class ValenceListMatrixWrapper {
      *
      * @param aValenceListEntryIndex index of the valence list entry to be returned
      * @return integer array of length five
-     * @throws IllegalArgumentException if the given index is of a negative value or exceeds the length of the valence
-     *                                  list ({@link #getLengthOfValenceList()})
+     * @throws IndexOutOfBoundsException if the given index is of a negative value or exceeds the length of the valence
+     *                                   list ({@link #getLengthOfValenceList()})
      * @see #getValenceListEntry(int, int)
      * @see #getLengthOfValenceList()
      * @see #getValenceListElementPointer(int)
      * @see #getAtomConfigurationsCountOfElement(int)
      */
-    public int[] getValenceListEntry(int aValenceListEntryIndex) throws IllegalArgumentException {
+    public int[] getValenceListEntry(int aValenceListEntryIndex) throws IndexOutOfBoundsException {
         if (aValenceListEntryIndex < 0) {
-            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is of a" +
+            throw new IndexOutOfBoundsException("The given valence list entry index (aValenceListEntryIndex) has a" +
                     " negative value.");
         }
         if (aValenceListEntryIndex >= this.valenceListMatrix.length) {
-            throw new IllegalArgumentException("The given valence list entry index (aValenceListEntryIndex) is out of" +
-                    " bounds for the first dimension of the valence list matrix (length: " +
+            throw new IndexOutOfBoundsException("The given valence list entry index (aValenceListEntryIndex) is out" +
+                    " of bounds for the first dimension of the valence list matrix (length: " +
                     + this.valenceListMatrix.length + ").");
         }
         return this.valenceListMatrix[aValenceListEntryIndex].clone();

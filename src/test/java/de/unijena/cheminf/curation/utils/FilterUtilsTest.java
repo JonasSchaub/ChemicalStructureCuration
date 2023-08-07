@@ -832,7 +832,7 @@ public class FilterUtilsTest {
     }
     //</editor-fold>
 
-    //<editor-fold desc=" method tests" defaultstate="collapsed">
+    //<editor-fold desc="hasAllValidValences() method tests" defaultstate="collapsed">
     /**
      * Tests whether the .hasAllValidValences() method of class FilterUtils returns true if all atoms of the given
      * atom container have a valence considered as valid (according to the valence model).
