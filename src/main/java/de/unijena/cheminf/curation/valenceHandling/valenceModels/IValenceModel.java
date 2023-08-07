@@ -23,7 +23,7 @@
  *
  */
 
-package de.unijena.cheminf.curation.valenceListContainers;
+package de.unijena.cheminf.curation.valenceHandling.valenceModels;
 
 import org.openscience.cdk.interfaces.IAtom;
 

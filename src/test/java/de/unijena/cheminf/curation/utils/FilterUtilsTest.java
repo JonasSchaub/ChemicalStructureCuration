@@ -26,11 +26,11 @@
 package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.TestUtils;
-import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
-import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
-import de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel;
-import de.unijena.cheminf.curation.valenceListContainers.ValenceListMatrixWrapper;
-import de.unijena.cheminf.curation.valenceListContainers.ValenceListMatrixWrapperTest;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.ValenceListBasedValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceListHandling.ValenceListMatrixWrapper;
+import de.unijena.cheminf.curation.valenceHandling.valenceListHandling.ValenceListMatrixWrapperTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;

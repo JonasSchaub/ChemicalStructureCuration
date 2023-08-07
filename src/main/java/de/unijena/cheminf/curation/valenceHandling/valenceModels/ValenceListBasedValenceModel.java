@@ -23,10 +23,11 @@
  *
  */
 
-package de.unijena.cheminf.curation.valenceListContainers;
+package de.unijena.cheminf.curation.valenceHandling.valenceModels;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.utils.ChemUtils;
+import de.unijena.cheminf.curation.valenceHandling.valenceListHandling.ValenceListMatrixWrapper;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IElement;
 

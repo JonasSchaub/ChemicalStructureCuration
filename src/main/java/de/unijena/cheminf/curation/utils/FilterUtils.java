@@ -26,8 +26,9 @@
 package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
-import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
-import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.ValenceListBasedValenceModel;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -228,7 +229,7 @@ public class FilterUtils {
      *                              of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
      * @see #hasAllValidValences(IAtomContainer, boolean, IValenceModel)
-     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
+     * @see ValenceListBasedValenceModel
      * @see PubChemValenceModel
      */
     public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid)
@@ -250,7 +251,7 @@ public class FilterUtils {
      *                              container is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of an atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
-     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
+     * @see ValenceListBasedValenceModel
      * @see PubChemValenceModel
      */
     public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid,

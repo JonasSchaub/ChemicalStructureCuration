@@ -30,7 +30,7 @@ import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
 import java.io.IOException;
 
 /**
- * Interface of all reporters. Reporters are meant to generate reports out of data referring to issues with structures.
+ * Interface of all reporters; reporters are meant to generate reports out of data referring to issues with structures.
  * This data might have its origin in the processing of sets of structures by instances of {@link IProcessingStep}
  * implementations.
  * <br>

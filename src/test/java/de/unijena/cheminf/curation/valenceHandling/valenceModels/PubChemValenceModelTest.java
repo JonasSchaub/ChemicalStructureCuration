@@ -23,9 +23,12 @@
  *
  */
 
-package de.unijena.cheminf.curation.valenceListContainers;
+package de.unijena.cheminf.curation.valenceHandling.valenceModels;
 
 import de.unijena.cheminf.curation.TestUtils;
+import de.unijena.cheminf.curation.valenceHandling.valenceListHandling.PubChemValenceListMatrixWrapper;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.ValenceListBasedValenceModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.exception.InvalidSmilesException;

@@ -23,7 +23,7 @@
  *
  */
 
-package de.unijena.cheminf.curation.valenceListContainers;
+package de.unijena.cheminf.curation.valenceHandling.valenceListHandling;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;

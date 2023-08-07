@@ -23,7 +23,7 @@
  *
  */
 
-package de.unijena.cheminf.curation.valenceListContainers;
+package de.unijena.cheminf.curation.valenceHandling.valenceListHandling;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ public class ValenceListMatrixWrapperTest extends ValenceListMatrixWrapper {
      * String containing the file path of the test valence list text file.
      */
     public static final String TEST_VALENCE_LIST_FILE_PATH_STRING
-            = "src/test/resources/de/unijena/cheminf/curation/TestValenceList.txt";
+            = "src/test/resources/de/unijena/cheminf/curation/valenceLists/TestValenceList.txt";
 
     /**
      * Constructor; calls the super passing the file path of the test valence list text file and the number of lines

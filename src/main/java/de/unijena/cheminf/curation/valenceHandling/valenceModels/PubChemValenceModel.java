@@ -23,8 +23,9 @@
  *
  */
 
-package de.unijena.cheminf.curation.valenceListContainers;
+package de.unijena.cheminf.curation.valenceHandling.valenceModels;
 
+import de.unijena.cheminf.curation.valenceHandling.valenceListHandling.PubChemValenceListMatrixWrapper;
 import org.openscience.cdk.interfaces.IAtom;
 
 /**

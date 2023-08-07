@@ -48,8 +48,9 @@ import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.Prop
 import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.ExternalIDChecker;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
-import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
-import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.ValenceListBasedValenceModel;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
@@ -714,7 +715,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws NullPointerException if the given valence model is null
      * @see HasAllValidValencesFilter
      * @see PubChemValenceModel
-     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
+     * @see ValenceListBasedValenceModel
      */
     public CurationPipeline withHasAllValidValencesFilter(IValenceModel aValenceModel,
                                                           boolean aWildcardAtomicNumberIsValid)
@@ -754,7 +755,7 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws NullPointerException if the given valence model is null
      * @see HasInvalidValencesFilter
      * @see PubChemValenceModel
-     * @see de.unijena.cheminf.curation.valenceListContainers.ValenceListBasedValenceModel
+     * @see ValenceListBasedValenceModel
      */
     public CurationPipeline withHasInvalidValencesFilter(IValenceModel aValenceModel,
                                                          boolean aWildcardAtomicNumberIsValid)

@@ -29,8 +29,8 @@ import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
-import de.unijena.cheminf.curation.valenceListContainers.IValenceModel;
-import de.unijena.cheminf.curation.valenceListContainers.PubChemValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
