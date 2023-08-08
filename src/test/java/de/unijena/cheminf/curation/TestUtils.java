@@ -239,9 +239,7 @@ public class TestUtils {
      * @return instance of IReporter
      */
     public static IReporter getDefaultReporterInstance() {
-        //TODO: the option to set a file path is missing in this MarkDownReporter version!
-        //IReporter tmpReporter = new MarkDownReporter(TestUtils.REPORT_FILES_DIRECTORY_PATH_NAME);
-        IReporter tmpReporter = new MarkDownReporter();
+        IReporter tmpReporter = new MarkDownReporter(TestUtils.REPORT_FILES_DIRECTORY_PATH_NAME);
         return tmpReporter;
     }
 

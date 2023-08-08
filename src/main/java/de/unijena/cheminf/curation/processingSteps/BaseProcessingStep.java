@@ -136,9 +136,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     public BaseProcessingStep(String aReportFilesDirectoryPath, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
-        //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null; check whether it is a directory path
-        //this(new MarkDownReporter(aReportFilesDirectoryPath), anExternalIDPropertyName);
-        this(new MarkDownReporter(), anExternalIDPropertyName);
+        this(new MarkDownReporter(aReportFilesDirectoryPath), anExternalIDPropertyName);
     }
     //</editor-fold>
 

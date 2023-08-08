@@ -90,10 +90,7 @@ public class PropertyChecker extends BaseFilter {
      */
     public PropertyChecker(String aNameOfProperty, ErrorCodes anErrorCode, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
-        //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null;
-        // check whether it is a directory path
-        //this(aNameOfProperty, anErrorCode, new MarkDownReporter(aReportFilesDirectoryPath));
-        this(aNameOfProperty, anErrorCode, new MarkDownReporter());
+        this(aNameOfProperty, anErrorCode, new MarkDownReporter(aReportFilesDirectoryPath));
     }
 
     /**
@@ -123,10 +120,7 @@ public class PropertyChecker extends BaseFilter {
      */
     public PropertyChecker(String aNameOfProperty, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
-        //TODO: the MarkDownReporter needs a constructor that I can pass the file path to; check for not null;
-        // check whether it is a directory path
-        //this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, new MarkDownReporter(aReportFilesDirectoryPath));
-        this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, new MarkDownReporter());
+        this(aNameOfProperty, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY, new MarkDownReporter(aReportFilesDirectoryPath));
     }
 
     /**
