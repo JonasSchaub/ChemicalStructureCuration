@@ -56,15 +56,17 @@ class CreateMarkdownTest {
      */
     @Test
     public void CreateCurationPipelineReport() throws IOException, CDKException {
-        ReportDataObject tmpTestReportDataObject = new ReportDataObject(TestUtils.parseSmilesString("CCC"),
-                "Idetifier", "OptionalIdentifier", "1",
-                MinBondCountFilter.class, ErrorCodes.CLONE_ERROR);
-        ReportDataObject tmpTestReportDataObject2 = new ReportDataObject(TestUtils.parseSmilesString("CCCCCCCCCCCCCCCC"),
-                "Idetifier2", "OptionalIdentifier2", "1",
-                MinBondCountFilter.class, ErrorCodes.ATOM_CONTAINER_NULL_ERROR);
-        ReportDataObject tmpTestReportDataObject3 = new ReportDataObject(TestUtils.parseSmilesString("CN1C=NC2=C1C(=O)N(C(=O)N2C)C"),
-                "Idetifier3", "OptionalIdentifier3", "3",
-                MinAtomCountFilter.class, ErrorCodes.ATOM_CONTAINER_NULL_ERROR);
+        ReportDataObject tmpTestReportDataObject = new ReportDataObject(ErrorCodes.CLONE_ERROR,
+                MinBondCountFilter.class, "1", TestUtils.parseSmilesString("CCC"),
+                "Identifier", "OptionalIdentifier");
+        ReportDataObject tmpTestReportDataObject2 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR,
+                MinBondCountFilter.class, "1",
+                TestUtils.parseSmilesString("CCCCCCCCCCCCCCCC"), "Identifier2",
+                "OptionalIdentifier2");
+        ReportDataObject tmpTestReportDataObject3 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR,
+                MinAtomCountFilter.class, "3",
+                TestUtils.parseSmilesString("CN1C=NC2=C1C(=O)N(C(=O)N2C)C"), "Identifier3",
+                "OptionalIdentifier3");
         MarkDownReporter tmpMDReporter = new MarkDownReporter("Processing_Reports" + File.separator);
         new File("Processing_Reports").mkdir();
         tmpMDReporter.setFilePathString("Processing_Reports\\");

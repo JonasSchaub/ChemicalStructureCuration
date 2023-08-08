@@ -89,11 +89,10 @@ public class MarkDownReporter implements IReporter {
     }
 
     /**
-     * Initializes a new report
-     * @param aFileDestination file path name string
+     * Initializes a new report.
      */
     @Override
-    public void initializeNewReport(String aFileDestination) {
+    public void initializeNewReport() {
         this.clear();
 
     }
@@ -151,13 +150,13 @@ public class MarkDownReporter implements IReporter {
         } else {
             for (ReportDataObject tmpReportDataObject : this.reportDataObjectList) {
                 tmpPreviousProcessingStepIdentifier = tmpCurrentProcessingStepIdentifier;
-                tmpCurrentProcessingStepIdentifier = tmpReportDataObject.getProcessingStepID();
+                tmpCurrentProcessingStepIdentifier = tmpReportDataObject.getProcessingStepIdentifier();
                 tmpCurationPipelineReport.append("<table>\n\n");
                 if (!tmpCurrentProcessingStepIdentifier.equals(tmpPreviousProcessingStepIdentifier)) {
                     tmpCurationPipelineReport.append("<div style=\"page-break-before:always\"></div>\n\n");
                     tmpCurationPipelineReport.append("| ").append(tmpReportDataObject.getClassOfProcessingStep()).append(" |\n");
                     tmpCurationPipelineReport.append("|:------:|\n");
-                    tmpCurationPipelineReport.append("|ProcessingStepIdentifier: " + tmpReportDataObject.getProcessingStepID() + "|\n\n");
+                    tmpCurationPipelineReport.append("|ProcessingStepIdentifier: " + tmpReportDataObject.getProcessingStepIdentifier() + "|\n\n");
                     tmpCurationPipelineReport.append("</table>\n\n");
                 }
                 tmpCurationPipelineReport.append("<table>\n\n");
@@ -166,7 +165,7 @@ public class MarkDownReporter implements IReporter {
                 tmpCurationPipelineReport.append("|" + "![Depiction](data:image/png;base64,")
                         .append(ReportDepictionUtils.getDepictionAsString(tmpReportDataObject.getAtomContainer()))
                         .append(")|\n");
-                tmpCurationPipelineReport.append("|Optional Identifier: ").append(tmpReportDataObject.getOptionalIdentifier())
+                tmpCurationPipelineReport.append("|Optional Identifier: ").append(tmpReportDataObject.getProcessingStepIdentifier())
                         .append("|\n");
                 tmpCurationPipelineReport.append("|ErrorCode: ").append(tmpReportDataObject.getErrorCode()).append(" \n").append(ErrorCodeMessage.getErrorMessage(tmpReportDataObject.getErrorCode())).append("|\n\n");
                 tmpCurationPipelineReport.append("</table>\n\n");
