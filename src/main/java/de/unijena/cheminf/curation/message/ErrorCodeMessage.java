@@ -27,6 +27,7 @@ package de.unijena.cheminf.curation.message;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -46,10 +47,14 @@ public class ErrorCodeMessage {
      * @return String value of the given ErrorCode
      */
     public static String getErrorMessage(ErrorCodes anErrorCode) {
+        String filePath = "src" + File.separator + "main" + File.separator + "resources" +
+                File.separator + "de" + File.separator + "unijena" +
+                File.separator + "cheminf" + File.separator + "curation" +
+                File.separator + "ErrorCodes.properties";
 
         try {
             Properties tmpProperties = new Properties();
-            FileInputStream tmpFileInputStream = new FileInputStream("src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");
+            FileInputStream tmpFileInputStream = new FileInputStream(filePath);
             tmpProperties.load(tmpFileInputStream);
             String tmpErrorMessage = tmpProperties.getProperty(String.valueOf(anErrorCode));
             tmpFileInputStream.close();
