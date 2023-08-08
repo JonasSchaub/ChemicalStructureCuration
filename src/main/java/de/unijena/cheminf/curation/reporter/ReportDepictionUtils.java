@@ -49,12 +49,12 @@ public class ReportDepictionUtils {
      *
      * @param anAtomContainer from ReportDataObject to depict for the report
      * @return base64String of the depicted AtomContainer
-     * @throws IOException If an error occurs while writing the depiction image to a file
+     * @throws IOException If an error occurs while creating the depiction as base64 String
      */
     public static String getDepictionAsString(IAtomContainer anAtomContainer) throws IOException {
         try {
             int tmpNumAtoms = anAtomContainer.getAtomCount();
-            int tmpWidth = tmpNumAtoms * 50;
+            int tmpWidth = tmpNumAtoms * 50; //
             int tmpHeight = tmpNumAtoms * 30;
             DepictionGenerator tmpDepictionGenerator = new DepictionGenerator().withAtomColors().withSize(tmpWidth, tmpHeight)
                     .withFillToFit();
@@ -66,7 +66,7 @@ public class ReportDepictionUtils {
             return tmpBase64ImageString;
         } catch (CDKException aCDKException) {
             aCDKException.printStackTrace();
-            throw new IOException("Error writing to file:" + aCDKException.getMessage());
+            throw new IOException("Error creating String: " + aCDKException.getMessage());
         }
     }
 

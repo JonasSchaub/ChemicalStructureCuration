@@ -44,6 +44,11 @@ import java.io.IOException;
 class CreateMarkdownTest {
 
     /**
+     * File path to folder for test report files.
+     */
+    public static final String REPORTS_FOLDER_PATH_STRING = "Processing_Reports" + File.separator;
+
+    /**
      * Test class for creating a markdown report.
      *
      * @throws IOException if an error occurs while accessing or writing the report file
@@ -60,9 +65,9 @@ class CreateMarkdownTest {
         ReportDataObject tmpTestReportDataObject3 = new ReportDataObject(TestUtils.parseSmilesString("CN1C=NC2=C1C(=O)N(C(=O)N2C)C"),
                 "Idetifier3", "OptionalIdentifier3", "3",
                 MinAtomCountFilter.class, ErrorCodes.ATOM_CONTAINER_NULL_ERROR);
-        MarkDownReporter tmpMDReporter = new MarkDownReporter();
+        MarkDownReporter tmpMDReporter = new MarkDownReporter("Processing_Reports" + File.separator);
         new File("Processing_Reports").mkdir();
-        tmpMDReporter.setFilePath("Processing_Reports\\");
+        tmpMDReporter.setFilePathString("Processing_Reports\\");
         tmpMDReporter.appendReport(tmpTestReportDataObject);
         tmpMDReporter.appendReport(tmpTestReportDataObject2);
         tmpMDReporter.appendReport(tmpTestReportDataObject3);

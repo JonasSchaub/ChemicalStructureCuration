@@ -46,9 +46,10 @@ public class ErrorCodeMessage {
      * @return String value of the given ErrorCode
      */
     public static String getErrorMessage(ErrorCodes anErrorCode) {
+
         try {
             Properties tmpProperties = new Properties();
-            FileInputStream tmpFileInputStream = new FileInputStream("src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");//TODO
+            FileInputStream tmpFileInputStream = new FileInputStream("src\\main\\resources\\de\\unijena\\cheminf\\curation\\ErrorCodes.properties");
             tmpProperties.load(tmpFileInputStream);
             String tmpErrorMessage = tmpProperties.getProperty(String.valueOf(anErrorCode));
             tmpFileInputStream.close();

@@ -31,9 +31,12 @@ import org.openscience.cdk.exception.CDKException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,17 +49,53 @@ import java.util.Objects;
 public class MarkDownReporter implements IReporter {
 
     /**
+     * Workaround: TODO remove after merge
+     */
+    public static final String REPORTS_FOLDER_PATH_STRING = "Processing_Reports" + File.separator;
+
+    /**
      * ArrayList storing ReportDataObjects.
      */
-    private final List<ReportDataObject> reportDataObjectList = new ArrayList<>();
+    private final List<ReportDataObject> reportDataObjectList = new LinkedList<>();
 
     /**
      * String for file path.
      */
-    private String filePath = "Processing_Reports\\";
+    private String filePathString;
 
+    /**
+     * Constructor for the given file path where the report file is created.
+     *
+     * @param aFilePathString file path where the report file is created.
+     * @throws NullPointerException if aFilePathString is null.
+     * @throws IllegalArgumentException if aFilePathString is empty or blank.
+     */
+    public MarkDownReporter(String aFilePathString) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(aFilePathString, "aFilePathString (instance of String) is null.");
+        if (aFilePathString.isBlank()){
+            throw new IllegalArgumentException("aFilePathString (instance of String) is empty or blank.");
+        }
+        Path filePath = Paths.get(aFilePathString);
+        if (Files.isDirectory(filePath)) {
+            this.filePathString = aFilePathString;
+        }
+    }
+
+    /**
+     * Constructor workaround: TODO remove after merge
+     */
+    public MarkDownReporter() {
+        this( MarkDownReporter.REPORTS_FOLDER_PATH_STRING);
+    }
+
+    /**
+     * Initializes a new report
+     * @param aFileDestination file path name string
+     */
     @Override
     public void initializeNewReport(String aFileDestination) {
+        this.clear();
+
     }
 
     /**
@@ -134,8 +173,8 @@ public class MarkDownReporter implements IReporter {
             }
         }
         try {
-            String tmpFileName = "Report_" + MarkDownReporter.getTimeStampAsFileName() + ".md";
-            File tmpFile = new File(this.filePath + "\\" + tmpFileName);
+            String tmpFileName = MarkDownReporter.getFileName();
+            File tmpFile = new File(this.filePathString + File.separator + tmpFileName);
             FileWriter tmpWriter = new FileWriter(tmpFile);
             tmpWriter.write(String.valueOf(tmpHeader));
             tmpWriter.write(String.valueOf(tmpErrors));
@@ -150,6 +189,7 @@ public class MarkDownReporter implements IReporter {
             aNullPointerException.printStackTrace();
             throw new NullPointerException("amountOfErrors cannot be null" + aNullPointerException.getMessage());
         }
+        this.clear();
     }
 
     /**
@@ -157,7 +197,7 @@ public class MarkDownReporter implements IReporter {
      */
     @Override
     public void clear () {
-    this.reportDataObjectList.clear();
+        this.reportDataObjectList.clear();
     }
 
     /**
@@ -165,8 +205,8 @@ public class MarkDownReporter implements IReporter {
      *
      * @return file path as String
      */
-    public String getFilePath() {
-        return this.filePath;
+    public String getFilePathString() {
+        return this.filePathString;
     }
 
     /**
@@ -174,8 +214,12 @@ public class MarkDownReporter implements IReporter {
      *
      * @param aFilePath The file path to set for creating the markdown file
      */
-    public void setFilePath(String aFilePath) {
-        this.filePath = aFilePath;
+    public void setFilePathString(String aFilePath) {
+        this.filePathString = aFilePath;
+    }
+
+    private static String getFileName(){
+        return "Report_" + getTimeStampAsFileName() + ".md";
     }
 
     /**
