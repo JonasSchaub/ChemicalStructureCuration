@@ -54,9 +54,34 @@ public enum ErrorCodes {
     BOND_NULL_ERROR,
 
     /**
+     * The order of an IBond instance is null.
+     */
+    BOND_ORDER_NULL_ERROR,
+
+    /**
+     * The order of an IBond instance is UNSET.
+     */
+    BOND_ORDER_UNSET_ERROR,
+
+    /**
+     * The order on an IBond instance is of an unknown type.
+     */
+    BOND_ORDER_UNKNOWN_ERROR,
+
+    /**
      * An atom has no atomic number; the atomic number is null.
      */
     ATOMIC_NUMBER_NULL_ERROR,
+
+    /**
+     * An atom has its formal charge (Integer) being null.
+     */
+    FORMAL_CHARGE_NULL_ERROR,
+
+    /**
+     * An atom has its implicit hydrogen count (Integer) being null.
+     */
+    IMPLICIT_HYDROGEN_COUNT_NULL_ERROR,
 
     /**
      * The IAtomContainer instance of the structure contains no atoms.
@@ -69,13 +94,40 @@ public enum ErrorCodes {
     ILLEGAL_THRESHOLD_VALUE_ERROR,
 
     /**
-     * ...
+     * An invalid atomic number was detected.
      */
-    XYZ_ERROR,
+    INVALID_ATOMIC_NUMBER_ERROR,
 
     /**
-     * An unexpected exception occurred. For more information the log / log-file shall be visited.
+     * The given MassComputationFlavours enum constant is null.
      */
-    UNEXPECTED_EXCEPTION_ERROR
+    FLAVOUR_NULL_ERROR,
+
+    /**
+     * The given valence model (IValenceModel instance) is null.
+     */
+    VALENCE_MODEL_NULL_ERROR,
+
+    /**
+     * An expected atom container property is unset.
+     */
+    MISSING_ATOM_CONTAINER_PROPERTY,
+
+    /**
+     * The external ID property is unset.
+     */
+    UNSET_EXTERNAL_ID_PROPERTY,
+
+    /**
+     * An unexpected (probably fatal) exception was encountered. For more information the log / log-file shall be
+     * visited.
+     */
+    UNEXPECTED_EXCEPTION_ERROR,
+
+    /* data import */
+    /**
+     * The import of the structure out of an SD file failed.
+     */
+    SDF_IMPORT_FAILED_ERROR
 
 }

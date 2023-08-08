@@ -26,6 +26,8 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.ChemUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -51,21 +53,67 @@ public class MaxMolecularMassFilter extends BaseFilter {
      */
     protected final MassComputationFlavours massComputationFlavour;
 
+    //<editor-fold desc="Constructors" defaultstate="collapsed">
     /**
-     * Constructor; initializes the class fields with the given values. Atom containers that equal the given molecular
-     * mass threshold value do not get filtered.
+     * Constructor; initializes the class fields with the given values and sets the reporter. Atom containers that equal
+     * the given molecular mass threshold value do not get filtered.
      *
      * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
      * @param aFlavour MassComputationFlavours constant that switches the computation type of the mass calculation;
      *                 see: {@link MassComputationFlavours},
      *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
-     * @throws NullPointerException if the given mass computation flavour is null
-     * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given mass computation flavour or the IReporter instance is null
+     * @throws IllegalArgumentException if the given molecular mass threshold value is below zero
      */
-    public MaxMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour) throws NullPointerException, IllegalArgumentException {
+    public MaxMolecularMassFilter(double aMolecularMassThreshold, MassComputationFlavours aFlavour, IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReporter, null);
         Objects.requireNonNull(aFlavour, "aFlavour (MassComputationFlavours constant) is null.");
         if (aMolecularMassThreshold < 0) {
-            throw new IllegalArgumentException("aMolecularMassThreshold (double value) was less than 0.");
+            throw new IllegalArgumentException("aMolecularMassThreshold (double value) is below zero.");
+        }
+        this.molecularMassThreshold = aMolecularMassThreshold;
+        this.massComputationFlavour = aFlavour;
+    }
+
+    /**
+     * Constructor; initializes the class fields with the given value, sets the mass computation type to {@link
+     * MassComputationFlavours#MOL_WEIGHT} and sets the reporter. Atom containers that equal the given molecular mass
+     * threshold value do not get filtered.
+     *
+     * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if the given molecular mass threshold value is below zero
+     */
+    public MaxMolecularMassFilter(double aMolecularMassThreshold, IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        this(aMolecularMassThreshold, MassComputationFlavours.MOL_WEIGHT, aReporter);
+    }
+
+    /**
+     * Constructor; initializes the class fields with the given values and sets the reporter; initializes the reporter
+     * with an instance of {@link MarkDownReporter}. Atom containers that equal the given molecular mass threshold value
+     * do not get filtered.
+     *
+     * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
+     * @param aFlavour MassComputationFlavours constant that switches the computation type of the mass calculation;
+     *                 see: {@link MassComputationFlavours},
+     *                      {@link AtomContainerManipulator#getMass(IAtomContainer, int)}
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given mass computation flavour or the String with the directory path is null
+     * @throws IllegalArgumentException if the given molecular mass threshold value is below zero; if the given file
+     *                                  path is no directory path
+     */
+    public MaxMolecularMassFilter(double aMolecularMassThreshold,
+                                  MassComputationFlavours aFlavour,
+                                  String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, null);
+        Objects.requireNonNull(aFlavour, "aFlavour (MassComputationFlavours constant) is null.");
+        if (aMolecularMassThreshold < 0) {
+            throw new IllegalArgumentException("aMolecularMassThreshold (double value) is below zero.");
         }
         this.molecularMassThreshold = aMolecularMassThreshold;
         this.massComputationFlavour = aFlavour;
@@ -73,15 +121,20 @@ public class MaxMolecularMassFilter extends BaseFilter {
 
     /**
      * Constructor; initializes the class fields with the given value and sets the mass computation type to {@link
-     * MassComputationFlavours#MOL_WEIGHT}. Atom containers that equal the given molecular mass threshold value do not
-     * get filtered.
+     * MassComputationFlavours#MOL_WEIGHT}; initializes the reporter with an instance of {@link MarkDownReporter}. Atom
+     * containers that equal the given molecular mass threshold value do not get filtered.
      *
-     * @param aMolecularMassThreshold double value of the molecular mass threshold value to filter by
-     * @throws IllegalArgumentException if the given molecular mass threshold value is less than zero
+     * @param aMolecularMassThreshold double value of the molecular mass threshold to filter by
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given molecular mass threshold value is below zero; if the given file
+     *                                  path is no directory path
      */
-    public MaxMolecularMassFilter(double aMolecularMassThreshold) throws IllegalArgumentException {
-        this(aMolecularMassThreshold, MassComputationFlavours.MOL_WEIGHT);
+    public MaxMolecularMassFilter(double aMolecularMassThreshold, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        this(aMolecularMassThreshold, MassComputationFlavours.MOL_WEIGHT, aReportFilesDirectoryPath);
     }
+    //</editor-fold>
 
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
@@ -93,20 +146,26 @@ public class MaxMolecularMassFilter extends BaseFilter {
     @Override
     protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
         String tmpExceptionMessageString = anException.getMessage();
+        boolean tmpIsExceptionFatal = false;
         ErrorCodes tmpErrorCode;
         try {
             // the message of the exception is expected to match the name of an ErrorCodes enum's constant
             tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+            if (tmpErrorCode == ErrorCodes.FLAVOUR_NULL_ERROR) {
+                // considered as fatal (should not happen)
+                tmpIsExceptionFatal = true;
+            }
         } catch (Exception aFatalException) {
-            /*
-             * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
-             * exception is considered as fatal and re-thrown
-             */
-            // the threshold value being of an illegal value is also considered as fatal
-            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            // the message string did not match the name of an ErrorCodes enum's constant; the exception is
+            // unexpected and considered as fatal
+            tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
+            tmpIsExceptionFatal = true;
+        }
+        this.appendToReport(tmpErrorCode, anAtomContainer);
+        // re-throw the exception if it is considered as fatal
+        if (tmpIsExceptionFatal) {
             throw anException;
         }
-        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**

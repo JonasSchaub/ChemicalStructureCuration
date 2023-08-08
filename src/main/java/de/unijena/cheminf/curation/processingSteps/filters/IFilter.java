@@ -43,27 +43,26 @@ public interface IFilter extends IProcessingStep {
     /**
      * {@inheritDoc}
      * <p>
+     * <b>Info regarding Filters</b>
      * The atom container set returned by this method contains all the atom containers that meet the criterion of the
      * filter; min and max threshold values are considered as inclusive. Structures causing an exception do not pass
-     * the filter and the issue gets reported.
-     * <br>
-     * <b>Note:</b> Classes implementing {@link IFilter} are not meant to cause any modifications to the provided atom
-     * containers.
+     * the filter. Note that classes implementing {@link IFilter} are not meant to cause any modifications to the
+     * provided atom containers.
      * </p>
      *
+     * @return the set of all atom containers that meet the filter criterion
      * @see #isFiltered(IAtomContainer)
      */
     public IAtomContainerSet process(
             IAtomContainerSet anAtomContainerSet,
-            boolean aCloneBeforeProcessing,
-            boolean anAssignIdentifiers
+            boolean aCloneBeforeProcessing
     ) throws NullPointerException, Exception;
 
     /**
      * Checks whether the filter applies to a given IAtomContainer instance; returns true, if the given atom container
-     * does not meet the criterion of the filter; returns false, if the atom container passes the filter. An exception
-     * gets thrown if an issue (with the structure) is encountered. In case of min and max threshold values, these
-     * values are considered as inclusive and respective atom containers pass the filter.
+     * does not meet the filter criterion; returns false, if the atom container passes the filter. An exception gets
+     * thrown if an issue (with the structure) is encountered. In case of min and max threshold values, these values
+     * are considered as inclusive and respective atom containers pass the filter.
      *
      * @param anAtomContainer IAtomContainer instance to be checked
      * @return true if the structure does not pass the filter

@@ -31,11 +31,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
+import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IElement;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
@@ -46,65 +49,68 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
  */
 public class ChemUtilsTest {
 
+    /*
+    TODO: adapt test method names to the name changes of ChemUtils method
+     */
+
     //<editor-fold desc="countAtoms() method tests" defaultstate="collapsed">
     /**
-     * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms of benzene correct
-     * considering implicit hydrogen atoms.
+     * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms correct considering
+     * implicit hydrogen atoms and not considering pseudo-atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_consideringImplicitHydrogens_12atoms() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
-        //
+    public void countAtomsTest_considerImplicitHydrogens_notConsiderPseudoAtoms() throws InvalidSmilesException {
         boolean tmpConsiderImplicitHydrogens = true;
-        int tmpAtomCount = ChemUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(12, tmpAtomCount);
+        boolean tmpConsiderPseudoAtoms = false;
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1[R]");
+        int tmpAtomCount = ChemUtils.getAtomCount(tmpAtomContainer, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
+        Assertions.assertEquals(11, tmpAtomCount);
+        //
+        tmpAtomContainer = TestUtils.parseSmilesString("NC([Me])C(=O)O");
+        tmpAtomCount = ChemUtils.getAtomCount(tmpAtomContainer, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
+        Assertions.assertEquals(9, tmpAtomCount);
     }
 
     /**
-     * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms of benzene correct
-     * not considering implicit hydrogen atoms.
+     * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms correct not considering
+     * implicit hydrogen atoms and considering pseudo-atoms.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_notConsideringImplicitHydrogens_6atoms() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
-        //
+    public void countAtomsTest_notConsiderImplicitHydrogens_considerPseudoAtoms() throws InvalidSmilesException {
         boolean tmpConsiderImplicitHydrogens = false;
-        int tmpAtomCount = ChemUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
+        boolean tmpConsiderPseudoAtoms = true;
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccc([Me])cc1");
+        int tmpAtomCount = ChemUtils.getAtomCount(tmpAtomContainer, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
+        Assertions.assertEquals(7, tmpAtomCount);
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("NC[R]C(=O)O");
+        tmpAtomCount = ChemUtils.getAtomCount(tmpAtomContainer, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
         Assertions.assertEquals(6, tmpAtomCount);
     }
 
     /**
-     * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms of glycine correct
-     * not considering implicit hydrogen atoms.
+     * Tests whether the .countAtoms() method of the class ChemUtils does not consider pseudo-atoms at all (including
+     * assigned implicit hydrogen counts) even though implicit hydrogen atoms are to be considered.
      *
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countAtomsTest_notConsideringImplicitHydrogens_5atoms() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
-        //
-        boolean tmpConsiderImplicitHydrogens = false;
-        int tmpAtomCount = ChemUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(5, tmpAtomCount);
-    }
-
-    /**
-     * Tests whether the .countAtoms() method of the class ChemUtils counts the number of atoms of glycine correct
-     * considering implicit hydrogen atoms.
-     *
-     * @throws InvalidSmilesException if the SMILES string could not be parsed
-     */
-    @Test
-    public void countAtomsTest_consideringImplicitHydrogens_10atoms() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
-        //
+    public void countAtomsTest_considerImplicitHydrogens_notConsiderPseudoAtoms_pseudoAtomWithImplicitHs() throws InvalidSmilesException {
         boolean tmpConsiderImplicitHydrogens = true;
-        int tmpAtomCount = ChemUtils.countAtoms(tmpAtomContainer, tmpConsiderImplicitHydrogens);
-        Assertions.assertEquals(10, tmpAtomCount);
+        boolean tmpConsiderPseudoAtoms = false;
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");    // 8 atoms
+        IPseudoAtom tmpPseudoAtom = new PseudoAtom("Me");
+        tmpPseudoAtom.setImplicitHydrogenCount(4);
+        tmpAtomContainer.addAtom(tmpPseudoAtom);
+        // implicit hydrogen counts of pseudo-atoms shall not be considered
+        int tmpAtomCount = ChemUtils.getAtomCount(tmpAtomContainer, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
+        Assertions.assertEquals(8, tmpAtomCount);
     }
 
     /**
@@ -116,7 +122,7 @@ public class ChemUtilsTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    ChemUtils.countAtoms(null, true);
+                    ChemUtils.getAtomCount(null, true, true);
                 }
         );
     }
@@ -133,7 +139,8 @@ public class ChemUtilsTest {
     public void countImplicitHydrogensTest_6ImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         //
-        Assertions.assertEquals(6, ChemUtils.countImplicitHydrogens(tmpAtomContainer));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertEquals(6, ChemUtils.getImplicitHydrogenCount(tmpAtomContainer, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -146,7 +153,8 @@ public class ChemUtilsTest {
     public void countImplicitHydrogensTest_5ImplicitHydrogens() throws InvalidSmilesException {
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
         //
-        Assertions.assertEquals(5, ChemUtils.countImplicitHydrogens(tmpAtomContainer));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertEquals(5, ChemUtils.getImplicitHydrogenCount(tmpAtomContainer, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -158,49 +166,8 @@ public class ChemUtilsTest {
         Assertions.assertThrows(
                 NullPointerException.class,
                 () -> {
-                    ChemUtils.countImplicitHydrogens(null);
-                }
-        );
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="countExplicitHydrogens() method tests" defaultstate="collapsed">
-    /**
-     * Tests whether the .countExplicitHydrogens() method of the class ChemUtils returns 6 when given an atom
-     * container with 6 explicit hydrogen atoms.
-     *
-     * @throws InvalidSmilesException if the SMILES string could not be parsed
-     */
-    @Test
-    public void countExplicitHydrogensTest_4ExplicitHydrogens() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("HC(H)(H)H");
-        //
-        Assertions.assertEquals(4, ChemUtils.countExplicitHydrogens(tmpAtomContainer));
-    }
-
-    /**
-     * Tests whether the .countExplicitHydrogens() method of the class ChemUtils returns 6 when given an atom
-     * container with 6 implicit hydrogen atoms.
-     *
-     * @throws InvalidSmilesException if the SMILES string could not be parsed
-     */
-    @Test
-    public void countExplicitHydrogensTest_2Implicit_3ExplicitHydrogens() throws InvalidSmilesException {
-        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("HN(H)CC(=O)OH");
-        //
-        Assertions.assertEquals(3, ChemUtils.countExplicitHydrogens(tmpAtomContainer));
-    }
-
-    /**
-     * Tests whether the .countExplicitHydrogens() method of the class ChemUtils throws a NullPointerException if the
-     * given IAtomContainer instance is null.
-     */
-    @Test
-    public void countExplicitHydrogensTest_throwsNullPointerExceptionIfGivenAtomContainerIsNull() {
-        Assertions.assertThrows(
-                NullPointerException.class,
-                () -> {
-                    ChemUtils.countExplicitHydrogens(null);
+                    boolean tmpConsiderPseudoAtoms = true;
+                    ChemUtils.getImplicitHydrogenCount(null, tmpConsiderPseudoAtoms);
                 }
         );
     }
@@ -220,7 +187,9 @@ public class ChemUtilsTest {
         );
         int tmpBondCount = 1;
         boolean tmpConsiderImplicitHydrogens = false;
-        Assertions.assertEquals(tmpBondCount, ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertEquals(tmpBondCount, ChemUtils.getBondCount(tmpAtomContainer, tmpConsiderImplicitHydrogens,
+                tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -236,7 +205,9 @@ public class ChemUtilsTest {
         );
         int tmpBondCount = 5;
         boolean tmpConsiderImplicitHydrogens = false;
-        Assertions.assertEquals(tmpBondCount, ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertEquals(tmpBondCount, ChemUtils.getBondCount(tmpAtomContainer, tmpConsiderImplicitHydrogens,
+                tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -246,7 +217,8 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsMethodTest_notConsideringImplicitHydrogens_test3_4MolsWithDiffCharacteristics() throws InvalidSmilesException {
+    public void countBondsMethodTest_notConsideringImplicitHydrogens_test3_4MolsWithDiffCharacteristics()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",  //2 - single bonds only
                 "C=CC=C",   //3 - with double bonds
@@ -255,10 +227,12 @@ public class ChemUtilsTest {
         );
         int[] tmpBondCountArray = new int[]{2, 3, 1, 6};
         boolean tmpConsiderImplicitHydrogens = false;
+        boolean tmpConsiderPseudoAtoms = true;
         IAtomContainer tmpAtomContainer;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            Assertions.assertEquals(tmpBondCountArray[i], ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
+            Assertions.assertEquals(tmpBondCountArray[i], ChemUtils.getBondCount(tmpAtomContainer,
+                    tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         }
     }
 
@@ -275,7 +249,9 @@ public class ChemUtilsTest {
         );
         int tmpBondCount = 7;
         boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertEquals(tmpBondCount, ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertEquals(tmpBondCount, ChemUtils.getBondCount(tmpAtomContainer, tmpConsiderImplicitHydrogens,
+                tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -291,7 +267,9 @@ public class ChemUtilsTest {
         );
         int tmpBondCount = 15;
         boolean tmpConsiderImplicitHydrogens = true;
-        Assertions.assertEquals(tmpBondCount, ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
+        boolean tmpConsiderPseudoAtoms = true;
+        Assertions.assertEquals(tmpBondCount, ChemUtils.getBondCount(tmpAtomContainer, tmpConsiderImplicitHydrogens,
+                tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -301,7 +279,8 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsMethodTest_consideringImplicitHydrogens_test3_4MolsWithDiffCharacteristics() throws InvalidSmilesException {
+    public void countBondsMethodTest_consideringImplicitHydrogens_test3_4MolsWithDiffCharacteristics()
+            throws InvalidSmilesException {
         IAtomContainerSet tmpAtomContainerSet = TestUtils.parseSmilesStrings(
                 "CCO",  //8 - single bonds only
                 "C=CC=C",   //9 - with double bonds
@@ -310,10 +289,12 @@ public class ChemUtilsTest {
         );
         int[] tmpBondCountArray = new int[]{8, 9, 2, 12};
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         IAtomContainer tmpAtomContainer;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            Assertions.assertEquals(tmpBondCountArray[i], ChemUtils.countBonds(tmpAtomContainer, tmpConsiderImplicitHydrogens));
+            Assertions.assertEquals(tmpBondCountArray[i], ChemUtils.getBondCount(tmpAtomContainer,
+                    tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         }
     }
 
@@ -327,7 +308,8 @@ public class ChemUtilsTest {
                 NullPointerException.class,
                 () -> {
                     boolean tmpConsiderImplicitHydrogens = true;
-                    ChemUtils.countBonds(null, tmpConsiderImplicitHydrogens);
+                    boolean tmpConsiderPseudoAtoms = true;
+                    ChemUtils.getBondCount(null, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms);
                 }
         );
     }
@@ -341,16 +323,20 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_singleBond_notConsideringImplHs_twoTests() throws InvalidSmilesException {
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_singleBond_notConsideringImplHs_twoTests()
+            throws InvalidSmilesException {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         boolean tmpConsiderImplicitHydrogens = false;
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
         int tmpSingleBondCount = 3;
-        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");
         tmpSingleBondCount = 1;
-        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -360,16 +346,20 @@ public class ChemUtilsTest {
      * @throws InvalidSmilesException if the SMILES string could not be parsed
      */
     @Test
-    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_singleBond_consideringImplHs_twoTests() throws InvalidSmilesException {
+    public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_singleBond_consideringImplHs_twoTests()
+            throws InvalidSmilesException {
         IBond.Order tmpBondOrder = IBond.Order.SINGLE;
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
         int tmpSingleBondCount = 8;
-        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("C=CC=C");
         tmpSingleBondCount = 7;
-        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -382,13 +372,16 @@ public class ChemUtilsTest {
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_doubleBond_twoTests() throws InvalidSmilesException {
         IBond.Order tmpBondOrder = IBond.Order.DOUBLE;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("NCC(=O)O");
         int tmpDoubleBondCount = 1;
-        Assertions.assertEquals(tmpDoubleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpDoubleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("C=CC=CC=CC(=O)O");
         tmpDoubleBondCount = 4;
-        Assertions.assertEquals(tmpDoubleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpDoubleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -401,13 +394,16 @@ public class ChemUtilsTest {
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_trippleBond_twoTests() throws InvalidSmilesException {
         IBond.Order tmpBondOrder = IBond.Order.TRIPLE;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("N#CC#N");
         int tmpTripleBondCount = 2;
-        Assertions.assertEquals(tmpTripleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpTripleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("O=C(O)C=CCC#CC#CCC#C");
         tmpTripleBondCount = 3;
-        Assertions.assertEquals(tmpTripleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpTripleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -417,6 +413,7 @@ public class ChemUtilsTest {
     @Test
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_bondOrdersHigherThanTriple() {
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        boolean tmpConsiderPseudoAtoms = true;
         IBond.Order[] tmpBondOrderArray = new IBond.Order[]{
                 IBond.Order.QUADRUPLE,
                 IBond.Order.QUINTUPLE,
@@ -428,12 +425,14 @@ public class ChemUtilsTest {
         //
         for (IBond.Order tmpBondOrder : tmpBondOrderArray) {
             tmpSpecificBondCount = 0;
-            Assertions.assertEquals(tmpSpecificBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+            Assertions.assertEquals(tmpSpecificBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                    tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
             tmpBond = new Bond();
             tmpBond.setOrder(tmpBondOrder);
             tmpAtomContainer.addBond(tmpBond);
             tmpSpecificBondCount = 1;
-            Assertions.assertEquals(tmpSpecificBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+            Assertions.assertEquals(tmpSpecificBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                    tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         }
     }
 
@@ -447,19 +446,22 @@ public class ChemUtilsTest {
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_unsetBond_twoTests() throws InvalidSmilesException {
         IBond.Order tmpBondOrder = IBond.Order.UNSET;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = new AtomContainer();
         IBond tmpBond = new Bond();
         tmpBond.setOrder(IBond.Order.UNSET);
         tmpAtomContainer.addBond(tmpBond);
         int tmpUnsetBondsCount = 1;
-        Assertions.assertEquals(tmpUnsetBondsCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpUnsetBondsCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)C");
         tmpUnsetBondsCount = 3;
         for (int i = 0; i < tmpUnsetBondsCount; i++) {
             tmpAtomContainer.addBond(tmpBond);
         }
-        Assertions.assertEquals(tmpUnsetBondsCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpUnsetBondsCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -472,19 +474,22 @@ public class ChemUtilsTest {
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_bondOrderNull_twoTests() throws InvalidSmilesException {
         IBond.Order tmpBondOrder = null;
         boolean tmpConsiderImplicitHydrogens = false;   //can be ignored
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = new AtomContainer();
         IBond tmpBond = new Bond();
         //tmpBond.setOrder(null);
         tmpAtomContainer.addBond(tmpBond);
         int tmpUndefinedBondsCount = 1;
-        Assertions.assertEquals(tmpUndefinedBondsCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpUndefinedBondsCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("CC(=O)C");
         tmpUndefinedBondsCount = 3;
         for (int i = 0; i < tmpUndefinedBondsCount; i++) {
             tmpAtomContainer.addBond(tmpBond);
         }
-        Assertions.assertEquals(tmpUndefinedBondsCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, tmpBondOrder, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpUndefinedBondsCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -496,17 +501,22 @@ public class ChemUtilsTest {
     @Test
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_aromaticSystem_shareOfSingleAndDoubleBonds_notConsiderImplHs_twoTests() throws InvalidSmilesException {
         boolean tmpConsiderImplicitHydrogens = false;
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         int tmpExpectedSingleBondCount = 3;
         int tmpExpectedDoubleBondCount = 3;
-        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.SINGLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("c1cccc2ccccc12");
         tmpExpectedSingleBondCount = 6;
         tmpExpectedDoubleBondCount = 5;
-        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.SINGLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -518,17 +528,22 @@ public class ChemUtilsTest {
     @Test
     public void countBondsOfSpecificOrderMethodTest_returnsBondTypeCount_aromaticSystem_shareOfSingleAndDoubleBonds_considerImplHs_twoTests() throws InvalidSmilesException {
         boolean tmpConsiderImplicitHydrogens = true;
+        boolean tmpConsiderPseudoAtoms = true;
         //
         IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
         int tmpExpectedSingleBondCount = 9;
         int tmpExpectedDoubleBondCount = 3;
-        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.SINGLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
         tmpAtomContainer = TestUtils.parseSmilesString("c1cccc2ccccc12");
         tmpExpectedSingleBondCount = 14;
         tmpExpectedDoubleBondCount = 5;
-        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.SINGLE, tmpConsiderImplicitHydrogens));
-        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer, IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens));
+        Assertions.assertEquals(tmpExpectedSingleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.SINGLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
+        Assertions.assertEquals(tmpExpectedDoubleBondCount, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                IBond.Order.DOUBLE, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
     }
 
     /**
@@ -543,8 +558,9 @@ public class ChemUtilsTest {
                     IAtomContainer tmpAtomContainer = null;
                     IBond.Order tmpBondOrder = IBond.Order.UNSET;
                     boolean tmpConsiderImplicitHydrogens = true;
-                    Assertions.assertInstanceOf(Integer.class, ChemUtils.countBondsOfSpecificBondOrder(tmpAtomContainer,
-                            tmpBondOrder, tmpConsiderImplicitHydrogens));
+                    boolean tmpConsiderPseudoAtoms = true;
+                    Assertions.assertInstanceOf(Integer.class, ChemUtils.getBondsOfSpecificBondOrderCount(tmpAtomContainer,
+                            tmpBondOrder, tmpConsiderImplicitHydrogens, tmpConsiderPseudoAtoms));
                 }
         );
     }
@@ -561,10 +577,11 @@ public class ChemUtilsTest {
             IAtomContainer tmpAtomContainer = new AtomContainer();
             int tmpAnIntegerValue = 5;
             int tmpReturnValue;
-            tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer);
-            tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnIntegerValue);
-            tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue);
-            tmpReturnValue = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue, tmpAnIntegerValue);
+            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer);
+            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue);
+            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue);
+            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue,
+                    tmpAnIntegerValue);
         });
     }
 
@@ -591,7 +608,7 @@ public class ChemUtilsTest {
         int tmpCalculatedAtomsCount;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            tmpCalculatedAtomsCount = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpCarbonAtomicNumber);
+            tmpCalculatedAtomsCount = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpCarbonAtomicNumber);
             Assertions.assertEquals(tmpExpectedAtomsCountArray[i], tmpCalculatedAtomsCount);
         }
     }
@@ -634,7 +651,7 @@ public class ChemUtilsTest {
             tmpAtomicNumber = tmpAtomicNumbersArray[i];
             for (int j = 0; j < tmpAtomContainerSet.getAtomContainerCount(); j++) {     //j = index of atom container
                 tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(j);
-                tmpCalculatedAtomsCount = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAtomicNumber);
+                tmpCalculatedAtomsCount = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAtomicNumber);
                 Assertions.assertEquals(tmpExpectedAtomsCountMatrix[i][j], tmpCalculatedAtomsCount);
             }
         }
@@ -664,7 +681,7 @@ public class ChemUtilsTest {
         int tmpCalculatedAtomsCount;
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(i);
-            tmpCalculatedAtomsCount = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpHydrogenAtomicNumber);
+            tmpCalculatedAtomsCount = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpHydrogenAtomicNumber);
             Assertions.assertEquals(tmpExpectedAtomsCountArray[i], tmpCalculatedAtomsCount);
         }
     }
@@ -705,7 +722,7 @@ public class ChemUtilsTest {
             tmpAtomicNumbersArray = tmpAtomicNumbersMatrix[i];
             for (int j = 0; j < tmpAtomContainerSet.getAtomContainerCount(); j++) {     //j = index of atom container
                 tmpAtomContainer = tmpAtomContainerSet.getAtomContainer(j);
-                tmpCalculatedAtomsCount = ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAtomicNumbersArray);
+                tmpCalculatedAtomsCount = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAtomicNumbersArray);
                 Assertions.assertEquals(tmpExpectedAtomsCountMatrix[i][j], tmpCalculatedAtomsCount);
             }
         }
@@ -722,7 +739,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
                     int tmpAnAtomicNumber = 5;
-                    ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpAnAtomicNumber);
+                    ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnAtomicNumber);
                 }
         );
     }
@@ -738,7 +755,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpNegativeIntegerValue = -1;
-                    ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpNegativeIntegerValue);
+                    ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpNegativeIntegerValue);
                 }
         );
     }
@@ -755,7 +772,7 @@ public class ChemUtilsTest {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpNegativeIntegerValue = -1;
                     int tmpAcceptedValue = 5;
-                    ChemUtils.countAtomsOfAtomicNumbers(
+                    ChemUtils.getAtomsOfAtomicNumbersCount(
                             tmpAtomContainer,
                             tmpAcceptedValue,
                             tmpNegativeIntegerValue,
@@ -777,7 +794,7 @@ public class ChemUtilsTest {
                 () -> {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpUnknownAtomicNumber = 119;
-                    ChemUtils.countAtomsOfAtomicNumbers(tmpAtomContainer, tmpUnknownAtomicNumber);
+                    ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpUnknownAtomicNumber);
                 }
         );
     }
@@ -795,7 +812,7 @@ public class ChemUtilsTest {
                     IAtomContainer tmpAtomContainer = new AtomContainer();
                     int tmpUnknownAtomicNumber = 119;
                     int tmpAcceptedValue = 10;
-                    ChemUtils.countAtomsOfAtomicNumbers(
+                    ChemUtils.getAtomsOfAtomicNumbersCount(
                             tmpAtomContainer,
                             tmpAcceptedValue,
                             tmpAcceptedValue,
@@ -824,11 +841,12 @@ public class ChemUtilsTest {
                 "HOH"
         );
         int[] tmpExpectedHeavyAtomsCount = new int[]{6, 5, 5, 2, 1, 1};
+        boolean tmpConsiderPseudoAtoms = true;
         //
         for (int i = 0; i < tmpAtomContainerSet.getAtomContainerCount(); i++) {
             Assertions.assertEquals(
                     tmpExpectedHeavyAtomsCount[i],
-                    ChemUtils.getHeavyAtomsCount(tmpAtomContainerSet.getAtomContainer(i))
+                    ChemUtils.getHeavyAtomCount(tmpAtomContainerSet.getAtomContainer(i), tmpConsiderPseudoAtoms)
             );
         }
     }
@@ -843,7 +861,8 @@ public class ChemUtilsTest {
                 NullPointerException.class,
                 () -> {
                     IAtomContainer tmpAtomContainer = null;
-                    ChemUtils.getHeavyAtomsCount(tmpAtomContainer);
+                    boolean tmpConsiderPseudoAtoms = true;
+                    ChemUtils.getHeavyAtomCount(tmpAtomContainer, tmpConsiderPseudoAtoms);
                 }
         );
     }
@@ -949,6 +968,277 @@ public class ChemUtilsTest {
                     ChemUtils.getMass(tmpAtomContainer, tmpFlavour);
                 }
         );
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="containsPseudoAtoms() method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the containsPseudoAtoms() method of ChemUtils returns false if the given atom container contains
+     * no IPseudoAtom instances.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void containsPseudoAtomsTest_noPseudoAtoms_returnsFalse() throws InvalidSmilesException {
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("c1ccccc1");
+        Assertions.assertFalse(ChemUtils.containsPseudoAtoms(tmpAtomContainer));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("[N+]C(Cc1ccccc1)C([O-])=O");
+        Assertions.assertFalse(ChemUtils.containsPseudoAtoms(tmpAtomContainer));
+    }
+
+    /**
+     * Tests whether the containsPseudoAtoms() method of ChemUtils returns true if the given atom container contains
+     * IPseudoAtom instances.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void containsPseudoAtomsTest_containsPseudoAtoms_returnsTrue() throws InvalidSmilesException {
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC[R]");
+        Assertions.assertTrue(ChemUtils.containsPseudoAtoms(tmpAtomContainer));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("[N+]C(C[Phe])C([O-])=O");
+        Assertions.assertTrue(ChemUtils.containsPseudoAtoms(tmpAtomContainer));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="getSigmaBondCount() method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils returns the correct sigma bond count if considering
+     * bonds to implicit hydrogen atoms; two tests.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaBondCountTest_considerImplicitHydrogens_returnsCorrectCount() throws InvalidSmilesException {
+        boolean tmpConsiderImplicitHydrogens = true;
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        int tmpExpectedSigmaBondCount = 4;
+        Assertions.assertEquals(tmpExpectedSigmaBondCount,
+                ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("C=C");
+        tmpExpectedSigmaBondCount = 3;
+        Assertions.assertEquals(tmpExpectedSigmaBondCount,
+                ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils returns the correct sigma bond count if not considering
+     * bonds to implicit hydrogen atoms; two tests.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaBondCountTest_notConsiderImplicitHydrogens_returnsCorrectCount() throws InvalidSmilesException {
+        boolean tmpConsiderImplicitHydrogens = false;
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        int tmpExpectedSigmaBondCount = 1;
+        Assertions.assertEquals(tmpExpectedSigmaBondCount,
+                ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("C1=CC=CC=C1");
+        tmpExpectedSigmaBondCount = 2;
+        Assertions.assertEquals(tmpExpectedSigmaBondCount,
+                ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils throws a NullPointerException if the bond order of a
+     * bond is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaBondCountTest_bondOrderNull_throwsNullPointerException() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        tmpAtomContainer.getBond(0).setOrder(null);
+        boolean tmpConsiderImplicitHydrogens = true; // irrelevant
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils throws an IllegalArgumentException if the bond order
+     * of a bond is IBond.Order.UNSET.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaBondCountTest_bondOrderUNSET_throwsIllegalArgumentException() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        tmpAtomContainer.getBond(0).setOrder(IBond.Order.UNSET);
+        boolean tmpConsiderImplicitHydrogens = true; // irrelevant
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils throws a NullPointerException if implicit hydrogen
+     * atoms are to be considered and the implicit hydrogen count of the atom is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaBondCountTest_considerImplicitHs_hydrogenCountNull_throwsNullPointerException()
+            throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C");
+        tmpAtomContainer.getAtom(0).setImplicitHydrogenCount(null);
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="getPiBondCount() method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the getPiBondCount() method of ChemUtils returns the correct pi bond count; two tests.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getPiBondCountTest_returnsCorrectCount() throws InvalidSmilesException {
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=C");
+        int tmpExpectedPiBondCount = 1;
+        Assertions.assertEquals(tmpExpectedPiBondCount,
+                ChemUtils.getPiBondCount(tmpAtomContainer.getAtom(0)));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("C#C");
+        tmpExpectedPiBondCount = 2;
+        Assertions.assertEquals(tmpExpectedPiBondCount,
+                ChemUtils.getPiBondCount(tmpAtomContainer.getAtom(0)));
+    }
+
+    /**
+     * Tests whether the getPiBondCount() method of ChemUtils throws a NullPointerException if the bond order of a bond
+     * is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getPiBondCountTest_bondOrderNull_throwsNullPointerException() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=C");
+        tmpAtomContainer.getBond(0).setOrder(null);
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ChemUtils.getPiBondCount(tmpAtomContainer.getAtom(0)));
+    }
+
+    /**
+     * Tests whether the getPiBondCount() method of ChemUtils throws an IllegalArgumentException if the bond order of
+     * a bond is IBond.Order.UNSET.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getPiBondCountTest_bondOrderUNSET_throwsIllegalArgumentException() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C=C");
+        tmpAtomContainer.getBond(0).setOrder(IBond.Order.UNSET);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ChemUtils.getPiBondCount(tmpAtomContainer.getAtom(0)));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="getSigmaAndPiBondCounts() method tests" defaultstate="collapsed">
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils returns the correct sigma bond and pi bond counts
+     * if considering bonds to implicit hydrogen atoms; two tests.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_considerImplicitHydrogens_returnsCorrectCounts() throws InvalidSmilesException {
+        boolean tmpConsiderImplicitHydrogens = true;
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        IAtom tmpAtomToCheck = tmpAtomContainer.getAtom(0);
+        int tmpExpectedSigmaBondCount = ChemUtils.getSigmaBondCount(tmpAtomToCheck, tmpConsiderImplicitHydrogens);
+        int tmpExpectedPiBondCount = ChemUtils.getPiBondCount(tmpAtomToCheck);
+        Assertions.assertArrayEquals(new int[]{tmpExpectedSigmaBondCount, tmpExpectedPiBondCount},
+                ChemUtils.getSigmaAndPiBondCounts(tmpAtomToCheck, tmpConsiderImplicitHydrogens));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("C=C");
+        tmpAtomToCheck = tmpAtomContainer.getAtom(0);
+        tmpExpectedSigmaBondCount = ChemUtils.getSigmaBondCount(tmpAtomToCheck, tmpConsiderImplicitHydrogens);
+        tmpExpectedPiBondCount = ChemUtils.getPiBondCount(tmpAtomToCheck);
+        Assertions.assertArrayEquals(new int[]{tmpExpectedSigmaBondCount, tmpExpectedPiBondCount},
+                ChemUtils.getSigmaAndPiBondCounts(tmpAtomToCheck, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils returns the correct sigma bond and pi bond counts
+     * if not considering bonds to implicit hydrogen atoms; two tests.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_notConsiderImplicitHydrogens_returnsCorrectCount() throws InvalidSmilesException {
+        boolean tmpConsiderImplicitHydrogens = false;
+        // test 1
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        IAtom tmpAtomToCheck = tmpAtomContainer.getAtom(0);
+        int tmpExpectedSigmaBondCount = ChemUtils.getSigmaBondCount(tmpAtomToCheck, tmpConsiderImplicitHydrogens);
+        int tmpExpectedPiBondCount = ChemUtils.getPiBondCount(tmpAtomToCheck);
+        Assertions.assertArrayEquals(new int[]{tmpExpectedSigmaBondCount, tmpExpectedPiBondCount},
+                ChemUtils.getSigmaAndPiBondCounts(tmpAtomToCheck, tmpConsiderImplicitHydrogens));
+        // test 2
+        tmpAtomContainer = TestUtils.parseSmilesString("C=C");
+        tmpAtomToCheck = tmpAtomContainer.getAtom(0);
+        tmpExpectedSigmaBondCount = ChemUtils.getSigmaBondCount(tmpAtomToCheck, tmpConsiderImplicitHydrogens);
+        tmpExpectedPiBondCount = ChemUtils.getPiBondCount(tmpAtomToCheck);
+        Assertions.assertArrayEquals(new int[]{tmpExpectedSigmaBondCount, tmpExpectedPiBondCount},
+                ChemUtils.getSigmaAndPiBondCounts(tmpAtomToCheck, tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws a NullPointerException if the bond order
+     * of a bond is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_bondOrderNull_throwsNullPointerException() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        tmpAtomContainer.getBond(0).setOrder(null);
+        boolean tmpConsiderImplicitHydrogens = true; // irrelevant
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws an IllegalArgumentException if the bond
+     * order of a bond is IBond.Order.UNSET.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_bondOrderUNSET_throwsIllegalArgumentException() throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("CC");
+        tmpAtomContainer.getBond(0).setOrder(IBond.Order.UNSET);
+        boolean tmpConsiderImplicitHydrogens = true; // irrelevant
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws a NullPointerException if implicit
+     * hydrogen atoms are to be considered and the implicit hydrogen count of the atom is null.
+     *
+     * @throws InvalidSmilesException if the SMILES string could not be parsed
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_considerImplicitHs_hydrogenCountNull_throwsNullPointerException()
+            throws InvalidSmilesException {
+        IAtomContainer tmpAtomContainer = TestUtils.parseSmilesString("C");
+        tmpAtomContainer.getAtom(0).setImplicitHydrogenCount(null);
+        boolean tmpConsiderImplicitHydrogens = true;
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
     }
     //</editor-fold>
 

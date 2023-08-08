@@ -26,9 +26,12 @@
 package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 
 import java.util.Objects;
 
@@ -57,26 +60,74 @@ public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
     protected final boolean considerImplicitHydrogens;
 
     /**
-     * Constructor; initializes the class fields with the given values. When filtering on the count of bonds with bond
-     * order single, bonds to implicit hydrogen atoms may or may not be considered; atom containers that equal the given
-     * max specific bond count do not get filtered.
+     * Boolean value whether to consider bonds to instances of {@link IPseudoAtom}.
+     */
+    protected final boolean considerPseudoAtoms;
+
+    /**
+     * Constructor; initializes the class fields with the given values and sets the reporter. When filtering on the
+     * count of bonds with bond order single, bonds to implicit hydrogen atoms may or may not be considered. If the
+     * second boolean parameter is false, instances of {@link IPseudoAtom} and their implicit hydrogen atoms are not
+     * taken into account. Atom containers that equal the given max specific bond count do not get filtered.
      *
      * @param aBondOrder bond order of bonds to count and filter on
      * @param aSpecificBondCountThreshold integer value of the specific bond count threshold to filter by
      * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
      *                                   counting bonds of bond order single
-     * @throws IllegalArgumentException if the given max specific bond count is less than zero
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if the given specific bond count threshold is below zero
      */
     public MaxBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder, int aSpecificBondCountThreshold,
-                                             boolean aConsiderImplicitHydrogens) throws IllegalArgumentException {
+                                             boolean aConsiderImplicitHydrogens, boolean aConsiderPseudoAtoms,
+                                             IReporter aReporter)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReporter, null);
         if (aSpecificBondCountThreshold < 0) {
-            throw new IllegalArgumentException("aSpecificBondCountThreshold (integer value) is less than 0.");
+            throw new IllegalArgumentException("aSpecificBondCountThreshold (integer value) is below zero.");
         }
         this.bondOrderOfInterest = aBondOrder;
         this.specificBondCountThreshold = aSpecificBondCountThreshold;
         this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+        this.considerPseudoAtoms = aConsiderPseudoAtoms;
     }
 
+    /**
+     * Constructor; initializes the class fields with the given values; initializes the reporter with an instance of
+     * {@link MarkDownReporter}. When filtering on the count of bonds with bond order single, bonds to implicit hydrogen
+     * atoms may or may not be considered. If the second boolean parameter is false, instances of {@link IPseudoAtom}
+     * and their implicit hydrogen atoms are not taken into account. Atom containers that equal the given max specific
+     * bond count do not get filtered.
+     *
+     * @param aBondOrder bond order of bonds to count and filter on
+     * @param aSpecificBondCountThreshold integer value of the specific bond count threshold to filter by
+     * @param aConsiderImplicitHydrogens boolean value whether implicit hydrogen atoms should be considered when
+     *                                   counting bonds of bond order single
+     * @param aConsiderPseudoAtoms boolean value whether to consider bonds to pseudo-atoms and their implicit hydrogens
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given specific bond count threshold is below zero; if the given file path
+     *                                  is no directory path
+     */
+    public MaxBondsOfSpecificBondOrderFilter(IBond.Order aBondOrder, int aSpecificBondCountThreshold,
+                                             boolean aConsiderImplicitHydrogens, boolean aConsiderPseudoAtoms,
+                                             String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aReportFilesDirectoryPath, null);
+        if (aSpecificBondCountThreshold < 0) {
+            throw new IllegalArgumentException("aSpecificBondCountThreshold (integer value) is below zero.");
+        }
+        this.bondOrderOfInterest = aBondOrder;
+        this.specificBondCountThreshold = aSpecificBondCountThreshold;
+        this.considerImplicitHydrogens = aConsiderImplicitHydrogens;
+        this.considerPseudoAtoms = aConsiderPseudoAtoms;
+    }
+
+    /**
+     * @throws NullPointerException {@inheritDoc}; if implicit hydrogen atoms are to be considered but the implicit
+     *                              hydrogen count of an atom is null
+     */
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
@@ -84,27 +135,37 @@ public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
         return FilterUtils.exceedsOrEqualsBondsOfSpecificBondOrderCount(
                 anAtomContainer, this.bondOrderOfInterest,
                 this.specificBondCountThreshold + 1,
-                this.considerImplicitHydrogens
+                this.considerImplicitHydrogens,
+                this.considerPseudoAtoms
         );
     }
 
     @Override
     protected void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws Exception {
         String tmpExceptionMessageString = anException.getMessage();
+        boolean tmpIsExceptionFatal = false;
         ErrorCodes tmpErrorCode;
         try {
             // the message of the exception is expected to match the name of an ErrorCodes enum's constant
             tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+            if (tmpErrorCode == ErrorCodes.ILLEGAL_THRESHOLD_VALUE_ERROR) {
+                // considered as fatal (should not happen)
+                tmpIsExceptionFatal = true;
+            }
         } catch (Exception aFatalException) {
             /*
              * the message string of the given exception did not match the name of an ErrorCodes enum's constant; the
              * exception is considered as fatal and re-thrown
              */
             // the threshold value being of an illegal value is also considered as fatal
-            this.appendToReporter(anAtomContainer, ErrorCodes.UNEXPECTED_EXCEPTION_ERROR);
+            tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
+            tmpIsExceptionFatal = true;
+        }
+        this.appendToReport(tmpErrorCode, anAtomContainer);
+        // re-throw the exception if it is considered as fatal
+        if (tmpIsExceptionFatal) {
             throw anException;
         }
-        this.appendToReporter(anAtomContainer, tmpErrorCode);
     }
 
     /**
@@ -132,6 +193,15 @@ public class MaxBondsOfSpecificBondOrderFilter extends BaseFilter {
      */
     public boolean isConsiderImplicitHydrogens() {
         return this.considerImplicitHydrogens;
+    }
+
+    /**
+     * Returns whether bonds with participation of {@link IPseudoAtom} instances are taken into account.
+     *
+     * @return Boolean value
+     */
+    public boolean isConsiderPseudoAtoms() {
+        return this.considerPseudoAtoms;
     }
 
 }

@@ -25,6 +25,8 @@
 
 package de.unijena.cheminf.curation.processingSteps.filters;
 
+import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -37,14 +39,31 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class HasInvalidAtomicNumbersFilter extends HasAllValidAtomicNumbersFilter {
 
     /**
-     * Constructor of the HasInvalidAtomicNumbersFilter class. The wildcard atomic number zero may or may not be
-     * considered as valid atomic number.
+     * Constructor; sets the reporter of the filter and whether the wildcard atomic number zero is to be considered as
+     * a valid atomic number.
      *
      * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
      *                                     as a valid atomic number
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @throws NullPointerException if the given IReporter instance is null
      */
-    public HasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid) {
-        super(aWildcardAtomicNumberIsValid);
+    public HasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid, IReporter aReporter) throws NullPointerException {
+        super(aWildcardAtomicNumberIsValid, aReporter);
+    }
+
+    /**
+     * Constructor; initializes the reporter of the filter with an instance of {@link MarkDownReporter} and sets whether
+     * the wildcard atomic number zero is to be considered as a valid atomic number.
+     *
+     * @param aWildcardAtomicNumberIsValid boolean value whether the wildcard atomic number zero should be considered
+     *                                     as a valid atomic number
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given file path is no directory path
+     */
+    public HasInvalidAtomicNumbersFilter(boolean aWildcardAtomicNumberIsValid, String aReportFilesDirectoryPath)
+            throws NullPointerException, IllegalArgumentException {
+        super(aWildcardAtomicNumberIsValid, aReportFilesDirectoryPath);
     }
 
     @Override

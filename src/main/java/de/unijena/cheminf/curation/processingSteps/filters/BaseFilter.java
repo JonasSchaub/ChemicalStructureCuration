@@ -27,6 +27,7 @@ package de.unijena.cheminf.curation.processingSteps.filters;
 
 import de.unijena.cheminf.curation.processingSteps.BaseProcessingStep;
 import de.unijena.cheminf.curation.reporter.IReporter;
+import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -51,33 +52,47 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     private static final Logger LOGGER = Logger.getLogger(BaseFilter.class.getName());
 
     /**
-     * Constructor, calls the main constructor with both params set to null.
+     * Constructor; calls the super constructor with the given reporter and external ID property name string. Since not
+     * every filter might give the option to specify the external ID property name in the constructor, this parameter
+     * is allowed to be null.
+     *
+     * @param aReporter the reporter that is to be used when processing sets of structures
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
+     *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
+     *                                 field gets specified (not null), every atom container processed by this filter
+     *                                 is expected to have a property with the respective name; the info is then
+     *                                 included in the report
+     * @throws NullPointerException if the given IReporter instance is null
+     * @throws IllegalArgumentException if an external ID property name is given, but it is blank or empty
      */
-    public BaseFilter() {   //TODO: view all the filters constructors!!
-        this(null, null);
+    public BaseFilter(IReporter aReporter, String anExternalIDPropertyName) throws NullPointerException, IllegalArgumentException {
+        super(aReporter, anExternalIDPropertyName);
     }
 
     /**
-     * Constructor; calls the super constructor with the given reporter and optional ID property name string.
+     * Constructor; calls the super constructor that initializes the reporter with an instance of {@link
+     * MarkDownReporter} - initialized with the given report files directory path. Since not every filter might give
+     * the option to specify the external ID property name in the constructor, this parameter is allowed to be null.
      *
-     * @param aReporter reporter to report to when processing; if null is given, an instance of the default reporter
-     *                  is used
-     * @param anOptionalIDPropertyName null or the name string of an atom container property containing an optional
-     *                                 second identifier of structures to be used at the reporting of a processing
-     *                                 process; if null is given, no second identifier is used
+     * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
+     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
+     *                                 identifier (e.g. the name or CAS registry number) for each structure; if this
+     *                                 field gets specified (not null), every atom container processed by this filter
+     *                                 is expected to have a property with the respective name; the info is then
+     *                                 included in the report
+     * @throws NullPointerException if the given String with the directory path is null
+     * @throws IllegalArgumentException if the given file path is no directory path; if a property name string is given,
+     *                                  but it is blank or empty
      */
-    public BaseFilter(IReporter aReporter, String anOptionalIDPropertyName) {
-        super(aReporter, anOptionalIDPropertyName);
+    public BaseFilter(String aReportFilesDirectoryPath, String anExternalIDPropertyName) {
+        super(aReportFilesDirectoryPath, anExternalIDPropertyName);
     }
 
     /**
      * Filters the atom containers of the given atom container set according to the values returned by {@link
      * #isFiltered(IAtomContainer)}. Returns all those atom containers that meet the filter criterion.
      *
-     * @throws NullPointerException  if the given IAtomContainerSet instance is null or an atom container of the set
-     * does not possess a MolID (this will only cause an exception, if the processing of the atom container causes an
-     * issue)
-     * @throws Exception if an unexpected, fatal exception occurred
+     * @return the set of all atom containers that meet the filter criterion
      */
     @Override
     protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
@@ -98,15 +113,17 @@ public abstract class BaseFilter extends BaseProcessingStep implements IFilter {
     }
 
     /**
-     * Handles the given exception by appending a report to the reporter; rethrows the exception, if it is considered
+     * Handles the given exception by appending a report to the reporter; re-throws the exception, if it is considered
      * as fatal. Most implementations expect non-fatal exceptions to have the name of an ErrorCodes enum constant as
      * message string.
      *
      * @param anAtomContainer the atom container the issue refers to
      * @param anException the thrown exception
-     * @throws NullPointerException if the given atom container (if it is not null) does not possess a MolID
+     * @throws NullPointerException if the given atom container (if it is not null) does not possess a MolID; if the
+     *                              exception is null
      * @throws Exception if the given exception is considered as fatal
      */
-    protected abstract void reportIssue(IAtomContainer anAtomContainer, Exception anException) throws NullPointerException, Exception;
+    protected abstract void reportIssue(IAtomContainer anAtomContainer, Exception anException)
+            throws NullPointerException, Exception;
 
 }

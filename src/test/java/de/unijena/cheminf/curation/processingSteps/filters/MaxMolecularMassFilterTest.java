@@ -53,14 +53,14 @@ public class MaxMolecularMassFilterTest {
                 () -> {
                     double tmpMaxMolecularMass = -0.1;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
+                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour, TestUtils.getTestReporterInstance());
                 }
         );
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> {
                     double tmpMaxMolecularMass = -0.1;
-                    new MaxMolecularMassFilter(tmpMaxMolecularMass);
+                    new MaxMolecularMassFilter(tmpMaxMolecularMass, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -76,7 +76,7 @@ public class MaxMolecularMassFilterTest {
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = null;
-                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
+                    new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour, TestUtils.getTestReporterInstance());
                 }
         );
     }
@@ -114,7 +114,8 @@ public class MaxMolecularMassFilterTest {
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MaxMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour) - 0.1,
-                        tmpFlavour
+                        tmpFlavour,
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertTrue(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -154,7 +155,8 @@ public class MaxMolecularMassFilterTest {
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MaxMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour) + 0.1,
-                        tmpFlavour
+                        tmpFlavour,
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -194,7 +196,8 @@ public class MaxMolecularMassFilterTest {
                     tmpAtomContainerSet.atomContainers()) {
                 tmpFilter = new MaxMolecularMassFilter(
                         ChemUtils.getMass(tmpAtomContainer, tmpFlavour),
-                        tmpFlavour
+                        tmpFlavour,
+                        TestUtils.getTestReporterInstance()
                 );
                 Assertions.assertFalse(tmpFilter.isFiltered(tmpAtomContainer));
             }
@@ -212,7 +215,8 @@ public class MaxMolecularMassFilterTest {
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
+                    IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
+                            TestUtils.getTestReporterInstance());
                     tmpMaxMolecularMassFilter.isFiltered(null);
                 }
         );
@@ -236,8 +240,9 @@ public class MaxMolecularMassFilterTest {
         //
         double tmpMaxMolecularMass = 50.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-        IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
+        IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
+                TestUtils.getTestReporterInstance());
+        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -261,8 +266,9 @@ public class MaxMolecularMassFilterTest {
         //
         double tmpMaxMolecularMass = 30.0;
         MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-        IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false, true);
+        IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
+                TestUtils.getTestReporterInstance());
+        IAtomContainerSet tmpFilteredACSet = tmpMaxMolecularMassFilter.process(tmpAtomContainerSet, false);
         Assertions.assertEquals(tmpNotFilteredArray.length, tmpFilteredACSet.getAtomContainerCount());
         for (int i = 0; i < tmpNotFilteredArray.length; i++) {
             Assertions.assertSame(tmpAtomContainerSet.getAtomContainer(tmpNotFilteredArray[i]), tmpFilteredACSet.getAtomContainer(i));
@@ -280,8 +286,9 @@ public class MaxMolecularMassFilterTest {
                 () -> {
                     double tmpMaxMolecularMass = 5.0;
                     MassComputationFlavours tmpFlavour = MassComputationFlavours.MOL_WEIGHT;
-                    IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour);
-                    tmpMaxMolecularMassFilter.process(null, false, true);
+                    IFilter tmpMaxMolecularMassFilter = new MaxMolecularMassFilter(tmpMaxMolecularMass, tmpFlavour,
+                            TestUtils.getTestReporterInstance());
+                    tmpMaxMolecularMassFilter.process(null, false);
                 }
         );
     }
