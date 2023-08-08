@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation.reporter;
 
 import de.unijena.cheminf.curation.processingSteps.IProcessingStep;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.IOException;
 
@@ -111,7 +112,7 @@ public interface IReporter {
      */
     public default void reportAfterFatalException() throws IOException {
         //TODO: remove default after this method has been implemented in the MarkDownReporter
-        //TODO: adapt the processing steps / the base classes
+        throw new NotImplementedException("Has yet to be implemented.");
     }
 
     /**

@@ -39,6 +39,7 @@ import java.util.Objects;
  */
 public class ReportDataObject {
 
+    //<editor-fold desc="private variables" defaultstate="collapsed">
     /**
      * Atom container of the structure the report refers to.
      */
@@ -59,7 +60,9 @@ public class ReportDataObject {
      * processing step has no ID (as it might be the case if it is not part of a pipeline).
      */
     private String processingStepIdentifier = null;
+    //</editor-fold>
 
+    //<editor-fold desc="private final variables" defaultstate="collapsed">
     /**
      * Runtime class of the IProcessingStep instance the reported problem occurred in.
      */
@@ -69,8 +72,10 @@ public class ReportDataObject {
      * Error code of the reported problem.
      */
     private final ErrorCodes errorCode;
+    //</editor-fold>
 
     //<editor-fold desc="Constructors" defaultstate="collapsed">
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with an error code and a class of processing step. The given
      * error code needs to be {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} or {@link
@@ -99,7 +104,9 @@ public class ReportDataObject {
         this.errorCode = anErrorCode;
         this.classOfProcessingStep = aClassOfProcessingStep;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class, String)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with an error code, a class of processing step and the identifier
      * of the processing step. The given error code needs to be {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} or {@link
@@ -111,21 +118,26 @@ public class ReportDataObject {
      * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
      *                                  in a pipeline it is part of)
      * @throws NullPointerException     if any of the given parameters is null
-     * @throws IllegalArgumentException if the reported error code is neither {@link
-     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR} nor {@link
+     * @throws IllegalArgumentException if the identifier string is empty or blank; if the reported error code is
+     *                                  neither {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} nor {@link
      *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR}
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
             String aProcessingStepIdentifier
-    ) throws NullPointerException {
+    ) throws NullPointerException, IllegalArgumentException {
         this(anErrorCode, aClassOfProcessingStep);
         Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
                 " is null.");
+        if (aProcessingStepIdentifier.isBlank()) {
+            throw new IllegalArgumentException("aProcessingStepIdentifier (instance of String) is empty or blank.");
+        }
         this.processingStepIdentifier = aProcessingStepIdentifier;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class, IAtomContainer, String)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with an error code, a class of processing step, atom container
      * and identifier.
@@ -135,24 +147,30 @@ public class ReportDataObject {
      * @param anAtomContainer        atom container of the structure the reported issue refers to
      * @param anIdentifier           identifier string of the structure
      * @throws NullPointerException if any of the given parameters is null
+     * @throws IllegalArgumentException if the identifier string is empty or blank
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
             Class<? extends IProcessingStep> aClassOfProcessingStep,
             IAtomContainer anAtomContainer,
             String anIdentifier
-    ) throws NullPointerException {
+    ) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
         Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
                 " IProcessingStep>) is null.");
         Objects.requireNonNull(anAtomContainer, "anAtomContainer (instance of IAtomContainer) is null.");
         Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
+        if (anIdentifier.isBlank()) {
+            throw new IllegalArgumentException("anIdentifier (instance of String) is empty or blank.");
+        }
         this.errorCode = anErrorCode;
         this.classOfProcessingStep = aClassOfProcessingStep;
         this.atomContainer = anAtomContainer;
         this.identifier = anIdentifier;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class, String, IAtomContainer, String)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with error code, class of processing step, identifier of
      * processing step, atom container and identifier.
@@ -164,6 +182,7 @@ public class ReportDataObject {
      * @param anAtomContainer           atom container of the structure the reported issue refers to
      * @param anIdentifier              identifier string of the structure
      * @throws NullPointerException if any of the given parameters is null
+     * @throws IllegalArgumentException if an identifier string is empty or blank
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -171,13 +190,18 @@ public class ReportDataObject {
             String aProcessingStepIdentifier,
             IAtomContainer anAtomContainer,
             String anIdentifier
-    ) throws NullPointerException {
+    ) throws NullPointerException, IllegalArgumentException {
         this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier);
         Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
                 " is null.");
+        if (aProcessingStepIdentifier.isBlank()) {
+            throw new IllegalArgumentException("aProcessingStepIdentifier (instance of String) is empty or blank.");
+        }
         this.processingStepIdentifier = aProcessingStepIdentifier;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class, IAtomContainer, String, String)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with an error code, a class of processing step, atom container,
      * identifier and external identifier.
@@ -188,6 +212,7 @@ public class ReportDataObject {
      * @param anIdentifier              identifier string of the structure
      * @param anExternalIdentifier      second, external identifier string of the structure
      * @throws NullPointerException if any of the given parameters is null
+     * @throws IllegalArgumentException if an identifier string is empty or blank
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -195,12 +220,17 @@ public class ReportDataObject {
             IAtomContainer anAtomContainer,
             String anIdentifier,
             String anExternalIdentifier
-    ) throws NullPointerException {
+    ) throws NullPointerException, IllegalArgumentException {
         this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier);
         Objects.requireNonNull(anExternalIdentifier, "anExternalIdentifier (instance of String) is null.");
+        if (anExternalIdentifier.isBlank()) {
+            throw new IllegalArgumentException("anExternalIdentifier (instance of String) is empty or blank.");
+        }
         this.externalIdentifier = anExternalIdentifier;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class, String, IAtomContainer, String, String)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with error code, class of processing step, identifier of
      * processing step, atom container, identifier and external identifier.
@@ -213,6 +243,7 @@ public class ReportDataObject {
      * @param anIdentifier              identifier string of the structure
      * @param anExternalIdentifier      second, external identifier string of the structure
      * @throws NullPointerException if any of the given parameters is null
+     * @throws IllegalArgumentException if an identifier string is empty or blank
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -221,14 +252,48 @@ public class ReportDataObject {
             IAtomContainer anAtomContainer,
             String anIdentifier,
             String anExternalIdentifier
-    ) throws NullPointerException {
+    ) throws NullPointerException, IllegalArgumentException {
         this(anErrorCode, aClassOfProcessingStep, anAtomContainer, anIdentifier, anExternalIdentifier);
         Objects.requireNonNull(aProcessingStepIdentifier, "aProcessingStepIdentifier (instance of String)" +
                 " is null.");
+        if (aProcessingStepIdentifier.isBlank()) {
+            throw new IllegalArgumentException("aProcessingStepIdentifier (instance of String) is empty or blank.");
+        }
         this.processingStepIdentifier = aProcessingStepIdentifier;
     }
     //</editor-fold>
 
+    //<editor-fold desc="ReportDataObject(ErrorCodes, Class, String, String)" defaultstate="collapsed">
+    /**
+     * Constructor to be used when there is no info on the structure (no atom container) but an identifier is known.
+     * Initializes the report data object with error code, class of processing step, identifier of processing step and
+     * the identifier of the structure the issue refers to.
+     *
+     * @param anErrorCode               error code of the reported issue
+     * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
+     * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
+     *                                  in a pipeline it is part of)
+     * @param anIdentifier              identifier string of the structure
+     * @throws NullPointerException if any of the given parameters is null
+     * @throws IllegalArgumentException if the identifier string is empty or blank
+     */
+    public ReportDataObject(
+            ErrorCodes anErrorCode,
+            Class<? extends IProcessingStep> aClassOfProcessingStep,
+            String aProcessingStepIdentifier,
+            String anIdentifier
+    ) throws NullPointerException, IllegalArgumentException {
+        this(anErrorCode, aClassOfProcessingStep, aProcessingStepIdentifier);
+        Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
+        if (anIdentifier.isBlank()) {
+            throw new IllegalArgumentException("anIdentifier (instance of String) is empty or blank.");
+        }
+        this.identifier = anIdentifier;
+    }
+    //</editor-fold>
+    //</editor-fold>
+
+    //<editor-fold desc="public properties" defaultstate="collapsed">
     /**
      * Returns the atom container of the structure the report refers to.
      *
@@ -283,5 +348,6 @@ public class ReportDataObject {
     public ErrorCodes getErrorCode() {
         return this.errorCode;
     }
+    //</editor-fold>
 
 }

@@ -54,14 +54,14 @@ public enum ErrorCodes {
     BOND_NULL_ERROR,
 
     /**
-     * The order of an IBond instance is UNSET.
-     */
-    BOND_ORDER_UNSET_ERROR,
-
-    /**
      * The order of an IBond instance is null.
      */
     BOND_ORDER_NULL_ERROR,
+
+    /**
+     * The order of an IBond instance is UNSET.
+     */
+    BOND_ORDER_UNSET_ERROR,
 
     /**
      * The order on an IBond instance is of an unknown type.
@@ -122,6 +122,12 @@ public enum ErrorCodes {
      * An unexpected (probably fatal) exception was encountered. For more information the log / log-file shall be
      * visited.
      */
-    UNEXPECTED_EXCEPTION_ERROR
+    UNEXPECTED_EXCEPTION_ERROR,
+
+    /* data import */
+    /**
+     * The import of the structure out of an SD file failed.
+     */
+    SDF_IMPORT_FAILED_ERROR
 
 }

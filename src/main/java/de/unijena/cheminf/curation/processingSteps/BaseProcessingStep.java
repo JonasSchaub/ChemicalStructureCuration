@@ -230,7 +230,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     }
 
     /**
-     * Generates a report data object on basis of the given error code and atom container and info respective to the
+     * Generates a report data object on the basis of the given error code and atom container and info respective to the
      * processing step and passes it to the reporter. The given atom container may only be null in combination with
      * specific error codes. If it is not null, it is expected to have a MolID (atom container property with name {@link
      * #MOL_ID_PROPERTY_NAME}) and - if the {@link #externalIDPropertyName} field has been specified - also to have an
@@ -243,11 +243,12 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      *                                  type of reporter)
      * @throws IllegalArgumentException if the atom container is null but the reported issue is neither {@link
      *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} nor {@link
-     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR}
+     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR}; if an identifier of the structure or the
+     *                                  identifier of the processing step is not null but empty or blank
      */
     protected void appendToReport(ErrorCodes anErrorCode, IAtomContainer anAtomContainer) throws NullPointerException,
             IllegalArgumentException {
-        Objects.requireNonNull(anErrorCode, "anErrorCode (constant of ErrorCodes) is null.");
+        Objects.requireNonNull(anErrorCode, "anErrorCode (ErrorCodes constant) is null.");
         byte tmpCase;
         if (anAtomContainer == null) {
             if (this.pipelineProcessingStepID == null) {

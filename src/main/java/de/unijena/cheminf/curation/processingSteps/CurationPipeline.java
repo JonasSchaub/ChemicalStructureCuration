@@ -48,14 +48,22 @@ import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.Prop
 import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.ExternalIDChecker;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
+import de.unijena.cheminf.curation.reporter.ReportDataObject;
 import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
 import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
 import de.unijena.cheminf.curation.valenceHandling.valenceModels.ValenceListBasedValenceModel;
+import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IPseudoAtom;
+import org.openscience.cdk.io.iterator.IteratingSDFReader;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -253,6 +261,90 @@ public class CurationPipeline extends BaseProcessingStep {
         return super.process(anAtomContainerSet, aCloneBeforeProcessing);
     }
 
+    //TODO
+    /**
+     * TODO
+     *
+     * @param aFilePath TODO: specify name
+     * @return TODO
+     * @throws NullPointerException if the given file path is null
+     * @throws IllegalArgumentException if the given file path is blank or empty
+     * @throws IOException if the import process fails due to ... TODO
+     * @throws Exception if an unexpected, fatal exception occurs
+     */
+    public IAtomContainerSet importAndProcess(String aFilePath) throws IOException, Exception {
+        //TODO: param check
+        //TODO: call overloaded method
+        File tmpFile = new File(aFilePath);
+        return this.importAndProcess(tmpFile);
+    }
+
+    /**
+     * TODO
+     *
+     * TODO: try-catch
+     *  finish report
+     *
+     * @param aFileToImport TODO
+     * @return TODO
+     * @throws NullPointerException if the given file is null
+     * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some
+     *                               other reason cannot be opened for reading
+     * @throws SecurityException if a security manager exists and its checkRead method denies read access to the file
+     * @throws IOException if the import process fails due to ... TODO
+     * @throws Exception if an unexpected, fatal exception occurs
+     */
+    public IAtomContainerSet importAndProcess(File aFileToImport) throws FileNotFoundException, IOException, Exception {
+        //TODO: param check
+        //
+        //TODO: initialize reporter
+        this.getReporter().initializeNewReport();
+        //
+        //TODO: import data
+        // assign MolIDs in the process
+        IAtomContainerSet tmpImportedMoleculeSet = new AtomContainerSet();
+        IteratingSDFReader tmpSDFReader = new IteratingSDFReader(new FileInputStream(aFileToImport),
+                SilentChemObjectBuilder.getInstance());
+        int tmpCounter = 0;
+        int tmpFailedStructureImportsCount = 0; //TODO: remove (?!)
+        while(!Thread.currentThread().isInterrupted() && tmpSDFReader.hasNext()) {  //TODO: remove listening to thread interruption?
+            try { //TODO: probably reposition try
+                IAtomContainer tmpAtomContainer = tmpSDFReader.next();
+                //String tmpName = this.findMoleculeName(tmpAtomContainer);
+                //if(tmpName == null || tmpName.isBlank() || tmpName.isEmpty())
+                //    tmpName = FileUtil.getFileNameWithoutExtension(aFile) + tmpCounter;
+                //tmpAtomContainer.setProperty(Importer.MOLECULE_NAME_PROPERTY_KEY, tmpName);
+                //
+                // set the position of the structure in the imported data set as MolID
+                tmpAtomContainer.setProperty(IProcessingStep.MOL_ID_PROPERTY_NAME, String.valueOf(tmpCounter));
+                tmpImportedMoleculeSet.addAtomContainer(tmpAtomContainer);
+            } catch (Exception anException) {
+                // import process of structure failed
+                //TODO: report
+                tmpFailedStructureImportsCount++;
+                throw anException;  //TODO: remove
+            }
+            tmpCounter++;
+        }
+        //TODO: probably remove the following lines of code
+        CurationPipeline.LOGGER.info("Successfully imported structures: " + (tmpCounter - tmpFailedStructureImportsCount));
+        if (tmpFailedStructureImportsCount > 0) {
+            CurationPipeline.LOGGER.severe("Structures that failed the import process: " + tmpFailedStructureImportsCount);
+        }
+        //
+        // suppress the report generation and MolID assignment
+        boolean tmpIsReporterSelfContainedCache = this.isReporterSelfContained();
+        this.setIsReporterSelfContained(false);
+        // do the processing
+        IAtomContainerSet tmpResultingAtomContainerSet = this.process(tmpImportedMoleculeSet, false);
+        this.setIsReporterSelfContained(tmpIsReporterSelfContainedCache);
+        //
+        //TODO: finish the report
+        this.getReporter().report();
+        //
+        return tmpResultingAtomContainerSet;
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -281,6 +373,30 @@ public class CurationPipeline extends BaseProcessingStep {
             }
         }
         return tmpResultingACSet;
+    }
+
+    /**
+     * Generates a report data object on the basis of the given error code, MolID and info respective to the processing
+     * step and passes it to the reporter. This method may only be used if there is no info on the structure but its
+     * MolID as it is the case at failed import attempts; see {@link CurationPipeline#importAndProcess(String)}).
+     *
+     * @param anErrorCode     error code of the reported issue
+     * @param aMolID          the MolID of the structure that failed the import
+     * @param anImportRoutine the import routine the structure failed
+     * @throws NullPointerException if the given error code, identifier or import routine is null
+     * @throws IllegalArgumentException if the identifier string is empty or blank
+     */
+    protected void appendToReport(ErrorCodes anErrorCode, String aMolID, ImportRoutines anImportRoutine)
+            throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(anErrorCode, "anErrorCode (ErrorCodes constant) is null.");
+        Objects.requireNonNull(aMolID, "aMolID (instance of String) is null.");
+        Objects.requireNonNull(anImportRoutine, "anImportRoutine (ImportRoutines constant) is null.");
+        if (aMolID.isBlank()) {
+            throw new IllegalArgumentException("aMolID (instance of String) is empty or blank.");
+        }
+        ReportDataObject tmpReportDataObject = new ReportDataObject(anErrorCode, this.getClass(),
+                anImportRoutine.getIdentifier(), aMolID);
+        this.getReporter().appendReport(tmpReportDataObject);
     }
 
     //<editor-fold desc="withPropertyChecker methods" defaultstate="collapsed">
@@ -821,6 +937,7 @@ public class CurationPipeline extends BaseProcessingStep {
         );
     }
 
+    //<editor-fold desc="public properties" defaultstate="collapsed">
     /**
      * Returns the list that contains all processing steps that were added to the pipeline.
      *
@@ -875,5 +992,53 @@ public class CurationPipeline extends BaseProcessingStep {
             this.listOfPipelineSteps.get(i).setPipelineProcessingStepID(tmpSuperordinateID + i);
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="ImportRoutines enum" defaultstate="collapsed">
+    /**
+     * Enum containing an entry for every available import routine. Every entry has an associated identifier string.
+     *
+     * @author Samuel Behr
+     * @version 1.0.0.0
+     * @see #importAndProcess(String)
+     */
+    public enum ImportRoutines {
+
+        /**
+         * SD file import routine.
+         */
+        SDF_IMPORT("SDFileImporterRoutine");
+
+        /**
+         * The identifier string of the import routine.
+         */
+        private final String identifier;
+
+        /**
+         * Internal constructor.
+         *
+         * @param anIdentifier the identifier string of the import routine
+         * @throws NullPointerException if the identifier is null
+         * @throws IllegalArgumentException if the identifier string is empty or blank
+         */
+        ImportRoutines(String anIdentifier) throws NullPointerException, IllegalArgumentException {
+            Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
+            if (anIdentifier.isBlank()) {
+                throw new IllegalArgumentException("anIdentifier (instance of String) is empty or blank.");
+            }
+            this.identifier = anIdentifier;
+        }
+
+        /**
+         * Returns the identifier string of the import routine.
+         *
+         * @return String instance
+         */
+        public String getIdentifier() {
+            return this.identifier;
+        }
+
+    }
+    //</editor-fold>
 
 }

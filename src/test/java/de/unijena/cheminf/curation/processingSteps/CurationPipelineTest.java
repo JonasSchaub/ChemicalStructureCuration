@@ -54,6 +54,19 @@ public class CurationPipelineTest {
      */
 
     /**
+     * Method for testing the new import routine. TODO: remove or clean up
+     *
+     * @throws Exception if anything goes wrong
+     */
+    @Test
+    public void importRoutineTest() throws Exception {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
+        tmpCurationPipeline.withMaxAtomCountFilter(50, false, false);
+        tmpCurationPipeline.importAndProcess("C:\\Users\\Behr\\Downloads\\Structure2D_COMPOUND_CID_2244.sdf");
+        System.out.println("It worked!");
+    }
+
+    /**
      * TODO
      */
     @Test
