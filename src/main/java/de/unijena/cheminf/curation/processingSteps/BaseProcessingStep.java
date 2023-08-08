@@ -165,11 +165,11 @@ public abstract class BaseProcessingStep implements IProcessingStep {
             tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
         } catch (Exception aFatalException) {
             // the exception is considered as fatal and can not be handled
-            BaseProcessingStep.LOGGER.severe("The processing by this processing step was interrupted due to an" +
-                    " unexpected, fatal exception.");
+            BaseProcessingStep.LOGGER.severe("The processing was interrupted due to an unexpected, fatal" +
+                    " exception.");
             if (this.isReporterSelfContained) {
                 try {
-                    // try to finish the report; a notification is appended to the report
+                    // try to finish the report via respective method
                     this.reporter.reportAfterFatalException();
                 } catch (IOException anIOException) {
                     BaseProcessingStep.LOGGER.warning("The report could not be generated / finished due to an" +

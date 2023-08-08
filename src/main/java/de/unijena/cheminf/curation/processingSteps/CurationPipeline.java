@@ -269,12 +269,18 @@ public class CurationPipeline extends BaseProcessingStep {
      * @return TODO
      * @throws NullPointerException if the given file path is null
      * @throws IllegalArgumentException if the given file path is blank or empty
+     * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some
+     *                               other reason cannot be opened for reading
+     * @throws SecurityException if a security manager exists and its checkRead method denies read access to the file
      * @throws IOException if the import process fails due to ... TODO
      * @throws Exception if an unexpected, fatal exception occurs
      */
-    public IAtomContainerSet importAndProcess(String aFilePath) throws IOException, Exception {
-        //TODO: param check
-        //TODO: call overloaded method
+    public IAtomContainerSet importAndProcess(String aFilePath) throws NullPointerException, IllegalArgumentException,
+            IOException, Exception {
+        Objects.requireNonNull(aFilePath, "aFilePath (instance of String) is null.");
+        if (aFilePath.isBlank()) {
+            throw new IllegalArgumentException("aFilePath (instance of String) is empty or blank.");
+        }
         File tmpFile = new File(aFilePath);
         return this.importAndProcess(tmpFile);
     }
@@ -295,54 +301,77 @@ public class CurationPipeline extends BaseProcessingStep {
      * @throws Exception if an unexpected, fatal exception occurs
      */
     public IAtomContainerSet importAndProcess(File aFileToImport) throws FileNotFoundException, IOException, Exception {
-        //TODO: param check
+        Objects.requireNonNull(aFileToImport, "aFileToImport (instance of File) is null.");
         //
-        //TODO: initialize reporter
+        // initialize the report
         this.getReporter().initializeNewReport();
         //
-        //TODO: import data
-        // assign MolIDs in the process
-        IAtomContainerSet tmpImportedMoleculeSet = new AtomContainerSet();
+        final IAtomContainerSet tmpImportedMoleculeSet = new AtomContainerSet();
+        final ImportRoutines tmpImportRoutine = ImportRoutines.SDF_IMPORT;
         IteratingSDFReader tmpSDFReader = new IteratingSDFReader(new FileInputStream(aFileToImport),
                 SilentChemObjectBuilder.getInstance());
         int tmpCounter = 0;
         int tmpFailedStructureImportsCount = 0; //TODO: remove (?!)
         while(!Thread.currentThread().isInterrupted() && tmpSDFReader.hasNext()) {  //TODO: remove listening to thread interruption?
-            try { //TODO: probably reposition try
+            try {
+                // load the structure and give it its position in the imported data set as MolID
                 IAtomContainer tmpAtomContainer = tmpSDFReader.next();
-                //String tmpName = this.findMoleculeName(tmpAtomContainer);
-                //if(tmpName == null || tmpName.isBlank() || tmpName.isEmpty())
-                //    tmpName = FileUtil.getFileNameWithoutExtension(aFile) + tmpCounter;
-                //tmpAtomContainer.setProperty(Importer.MOLECULE_NAME_PROPERTY_KEY, tmpName);
-                //
-                // set the position of the structure in the imported data set as MolID
                 tmpAtomContainer.setProperty(IProcessingStep.MOL_ID_PROPERTY_NAME, String.valueOf(tmpCounter));
                 tmpImportedMoleculeSet.addAtomContainer(tmpAtomContainer);
             } catch (Exception anException) {
                 // import process of structure failed
-                //TODO: report
-                tmpFailedStructureImportsCount++;
-                throw anException;  //TODO: remove
+                // report the issue to the reporter
+                String tmpExceptionMessageString = anException.getMessage();
+                ErrorCodes tmpErrorCode = null;
+                try {
+                    // the message of the exception is expected to match the name of an ErrorCodes enum's constant
+                    tmpErrorCode = ErrorCodes.valueOf(tmpExceptionMessageString);
+                } catch (Exception aFatalException) {
+                    /* the message string of the given exception did not match the name of an ErrorCodes enum's
+                     * constant; the exception is considered as fatal and re-thrown */
+                    tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
+                    throw anException;
+                } finally {
+                    this.appendToReport(tmpErrorCode, String.valueOf(tmpCounter), tmpImportRoutine);
+                    tmpFailedStructureImportsCount++;
+                }
             }
             tmpCounter++;
         }
-        //TODO: probably remove the following lines of code
+        // TODO: probably remove the following lines of code
         CurationPipeline.LOGGER.info("Successfully imported structures: " + (tmpCounter - tmpFailedStructureImportsCount));
         if (tmpFailedStructureImportsCount > 0) {
             CurationPipeline.LOGGER.severe("Structures that failed the import process: " + tmpFailedStructureImportsCount);
         }
         //
+        IAtomContainerSet tmpProcessedAtomContainerSet;
         // suppress the report generation and MolID assignment
         boolean tmpIsReporterSelfContainedCache = this.isReporterSelfContained();
         this.setIsReporterSelfContained(false);
-        // do the processing
-        IAtomContainerSet tmpResultingAtomContainerSet = this.process(tmpImportedMoleculeSet, false);
-        this.setIsReporterSelfContained(tmpIsReporterSelfContainedCache);
-        //
-        //TODO: finish the report
+        try {
+            // do the processing
+            tmpProcessedAtomContainerSet = this.process(tmpImportedMoleculeSet, false);
+        } catch (Exception aFatalException) {
+            // the exception is considered as fatal and can not be handled
+            CurationPipeline.LOGGER.severe("The processing was interrupted due to an unexpected, fatal" +
+                    " exception.");
+            try {
+                // try to finish the report via respective method
+                this.getReporter().reportAfterFatalException();
+            } catch (IOException anIOException) {
+                CurationPipeline.LOGGER.warning("The report could not be generated / finished due to an" +
+                        " IOException.");
+            } catch (Exception anException) {
+                CurationPipeline.LOGGER.warning("The report could not be generated / finished.");
+            }
+            throw aFatalException;
+        } finally {
+            this.setIsReporterSelfContained(tmpIsReporterSelfContainedCache);
+        }
+        // generate / finish the report
         this.getReporter().report();
         //
-        return tmpResultingAtomContainerSet;
+        return tmpProcessedAtomContainerSet;
     }
 
     /**
