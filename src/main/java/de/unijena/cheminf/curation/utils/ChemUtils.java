@@ -34,7 +34,10 @@ import org.openscience.cdk.interfaces.IElement;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Objects;
+import java.util.TreeSet;
 
 /**
  * Class with chemistry utilities; mainly contains methods for determining and calculating values of molecular
@@ -45,6 +48,7 @@ import java.util.Objects;
  */
 public class ChemUtils {
 
+    //<editor-fold desc="getAtomCount()" defaultstate="collapsed">
     /**
      * Returns the number of atoms present in a given atom container. Based on the boolean parameters, implicit hydrogen
      * atoms and pseudo-atoms are taken into account or not. Implicit hydrogen counts assigned to pseudo-atoms are not
@@ -75,7 +79,9 @@ public class ChemUtils {
         }
         return tmpAtomCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getImplicitHydrogenCount()" defaultstate="collapsed">
     /**
      * Returns the total count of implicit hydrogen atoms present in the given atom container. The implicit hydrogen
      * count assigned to instances of {@link IPseudoAtom} may or may not be taken into account.
@@ -111,7 +117,9 @@ public class ChemUtils {
         }
         return tmpTotalImplicitHydrogenCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getBondCount()" defaultstate="collapsed">
     /**
      * Returns the number of bonds present in the given atom container. Based on the boolean parameters, bonds to
      * implicit hydrogen atoms and bonds to pseudo-atoms are taken into account or not. If either of the two boolean
@@ -145,7 +153,9 @@ public class ChemUtils {
         }
         return tmpBondCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getBondsOfSpecificBondOrderCount()" defaultstate="collapsed">
     /**
      * Returns the count of bonds of a specific bond order that are present in the given atom container. Based on the
      * boolean parameters, bonds to implicit hydrogen atoms and bonds to pseudo-atoms are taken into account or not. If
@@ -202,73 +212,99 @@ public class ChemUtils {
         }
         return tmpBondTypeCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getAtomsOfAtomicNumbersCount(IAtomContainer, int...)" defaultstate="collapsed">
     /**
      * Counts the number of atoms in the given IAtomContainer instance with one of the given atomic numbers considering
-     * implicit hydrogen atoms as atoms of the atomic number one.
+     * implicit hydrogen atoms as atoms of the atomic number one. To not consider implicit hydrogens, see
+     * {@link #getAtomsOfAtomicNumbersCount(IAtomContainer, boolean, int...)}.
      *
-     * @param anAtomContainer IAtomContainer instance to count atoms of
-     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count; use the {@link IElement} enum of
-     *                        element symbols to receive the atomic numbers of specific elements
+     * @param anAtomContainer IAtomContainer instance to count the atoms of
+     * @param anAtomicNumbers integer values of the atomic numbers to count the atoms of; use the {@link IElement} enum
+     *                        of element symbols to receive the atomic numbers of specific elements
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
-     * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null
+     * @throws NullPointerException if the given atom container or the atomic number of an atom contained by it is null;
+     *                              if counting atoms of atomic number one and the implicit hydrogen count of an atom is
+     *                              unset (null)
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
-     * greater than 118)
+     *                                  above 118)
      */
     public static int getAtomsOfAtomicNumbersCount(IAtomContainer anAtomContainer, int... anAtomicNumbers)
             throws NullPointerException, IllegalArgumentException {
         return ChemUtils.getAtomsOfAtomicNumbersCount(anAtomContainer, true, anAtomicNumbers);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getAtomsOfAtomicNumbersCount(IAtomContainer, boolean, int...)" defaultstate="collapsed">
     /**
      * Counts the number of atoms in the given IAtomContainer instance with one of the given atomic numbers. When
-     * counting atoms with an atomic number of one, implicit hydrogen atoms may or may not be considered.
+     * counting atoms of the atomic number one, implicit hydrogen atoms may or may not be considered.
      * TODO: implement filter
      * TODO: convenience method/filter that parses element symbols to atomic numbers (see parseAtomSymbol() method of class Atom)
-     * TODO: what to do if one and the same atomic number is given twice?
-     * TODO: adapt tests?
      * TODO: what about pseudo-atoms?
      *
-     * @param anAtomContainer IAtomContainer instance to count atoms of
+     * @param anAtomContainer IAtomContainer instance to count the atoms of
      * @param aConsiderImplicitHydrogens boolean value whether to consider implicit hydrogen atoms when counting
-     *                                   atoms with an atomic number of one
-     * @param anAtomicNumbers integer values of the atomic numbers of atoms to count; use the {@link IElement} enum of
-     *                        element symbols to receive the atomic numbers of specific elements
+     *                                   atoms of the atomic number one ({@link IElement#H})
+     * @param anAtomicNumbers integer values of the atomic numbers to count the atoms of; use the {@link IElement} enum
+     *                        of element symbols to receive the atomic numbers of specific elements
      * @return integer value of the count of atoms in the given atom container with one of the given atomic numbers
-     * @throws NullPointerException if the given instance of IAtomContainer or an atomic number is null; if implicit
-     *                              hydrogen atoms are to be considered and the implicit hydrogen count of an atom is
-     *                              null
+     * @throws NullPointerException if the given atom container is null; if the atomic number of an atom is unset
+     *                              (null); if the implicit hydrogen count of an atom is unset (only relevant when
+     *                              counting atoms of atomic number one and considering implicit hydrogen atoms)
      * @throws IllegalArgumentException if one of the given integer values is no valid atomic number (below zero or
-     *                                  greater than 118)
+     *                                  above 118)
      */
     public static int getAtomsOfAtomicNumbersCount(IAtomContainer anAtomContainer, boolean aConsiderImplicitHydrogens,
                                                    int... anAtomicNumbers)
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
-        for (int tmpAtomicNumber : anAtomicNumbers) {
-            if (tmpAtomicNumber < 0 || tmpAtomicNumber > 118)
-                throw new IllegalArgumentException(ErrorCodes.INVALID_ATOMIC_NUMBER_ERROR.name());
+        //
+        if (anAtomicNumbers.length == 0) {
+            return 0;
         }
-        int tmpAtomsOfAtomicNumbersCount = 0;
+        //
+        // sort the atomic numbers and remove duplicates
+        // check whether they fall within the spectrum of: 0 <= tmpAtomicNumber <= 118
+        TreeSet<Integer> tmpTreeSet = new TreeSet<>();
+        for (int tmpAtomicNumber : anAtomicNumbers) {
+            if (tmpAtomicNumber < 0 || tmpAtomicNumber > 118) {
+                throw new IllegalArgumentException(ErrorCodes.INVALID_ATOMIC_NUMBER_ERROR.name());
+            }
+            tmpTreeSet.add(tmpAtomicNumber);
+        }
+        Iterator<Integer> tmpIterator = tmpTreeSet.iterator();
+        int[] tmpAtomicNumbersSorted = new int[tmpTreeSet.size()];
+        for (int i = 0; i < tmpAtomicNumbersSorted.length; i++) {
+            tmpAtomicNumbersSorted[i] = tmpIterator.next();
+        }
+        //
+        int tmpSpecificAtomsCount = 0;
         Integer tmpAtomicNumberOfAtom;
         for (IAtom tmpAtom : anAtomContainer.atoms()) {
             tmpAtomicNumberOfAtom = tmpAtom.getAtomicNumber();
             Objects.requireNonNull(tmpAtomicNumberOfAtom, ErrorCodes.ATOMIC_NUMBER_NULL_ERROR.name());
-            for (int tmpAtomicNumber : anAtomicNumbers) {
-                if (tmpAtom.getAtomicNumber() == tmpAtomicNumber) {
-                    tmpAtomsOfAtomicNumbersCount++;
+            for (int tmpAtomicNumber : tmpAtomicNumbersSorted) {
+                if (tmpAtomicNumberOfAtom < tmpAtomicNumber) {
                     break;
                 }
+                if (tmpAtomicNumberOfAtom == tmpAtomicNumber) {
+                    tmpSpecificAtomsCount++;
+                    break;
+                }
+                // else: continue
             }
         }
-        for (int tmpAtomicNumber : anAtomicNumbers) {
-            if (tmpAtomicNumber == IElement.H && aConsiderImplicitHydrogens) {
-                return tmpAtomsOfAtomicNumbersCount + ChemUtils.getImplicitHydrogenCount(anAtomContainer, true);
-            }
+        if (aConsiderImplicitHydrogens && tmpAtomicNumbersSorted[0] == IElement.Wildcard) {
+            //TODO: consider implicit Hs of pseudo atoms?
+            tmpSpecificAtomsCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer, false);
         }
-        return tmpAtomsOfAtomicNumbersCount;
+        return tmpSpecificAtomsCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getHeavyAtomCount" defaultstate="collapsed">
     /**
      * Counts the number of heavy (non-hydrogen) atoms in the given IAtomContainer instance. Instances of {@link
      * IPseudoAtom} may or may not be taken into account.
@@ -290,7 +326,9 @@ public class ChemUtils {
         }
         return tmpHeavyAtomsCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getMass()" defaultstate="collapsed">
     /**
      * Calculates the mass of a molecule (given IAtomContainer instance). This function takes a 'mass flavour' that
      * switches the computation type of the mass calculation. The key distinction is how specified/unspecified isotopes
@@ -315,7 +353,9 @@ public class ChemUtils {
         //TODO: use MolWeight as default if null is given?
         return AtomContainerManipulator.getMass(anAtomContainer, aFlavour.getAssociatedIntegerValue());
     }
+    //</editor-fold>
 
+    //<editor-fold desc="containsPseudoAtoms()" defaultstate="collapsed">
     /**
      * Returns whether the given atom container contains pseudo-atoms (which are expected to be instances of
      * {@link IPseudoAtom}).
@@ -335,7 +375,9 @@ public class ChemUtils {
         }
         return tmpContainsPseudoAtoms;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getSigmaBondCount()" defaultstate="collapsed">
     /**
      * Returns the sigma bond count of the atom.
      *
@@ -386,7 +428,9 @@ public class ChemUtils {
         }
         return tmpSigmaBondCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getPiBondCount()" defaultstate="collapsed">
     /**
      * Returns the pi bond count of the atom.
      *
@@ -440,7 +484,9 @@ public class ChemUtils {
         }
         return tmpPiBondCount;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getSigmaAndPiBondCounts()" defaultstate="collapsed">
     /**
      * Returns an array containing in the first position the sigma bond count and in the second position the pi bond
      * count of the atom.
@@ -514,5 +560,6 @@ public class ChemUtils {
         }
         return new int[]{tmpSigmaBondCount, tmpPiBondCount};
     }
+    //</editor-fold>
 
 }

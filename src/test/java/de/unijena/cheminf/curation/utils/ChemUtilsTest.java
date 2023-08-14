@@ -578,11 +578,10 @@ public class ChemUtilsTest {
         Assertions.assertDoesNotThrow(() -> {
             IAtomContainer tmpAtomContainer = new AtomContainer();
             int tmpAnIntegerValue = 5;
-            int tmpReturnValue;
-            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer);
-            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue);
-            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue);
-            tmpReturnValue = ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue,
+            ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer);
+            ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue);
+            ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue);
+            ChemUtils.getAtomsOfAtomicNumbersCount(tmpAtomContainer, tmpAnIntegerValue, tmpAnIntegerValue,
                     tmpAnIntegerValue);
         });
     }
@@ -591,7 +590,7 @@ public class ChemUtilsTest {
      * Tests whether the .countAtomsOfAtomicNumbers() method of class ChemUtils counts the number of atoms of a single
      * atomic number in a given atom container correctly; here: carbon (atomic number: 6).
      *
-     * @throws InvalidSmilesException if a SMILES string could not be parsed    //TODO: check everywhere: the / a SMILES
+     * @throws InvalidSmilesException if a SMILES string could not be parsed
      */
     @Test
     public void countAtomsOfAtomicNumbersMethodTest_countOfCarbonAtoms() throws InvalidSmilesException {
