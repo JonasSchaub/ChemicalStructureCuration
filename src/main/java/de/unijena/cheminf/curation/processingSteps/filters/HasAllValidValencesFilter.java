@@ -145,7 +145,7 @@ public class HasAllValidValencesFilter extends BaseFilter {
             UnsupportedOperationException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
-        return FilterUtils.hasAllValidValences(anAtomContainer, this.wildcardAtomicNumberIsValid, this.valenceModel);
+        return !FilterUtils.hasAllValidValences(anAtomContainer, this.wildcardAtomicNumberIsValid, this.valenceModel);
     }
 
     @Override
