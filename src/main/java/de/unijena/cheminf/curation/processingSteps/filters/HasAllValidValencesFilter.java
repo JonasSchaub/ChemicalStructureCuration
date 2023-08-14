@@ -31,6 +31,7 @@ import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.utils.FilterUtils;
 import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
 import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.util.Objects;
@@ -123,20 +124,25 @@ public class HasAllValidValencesFilter extends BaseFilter {
     }
     //</editor-fold>
 
-     /**
+    /**
      * {@inheritDoc}
      * <br>
-     * The class field considerWildcardAsValid decides whether atoms with atomic number zero are generally considered as
-     * having a valid valence. Otherwise the wildcard atomic number is considered as invalid if not covered by the
-     * valence model.
+     * The class field {@link #wildcardAtomicNumberIsValid} decides whether atoms with atomic number zero are generally
+     * to be considered as having a valid valence. Otherwise the wildcard atomic number is considered as invalid if not
+     * covered by the valence model.
      *
      * @throws NullPointerException if the given atom container or an atom contained by it is null; if atomic number,
      *                              formal charge or the implicit hydrogen count of an atom is null; if the bond order
      *                              of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @throws UnsupportedOperationException if an IAtom instance of the given atom container does not support its bonds
+     *                                       to be queried ({@link IAtom#bonds()}); this might not be a problem if the
+     *                                       provided valence model ({@link #valenceModel}) does not rely on this
+     *                                       functionality
      */
     @Override
-    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException {
+    public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, IllegalArgumentException,
+            UnsupportedOperationException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         //
         return FilterUtils.hasAllValidValences(anAtomContainer, this.wildcardAtomicNumberIsValid, this.valenceModel);

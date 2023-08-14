@@ -26,9 +26,11 @@
 package de.unijena.cheminf.curation.utils;
 
 import de.unijena.cheminf.curation.TestUtils;
+import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.PseudoAtom;
@@ -1093,6 +1095,26 @@ public class ChemUtilsTest {
         Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getSigmaBondCount(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
     }
+
+    /**
+     * Tests whether the getSigmaBondCount() method of ChemUtils throws an UnsupportedOperationException with the
+     * respective error code as message if the provided IAtom instance does not support the functionality
+     * {@link IAtom#bonds()}.
+     */
+    @Test
+    public void getSigmaBondCountTest_givenIAtomDoesNotSupportBondsFunctionality_throwsUnsupportedOperationExceptionWithErrorCode() {
+        IAtom tmpAtom = new Atom(IElement.H);   // class Atom does not support the .bonds() functionality
+        boolean tmpConsiderImplicitHydrogens = true;    // can be ignored
+        // following line: requirement for the test to work
+        Assertions.assertThrows(UnsupportedOperationException.class, tmpAtom::bonds);
+        try {
+            ChemUtils.getSigmaBondCount(tmpAtom, tmpConsiderImplicitHydrogens);
+            Assertions.fail();
+        } catch (UnsupportedOperationException anUnsupportedOperationException) {
+            ErrorCodes tmpErrorCode = ErrorCodes.valueOf(anUnsupportedOperationException.getMessage());
+            Assertions.assertEquals(ErrorCodes.BONDS_OF_ATOM_NOT_QUERYABLE, tmpErrorCode);
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="getPiBondCount() method tests" defaultstate="collapsed">
@@ -1141,6 +1163,25 @@ public class ChemUtilsTest {
         tmpAtomContainer.getBond(0).setOrder(IBond.Order.UNSET);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ChemUtils.getPiBondCount(tmpAtomContainer.getAtom(0)));
+    }
+
+    /**
+     * Tests whether the getPiBondCount() method of ChemUtils throws an UnsupportedOperationException with the
+     * respective error code as message if the provided IAtom instance does not support the functionality
+     * {@link IAtom#bonds()}.
+     */
+    @Test
+    public void getPiBondCountTest_givenIAtomDoesNotSupportBondsFunctionality_throwsUnsupportedOperationExceptionWithErrorCode() {
+        IAtom tmpAtom = new Atom(IElement.H);   // class Atom does not support the .bonds() functionality
+        // following line: requirement for the test to work
+        Assertions.assertThrows(UnsupportedOperationException.class, tmpAtom::bonds);
+        try {
+            ChemUtils.getPiBondCount(tmpAtom);
+            Assertions.fail();
+        } catch (UnsupportedOperationException anUnsupportedOperationException) {
+            ErrorCodes tmpErrorCode = ErrorCodes.valueOf(anUnsupportedOperationException.getMessage());
+            Assertions.assertEquals(ErrorCodes.BONDS_OF_ATOM_NOT_QUERYABLE, tmpErrorCode);
+        }
     }
     //</editor-fold>
 
@@ -1239,6 +1280,26 @@ public class ChemUtilsTest {
         boolean tmpConsiderImplicitHydrogens = true;
         Assertions.assertThrows(NullPointerException.class,
                 () -> ChemUtils.getSigmaAndPiBondCounts(tmpAtomContainer.getAtom(0), tmpConsiderImplicitHydrogens));
+    }
+
+    /**
+     * Tests whether the getSigmaAndPiBondCounts() method of ChemUtils throws an UnsupportedOperationException with
+     * the respective error code as message if the provided IAtom instance does not support the functionality
+     * {@link IAtom#bonds()}.
+     */
+    @Test
+    public void getSigmaAndPiBondCountsTest_givenIAtomDoesNotSupportBondsFunctionality_throwsUnsupportedOperationExceptionWithErrorCode() {
+        IAtom tmpAtom = new Atom(IElement.H);   // class Atom does not support the .bonds() functionality
+        boolean tmpConsiderImplicitHydrogens = true;    // can be ignored
+        // following line: requirement for the test to work
+        Assertions.assertThrows(UnsupportedOperationException.class, tmpAtom::bonds);
+        try {
+            ChemUtils.getSigmaAndPiBondCounts(tmpAtom, tmpConsiderImplicitHydrogens);
+            Assertions.fail();
+        } catch (UnsupportedOperationException anUnsupportedOperationException) {
+            ErrorCodes tmpErrorCode = ErrorCodes.valueOf(anUnsupportedOperationException.getMessage());
+            Assertions.assertEquals(ErrorCodes.BONDS_OF_ATOM_NOT_QUERYABLE, tmpErrorCode);
+        }
     }
     //</editor-fold>
 

@@ -228,12 +228,14 @@ public class FilterUtils {
      *                              formal charge or the implicit hydrogen count of an atom is null; if the bond order
      *                              of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @throws UnsupportedOperationException if an IAtom instance of the given atom container does not support its bonds
+     *                                       to be queried ({@link IAtom#bonds()})
      * @see #hasAllValidValences(IAtomContainer, boolean, IValenceModel)
      * @see ValenceListBasedValenceModel
      * @see PubChemValenceModel
      */
     public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid)
-            throws NullPointerException {
+            throws NullPointerException, IllegalArgumentException, UnsupportedOperationException {
         IValenceModel tmpValenceModel = new PubChemValenceModel();
         return FilterUtils.hasAllValidValences(anAtomContainer, aWildcardAtomicNumberIsValid, tmpValenceModel);
     }
@@ -251,17 +253,20 @@ public class FilterUtils {
      *                              container is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of an atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @throws UnsupportedOperationException if an IAtom instance of the given atom container does not support its bonds
+     *                                       to be queried ({@link IAtom#bonds()})
      * @see ValenceListBasedValenceModel
      * @see PubChemValenceModel
      */
     public static boolean hasAllValidValences(IAtomContainer anAtomContainer, boolean aWildcardAtomicNumberIsValid,
-                                              IValenceModel aValenceModel) throws NullPointerException {
+                                              IValenceModel aValenceModel)
+            throws NullPointerException, UnsupportedOperationException {
         Objects.requireNonNull(anAtomContainer, ErrorCodes.ATOM_CONTAINER_NULL_ERROR.name());
         Objects.requireNonNull(aValenceModel, ErrorCodes.VALENCE_MODEL_NULL_ERROR.name());
         //
         for (IAtom tmpAtom : anAtomContainer.atoms()) {
             if (!aValenceModel.hasValidValence(tmpAtom, aWildcardAtomicNumberIsValid)) {
-                // lines to analyse detected valence errors
+                // lines to analyse detected valence errors TODO: keep or remove them?
                 /*int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
                 System.out.printf("%s:\t%d\t%d\t%d\t%d\t%d\n", tmpAtom.getSymbol(), tmpAtom.getAtomicNumber(),
                         tmpAtom.getFormalCharge(), tmpSigmaAndPiBondsCount[1], tmpSigmaAndPiBondsCount[0],

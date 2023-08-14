@@ -346,13 +346,21 @@ public class ChemUtils {
      *                              implicit hydrogens are to be considered and the implicit hydrogen count of an atom
      *                              is null
      * @throws IllegalArgumentException if the bond order of a bond is UNSET
+     * @throws UnsupportedOperationException if the given IAtom instance does not support the bonds of the atom being
+     *                                       queried ({@link IAtom#bonds()})
      */
     public static int getSigmaBondCount(IAtom anAtom, boolean aConsiderImplicitHydrogens) throws NullPointerException,
-            IllegalArgumentException {
+            IllegalArgumentException, UnsupportedOperationException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         int tmpSigmaBondCount = 0;
         IBond.Order tmpBondOrder;
-        for (IBond tmpBond : anAtom.bonds()) {
+        Iterable<IBond> tmpBonds;
+        try {
+            tmpBonds = anAtom.bonds();
+        } catch (UnsupportedOperationException anUnsupportedOperationException) {
+            throw new UnsupportedOperationException(ErrorCodes.BONDS_OF_ATOM_NOT_QUERYABLE.name());
+        }
+        for (IBond tmpBond : tmpBonds) {
             if ((tmpBondOrder = tmpBond.getOrder()) == null) {
                 throw new NullPointerException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
             }
@@ -386,12 +394,21 @@ public class ChemUtils {
      * @return the pi bond count
      * @throws NullPointerException if the given IAtom instance is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is UNSET
+     * @throws UnsupportedOperationException if the given IAtom instance does not support the bonds of the atom being
+     *                                       queried ({@link IAtom#bonds()})
      */
-    public static int getPiBondCount(IAtom anAtom) throws NullPointerException, IllegalArgumentException {
+    public static int getPiBondCount(IAtom anAtom) throws NullPointerException, IllegalArgumentException,
+            UnsupportedOperationException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         int tmpPiBondCount = 0;
         IBond.Order tmpBondOrder;
-        for (IBond tmpBond : anAtom.bonds()) {
+        Iterable<IBond> tmpBonds;
+        try {
+            tmpBonds = anAtom.bonds();
+        } catch (UnsupportedOperationException anUnsupportedOperationException) {
+            throw new UnsupportedOperationException(ErrorCodes.BONDS_OF_ATOM_NOT_QUERYABLE.name());
+        }
+        for (IBond tmpBond : tmpBonds) {
             if ((tmpBondOrder = tmpBond.getOrder()) == null) {
                 throw new NullPointerException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
             }
@@ -435,15 +452,23 @@ public class ChemUtils {
      *                              implicit hydrogens are to be considered and the implicit hydrogen count of an atom
      *                              is null
      * @throws IllegalArgumentException if the bond order of a bond is UNSET
+     * @throws UnsupportedOperationException if the given IAtom instance does not support the bonds of the atom being
+     *                                       queried ({@link IAtom#bonds()})
      */
     public static int[] getSigmaAndPiBondCounts(IAtom anAtom, boolean aConsiderImplicitHydrogens)
-            throws NullPointerException, IllegalArgumentException {
+            throws NullPointerException, IllegalArgumentException, UnsupportedOperationException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         // not using getSigmaBondCount() and getPiBondCount() for a better performance
         int tmpSigmaBondCount = 0;
         int tmpPiBondCount = 0;
         IBond.Order tmpBondOrder;
-        for (IBond tmpBond : anAtom.bonds()) {
+        Iterable<IBond> tmpBonds;
+        try {
+            tmpBonds = anAtom.bonds();
+        } catch (UnsupportedOperationException anUnsupportedOperationException) {
+            throw new UnsupportedOperationException(ErrorCodes.BONDS_OF_ATOM_NOT_QUERYABLE.name());
+        }
+        for (IBond tmpBond : tmpBonds) {
             if ((tmpBondOrder = tmpBond.getOrder()) == null) {
                 throw new NullPointerException(ErrorCodes.BOND_ORDER_NULL_ERROR.name());
             }
