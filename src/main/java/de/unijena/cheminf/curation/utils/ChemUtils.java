@@ -34,7 +34,6 @@ import org.openscience.cdk.interfaces.IElement;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -296,7 +295,7 @@ public class ChemUtils {
                 // else: continue
             }
         }
-        if (aConsiderImplicitHydrogens && tmpAtomicNumbersSorted[0] == IElement.Wildcard) {
+        if (aConsiderImplicitHydrogens && tmpAtomicNumbersSorted[0] == IElement.H) {
             //TODO: consider implicit Hs of pseudo atoms?
             tmpSpecificAtomsCount += ChemUtils.getImplicitHydrogenCount(anAtomContainer, false);
         }
