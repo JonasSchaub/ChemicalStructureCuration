@@ -23,27 +23,30 @@
  *
  */
 
-package de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers;
+package de.unijena.cheminf.curation.processingSteps.filters.hasProperty;
 
-import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 
 import java.util.Objects;
 
 /**
- * Processing step that checks all given atom containers whether they have the external ID property. If atom containers
- * do not have the respective property, it is reported to the reporter and the respective atom container is removed from
- * the returned atom container set. This class is meant tp be used to check the annotation of data sets.
+ * Processing step to filter atom containers that possess the property that is defined to contain an external
+ * identifier (see {@link #getExternalIDPropertyName()}). It is an extension of the {@link HasPropertyFilter} that
+ * specifically checks for the existence of this specific property. To receive the atom containers of a set that miss
+ * this specific property, see the counterpart of this filter, the {@link HasNoExternalIDFilter}.
+ * <br>
+ * This class is meant to be used to check the annotation of data sets.
  *
  * @author Samuel Behr
  * @version 1.0.0.0
+ * @see HasNoExternalIDFilter
  */
-public class ExternalIDChecker extends PropertyChecker {
+public class HasExternalIDFilter extends HasPropertyFilter {
 
     /**
-     * Constructor; calls the super constructor with the given reporter, the name string of the property containing the
-     * external identifier and the respective error code.
+     * Constructor; calls the super constructor with the given reporter and the external ID property name string. Sets
+     * the external ID property name field to the given value ({@link #setExternalIDPropertyName(String)}).
      *
      * @param anExternalIDPropertyName name string of the atom container property containing a second, external
      *                                 identifier (e.g. the name or CAS registry number) of the structures which is used
@@ -52,16 +55,17 @@ public class ExternalIDChecker extends PropertyChecker {
      * @param aReporter                the reporter that is to be used when processing sets of structures
      * @throws NullPointerException     if the given reporter or property name is null
      * @throws IllegalArgumentException if the property name string is blank or empty
+     * @see HasPropertyFilter (String, IReporter)
      */
-    public ExternalIDChecker(String anExternalIDPropertyName, IReporter aReporter)
+    public HasExternalIDFilter(String anExternalIDPropertyName, IReporter aReporter)
             throws NullPointerException, IllegalArgumentException {
-        super(anExternalIDPropertyName, ErrorCodes.UNSET_EXTERNAL_ID_PROPERTY, aReporter);
+        super(anExternalIDPropertyName, aReporter);
+        this.setExternalIDPropertyName(anExternalIDPropertyName);
     }
 
     /**
-     * Constructor; calls the super constructor that initializes the reporter with an instance of {@link
-     * MarkDownReporter} - initialized with the given report files directory path; passes the name string of the
-     * property containing the external identifier and the respective error code.
+     * Constructor; calls the respective super passing the given directory path and the external ID property name
+     * string. The super initializes the reporter with an instance of {@link MarkDownReporter}.
      *
      * @param anExternalIDPropertyName  name string of the atom container property containing a second, external
      *                                  identifier (e.g. the name or CAS registry number) of the structures which is
@@ -71,16 +75,19 @@ public class ExternalIDChecker extends PropertyChecker {
      * @throws NullPointerException     if the given directory path or the property name is null
      * @throws IllegalArgumentException if the given file path is no directory path; if the property name string is
      *                                  blank or empty
+     * @see HasPropertyFilter (String, String)
      */
-    public ExternalIDChecker(String anExternalIDPropertyName, String aReportFilesDirectoryPath) {
-        super(anExternalIDPropertyName, ErrorCodes.UNSET_EXTERNAL_ID_PROPERTY, aReportFilesDirectoryPath);
+    public HasExternalIDFilter(String anExternalIDPropertyName, String aReportFilesDirectoryPath) {
+        super(anExternalIDPropertyName, aReportFilesDirectoryPath);
     }
 
     /**
      * {@inheritDoc}
      * <p>
-     *     The external ID property name passed to the {@link ExternalIDChecker} may not be null.
+     *     The external ID property name passed to the {@link HasExternalIDFilter} may not be null. Also sets the name of
+     *     the property to check for to the given name (see {@link HasPropertyFilter#setNameOfProperty(String)}).
      * </p>
+     *
      * @param anExternalIDPropertyName String instance with the name of the atom container property
      * @throws NullPointerException if the given String is null
      */
@@ -90,6 +97,7 @@ public class ExternalIDChecker extends PropertyChecker {
         Objects.requireNonNull(anExternalIDPropertyName, "The external ID passed to the ExternalIDChecker may" +
                 " not be null.");
         super.setExternalIDPropertyName(anExternalIDPropertyName);
+        this.setNameOfProperty(anExternalIDPropertyName);
     }
 
 }

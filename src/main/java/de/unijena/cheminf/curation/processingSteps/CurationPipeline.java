@@ -44,8 +44,10 @@ import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinBondsOfSpecificBondOrderFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinHeavyAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinMolecularMassFilter;
-import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.PropertyChecker;
-import de.unijena.cheminf.curation.processingSteps.filters.propertyCheckers.ExternalIDChecker;
+import de.unijena.cheminf.curation.processingSteps.filters.hasProperty.HasNoExternalIDFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.hasProperty.HasPropertyFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.hasProperty.HasExternalIDFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.hasProperty.NotHasPropertyFilter;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.reporter.ReportDataObject;
@@ -427,60 +429,6 @@ public class CurationPipeline extends BaseProcessingStep {
                 anImportRoutine.getIdentifier(), aMolID);
         this.getReporter().appendReport(tmpReportDataObject);
     }
-
-    //<editor-fold desc="withPropertyChecker methods" defaultstate="collapsed">
-    /**
-     * Adds a step to the pipeline that checks all given atom containers whether they have a specific atom container
-     * property. It appends a report to the reporter for every atom container that does not have the respective property
-     * and removes the respective atom containers from the returned set.
-     * <br>
-     * <b>Note:</b> This option might be used to ensure a coherent annotation of data sets.
-     *
-     * @param aPropertyName the name of the atom container the existence is checked for
-     * @param anErrorCode the error code associated with the non-existence of the property
-     * @return the CurationPipeline instance itself
-     * @see PropertyChecker
-     */
-    public CurationPipeline withPropertyChecker(String aPropertyName, ErrorCodes anErrorCode) {
-        PropertyChecker tmpPropertyChecker = new PropertyChecker(aPropertyName, anErrorCode, this.getReporter());
-        this.addToListOfProcessingSteps(tmpPropertyChecker);
-        return this;
-    }
-
-    /**
-     * Calls {@link #withPropertyChecker(String, ErrorCodes)} with {@code ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY} as
-     * default error code.
-     *
-     * @param aPropertyName the name of the atom container the existence is checked for
-     * @return the CurationPipeline instance itself
-     * @see #withPropertyChecker(String, ErrorCodes)
-     * @see PropertyChecker
-     */
-    public CurationPipeline withPropertyChecker(String aPropertyName) {
-        return this.withPropertyChecker(aPropertyName, ErrorCodes.MISSING_ATOM_CONTAINER_PROPERTY);
-    }
-
-    /**
-     * Adds a step to the pipeline that checks all given atom containers whether they have a property with the external
-     * ID property name given to this pipeline ({@link #getExternalIDPropertyName()}. It appends a report to the
-     * reporter for every atom container that does not possess such a property and returns only those that have one.
-     * <br>
-     * <b>Note:</b> If the pipeline has been given an external ID property name, it is advised to add this processing
-     * step as the initial step to the pipeline to remove atom containers with missing external ID from the given atom
-     * container set and manually check them in the generated report.
-     *
-     * @return the CurationPipeline instance itself
-     * @throws NullPointerException if the external ID property name field of the pipeline has not been specified (via
-     *                              constructor or respective setter)
-     * @see ExternalIDChecker
-     * @see #setExternalIDPropertyName(String)
-     */
-    public CurationPipeline withExternalIDChecker() throws NullPointerException {
-        PropertyChecker tmpExternalIDChecker = new ExternalIDChecker(this.getExternalIDPropertyName(), this.getReporter());
-        this.addToListOfProcessingSteps(tmpExternalIDChecker);
-        return this;
-    }
-    //</editor-fold>
 
     //<editor-fold desc="with...Filter methods" defaultstate="collapsed">
     //<editor-fold desc="withMaxAtomCountFilter" defaultstate="collapsed">
@@ -923,6 +871,99 @@ public class CurationPipeline extends BaseProcessingStep {
     public CurationPipeline withHasInvalidValencesFilter(boolean aWildcardAtomicNumberIsValid) {
         IFilter tmpFilter = new HasInvalidValencesFilter(aWildcardAtomicNumberIsValid, this.getReporter());
         this.addToListOfProcessingSteps(tmpFilter);
+        return this;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="withHasPropertyFilter" defaultstate="collapsed">
+    /**
+     * Adds a {@link HasPropertyFilter} as step to the curation pipeline. The filter is initialized with the given
+     * property name and removes all atom containers from a set that do not possess that specific property.
+     * <br>
+     * <b>Note:</b> This option might be used to ensure a coherent annotation of data sets.
+     *
+     * @param aNameOfProperty the name of the atom container property to check for
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException     if the given property name string is null
+     * @throws IllegalArgumentException if the property name string is blank or empty
+     * @see HasPropertyFilter
+     * @see #withNotHasPropertyFilter(String)
+     */
+    public CurationPipeline withHasPropertyFilter(String aNameOfProperty) throws NullPointerException,
+            IllegalArgumentException {
+        HasPropertyFilter tmpHasPropertyFilter = new HasPropertyFilter(aNameOfProperty, this.getReporter());
+        this.addToListOfProcessingSteps(tmpHasPropertyFilter);
+        return this;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="withNotHasPropertyFilter" defaultstate="collapsed">
+    /**
+     * Adds a {@link NotHasPropertyFilter} as step to the curation pipeline. The filter is initialized with the given
+     * property name and removes all atom containers from a set that possess that specific property.
+     * <br>
+     * <b>Note:</b> This option might be used to ensure a coherent annotation of data sets.
+     *
+     * @param aNameOfProperty the name of the atom container property to check for
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException     if the given property name string is null
+     * @throws IllegalArgumentException if the property name string is blank or empty
+     * @see NotHasPropertyFilter
+     * @see #withHasPropertyFilter(String)
+     */
+    public CurationPipeline withNotHasPropertyFilter(String aNameOfProperty) throws NullPointerException,
+            IllegalArgumentException {
+        NotHasPropertyFilter tmpNotHasPropertyFilter = new NotHasPropertyFilter(aNameOfProperty, this.getReporter());
+        this.addToListOfProcessingSteps(tmpNotHasPropertyFilter);
+        return this;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="withHasExternalIDFilter" defaultstate="collapsed">
+    /**
+     * Adds a {@link HasExternalIDFilter} as step to the curation pipeline. The filter removes all atom containers from
+     * a set that do not possess a property with the external ID property name that has been given to this pipeline
+     * (see {@link #getExternalIDPropertyName()}).
+     * <br>
+     * <b>Note:</b> If the pipeline has been given an external ID property name, it is advised to add this processing
+     * step as the initial step to the pipeline to remove atom containers with missing external ID from the processed
+     * atom container set and ensure a coherent annotation of the curated data.
+     *
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if the external ID property name field of the pipeline has not been specified (via
+     *                              constructor or respective setter)
+     * @see HasExternalIDFilter
+     * @see #setExternalIDPropertyName(String)
+     * @see #withHasNoExternalIDFilter()
+     */
+    public CurationPipeline withHasExternalIDFilter() throws NullPointerException {
+        HasPropertyFilter tmpHasExternalIDFilter = new HasExternalIDFilter(this.getExternalIDPropertyName(),
+                this.getReporter());
+        this.addToListOfProcessingSteps(tmpHasExternalIDFilter);
+        return this;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="withHasNoExternalIDFilter" defaultstate="collapsed">
+    /**
+     * Adds a {@link HasNoExternalIDFilter} as step to the curation pipeline. The filter removes all atom containers
+     * from a set that possess a property with the external ID property name that has been given to this pipeline
+     * (see {@link #getExternalIDPropertyName()}).
+     * <br>
+     * <b>Note:</b> If the pipeline has been given an external ID property name, this processing step might be added to
+     * receive those atom containers that do not possess this external ID.
+     *
+     * @return the CurationPipeline instance itself
+     * @throws NullPointerException if the external ID property name field of the pipeline has not been specified (via
+     *                              constructor or respective setter)
+     * @see HasNoExternalIDFilter
+     * @see #setExternalIDPropertyName(String)
+     * @see #withHasExternalIDFilter()
+     */
+    public CurationPipeline withHasNoExternalIDFilter() throws NullPointerException {
+        HasNoExternalIDFilter tmpHasNoExternalIDFilter = new HasNoExternalIDFilter(this.getExternalIDPropertyName(),
+                this.getReporter());
+        this.addToListOfProcessingSteps(tmpHasNoExternalIDFilter);
         return this;
     }
     //</editor-fold>
