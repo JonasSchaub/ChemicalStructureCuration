@@ -62,7 +62,7 @@ public class HasPropertyFilter extends BaseFilter {
      * @param aReporter       the reporter that is to be used when processing sets of structures
      * @throws NullPointerException     if the given reporter or property name string is null
      * @throws IllegalArgumentException if the property name string is blank or empty
-     * @see BaseFilter(IReporter, String)
+     * @see BaseFilter (IReporter, String)
      */
     public HasPropertyFilter(String aNameOfProperty, IReporter aReporter) throws NullPointerException,
             IllegalArgumentException {
@@ -80,7 +80,7 @@ public class HasPropertyFilter extends BaseFilter {
      * @throws NullPointerException     if the given directory path or property name string is null
      * @throws IllegalArgumentException if the given file path is no directory path; if the property name string is
      *                                  blank or empty
-     * @see BaseFilter(String, String)
+     * @see BaseFilter (String, String)
      */
     public HasPropertyFilter(String aNameOfProperty, String aReportFilesDirectoryPath)
             throws NullPointerException, IllegalArgumentException {
