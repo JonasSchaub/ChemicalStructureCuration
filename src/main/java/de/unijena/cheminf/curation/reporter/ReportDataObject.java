@@ -39,6 +39,18 @@ import java.util.Objects;
  */
 public class ReportDataObject {
 
+    //<editor-fold desc="static class variable" defaultstate="collapsed">
+    /**
+     * Array of {@link ErrorCodes} that are allowed to be reported without an atom container. The array may be modified
+     * and provided with additional error codes if necessary.
+     */
+    public static ErrorCodes[] ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER = {
+            ErrorCodes.ATOM_CONTAINER_NULL_ERROR,
+            ErrorCodes.SDF_IMPORT_FAILED_ERROR,
+            ErrorCodes.UNEXPECTED_EXCEPTION_ERROR
+    };
+    //</editor-fold>
+
     //<editor-fold desc="private variables" defaultstate="collapsed">
     /**
      * Atom container of the structure the report refers to.
@@ -78,16 +90,15 @@ public class ReportDataObject {
     //<editor-fold desc="ReportDataObject(ErrorCodes, Class)" defaultstate="collapsed">
     /**
      * Constructor; initializes the report data object with an error code and a class of processing step. The given
-     * error code needs to be {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} or {@link
-     * ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} for this constructor to be used; otherwise, report data objects are
-     * expected to contain an atom container instance.
+     * error code needs to be listed in the {@link #ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER} array for this
+     * constructor to be used; otherwise, the report data object is expected to be initialized with the atom container
+     * instance belonging to the reported issue.
      *
      * @param anErrorCode               error code of the reported issue
      * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
      * @throws NullPointerException     if any of the given parameters is null
-     * @throws IllegalArgumentException if the reported error code is neither {@link
-     *                                  ErrorCodes#ATOM_CONTAINER_NULL_ERROR} nor {@link
-     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR}
+     * @throws IllegalArgumentException if the reported error code is not listed in the {@link
+     *                                  #ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER} array
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -96,11 +107,19 @@ public class ReportDataObject {
         Objects.requireNonNull(anErrorCode, "anErrorCode (instance of ErrorCodes) is null.");
         Objects.requireNonNull(aClassOfProcessingStep, "aClassOfProcessingStep (instance of Class<? extends" +
                 " IProcessingStep>) is null.");
-        if (anErrorCode != ErrorCodes.ATOM_CONTAINER_NULL_ERROR
-                && anErrorCode != ErrorCodes.UNEXPECTED_EXCEPTION_ERROR) {
-            throw new IllegalArgumentException("The error code needs to be ErrorCodes.ATOM_CONTAINER_NULL_ERROR or" +
-                    "ErrorCodes.UNEXPECTED_EXCEPTION_ERROR for this constructor to be used.");
+        //<editor-fold desc="check of the error code" defaultstate="collapsed">
+        boolean tmpIsAllowed = false;
+        for (ErrorCodes tmpErrorCode : ReportDataObject.ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER) {
+            if (anErrorCode == tmpErrorCode) {
+                tmpIsAllowed = true;
+                break;
+            }
         }
+        if (!tmpIsAllowed) {
+            throw new IllegalArgumentException("The given error code is not allowed to be reported without the" +
+                    " respective atom container.");
+        }
+        //</editor-fold>
         this.errorCode = anErrorCode;
         this.classOfProcessingStep = aClassOfProcessingStep;
     }
@@ -108,19 +127,18 @@ public class ReportDataObject {
 
     //<editor-fold desc="ReportDataObject(ErrorCodes, Class, String)" defaultstate="collapsed">
     /**
-     * Constructor; initializes the report data object with an error code, a class of processing step and the identifier
-     * of the processing step. The given error code needs to be {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} or {@link
-     * ErrorCodes#UNEXPECTED_EXCEPTION_ERROR} for this constructor to be used; otherwise, report data objects are
-     * expected to contain an atom container instance.
+     * Constructor; initializes the report data object with an error code, a class of processing step and the
+     * identifier of the processing step. The given error code needs to be listed in the {@link
+     * #ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER} array for this constructor to be used; otherwise, the report data
+     * object is expected to be initialized with the atom container instance belonging to the reported issue.
      *
      * @param anErrorCode               error code of the reported issue
      * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
      * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
      *                                  in a pipeline it is part of)
      * @throws NullPointerException     if any of the given parameters is null
-     * @throws IllegalArgumentException if the identifier string is empty or blank; if the reported error code is
-     *                                  neither {@link ErrorCodes#ATOM_CONTAINER_NULL_ERROR} nor {@link
-     *                                  ErrorCodes#UNEXPECTED_EXCEPTION_ERROR}
+     * @throws IllegalArgumentException if the reported error code is not listed in the {@link
+     *                                  #ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER} array
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -267,15 +285,18 @@ public class ReportDataObject {
     /**
      * Constructor to be used when there is no info on the structure (no atom container) but an identifier is known.
      * Initializes the report data object with error code, class of processing step, identifier of processing step and
-     * the identifier of the structure the issue refers to.
+     * the identifier of the structure the issue refers to. The reported error code needs to be listed in the {@link
+     * #ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER} array for this constructor to be used. The identifier of the
+     * processing step is optional.
      *
      * @param anErrorCode               error code of the reported issue
      * @param aClassOfProcessingStep    runtime class of the IProcessingStep instance reporting the issue
      * @param aProcessingStepIdentifier identifier string of the processing step (probably with the index the step has
      *                                  in a pipeline it is part of)
      * @param anIdentifier              identifier string of the structure
-     * @throws NullPointerException if any of the given parameters is null
-     * @throws IllegalArgumentException if the identifier string is empty or blank
+     * @throws NullPointerException if any of the given parameters is null (except the processing step identifier)
+     * @throws IllegalArgumentException if an identifier string is empty or blank; if the reported error code is not
+     *                                  listed in the {@link #ERROR_CODES_ALLOWED_WITH_NO_ATOM_CONTAINER} array
      */
     public ReportDataObject(
             ErrorCodes anErrorCode,
@@ -283,7 +304,12 @@ public class ReportDataObject {
             String aProcessingStepIdentifier,
             String anIdentifier
     ) throws NullPointerException, IllegalArgumentException {
-        this(anErrorCode, aClassOfProcessingStep, aProcessingStepIdentifier);
+        // not using the constructor with processing step identifier param since it might be null
+        this(anErrorCode, aClassOfProcessingStep);
+        if (aProcessingStepIdentifier != null && aProcessingStepIdentifier.isBlank()) {
+            throw new IllegalArgumentException("aProcessingStepIdentifier (instance of String) is empty or blank.");
+        }
+        this.processingStepIdentifier = aProcessingStepIdentifier;
         Objects.requireNonNull(anIdentifier, "anIdentifier (instance of String) is null.");
         if (anIdentifier.isBlank()) {
             throw new IllegalArgumentException("anIdentifier (instance of String) is empty or blank.");
