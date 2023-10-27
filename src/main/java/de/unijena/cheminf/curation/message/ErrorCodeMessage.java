@@ -25,12 +25,9 @@
 
 package de.unijena.cheminf.curation.message;
 
-import de.unijena.cheminf.curation.enums.ErrorCodes;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * Message class for error code descriptions.
@@ -41,26 +38,36 @@ import java.util.Properties;
 public class ErrorCodeMessage {
 
     /**
-     * Reads properties file return the value of the given key ErrorCode as String.
-     *
-     * @param anErrorCode the errorCode to return the description of
-     * @return String value of the given ErrorCode
+     * Resource bundle name
      */
-    public static String getErrorMessage(ErrorCodes anErrorCode) {
-        String filePath = "src" + File.separator + "main" + File.separator + "resources" +
-                File.separator + "de" + File.separator + "unijena" +
-                File.separator + "cheminf" + File.separator + "curation" +
-                File.separator + "ErrorCodes.properties";
+    private static final String BUNDLE_NAME = "de.unijena.cheminf.curation.message.Message";
 
+    /**
+     * Locale default
+     */
+    private static final Locale LOCALE_DEFAULT = Locale.getDefault();
+
+    /**
+     * Resource bundle
+     */
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, LOCALE_DEFAULT);
+
+    /**
+     * Private constructor
+     */
+    private ErrorCodeMessage(){
+    }
+
+    /**
+     * Return resource string for key
+     * @param aKey Key
+     * @return Resource string for key
+     */
+    public static String get(String aKey){
         try {
-            Properties tmpProperties = new Properties();
-            FileInputStream tmpFileInputStream = new FileInputStream(filePath);
-            tmpProperties.load(tmpFileInputStream);
-            String tmpErrorMessage = tmpProperties.getProperty(String.valueOf(anErrorCode));
-            tmpFileInputStream.close();
-            return tmpErrorMessage;
-        } catch (IOException anIOException) {
-            throw new RuntimeException(anIOException);
+            return RESOURCE_BUNDLE.getString(aKey).trim();
+        } catch (MissingResourceException | NullPointerException anException){
+            return "'Key '" + aKey + "'not found'";
         }
     }
 

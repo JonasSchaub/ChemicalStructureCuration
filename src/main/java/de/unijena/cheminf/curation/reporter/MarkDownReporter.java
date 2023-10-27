@@ -131,15 +131,6 @@ public class MarkDownReporter implements IReporter {
         int tmpNumberOfErrors = this.reportDataObjectList.size();
         tmpErrors.append("\n|Number of Errors|" + tmpNumberOfErrors + "|\n");
         tmpErrors.append("|------|-------|\n\n");
-        /*style tag to define tables for a page break if needed
-        StringBuilder tmpStyle = new StringBuilder();
-        tmpStyle.append("<style>\n\n" +
-                "  table {\n" +
-                "    page-break-inside: avoid;\n" +
-                "  }\n\n" +
-                "</style>\n\n");
-
-         */
         //Details
         StringBuilder tmpCurationPipelineReport = new StringBuilder();
         tmpCurationPipelineReport.append("## Molecules that caused an error, sorted by the ProcessingStep the error occured in:\n");
@@ -169,7 +160,8 @@ public class MarkDownReporter implements IReporter {
                         .append(")|\n");
                 tmpCurationPipelineReport.append("|Optional Identifier: ").append(tmpReportDataObject.getProcessingStepIdentifier())
                         .append("|\n");
-                tmpCurationPipelineReport.append("|ErrorCode: ").append(tmpReportDataObject.getErrorCode()).append(" \n").append(ErrorCodeMessage.getErrorMessage(tmpReportDataObject.getErrorCode())).append("|\n\n");
+                tmpCurationPipelineReport.append("|ErrorCode: ").append(tmpReportDataObject.getErrorCode()).append(" \n")
+                        .append(ErrorCodeMessage.get(tmpReportDataObject.getErrorCode().toString())).append("|\n\n");
                 tmpCurationPipelineReport.append("</table>\n\n");
             }
         }
@@ -179,7 +171,6 @@ public class MarkDownReporter implements IReporter {
             FileWriter tmpWriter = new FileWriter(tmpFile);
             tmpWriter.write(String.valueOf(tmpHeader));
             tmpWriter.write(String.valueOf(tmpErrors));
-            //tmpWriter.write(String.valueOf(tmpStyle));
             tmpWriter.write(String.valueOf(tmpCurationPipelineReport));
             tmpWriter.flush();
             tmpWriter.close();

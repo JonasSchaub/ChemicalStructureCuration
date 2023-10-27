@@ -54,7 +54,7 @@ public class ReportDepictionUtils {
     public static String getDepictionAsString(IAtomContainer anAtomContainer) throws IOException {
         try {
             int tmpNumAtoms = anAtomContainer.getAtomCount();
-            int tmpWidth = tmpNumAtoms * 50; //
+            int tmpWidth = tmpNumAtoms * 50;
             int tmpHeight = tmpNumAtoms * 30;
             DepictionGenerator tmpDepictionGenerator = new DepictionGenerator().withAtomColors().withSize(tmpWidth, tmpHeight)
                     .withFillToFit();
@@ -69,5 +69,8 @@ public class ReportDepictionUtils {
             throw new IOException("Error creating String: " + aCDKException.getMessage());
         }
     }
+
+    //Creating an Image with an Error Message to display in case Molecule could not be depicted
+
 
 }
