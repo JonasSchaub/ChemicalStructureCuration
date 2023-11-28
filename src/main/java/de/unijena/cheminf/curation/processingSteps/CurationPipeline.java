@@ -27,6 +27,7 @@ package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
+import de.unijena.cheminf.curation.fileReaders.CustomIteratingSDFReader;
 import de.unijena.cheminf.curation.processingSteps.filters.ContainsNoPseudoAtomsFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.ContainsPseudoAtomsFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.HasAllValidAtomicNumbersFilter;
@@ -59,7 +60,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IPseudoAtom;
-import org.openscience.cdk.io.iterator.IteratingSDFReader;
+import org.openscience.cdk.io.IChemObjectReader;
+import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 
 import java.io.File;
@@ -68,6 +70,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -171,18 +174,18 @@ public class CurationPipeline extends BaseProcessingStep {
      * initializes the list of pipeline steps.
      * <br>
      * The option of the second identifier property might be used if information such as name of the structures or their
-     * CAS registry numbers exists. If this field is set to anything else than null, every atom container processed by
-     * this curation pipeline is expected to have a property with the respective name. The given information is then
-     * included in the report. The reports are generated using the given reporter. To initialize the curation pipeline
-     * with a default reporter (instance of {@link MarkDownReporter}), see the other constructors.
+     * CAS registry numbers exists. By setting this field, every atom container processed by this curation pipeline is
+     * expected to have a property with the respective name. The given information is then included in the report. The
+     * reports are generated using the given reporter. To initialize the curation pipeline with a default reporter
+     * (instance of {@link MarkDownReporter}), see the other constructors.
      *
      * @param aReporter the reporter to generate the reports with when processing sets of structures
-     * @param anExternalIDPropertyName name string of the atom container property containing a second, external
-     *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); if given
-     *                                 null, no second identifier is used; otherwise every atom container processed by
-     *                                 this processing step is expected to have this property
-     * @throws NullPointerException if the given IReporter instance is null
-     * @throws IllegalArgumentException if an external ID property name is given, but it is blank or empty
+     * @param anExternalIDPropertyName name string of an atom container property containing a second, external
+     *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); by
+     *                                 specifying this field, every atom container processed by this processing step
+     *                                 is expected to have this property
+     * @throws NullPointerException if the given IReporter or String instance is null
+     * @throws IllegalArgumentException if the given external ID property name is blank or empty
      * @see #CurationPipeline(String, String)
      * @see #CurationPipeline(String)
      * @see #CurationPipeline(IReporter)
@@ -190,40 +193,40 @@ public class CurationPipeline extends BaseProcessingStep {
     public CurationPipeline(IReporter aReporter, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
         super(aReporter, anExternalIDPropertyName);
+        Objects.requireNonNull(anExternalIDPropertyName, "The given external ID property name is null.");
         this.listOfPipelineSteps = new LinkedList<>();
     }
 
     /**
-     * Constructor; initializes the curation pipeline by calling {@link #CurationPipeline(IReporter, String)} with the
-     * given reporter and the external ID property name set to null. See the description of the respective constructor
-     * for more details.
+     * Constructor; initializes the curation pipeline by calling the respective super constructor passing the given
+     * reporter and no external ID property name.
      *
      * @param aReporter the reporter to generate the reports with when processing sets of structures
      * @throws NullPointerException if the given IReporter instance is null
      * @see #CurationPipeline(IReporter, String)
      */
     public CurationPipeline(IReporter aReporter) throws NullPointerException {
-        this(aReporter, null);
+        super(aReporter, null);
+        this.listOfPipelineSteps = new LinkedList<>();
     }
 
     /**
-     * Constructor; initializes the curation pipeline with a default reporter (instance of {@link MarkDownReporter})
-     * that generates reports in markdown-format at the given directory path.
+     * Constructor; initializes the curation pipeline with an instance of the default reporter that will generate
+     * reports in markdown-format at the given directory path (see {@link MarkDownReporter}).
      * <br>
      * The option of the second identifier property might be used if information such as name of the structures or their
-     * CAS registry numbers exists. If this field is set to anything else than null, every atom container processed by
-     * this curation pipeline is expected to have a property with the respective name. The given information is then
-     * included in the report. To initialize the curation pipeline with a specific reporter, see the respective
-     * constructors.
+     * CAS registry numbers exists. By setting this field, every atom container processed by this curation pipeline is
+     * expected to have a property with the respective name. The given information is then included in the report. To
+     * initialize the curation pipeline with a specific reporter, see the respective constructors.
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
      * @param anExternalIDPropertyName name string of the atom container property containing a second, external
-     *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); if given
-     *                                 null, no second identifier is used; otherwise every atom container processed by
-     *                                 this processing step is expected to have this property
-     * @throws NullPointerException if the given String containing the directory path is null
-     * @throws IllegalArgumentException if the given file path is no directory path; if a property name string is given,
-     *                                  but it is blank or empty
+     *                                 identifier (e.g. the name of the structures or CAS Registry Numbers); by
+     *                                 specifying this field, every atom container processed by this processing step
+     *                                 is expected to have this property
+     * @throws NullPointerException if one of the given String instances is null
+     * @throws IllegalArgumentException if the given file path is no directory path; if the given property name string
+     *                                  is blank or empty
      * @see #CurationPipeline(IReporter, String)
      * @see #CurationPipeline(IReporter)
      * @see #CurationPipeline(String)
@@ -231,14 +234,15 @@ public class CurationPipeline extends BaseProcessingStep {
     public CurationPipeline(String aReportFilesDirectoryPath, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
         super(aReportFilesDirectoryPath, anExternalIDPropertyName);
+        Objects.requireNonNull(anExternalIDPropertyName, "The given external ID property name is null.");
         this.listOfPipelineSteps = new LinkedList<>();
     }
 
     /**
-     * Constructor; initializes the curation pipeline by calling {@link #CurationPipeline(String, String)} with the
-     * given directory path and the external ID property name set to null. The pipeline is initialized with a default
-     * reporter (instance of {@link MarkDownReporter}) that generates reports in markdown-format at the given directory
-     * path.
+     * Constructor; initializes the curation pipeline by calling the respective super constructor passing the given
+     * directory path and no external ID property name. The pipeline is initialized with an instance of the default
+     * reporter that will generate reports in markdown-format at the given directory path (see {@link
+     * MarkDownReporter}).
      *
      * @param aReportFilesDirectoryPath the directory path for the MarkDownReporter to create the report files at
      * @throws NullPointerException if the given String containing the directory path is null
@@ -246,14 +250,15 @@ public class CurationPipeline extends BaseProcessingStep {
      * @see #CurationPipeline(String, String)
      */
     public CurationPipeline(String aReportFilesDirectoryPath) throws NullPointerException, IllegalArgumentException {
-        this(aReportFilesDirectoryPath, null);
+        super(aReportFilesDirectoryPath, null);
+        this.listOfPipelineSteps = new LinkedList<>();
     }
     //</editor-fold>
 
     /**
      * {@inheritDoc}
      * <p>
-     * <b>Pipeline specific Info</b> The given atom container set is sequentially processed by all steps of the
+     * <b>Pipeline specific Info:</b> The given atom container set is sequentially processed by all steps of the
      * pipeline. All steps report to the same reporter (as long as there have been no changes to reporters of the
      * processing steps after them being added to the pipeline).
      * </p>
@@ -263,12 +268,11 @@ public class CurationPipeline extends BaseProcessingStep {
         return super.process(anAtomContainerSet, aCloneBeforeProcessing);
     }
 
-    //TODO
     /**
      * TODO
      *
-     * @param aFilePath TODO: specify name
-     * @return TODO
+     * @param aFilePath the path of the file to import a set of structures from (currently only supports SD files)
+     * @return the imported and processed atom container set
      * @throws NullPointerException if the given file path is null
      * @throws IllegalArgumentException if the given file path is blank or empty
      * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some
@@ -290,11 +294,8 @@ public class CurationPipeline extends BaseProcessingStep {
     /**
      * TODO
      *
-     * TODO: try-catch
-     *  finish report
-     *
-     * @param aFileToImport TODO
-     * @return TODO
+     * @param aFileToImport the file to import a set of structures from (currently only supports SD files)
+     * @return the imported and processed atom container set
      * @throws NullPointerException if the given file is null
      * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some
      *                               other reason cannot be opened for reading
@@ -309,17 +310,41 @@ public class CurationPipeline extends BaseProcessingStep {
         this.getReporter().initializeNewReport();
         //
         final IAtomContainerSet tmpImportedMoleculeSet = new AtomContainerSet();
+        //<editor-fold desc="import process" defaultstate="collapsed">
         final ImportRoutines tmpImportRoutine = ImportRoutines.SDF_IMPORT;
-        IteratingSDFReader tmpSDFReader = new IteratingSDFReader(new FileInputStream(aFileToImport),
-                SilentChemObjectBuilder.getInstance());
-        int tmpCounter = 0;
-        int tmpFailedStructureImportsCount = 0; //TODO: remove (?!)
+        CustomIteratingSDFReader tmpSDFReader = new CustomIteratingSDFReader(new FileInputStream(aFileToImport),
+                SilentChemObjectBuilder.getInstance(), false);
+        tmpSDFReader.setReaderMode(IChemObjectReader.Mode.RELAXED);
+        int tmpCounter = 0; //TODO: remove (?!)
+        int tmpFailedStructureImportsCounter = 0; //TODO: remove (?!)
+        int tmpQueryAtomContainersCount = 0; //TODO: remove
+        // continue until the thread is interrupted or the end of the file is reached
         while(!Thread.currentThread().isInterrupted() && tmpSDFReader.hasNext()) {  //TODO: remove listening to thread interruption?
             try {
                 // load the structure and give it its position in the imported data set as MolID
-                IAtomContainer tmpAtomContainer = tmpSDFReader.next();
-                tmpAtomContainer.setProperty(IProcessingStep.MOL_ID_PROPERTY_NAME, String.valueOf(tmpCounter));
-                tmpImportedMoleculeSet.addAtomContainer(tmpAtomContainer);
+                IAtomContainer tmpNextMolecule = tmpSDFReader.next();
+                if (tmpNextMolecule == null) {
+                    //TODO: log?
+                    CurationPipeline.LOGGER.warning(String.format("Structure %d (index), line %dff, failed to be" +
+                            " imported.", tmpSDFReader.getMoleculesInFileCounter(),
+                            tmpSDFReader.getLineCountAtBeginOfNext()));
+                    //TODO: throw exception?
+                    throw new Exception(ErrorCodes.SDF_IMPORT_FAILED_ERROR.name());
+                }
+                if (tmpNextMolecule instanceof QueryAtomContainer) {   //TODO: remove
+                    System.out.printf("Structure %d (index), line %dff, was imported as QueryAtomContainer" +
+                            " instance.\n", tmpSDFReader.getMoleculesInFileCounter(),
+                            tmpSDFReader.getLineCountAtBeginOfNext());
+                    System.out.println("\t" + tmpNextMolecule.getProperty("ChEBI ID"));
+                    System.out.println("\t" + tmpNextMolecule.getProperty("ChEBI Name"));
+                    tmpQueryAtomContainersCount++;
+                }
+                /* setting the index of the structure in combination with the line number the entry begins at in the
+                 * file as MolID */
+                String tmpMolID = String.format("%d (line %dff)", (tmpSDFReader.getMoleculesInFileCounter() - 1),
+                        tmpSDFReader.getLineCountAtBeginOfNext());
+                tmpNextMolecule.setProperty(IProcessingStep.MOL_ID_PROPERTY_NAME, tmpMolID);
+                tmpImportedMoleculeSet.addAtomContainer(tmpNextMolecule);
             } catch (Exception anException) {
                 // import process of structure failed
                 // report the issue to the reporter
@@ -334,42 +359,47 @@ public class CurationPipeline extends BaseProcessingStep {
                     tmpErrorCode = ErrorCodes.UNEXPECTED_EXCEPTION_ERROR;
                     throw anException;
                 } finally {
-                    this.appendToReport(tmpErrorCode, String.valueOf(tmpCounter), tmpImportRoutine);
-                    tmpFailedStructureImportsCount++;
+                    this.appendToReport(tmpErrorCode, String.format("%d (line %dff)",
+                            (tmpSDFReader.getMoleculesInFileCounter() - 1),
+                            tmpSDFReader.getLineCountAtBeginOfNext()), tmpImportRoutine);
+                    tmpFailedStructureImportsCounter++;
                 }
             }
             tmpCounter++;
         }
-        // TODO: probably remove the following lines of code
-        CurationPipeline.LOGGER.info("Successfully imported structures: " + (tmpCounter - tmpFailedStructureImportsCount));
-        if (tmpFailedStructureImportsCount > 0) {
-            CurationPipeline.LOGGER.severe("Structures that failed the import process: " + tmpFailedStructureImportsCount);
+        // TODO: probably remove the following lines of code or use the ILoggingTool of the CDK and put this as "debug"
+        System.out.println("Check: Structures in file count is correct: " + (tmpCounter == tmpSDFReader.getMoleculesInFileCounter()));
+        System.out.println("Check: Structures failing import count is correct: " + (tmpFailedStructureImportsCounter == tmpSDFReader.getNullMoleculesCounter()));
+        CurationPipeline.LOGGER.info("Structures in file count: " + tmpSDFReader.getMoleculesInFileCounter());
+        CurationPipeline.LOGGER.info("Successfully imported structures: " + (tmpSDFReader.getMoleculesInFileCounter() - tmpFailedStructureImportsCounter));
+        if (tmpFailedStructureImportsCounter > 0) {
+            CurationPipeline.LOGGER.severe("Structures failing the import process: " + tmpFailedStructureImportsCounter);
         }
+        System.out.println("Detected QueryAtomContainer Count: " + tmpQueryAtomContainersCount);
+        //</editor-fold>
         //
+        // the following code is an adaption of the core part of the .process() method of the BaseProcessingStep class
         IAtomContainerSet tmpProcessedAtomContainerSet;
-        // suppress the report generation and MolID assignment
-        boolean tmpIsReporterSelfContainedCache = this.isReporterSelfContained();
-        this.setIsReporterSelfContained(false);
+        //<editor-fold desc="process and handle fatal exceptions" defaultstate="collapsed">
         try {
             // do the processing
-            tmpProcessedAtomContainerSet = this.process(tmpImportedMoleculeSet, false);
+            tmpProcessedAtomContainerSet = this.applyLogic(tmpImportedMoleculeSet);
         } catch (Exception aFatalException) {
-            // the exception is considered as fatal and can not be handled
+            // the exception is considered as fatal
             CurationPipeline.LOGGER.severe("The processing was interrupted due to an unexpected, fatal" +
                     " exception.");
             try {
                 // try to finish the report via respective method
                 this.getReporter().reportAfterFatalException();
-            } catch (IOException anIOException) {
-                CurationPipeline.LOGGER.warning("The report could not be generated / finished due to an" +
-                        " IOException.");
             } catch (Exception anException) {
+                //TODO: use ILoggingTool debug mode to log the exception? (see BaseProcessingStep)
+                CurationPipeline.LOGGER.log(Level.WARNING, anException.toString(), anException);
                 CurationPipeline.LOGGER.warning("The report could not be generated / finished.");
             }
             throw aFatalException;
-        } finally {
-            this.setIsReporterSelfContained(tmpIsReporterSelfContainedCache);
         }
+        //</editor-fold>
+        //
         // generate / finish the report
         this.getReporter().report();
         //
@@ -387,6 +417,9 @@ public class CurationPipeline extends BaseProcessingStep {
     @Override
     protected IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet) throws NullPointerException, Exception {
         Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        if (this.isIsReporterSelfContained()) {
+            System.out.printf("Processing started with %d structures.\n", anAtomContainerSet.getAtomContainerCount());  //TODO: remove
+        }
         IAtomContainerSet tmpResultingACSet = anAtomContainerSet;
         //
         for (IProcessingStep tmpProcessingStep : this.listOfPipelineSteps) {
@@ -397,11 +430,13 @@ public class CurationPipeline extends BaseProcessingStep {
                 tmpResultingACSet = tmpProcessingStep.process(tmpResultingACSet, false);
             } catch (Exception aFatalException) {
                 // the exception will be re-thrown
-                CurationPipeline.LOGGER.severe(String.format("The processing step of class %s with identifier %s" +
-                                " was interrupted by an unexpected exception.",
-                        tmpProcessingStep.getClass().getName(), tmpProcessingStep.getPipelineProcessingStepID()));
+                CurationPipeline.LOGGER.severe(String.format("The processing step with identifier %s and of class %s" +
+                        " was interrupted by an unexpected exception.", tmpProcessingStep.getPipelineProcessingStepID(),
+                        tmpProcessingStep.getClass().getName()));
                 throw aFatalException;
             }
+            System.out.printf("Step %s ended with %d structures remaining.\n",
+                    tmpProcessingStep.getPipelineProcessingStepID(), tmpResultingACSet.getAtomContainerCount()); //TODO: remove
         }
         return tmpResultingACSet;
     }
@@ -986,6 +1021,16 @@ public class CurationPipeline extends BaseProcessingStep {
     }
 
     /**
+     * Clears the pipeline by emptying the list of pipeline steps. All processing steps added to the pipeline are
+     * removed.
+     *
+     * @see #getListOfPipelineSteps()
+     */
+    public void clear() {
+        this.listOfPipelineSteps.clear();
+    }
+
+    /**
      * Adds the given processing step to the list of processing steps and sets its fields externalIDPropertyName and
      * reporter to the ones of the pipeline; sets the flag of the processing step whether the reporter is
      * self-contained to false; sets the identifier of the processing step to the respective ID of the pipeline added
@@ -1000,6 +1045,9 @@ public class CurationPipeline extends BaseProcessingStep {
         aProcessingStep.setExternalIDPropertyName(this.getExternalIDPropertyName());
         aProcessingStep.setReporter(this.getReporter());    //TODO: remove this? or just keep it to make sure?
         aProcessingStep.setIsReporterSelfContained(false);
+        String tmpStepID = ((this.getPipelineProcessingStepID() == null) ?
+                "" : this.getPipelineProcessingStepID() + ".") +
+                (this.listOfPipelineSteps.size() - 1);
         aProcessingStep.setPipelineProcessingStepID(
                 ((this.getPipelineProcessingStepID() == null) ?
                         "" : this.getPipelineProcessingStepID() + ".") +
@@ -1065,7 +1113,7 @@ public class CurationPipeline extends BaseProcessingStep {
     //</editor-fold>
 
     //<editor-fold desc="ImportRoutines enum" defaultstate="collapsed">
-    /**
+    /** TODO: check if it is necessary
      * Enum containing an entry for every available import routine. Every entry has an associated identifier string.
      *
      * @author Samuel Behr
