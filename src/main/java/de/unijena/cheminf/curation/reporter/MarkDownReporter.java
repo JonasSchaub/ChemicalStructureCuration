@@ -136,7 +136,7 @@ public class MarkDownReporter implements IReporter {
         tmpCurationPipelineReport.append("## Molecules that caused an error, sorted by the ProcessingStep the error occured in:\n");
         String tmpPreviousProcessingStepIdentifier;
         String tmpCurrentProcessingStepIdentifier = null;
-        //in case no error occured
+        //in case no error occurred
         if (this.reportDataObjectList.isEmpty()) {
             tmpCurationPipelineReport.append("| No error occurred |\n");
             tmpCurationPipelineReport.append("|:------:|\n\n");
