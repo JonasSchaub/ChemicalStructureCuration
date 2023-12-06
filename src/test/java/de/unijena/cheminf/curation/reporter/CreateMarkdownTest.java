@@ -27,7 +27,7 @@ package de.unijena.cheminf.curation.reporter;
 
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.enums.ErrorCodes;
-import de.unijena.cheminf.curation.processingSteps.filters.MinAtomCountFilter;
+import de.unijena.cheminf.curation.processingSteps.filters.MaxAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.exception.CDKException;
@@ -59,20 +59,17 @@ class CreateMarkdownTest {
         ReportDataObject tmpTestReportDataObject = new ReportDataObject(ErrorCodes.CLONE_ERROR,
                 MinBondCountFilter.class, "1", TestUtils.parseSmilesString("CCC"),
                 "Identifier", "OptionalIdentifier");
-        ReportDataObject tmpTestReportDataObject2 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR,
-                MinBondCountFilter.class, "1",
-                TestUtils.parseSmilesString("CCCCCCCCCCCCCCCC"), "Identifier2",
-                "OptionalIdentifier2");
-        ReportDataObject tmpTestReportDataObject3 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR,
-                MinAtomCountFilter.class, "3",
-                TestUtils.parseSmilesString("CN1C=NC2=C1C(=O)N(C(=O)N2C)C"), "Identifier3",
-                "OptionalIdentifier3");
+        ReportDataObject tmpTestReportDataObject2 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR, MaxAtomCountFilter.class, "3");
+        ReportDataObject tmpTestReportDataObject3 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR, MaxAtomCountFilter.class, "2");
+        ReportDataObject tmpTestReportDataObject4 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR, MaxAtomCountFilter.class, "3");
+
         MarkDownReporter tmpMDReporter = new MarkDownReporter("Processing_Reports" + File.separator);
         new File("Processing_Reports").mkdir();
         tmpMDReporter.setFilePathString("Processing_Reports\\");
         tmpMDReporter.appendReport(tmpTestReportDataObject);
         tmpMDReporter.appendReport(tmpTestReportDataObject2);
         tmpMDReporter.appendReport(tmpTestReportDataObject3);
+        tmpMDReporter.appendReport(tmpTestReportDataObject4);
         tmpMDReporter.report();
     }
 
