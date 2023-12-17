@@ -30,6 +30,7 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,10 +52,9 @@ public class ReportDepictionUtils {
      * @return base64String of the depicted AtomContainer
      * @throws IOException If an error occurs while creating the depiction as base64 String
      */
-    public static String getDepictionAsString(IAtomContainer anAtomContainer) throws IOException {
-        try {
+    public static String getDepictionAsString(IAtomContainer anAtomContainer) throws IOException, CDKException {
             int tmpNumAtoms = anAtomContainer.getAtomCount();
-            int tmpWidth = tmpNumAtoms * 50; //
+            int tmpWidth = tmpNumAtoms * 50;
             int tmpHeight = tmpNumAtoms * 30;
             DepictionGenerator tmpDepictionGenerator = new DepictionGenerator().withAtomColors().withSize(tmpWidth, tmpHeight)
                     .withFillToFit();
@@ -64,10 +64,30 @@ public class ReportDepictionUtils {
             byte[] tmpImageBytesArray = tmpOutputStream.toByteArray();
             String tmpBase64ImageString = Base64.getEncoder().encodeToString(tmpImageBytesArray);
             return tmpBase64ImageString;
-        } catch (CDKException aCDKException) {
-            aCDKException.printStackTrace();
-            throw new IOException("Error creating String: " + aCDKException.getMessage());
-        }
     }
 
+    /**
+     * Method to create an error message as image in case the given molecule could not be depicted
+     * to display where molecule would be displayed
+     * @return Error message as String.
+     */
+    public static String getErrorMessageImage() throws IOException {
+        int width = 200;
+        int height = 100;
+        BufferedImage errorMessageImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = errorMessageImage.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.drawString("Molecule could not be depicted", 10, 40);
+        g2d.dispose();
+        String errorMessageBase64 = convertImageToBase64(errorMessageImage);
+        return errorMessageBase64;
+    }
+    private static String convertImageToBase64(BufferedImage image) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", outputStream);
+        byte[] imageBytes = outputStream.toByteArray();
+        return Base64.getEncoder().encodeToString(imageBytes);
+    }
 }
+
+

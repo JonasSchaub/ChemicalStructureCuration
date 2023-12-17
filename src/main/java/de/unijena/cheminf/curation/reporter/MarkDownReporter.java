@@ -25,9 +25,10 @@
 
 package de.unijena.cheminf.curation.reporter;
 
-import de.unijena.cheminf.curation.message.ErrorCodeMessage;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,9 +37,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class to create a report as markdown file for the Curation Pipeline.
@@ -56,12 +56,17 @@ public class MarkDownReporter implements IReporter {
     /**
      * ArrayList storing ReportDataObjects.
      */
-    private final List<ReportDataObject> reportDataObjectList = new LinkedList<>();
+    private final List<ReportDataObject> reportDataObjectList = new ArrayList<>();
 
     /**
      * String for file path.
      */
     private String filePathString;
+
+    /**
+     * Resource Bundle for String literals in the report.
+     */
+    private static final ResourceBundle reportStringLiterals = ResourceBundle.getBundle("ReportStringLiterals", Locale.getDefault());
 
     /**
      * Constructor for the given file path where the report file is created.
@@ -94,7 +99,6 @@ public class MarkDownReporter implements IReporter {
     @Override
     public void initializeNewReport() {
         this.clear();
-
     }
 
     /**
@@ -118,67 +122,45 @@ public class MarkDownReporter implements IReporter {
      */
     @Override
     public void report() throws CDKException, IOException {
-        //header
-        StringBuilder tmpHeader = new StringBuilder();
-        LocalDateTime tmpNow = LocalDateTime.now();
-        DateTimeFormatter tmpFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss\n\n");
-        String tmpHeaderString = "# Curation Pipeline Report\n";
-        String tmpTimestamp = tmpNow.format(tmpFormatter);
-        tmpHeader.append(tmpHeaderString);
-        tmpHeader.append(tmpTimestamp);
-        //table for number of errors
-        StringBuilder tmpErrors = new StringBuilder();
-        int tmpNumberOfErrors = this.reportDataObjectList.size();
-        tmpErrors.append("\n|Number of Errors|" + tmpNumberOfErrors + "|\n");
-        tmpErrors.append("|------|-------|\n\n");
-        //style tag to define tables for a page break if needed
-        StringBuilder tmpStyle = new StringBuilder();
-        tmpStyle.append("<style>\n" +
-                "  table {\n" +
-                "    page-break-inside: avoid;\n" +
-                "  }\n" +
-                "</style>\n\n");
-        //Details
-        StringBuilder tmpCurationPipelineReport = new StringBuilder();
-        tmpCurationPipelineReport.append("## Molecules that caused an error, sorted by the ProcessingStep the error occured in:\n");
-        String tmpPreviousProcessingStepIdentifier;
-        String tmpCurrentProcessingStepIdentifier = null;
-        //in case no error occured
-        if (this.reportDataObjectList.isEmpty()) {
-            tmpCurationPipelineReport.append("| No error occurred |\n");
-            tmpCurationPipelineReport.append("|:------:|\n\n");
-        } else {
-            for (ReportDataObject tmpReportDataObject : this.reportDataObjectList) {
-                tmpPreviousProcessingStepIdentifier = tmpCurrentProcessingStepIdentifier;
-                tmpCurrentProcessingStepIdentifier = tmpReportDataObject.getProcessingStepIdentifier();
-                tmpCurationPipelineReport.append("<table>\n\n");
-                if (!tmpCurrentProcessingStepIdentifier.equals(tmpPreviousProcessingStepIdentifier)) {
-                    tmpCurationPipelineReport.append("<div style=\"page-break-before:always\"></div>\n\n");
-                    tmpCurationPipelineReport.append("| ").append(tmpReportDataObject.getClassOfProcessingStep()).append(" |\n");
-                    tmpCurationPipelineReport.append("|:------:|\n");
-                    tmpCurationPipelineReport.append("|ProcessingStepIdentifier: " + tmpReportDataObject.getProcessingStepIdentifier() + "|\n\n");
-                    tmpCurationPipelineReport.append("</table>\n\n");
-                }
-                tmpCurationPipelineReport.append("<table>\n\n");
-                tmpCurationPipelineReport.append("| Identifier: ").append(tmpReportDataObject.getIdentifier()).append("|\n");
-                tmpCurationPipelineReport.append("|:-------:|\n");
-                tmpCurationPipelineReport.append("|" + "![Depiction](data:image/png;base64,")
-                        .append(ReportDepictionUtils.getDepictionAsString(tmpReportDataObject.getAtomContainer()))
-                        .append(")|\n");
-                tmpCurationPipelineReport.append("|Optional Identifier: ").append(tmpReportDataObject.getProcessingStepIdentifier())
-                        .append("|\n");
-                tmpCurationPipelineReport.append("|ErrorCode: ").append(tmpReportDataObject.getErrorCode()).append(" \n").append(ErrorCodeMessage.getErrorMessage(tmpReportDataObject.getErrorCode())).append("|\n\n");
-                tmpCurationPipelineReport.append("</table>\n\n");
+        // sorting list of objects for ProcessingStep
+        List<ReportDataObject> sortedReportDataObjects = reportDataObjectList.stream()
+                .sorted(Comparator.comparing(ReportDataObject::getProcessingStepIdentifier)
+                        .thenComparing(ReportDataObject::getErrorCode)).toList();
+        
+        StringBuilder markdownReport = new StringBuilder();
+        markdownReport.append("# ").append(reportStringLiterals.getString("HEADER")).append("\n");
+        markdownReport.append(reportStringLiterals.getString("TIMESTAMPOFREPORTGENERATION")).append(getCurrentTimeStamp()).append("\n\n");
+        markdownReport.append(reportStringLiterals.getString("NUMBEROFERRORS")).append(sortedReportDataObjects.size()).append("\n\n");
+        markdownReport.append("## ").append(reportStringLiterals.getString("DETAILS")).append("\n\n");
+
+        //TODO  not repeating the ProcessingStep for more than one object with the same ProcessingStep
+        //TODO Bringing string literals into properties file
+        for (ReportDataObject reportDataObject : sortedReportDataObjects) {
+            markdownReport.append("Processing Step: ").append(reportDataObject.getProcessingStepIdentifier()).append("\n");
+            markdownReport.append("* **Error Code:** ").append(reportDataObject.getErrorCode()).append("\n");
+            markdownReport.append("* **Identifier:** ").append(reportDataObject.getIdentifier()).append("\n");
+            markdownReport.append("* **External Identifier:** ").append(reportDataObject.getExternalIdentifier()).append("\n");
+
+            IAtomContainer atomContainer = reportDataObject.getAtomContainer();
+
+            // Check if AtomContainer is available and valid, if so, create depiction, else error message
+            //TODO bring depiction in line
+            if (atomContainer != null && atomContainer.getAtomCount() > 0) {
+                String depictionBase64 = ReportDepictionUtils.getDepictionAsString(atomContainer);
+                markdownReport.append(" * **Molecule Depiction:**\n");
+                markdownReport.append("![Molecule Depiction](data:image/png;base64,").append(depictionBase64).append(")\n");
+            }else {//TODO bring message in line
+                String ErrorMessageBase64 = ReportDepictionUtils.getErrorMessageImage();
+                markdownReport.append("* ![Error Message](data:image/png;base64,").append(ErrorMessageBase64).append(")\n");
             }
+            markdownReport.append("\n\n");
         }
+
         try {
             String tmpFileName = MarkDownReporter.getFileName();
             File tmpFile = new File(this.filePathString + File.separator + tmpFileName);
             FileWriter tmpWriter = new FileWriter(tmpFile);
-            tmpWriter.write(String.valueOf(tmpHeader));
-            tmpWriter.write(String.valueOf(tmpErrors));
-            tmpWriter.write(String.valueOf(tmpStyle));
-            tmpWriter.write(String.valueOf(tmpCurationPipelineReport));
+            tmpWriter.write(markdownReport.toString());
             tmpWriter.flush();
             tmpWriter.close();
         } catch (IOException anIOException) {
@@ -186,7 +168,7 @@ public class MarkDownReporter implements IReporter {
             throw new IOException("Error writing to file:" + anIOException.getMessage());
         } catch (NullPointerException aNullPointerException) {
             aNullPointerException.printStackTrace();
-            throw new NullPointerException("amountOfErrors cannot be null" + aNullPointerException.getMessage());
+            throw new NullPointerException("NumberOfErrors cannot be null" + aNullPointerException.getMessage());
         }
         this.clear();
     }
@@ -218,7 +200,7 @@ public class MarkDownReporter implements IReporter {
     }
 
     private static String getFileName(){
-        return "Report_" + getTimeStampAsFileName() + ".md";
+        return "Report_" + getCurrentTimeStamp() + ".md";
     }
 
     /**
@@ -226,7 +208,7 @@ public class MarkDownReporter implements IReporter {
      *
      * @return timestamp as legit String for filename
      */
-    private static String getTimeStampAsFileName(){
+    private static String getCurrentTimeStamp(){
         LocalDateTime tmpNow = LocalDateTime.now();
         DateTimeFormatter tmpFormatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
         return tmpNow.format(tmpFormatter);
