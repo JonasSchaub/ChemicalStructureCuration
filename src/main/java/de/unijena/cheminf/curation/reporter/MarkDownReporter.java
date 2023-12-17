@@ -38,6 +38,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +49,11 @@ import java.util.stream.Collectors;
  * @version 1.0.0.0
  */
 public class MarkDownReporter implements IReporter {
+
+    /**
+     * Logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(MarkDownReporter.class.getName());
 
     /**
      * Workaround: TODO remove after merge
@@ -135,8 +142,9 @@ public class MarkDownReporter implements IReporter {
 
         //TODO  not repeating the ProcessingStep for more than one object with the same ProcessingStep
         //TODO Bringing string literals into properties file
-        for (ReportDataObject reportDataObject : sortedReportDataObjects) {
-            markdownReport.append("Processing Step: ").append(reportDataObject.getProcessingStepIdentifier()).append("\n");
+        for (ReportDataObject reportDataObject : this.reportDataObjectList) {
+            markdownReport.append("Processing Step ID: ").append(reportDataObject.getProcessingStepIdentifier()).append("\n");
+            markdownReport.append("* **Processing Step Class:** ").append(reportDataObject.getClassOfProcessingStep()).append("\n");
             markdownReport.append("* **Error Code:** ").append(reportDataObject.getErrorCode()).append("\n");
             markdownReport.append("* **Identifier:** ").append(reportDataObject.getIdentifier()).append("\n");
             markdownReport.append("* **External Identifier:** ").append(reportDataObject.getExternalIdentifier()).append("\n");
@@ -145,11 +153,23 @@ public class MarkDownReporter implements IReporter {
 
             // Check if AtomContainer is available and valid, if so, create depiction, else error message
             //TODO bring depiction in line
+            boolean tmpImageCouldBeGenerated;
             if (atomContainer != null && atomContainer.getAtomCount() > 0) {
-                String depictionBase64 = ReportDepictionUtils.getDepictionAsString(atomContainer);
-                markdownReport.append(" * **Molecule Depiction:**\n");
-                markdownReport.append("![Molecule Depiction](data:image/png;base64,").append(depictionBase64).append(")\n");
-            }else {//TODO bring message in line
+                try {
+                    String depictionBase64 = ReportDepictionUtils.getDepictionAsString(atomContainer);
+                    markdownReport.append(" * **Molecule Depiction:**\n");
+                    markdownReport.append("![Molecule Depiction](data:image/png;base64,").append(depictionBase64).append(")\n");
+                    //
+                    tmpImageCouldBeGenerated = true;
+                } catch (Exception anException) {
+                    MarkDownReporter.LOGGER.log(Level.WARNING, anException.toString(), anException);
+                    tmpImageCouldBeGenerated = false;
+                }
+            } else {
+                tmpImageCouldBeGenerated = false;
+            }
+            // image generation failed
+            if (!tmpImageCouldBeGenerated) {//TODO bring message in line
                 String ErrorMessageBase64 = ReportDepictionUtils.getErrorMessageImage();
                 markdownReport.append("* ![Error Message](data:image/png;base64,").append(ErrorMessageBase64).append(")\n");
             }
