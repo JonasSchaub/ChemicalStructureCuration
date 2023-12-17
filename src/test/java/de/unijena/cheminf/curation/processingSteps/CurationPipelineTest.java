@@ -28,15 +28,21 @@ package de.unijena.cheminf.curation.processingSteps;
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.enums.MassComputationFlavours;
 import de.unijena.cheminf.curation.processingSteps.filters.MaxHeavyAtomCountFilter;
+import de.unijena.cheminf.curation.utils.ChemUtils;
 import de.unijena.cheminf.curation.utils.ProcessingStepUtils;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.IValenceModel;
+import de.unijena.cheminf.curation.valenceHandling.valenceModels.PubChemValenceModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.AtomContainerSet;
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.smiles.SmilesGenerator;
 
 import java.util.Objects;
 
@@ -47,6 +53,11 @@ import java.util.Objects;
  * @version 1.0.0.0
  */
 public class CurationPipelineTest {
+
+    /**
+     * The name of the SD file item containing the ChEBI ID.
+     */
+    public static final String CHEBI_ID_SDF_ITEM_NAME = "ChEBI ID";
 
     /*
     open TODOs:
@@ -59,11 +70,267 @@ public class CurationPipelineTest {
      * @throws Exception if anything goes wrong
      */
     @Test
+    @Disabled   //TODO
     public void importRoutineTest() throws Exception {
-        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getTestReporterInstance());
-        tmpCurationPipeline.withMaxAtomCountFilter(50, false, false);
-        tmpCurationPipeline.importAndProcess("C:\\Users\\Behr\\Downloads\\Structure2D_COMPOUND_CID_2244.sdf");
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME);
+        /*
+        tmpCurationPipeline.withMaxAtomCountFilter(50, false, false)
+                .withMinAtomCountFilter(20, false, false);
+        */
+        /*
+        tmpCurationPipeline.withHasAllValidValencesFilter(false)
+                .withMaxAtomCountFilter(50, false, false)
+                .withMinAtomCountFilter(20, false, false)
+                .withMaxMolecularMassFilter(800)
+                .withMinMolecularMassFilter(500);
+        */
+        tmpCurationPipeline.withContainsNoPseudoAtomsFilter();
+        tmpCurationPipeline.withHasInvalidValencesFilter(false);
+        //tmpCurationPipeline.importAndProcess("C:\\Users\\Behr\\Downloads\\Structure2D_COMPOUND_CID_2244.sdf");
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_complete.sdf"
+        );*/
+        IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+        );
+        System.out.println("Processing finished with: " + tmpCuratedAtomContainerSet.getAtomContainerCount() + " structures");
         System.out.println("It worked!");
+        System.out.println("MoldID and external ID of the first (10) remaining structures:");
+        if (true) { // print out first (10) structures; print out invalid valences
+            IValenceModel tmpValenceModel = new PubChemValenceModel();
+            for (int i = 0; i < tmpCuratedAtomContainerSet.getAtomContainerCount(); i++) {
+                if (i >= 10) break;
+                System.out.printf("\t%s;\t%s\n",
+                        tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME),
+                        tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(tmpCurationPipeline.getExternalIDPropertyName()));
+                for (IAtom tmpAtom : tmpCuratedAtomContainerSet.getAtomContainer(i).atoms()) {
+                    if (!tmpValenceModel.hasValidValence(tmpAtom, false)) {
+                        // lines to analyse detected valence errors
+                        int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
+                        System.out.printf("%s:\t%d\t%d\t%d\t%d\t%d\n", tmpAtom.getSymbol(), tmpAtom.getAtomicNumber(),
+                                tmpAtom.getFormalCharge(), tmpSigmaAndPiBondsCount[1], tmpSigmaAndPiBondsCount[0],
+                                tmpAtom.getImplicitHydrogenCount());
+                    }
+                }
+            }
+        }
+    }
+
+    //TODO: remove
+    public static void main(String[] args) throws Exception {
+        if (false) {
+            CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                    CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME);
+            /*tmpCurationPipeline.withMaxAtomCountFilter(50, false, false)
+                    .withMinAtomCountFilter(20, false, false)
+                    .withHasAllValidValencesFilter(false);*/
+                //
+                tmpCurationPipeline.clear();
+            /*IAtomContainerSet tmpStructuresOfChEBI = tmpCurationPipeline.importAndProcess(
+                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                            "\\ChEBI_complete.sdf"
+            );*/
+            IAtomContainerSet tmpStructuresOfChEBI = tmpCurationPipeline.importAndProcess(
+                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                            "\\ChEBI_complete_3star.sdf"
+            );
+            //<editor-fold desc="comparing amount of detected valence errors" defaultstate="collapsed">
+            tmpCurationPipeline.setIsReporterSelfContained(false);  // to not overwrite the assigned IDs
+            IAtomContainerSet tmpCuratedAtomContainerSet;
+            //
+            System.out.println("\nMolecules with all valid valences (total count; according to PubChem valence list)");
+            tmpCurationPipeline.clear();
+            tmpCurationPipeline.withHasAllValidValencesFilter(false);
+            tmpCuratedAtomContainerSet = tmpCurationPipeline.process(tmpStructuresOfChEBI, false);
+            tmpCurationPipeline.getReporter().report();
+            //
+            System.out.println("\nMolecules with invalid valences (total count; according to PubChem valence list)");
+            tmpCurationPipeline.clear();
+            tmpCurationPipeline.withHasInvalidValencesFilter(false);
+            tmpCuratedAtomContainerSet = tmpCurationPipeline.process(tmpStructuresOfChEBI, false);
+            tmpCurationPipeline.getReporter().report();
+            //
+            System.out.println("\nNo pseudo-atoms; all valid valences");
+            tmpCurationPipeline.clear();
+            tmpCurationPipeline.withContainsNoPseudoAtomsFilter().withHasAllValidValencesFilter(false);
+            tmpCuratedAtomContainerSet = tmpCurationPipeline.process(tmpStructuresOfChEBI, false);
+            tmpCurationPipeline.getReporter().report();
+            //
+            System.out.println("\nNo pseudo-atoms; invalid valences");
+            tmpCurationPipeline.clear();
+            tmpCurationPipeline.withContainsNoPseudoAtomsFilter().withHasInvalidValencesFilter(false);
+            tmpCuratedAtomContainerSet = tmpCurationPipeline.process(tmpStructuresOfChEBI, false);
+            tmpCurationPipeline.getReporter().report();
+            //
+            System.out.println("\nWith pseudo-atoms; all valid valences");
+            tmpCurationPipeline.clear();
+            tmpCurationPipeline.withContainsPseudoAtomsFilter().withHasAllValidValencesFilter(true);
+            tmpCuratedAtomContainerSet = tmpCurationPipeline.process(tmpStructuresOfChEBI, false);
+            tmpCurationPipeline.getReporter().report();
+            //
+            System.out.println("\nWith pseudo-atoms; invalid valences");
+            tmpCurationPipeline.clear();
+            tmpCurationPipeline.withContainsPseudoAtomsFilter().withHasInvalidValencesFilter(true);
+            tmpCuratedAtomContainerSet = tmpCurationPipeline.process(tmpStructuresOfChEBI, false);
+            tmpCurationPipeline.getReporter().report();
+            //</editor-fold>
+            //
+            //tmpCurationPipeline.withHasInvalidValencesFilter(true);
+            //tmpCurationPipeline.importAndProcess("C:\\Users\\Behr\\Downloads\\Structure2D_COMPOUND_CID_2244.sdf");
+            /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                            "\\ChEBI_complete.sdf"
+            );*/
+            /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                            "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+            );*/
+            System.out.println("Processing finished with: " + tmpCuratedAtomContainerSet.getAtomContainerCount() + " structures");
+            System.out.println("It worked!");
+            if (false) { // print out first (10) structures; print out invalid valences
+                //<editor-fold desc="valence error analysis" defaultstate="collapsed">
+                IValenceModel tmpValenceModel = new PubChemValenceModel();
+                for (int i = 0; i < tmpCuratedAtomContainerSet.getAtomContainerCount(); i++) {
+                    if (i >= 10) break;
+                    System.out.printf("\t%s;\t%s\n",
+                            tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME),
+                            tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(tmpCurationPipeline.getExternalIDPropertyName()));
+                    for (IAtom tmpAtom : tmpCuratedAtomContainerSet.getAtomContainer(i).atoms()) {
+                        if (!tmpValenceModel.hasValidValence(tmpAtom, false)) {
+                            // lines to analyse detected valence errors
+                            int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
+                            System.out.printf("%s:\t%d\t%d\t%d\t%d\t%d\n", tmpAtom.getSymbol(), tmpAtom.getAtomicNumber(),
+                                    tmpAtom.getFormalCharge(), tmpSigmaAndPiBondsCount[1], tmpSigmaAndPiBondsCount[0],
+                                    tmpAtom.getImplicitHydrogenCount());
+                        }
+                    }
+                }
+                //</editor-fold>
+            }
+        }
+        //
+        CurationPipelineTest.validityCheck_ChEBI();
+    }
+
+    //TODO: remove (?!)
+    //@Test
+    public static void validityCheck_ChEBI() throws Exception {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME);
+        //
+        // property checking pipeline
+        CurationPipeline tmpPropertyCheckingPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME)
+                .withHasExternalIDFilter()
+                .withHasPropertyFilter("ChEBI Name")
+                .withHasPropertyFilter("Star");
+                //.withHasPropertyFilter("Formulae") TODO: reactivate
+                //.withHasPropertyFilter("Charge"); TODO: reactivate
+                //.withHasPropertyFilter("Mass")
+                //.withHasPropertyFilter("Monoisotopic Mass")
+                //.withHasPropertyFilter("PubChem Database Links");
+        //
+        // check for not being empty pipeline
+        CurationPipeline tmpNotEmptyCheckingPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME)
+                //.withMinMolecularMassFilter(1.0)  //TODO: reactivate after fix (?!); fatal exception due to missing implicit hydrogen counts
+                .withMinAtomCountFilter(2, true, true)
+                .withMinBondCountFilter(1, true, true);
+        // valence checking pipeline
+        CurationPipeline tmpValenceCheckingPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME)
+                //.withHasAllValidValencesFilter(false);
+                .withHasInvalidValencesFilter(true);
+        //
+        //<editor-fold desc="separate import" defaultstate="collapsed">
+        // separate import
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_complete.sdf"
+        );
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+        );*/
+        /*tmpCuratedAtomContainerSet = tmpPropertyCheckingPipeline.process(tmpCuratedAtomContainerSet, true);
+        tmpCuratedAtomContainerSet = tmpNotEmptyCheckingPipeline.process(tmpCuratedAtomContainerSet, true);
+        tmpCuratedAtomContainerSet = tmpValenceCheckingPipeline.process(tmpCuratedAtomContainerSet, true);*/
+        //</editor-fold>
+        //
+        //<editor-fold desc="import and directly process" defaultstate="collapsed">
+        // import and directly process
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpPropertyCheckingPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_complete.sdf"
+        );
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpPropertyCheckingPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+        );*/
+        /*tmpCuratedAtomContainerSet = tmpNotEmptyCheckingPipeline.process(tmpCuratedAtomContainerSet, true);
+        tmpCuratedAtomContainerSet = tmpValenceCheckingPipeline.process(tmpCuratedAtomContainerSet, true);*/
+        //</editor-fold>
+        //
+        //<editor-fold desc="all in one pipeline">
+        // all in one pipeline
+        tmpCurationPipeline.addProcessingStep(tmpPropertyCheckingPipeline)
+                .addProcessingStep(tmpNotEmptyCheckingPipeline)
+                .addProcessingStep(tmpValenceCheckingPipeline);
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_complete.sdf"
+        );*/
+        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_complete_3star.sdf"
+        );*/
+        IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
+                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+        );
+        //</editor-fold>
+        //
+        if (false) { // print out first (50) structures with specifications on invalid valences
+            //<editor-fold desc="valence error analysis" defaultstate="collapsed">
+            IValenceModel tmpValenceModel = new PubChemValenceModel();
+            for (int i = 0; i < tmpCuratedAtomContainerSet.getAtomContainerCount(); i++) {
+                if (i >= 50) break;
+                System.out.printf("\t%s;\t%s\n",
+                        tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(IProcessingStep.MOL_ID_PROPERTY_NAME),
+                        tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(tmpCurationPipeline.getExternalIDPropertyName()));
+                for (IAtom tmpAtom : tmpCuratedAtomContainerSet.getAtomContainer(i).atoms()) {
+                    if (!tmpValenceModel.hasValidValence(tmpAtom, false)) {
+                        // lines to analyse detected valence errors
+                        int[] tmpSigmaAndPiBondsCount = ChemUtils.getSigmaAndPiBondCounts(tmpAtom, true);
+                        System.out.printf("%s:\t%d\t%d\t%d\t%d\t%d\n", tmpAtom.getSymbol(), tmpAtom.getAtomicNumber(),
+                                tmpAtom.getFormalCharge(), tmpSigmaAndPiBondsCount[1], tmpSigmaAndPiBondsCount[0],
+                                tmpAtom.getImplicitHydrogenCount());
+                    }
+                }
+            }
+            //</editor-fold>
+        }
+        if (false) { // print out SMILES of first (50) structures
+            //<editor-fold desc="structures as SMILES" defaultstate="collapsed">
+            IValenceModel tmpValenceModel = new PubChemValenceModel();
+            SmilesGenerator tmpSmilesGenerator = SmilesGenerator.unique();
+            for (int i = 0; i < tmpCuratedAtomContainerSet.getAtomContainerCount(); i++) {
+                if (i >= 50) break;
+                try {
+                    System.out.printf("%s\t%s\n",
+                            tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME),
+                            tmpSmilesGenerator.create(tmpCuratedAtomContainerSet.getAtomContainer(i)));
+                } catch (CDKException aCDKException) {
+                    System.out.printf("%s\t%s\n",
+                            tmpCuratedAtomContainerSet.getAtomContainer(i).getProperty(CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME),
+                            "SMILES-generation failed");
+                }
+            }
+            //</editor-fold>
+        }
     }
 
     /**
