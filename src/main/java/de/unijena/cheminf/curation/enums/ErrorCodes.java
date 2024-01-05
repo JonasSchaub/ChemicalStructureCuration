@@ -25,6 +25,8 @@
 
 package de.unijena.cheminf.curation.enums;
 
+import org.openscience.cdk.interfaces.IAtom;
+
 /**
  * The enum defines the errors (issues with structures) encountered in the processing of structures.
  *
@@ -117,6 +119,12 @@ public enum ErrorCodes {
      * The external ID property is unset.
      */
     UNSET_EXTERNAL_ID_PROPERTY,
+
+    /**
+     * An IAtom instance does not support its bonds to be queried ({@link IAtom#bonds()} throws an
+     * UnsupportedOperationException).
+     */
+    BONDS_OF_ATOM_NOT_QUERYABLE,
 
     /**
      * An unexpected (probably fatal) exception was encountered. For more information the log / log-file shall be

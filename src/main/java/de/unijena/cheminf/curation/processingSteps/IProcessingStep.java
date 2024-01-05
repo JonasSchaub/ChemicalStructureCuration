@@ -62,12 +62,12 @@ public interface IProcessingStep {
 
     /**
      * Processes the given atom container set according to the logic of the respective processing step and generates
-     * a report containing info on issues encountered with structures; respective structures are excluded from the
-     * returned atom container set. A MolID (atom container property of name {@link #MOL_ID_PROPERTY_NAME}) gets
-     * assigned to every given atom container; it contains the index the atom container has in the processed atom
+     * a report containing info on issues with structures encountered in the process; respective structures are excluded
+     * from the returned atom container set. A MolID (atom container property of name {@link #MOL_ID_PROPERTY_NAME})
+     * gets assigned to every given atom container; it contains the index the atom container has in the processed atom
      * container set and may be used to trace down issues. During the processing the MolIDs might be extended with info
      * on parent structures or duplicates (if the processing step does so).
-     * <p>The reporting and MolID assignment can both be prevented by setting the {@link #isReporterSelfContained()}
+     * <p>The reporting and MolID assignment can both be prevented by setting the {@link #isIsReporterSelfContained()}
      * flag to false. If so, issues with structures are only passed to the reporter; the {@link IReporter#report()}
      * method to generate / finalize the report can later be executed manually or by a supervisory pipeline (see {@link
      * CurationPipeline}). Formally assigned MolIDs do not get overwritten.</p>
@@ -139,7 +139,7 @@ public interface IProcessingStep {
      *
      * @return boolean value
      */
-    public boolean isReporterSelfContained();
+    public boolean isIsReporterSelfContained();
 
     /**
      * Sets whether the reporter instance of this processing step is self-contained; depending on this, the {@link

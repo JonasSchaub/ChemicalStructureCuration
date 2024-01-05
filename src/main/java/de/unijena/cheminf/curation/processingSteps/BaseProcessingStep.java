@@ -36,6 +36,7 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -51,16 +52,6 @@ import java.util.logging.Logger;
  * @version 1.0.0.0
  */
 public abstract class BaseProcessingStep implements IProcessingStep {
-
-    /*
-    TODO: additional constructors?
-        - at all?
-        - here in the constructor or only at the level of the classes children?
-    //
-    TODO:
-        - initialize reporter
-        - make the destination of the report-file adjustable without the need to set a new reporter?
-     */
 
     /**
      * Logger of this class.
@@ -110,7 +101,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      * @throws NullPointerException if the given IReporter instance is null
      * @throws IllegalArgumentException if an external ID property name is given, but it is blank or empty
      */
-    public BaseProcessingStep(IReporter aReporter, String anExternalIDPropertyName) throws NullPointerException, IllegalArgumentException {
+    public BaseProcessingStep(IReporter aReporter, String anExternalIDPropertyName) throws NullPointerException,
+            IllegalArgumentException {
         Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
         if (anExternalIDPropertyName != null && anExternalIDPropertyName.isBlank()) {
             throw new IllegalArgumentException("anExternalIDPropertyName (instance of String) is empty or blank.");
@@ -143,7 +135,8 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     @Override
     public IAtomContainerSet process(IAtomContainerSet anAtomContainerSet, boolean aCloneBeforeProcessing)
             throws NullPointerException, Exception {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        Objects.requireNonNull(anAtomContainerSet,
+                "anAtomContainerSet (instance of IAtomContainerSet) is null.");
         //
         if (this.isReporterSelfContained) {
             // initialize the report and assign MolIDs to the given structures
@@ -160,21 +153,20 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         }
         //
         // apply the logic of the processing step on the atom container set
-        IAtomContainerSet tmpResultingACSet;
+        IAtomContainerSet tmpProcessedACSet;
         try {
-            tmpResultingACSet = this.applyLogic(tmpACSetToProcess);
+            tmpProcessedACSet = this.applyLogic(tmpACSetToProcess);
         } catch (Exception aFatalException) {
-            // the exception is considered as fatal and can not be handled
-            BaseProcessingStep.LOGGER.severe("The processing by this processing step was interrupted due to an" +
-                    " unexpected, fatal exception.");
+            // the exception is considered as fatal
+            BaseProcessingStep.LOGGER.severe("The processing was interrupted due to an unexpected, fatal" +
+                    " exception.");
             if (this.isReporterSelfContained) {
                 try {
-                    // try to finish the report; a notification is appended to the report
+                    // try to finish the report via respective method
                     this.reporter.reportAfterFatalException();
-                } catch (IOException anIOException) {
-                    BaseProcessingStep.LOGGER.warning("The report could not be generated / finished due to an" +
-                            " IOException.");
                 } catch (Exception anException) {
+                    //TODO: use ILoggingTool debug mode to log the exception?
+                    BaseProcessingStep.LOGGER.log(Level.WARNING, anException.toString(), anException);
                     BaseProcessingStep.LOGGER.warning("The report could not be generated / finished.");
                 }
             }
@@ -182,11 +174,11 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         }
         //
         // generate / finish the report if the reporter is self-contained by this processing step
-        if (this.isReporterSelfContained()) {
+        if (this.isIsReporterSelfContained()) {
             this.reporter.report();
         }
         //
-        return tmpResultingACSet;
+        return tmpProcessedACSet;
     }
 
     /**
@@ -203,29 +195,6 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     protected abstract IAtomContainerSet applyLogic(IAtomContainerSet anAtomContainerSet)
             throws NullPointerException, Exception;
-
-    /**
-     * Clones the given atom container set and reports issues with the cloning of individual atom containers to the
-     * reporter (therefore it is not part of an utils class so far).
-     *
-     * @param anAtomContainerSet atom container set to be cloned
-     * @return a clone of the given atom container set
-     * @throws NullPointerException if the given IAtomContainerSet instance is null
-     * @throws Exception if an encountered issue could not be appended to the reporter
-     */
-    private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException,
-            Exception {
-        Objects.requireNonNull(anAtomContainerSet, "anAtomContainerSet (instance of IAtomContainerSet) is null.");
-        IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
-        for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
-            try {
-                tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
-            } catch (CloneNotSupportedException aCloneNotSupportedException) {
-                this.appendToReport(ErrorCodes.CLONE_ERROR, tmpAtomContainer);
-            }
-        }
-        return tmpCloneOfGivenACSet;
-    }
 
     /**
      * Generates a report data object on the basis of the given error code and atom container and info respective to the
@@ -324,6 +293,30 @@ public abstract class BaseProcessingStep implements IProcessingStep {
         return tmpExternalIDString;
     }
 
+    /**
+     * Clones the given atom container set and reports issues with the cloning of individual atom containers to the
+     * reporter (therefore it is not part of an utils class so far).
+     *
+     * @param anAtomContainerSet atom container set to be cloned
+     * @return a clone of the given atom container set
+     * @throws NullPointerException if the given IAtomContainerSet instance is null
+     * @throws Exception if an encountered issue could not be appended to the reporter
+     */
+    private IAtomContainerSet cloneAtomContainerSet(IAtomContainerSet anAtomContainerSet) throws NullPointerException,
+            Exception {
+        Objects.requireNonNull(anAtomContainerSet,
+                "anAtomContainerSet (instance of IAtomContainerSet) is null.");
+        IAtomContainerSet tmpCloneOfGivenACSet = new AtomContainerSet();
+        for (IAtomContainer tmpAtomContainer : anAtomContainerSet.atomContainers()) {
+            try {
+                tmpCloneOfGivenACSet.addAtomContainer(tmpAtomContainer.clone());
+            } catch (CloneNotSupportedException aCloneNotSupportedException) {
+                this.appendToReport(ErrorCodes.CLONE_ERROR, tmpAtomContainer);
+            }
+        }
+        return tmpCloneOfGivenACSet;
+    }
+
     @Override
     public String getExternalIDPropertyName() {
         return this.externalIDPropertyName;
@@ -348,13 +341,13 @@ public abstract class BaseProcessingStep implements IProcessingStep {
     }
 
     @Override
-    public void setReporter(IReporter aReporter){
+    public void setReporter(IReporter aReporter) {
         Objects.requireNonNull(aReporter, "aReporter (instance of IReporter) is null.");
         this.reporter = aReporter;
     }
 
     @Override
-    public boolean isReporterSelfContained() {
+    public boolean isIsReporterSelfContained() {
         return this.isReporterSelfContained;
     }
 

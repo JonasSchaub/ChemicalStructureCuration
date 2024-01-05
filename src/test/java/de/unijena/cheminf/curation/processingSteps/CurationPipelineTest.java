@@ -38,6 +38,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -52,6 +55,46 @@ public class CurationPipelineTest {
     open TODOs:
     TODO: add a / finish the showcase method
      */
+
+    /**
+     * The name of the SD file item containing the ChEBI ID (specific to test files with structures from the ChEBI).
+     */
+    public static final String CHEBI_ID_SDF_ITEM_NAME = "ChEBI ID";
+
+    //TODO: remove (?!)
+    /**
+     * Method for a test report generation. The test file (8k structures from ChEBI) includes structures failing the
+     * import and structures failing to be processed due to missing implicit hydrogen counts (fail at step MinAtomCount,
+     * index 3).
+     *
+     * @throws Exception TODO
+     */
+    @Test
+    public void testReportGeneration() throws Exception {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME);
+        //
+        tmpCurationPipeline
+                .withHasExternalIDFilter()
+                .withHasPropertyFilter("ChEBI Name")
+                .withHasPropertyFilter("Star")
+                .withMinAtomCountFilter(2, true, true)
+                .withMinBondCountFilter(1, true, true)
+                .withHasInvalidValencesFilter(true);
+        //
+        // name of file to be imported (from resources)
+        String tmpNameOfFileToImport = "ChEBI_lite_testFile_structures18kTo26k.sdf";
+        //String tmpNameOfFileToImport = "Dummy.sdf";
+        //
+        // getting the file from resources
+        URL tmpURL = CurationPipelineTest.class.getResource(tmpNameOfFileToImport);
+        File tmpFileToImport = Paths.get(tmpURL.toURI()).toFile();
+        //
+        // applying the pipeline to the structures of the file
+        IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                tmpFileToImport
+        );
+    }
 
     /**
      * Method for testing the new import routine. TODO: remove or clean up

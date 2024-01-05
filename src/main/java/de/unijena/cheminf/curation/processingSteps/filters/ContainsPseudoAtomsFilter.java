@@ -67,7 +67,7 @@ public class ContainsPseudoAtomsFilter extends BaseFilter {
 
     @Override
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, Exception {
-        return ChemUtils.containsPseudoAtoms(anAtomContainer);
+        return !ChemUtils.containsPseudoAtoms(anAtomContainer);
     }
 
     /**

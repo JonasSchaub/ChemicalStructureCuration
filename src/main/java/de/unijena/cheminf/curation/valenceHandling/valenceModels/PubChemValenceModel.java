@@ -59,7 +59,7 @@ public class PubChemValenceModel extends ValenceListBasedValenceModel {
      */
     @Override
     public boolean hasValidValence(IAtom anAtom, boolean aWildcardAtomicNumberIsValid) throws NullPointerException,
-            IllegalArgumentException {
+            IllegalArgumentException, UnsupportedOperationException {
         return super.hasValidValence(anAtom, aWildcardAtomicNumberIsValid);
     }
 

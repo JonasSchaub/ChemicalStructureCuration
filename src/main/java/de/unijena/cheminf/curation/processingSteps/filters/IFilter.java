@@ -66,7 +66,7 @@ public interface IFilter extends IProcessingStep {
      *
      * @param anAtomContainer IAtomContainer instance to be checked
      * @return true if the structure does not pass the filter
-     * @throws NullPointerException if the given IAtomContainer instance is null
+     * @throws NullPointerException if the provided IAtomContainer instance is null
      * @throws Exception any other, filter specific exception or if an unexpected, fatal error occurred
      */
     public boolean isFiltered(IAtomContainer anAtomContainer) throws NullPointerException, Exception;

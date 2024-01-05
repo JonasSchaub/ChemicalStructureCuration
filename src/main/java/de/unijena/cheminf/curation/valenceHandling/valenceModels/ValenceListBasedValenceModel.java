@@ -39,6 +39,9 @@ import java.util.Objects;
  * ValenceListMatrixWrapper}. It may be used to create a valence model based on lists of valid valences and
  * configurations of atoms with respect to atomic number, charge, number of π bonds, number of σ bonds and the maximum
  * number of implicit hydrogens.
+ * <br>
+ * Valence list based valence models rely on the functionality for the bonds of an atom to be queryable to check the
+ * valence of an {@link IAtom} instance ({@link IAtom#bonds()}).
  *
  * @author Samuel Behr
  * @version 1.0.0.0
@@ -138,9 +141,12 @@ public class ValenceListBasedValenceModel implements IValenceModel {
      * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of the atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @throws UnsupportedOperationException if the given IAtom instance does not support the bonds of the atom being
+     *                                       queried ({@link IAtom#bonds()})
      */
     @Override
-    public boolean hasValidValence(IAtom anAtom) throws NullPointerException, IllegalArgumentException {
+    public boolean hasValidValence(IAtom anAtom) throws NullPointerException, IllegalArgumentException,
+            UnsupportedOperationException {
         return this.hasValidValence(anAtom, false);
     }
 
@@ -148,10 +154,12 @@ public class ValenceListBasedValenceModel implements IValenceModel {
      * @throws NullPointerException if the atom is null; if atomic number, formal charge or the implicit hydrogen count
      *                              of the atom is null; if the bond order of a bond is null
      * @throws IllegalArgumentException if the bond order of a bond is IBond.Order.UNSET
+     * @throws UnsupportedOperationException if the given IAtom instance does not support the bonds of the atom being
+     *                                       queried ({@link IAtom#bonds()})
      */
     @Override
     public boolean hasValidValence(IAtom anAtom, boolean aWildcardAtomicNumberIsValid) throws NullPointerException,
-            IllegalArgumentException {
+            IllegalArgumentException, UnsupportedOperationException {
         Objects.requireNonNull(anAtom, ErrorCodes.ATOM_NULL_ERROR.name());
         Integer tmpNotNullInteger;
         //<editor-fold desc="atomic number" defaultstate="collapsed">
