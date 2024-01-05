@@ -67,6 +67,41 @@ public class CurationPipelineTest {
     TODO: add a / finish the showcase method
      */
 
+    //TODO: remove (?!)
+    /**
+     * Method for a test report generation. The test file (8k structures from ChEBI) includes structures failing the
+     * import and structures failing to be processed due to missing implicit hydrogen counts (fail at step MinAtomCount,
+     * index 3).
+     *
+     * @throws Exception TODO
+     */
+    @Test
+    public void testReportGeneration() throws Exception {
+        CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
+                CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME);
+        //
+        tmpCurationPipeline
+                .withHasExternalIDFilter()
+                .withHasPropertyFilter("ChEBI Name")
+                .withHasPropertyFilter("Star")
+                .withMinAtomCountFilter(2, true, true)
+                .withMinBondCountFilter(1, true, true)
+                .withHasInvalidValencesFilter(true);
+        //
+        // name of file to be imported (from resources)
+        String tmpNameOfFileToImport = "ChEBI_lite_testFile_structures18kTo26k.sdf";
+        //String tmpNameOfFileToImport = "Dummy.sdf";
+        //
+        // getting the file from resources
+        URL tmpURL = CurationPipelineTest.class.getResource(tmpNameOfFileToImport);
+        File tmpFileToImport = Paths.get(tmpURL.toURI()).toFile();
+        //
+        // applying the pipeline to the structures of the file
+        IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
+                tmpFileToImport
+        );
+    }
+
     /**
      * Method for testing the new import routine. TODO: remove or clean up
      *
