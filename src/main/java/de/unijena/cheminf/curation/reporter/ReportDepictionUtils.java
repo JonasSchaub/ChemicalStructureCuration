@@ -70,6 +70,7 @@ public class ReportDepictionUtils {
      * Method to create an error message as image in case the given molecule could not be depicted
      * to display where molecule would be displayed
      * @return Error message as String.
+     * @throws IOException //TODO
      */
     public static String getErrorMessageImage() throws IOException {
         int width = 200;
