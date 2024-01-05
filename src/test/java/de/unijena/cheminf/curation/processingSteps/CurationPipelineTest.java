@@ -44,6 +44,9 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmilesGenerator;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -87,14 +90,20 @@ public class CurationPipelineTest {
         */
         tmpCurationPipeline.withContainsNoPseudoAtomsFilter();
         tmpCurationPipeline.withHasInvalidValencesFilter(false);
+        //
+        // name of file to be imported (from resources)
+        //String tmpNameOfFileToImport = "ChEBI_complete.sdf";
+        //String tmpNameOfFileToImport = "ChEBI_complete_3star.sdf";
+        String tmpNameOfFileToImport = "ChEBI_lite_testFile_structures18kTo26k.sdf";
+        //String tmpNameOfFileToImport = "Dummy.sdf";
+        //
+        // getting the file from resources
+        URL tmpURL = CurationPipelineTest.class.getResource(tmpNameOfFileToImport);
+        File tmpFileToImport = Paths.get(tmpURL.toURI()).toFile();
+        //
         //tmpCurationPipeline.importAndProcess("C:\\Users\\Behr\\Downloads\\Structure2D_COMPOUND_CID_2244.sdf");
-        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_complete.sdf"
-        );*/
         IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+                tmpFileToImport
         );
         System.out.println("Processing finished with: " + tmpCuratedAtomContainerSet.getAtomContainerCount() + " structures");
         System.out.println("It worked!");
@@ -122,20 +131,26 @@ public class CurationPipelineTest {
     //TODO: remove
     public static void main(String[] args) throws Exception {
         if (false) {
+            //<editor-fold desc="some older test code" defaultstate="collapsed">
             CurationPipeline tmpCurationPipeline = new CurationPipeline(TestUtils.getDefaultReporterInstance(),
                     CurationPipelineTest.CHEBI_ID_SDF_ITEM_NAME);
             /*tmpCurationPipeline.withMaxAtomCountFilter(50, false, false)
                     .withMinAtomCountFilter(20, false, false)
                     .withHasAllValidValencesFilter(false);*/
-                //
-                tmpCurationPipeline.clear();
-            /*IAtomContainerSet tmpStructuresOfChEBI = tmpCurationPipeline.importAndProcess(
-                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                            "\\ChEBI_complete.sdf"
-            );*/
+            //
+            tmpCurationPipeline.clear();
+            //
+            // name of file to be imported (from resources)
+            //String tmpNameOfFileToImport = "ChEBI_complete.sdf";
+            String tmpNameOfFileToImport = "ChEBI_complete_3star.sdf";
+            //String tmpNameOfFileToImport = "ChEBI_lite_testFile_structures18kTo26k.sdf";
+            //String tmpNameOfFileToImport = "Dummy.sdf";
+            //
+            URL tmpURL = CurationPipelineTest.class.getResource(tmpNameOfFileToImport);
+            File tmpFileToImport = Paths.get(tmpURL.toURI()).toFile();
+            //
             IAtomContainerSet tmpStructuresOfChEBI = tmpCurationPipeline.importAndProcess(
-                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                            "\\ChEBI_complete_3star.sdf"
+                    tmpFileToImport
             );
             //<editor-fold desc="comparing amount of detected valence errors" defaultstate="collapsed">
             tmpCurationPipeline.setIsReporterSelfContained(false);  // to not overwrite the assigned IDs
@@ -181,12 +196,7 @@ public class CurationPipelineTest {
             //tmpCurationPipeline.withHasInvalidValencesFilter(true);
             //tmpCurationPipeline.importAndProcess("C:\\Users\\Behr\\Downloads\\Structure2D_COMPOUND_CID_2244.sdf");
             /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                            "\\ChEBI_complete.sdf"
-            );*/
-            /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                    "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                            "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+                    tmpFileToImport
             );*/
             System.out.println("Processing finished with: " + tmpCuratedAtomContainerSet.getAtomContainerCount() + " structures");
             System.out.println("It worked!");
@@ -210,8 +220,22 @@ public class CurationPipelineTest {
                 }
                 //</editor-fold>
             }
+            //</editor-fold>
         }
         //
+        // workaround: call of validityCheck_ChEBI() for files of a size that would otherwise (test via test method)
+        // exceed the available heap size
+        CurationPipelineTest.validityCheck_ChEBI();
+    }
+
+    /**
+     * Method for testing the code wrapped by the .validityCheck_ChEBI_test() method of this class. Caution when
+     * importing sdf filed of greater size (OutOfMemoryError).
+     *
+     * @throws Exception TODO
+     */
+    @Test
+    public void validityCheck_ChEBI_test() throws Exception {
         CurationPipelineTest.validityCheck_ChEBI();
     }
 
@@ -245,16 +269,21 @@ public class CurationPipelineTest {
                 //.withHasAllValidValencesFilter(false);
                 .withHasInvalidValencesFilter(true);
         //
+        // name of file to be imported (from resources)
+        //String tmpNameOfFileToImport = "ChEBI_complete.sdf";
+        //String tmpNameOfFileToImport = "ChEBI_complete_3star.sdf";
+        String tmpNameOfFileToImport = "ChEBI_lite_testFile_structures18kTo26k.sdf";
+        //String tmpNameOfFileToImport = "Dummy.sdf";
+        //
+        // getting the file from resources
+        URL tmpURL = CurationPipelineTest.class.getResource(tmpNameOfFileToImport);
+        File tmpFileToImport = Paths.get(tmpURL.toURI()).toFile();
+        //
         //<editor-fold desc="separate import" defaultstate="collapsed">
         // separate import
         /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_complete.sdf"
+                tmpFileToImport
         );
-        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
-        );*/
         /*tmpCuratedAtomContainerSet = tmpPropertyCheckingPipeline.process(tmpCuratedAtomContainerSet, true);
         tmpCuratedAtomContainerSet = tmpNotEmptyCheckingPipeline.process(tmpCuratedAtomContainerSet, true);
         tmpCuratedAtomContainerSet = tmpValenceCheckingPipeline.process(tmpCuratedAtomContainerSet, true);*/
@@ -263,13 +292,8 @@ public class CurationPipelineTest {
         //<editor-fold desc="import and directly process" defaultstate="collapsed">
         // import and directly process
         /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpPropertyCheckingPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_complete.sdf"
+                tmpFileToImport
         );
-        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpPropertyCheckingPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
-        );*/
         /*tmpCuratedAtomContainerSet = tmpNotEmptyCheckingPipeline.process(tmpCuratedAtomContainerSet, true);
         tmpCuratedAtomContainerSet = tmpValenceCheckingPipeline.process(tmpCuratedAtomContainerSet, true);*/
         //</editor-fold>
@@ -279,17 +303,8 @@ public class CurationPipelineTest {
         tmpCurationPipeline.addProcessingStep(tmpPropertyCheckingPipeline)
                 .addProcessingStep(tmpNotEmptyCheckingPipeline)
                 .addProcessingStep(tmpValenceCheckingPipeline);
-        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_complete.sdf"
-        );*/
-        /*IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_complete_3star.sdf"
-        );*/
         IAtomContainerSet tmpCuratedAtomContainerSet = tmpCurationPipeline.importAndProcess(
-                "C:\\Users\\Behr\\Documents\\Chemical_Structure_Curation_Project\\Files\\ChEBI_data" +
-                        "\\ChEBI_lite_testFile_structures18kTo26k.sdf"
+                tmpFileToImport
         );
         //</editor-fold>
         //
