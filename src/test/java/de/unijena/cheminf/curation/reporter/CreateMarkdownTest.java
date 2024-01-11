@@ -27,6 +27,7 @@ package de.unijena.cheminf.curation.reporter;
 
 import de.unijena.cheminf.curation.TestUtils;
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.enums.SortProperty;
 import de.unijena.cheminf.curation.processingSteps.filters.MaxAtomCountFilter;
 import de.unijena.cheminf.curation.processingSteps.filters.MinBondCountFilter;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class CreateMarkdownTest {
         ReportDataObject tmpTestReportDataObject3 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR, MaxAtomCountFilter.class, "2");
         ReportDataObject tmpTestReportDataObject4 = new ReportDataObject(ErrorCodes.ATOM_CONTAINER_NULL_ERROR, MaxAtomCountFilter.class, "3");
 
-        MarkDownReporter tmpMDReporter = new MarkDownReporter("Processing_Reports" + File.separator);
+        MarkDownReporter tmpMDReporter = new MarkDownReporter("Processing_Reports" + File.separator, SortProperty.PROCESSING_STEP_ID);
         new File("Processing_Reports").mkdir();
         tmpMDReporter.setFilePathString("Processing_Reports\\");
         tmpMDReporter.appendReport(tmpTestReportDataObject);

@@ -78,7 +78,8 @@ public class ReportDepictionUtils {
         BufferedImage errorMessageImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = errorMessageImage.createGraphics();
         g2d.setColor(Color.BLACK);
-        g2d.drawString("Molecule could not be depicted", 10, 40);
+        g2d.drawString("Molecule could not be depicted", 10, 50);
+        g2d.setBackground(Color.WHITE);
         g2d.dispose();
         String errorMessageBase64 = convertImageToBase64(errorMessageImage);
         return errorMessageBase64;

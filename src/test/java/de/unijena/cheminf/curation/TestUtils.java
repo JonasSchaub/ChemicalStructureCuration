@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.enums.SortProperty;
 import de.unijena.cheminf.curation.processingSteps.filters.BaseFilter;
 import de.unijena.cheminf.curation.processingSteps.CurationPipeline;
 import de.unijena.cheminf.curation.processingSteps.filters.IFilter;
@@ -239,7 +240,7 @@ public class TestUtils {
      * @return instance of IReporter
      */
     public static IReporter getDefaultReporterInstance() {
-        IReporter tmpReporter = new MarkDownReporter(TestUtils.REPORT_FILES_DIRECTORY_PATH_NAME);
+        IReporter tmpReporter = new MarkDownReporter(TestUtils.REPORT_FILES_DIRECTORY_PATH_NAME, SortProperty.PROCESSING_STEP_ID);
         return tmpReporter;
     }
 

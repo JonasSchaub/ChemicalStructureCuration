@@ -26,6 +26,7 @@
 package de.unijena.cheminf.curation.processingSteps;
 
 import de.unijena.cheminf.curation.enums.ErrorCodes;
+import de.unijena.cheminf.curation.enums.SortProperty;
 import de.unijena.cheminf.curation.reporter.IReporter;
 import de.unijena.cheminf.curation.reporter.MarkDownReporter;
 import de.unijena.cheminf.curation.reporter.ReportDataObject;
@@ -128,7 +129,7 @@ public abstract class BaseProcessingStep implements IProcessingStep {
      */
     public BaseProcessingStep(String aReportFilesDirectoryPath, String anExternalIDPropertyName)
             throws NullPointerException, IllegalArgumentException {
-        this(new MarkDownReporter(aReportFilesDirectoryPath), anExternalIDPropertyName);
+        this(new MarkDownReporter(aReportFilesDirectoryPath, SortProperty.PROCESSING_STEP_ID), anExternalIDPropertyName);
     }
     //</editor-fold>
 

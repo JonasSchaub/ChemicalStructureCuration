@@ -367,6 +367,15 @@ public class ReportDataObject {
     }
 
     /**
+     * Returns the simple name of the runtime class of the IProcessingStep instance the reported problem occurred in.
+     *
+     * @return String of the Classname
+     */
+    public String getSimpleNameOfClassOfProcessingStep() {
+        return this.classOfProcessingStep.getSimpleName();
+    }
+
+    /**
      * Returns the error code of the reported problem.
      *
      * @return ErrorCodes constant

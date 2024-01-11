@@ -25,8 +25,10 @@
 
 package de.unijena.cheminf.curation.reporter;
 
+import de.unijena.cheminf.curation.enums.SortProperty;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.xmlcml.euclid.Util;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -78,6 +81,13 @@ public class MarkDownReporter implements IReporter {
      */
     private static final ResourceBundle reportStringLiterals = ResourceBundle.getBundle("ReportStringLiterals", Locale.getDefault());
 
+    private static final ResourceBundle errorMessages = ResourceBundle.getBundle("Errors", Locale.getDefault());
+
+    /**
+     * Comparator for sorting errors
+     */
+    private Comparator<ReportDataObject> sortComparator;
+
     /**
      * Constructor for the given file path where the report file is created.
      *
@@ -85,7 +95,7 @@ public class MarkDownReporter implements IReporter {
      * @throws NullPointerException if aFilePathString is null.
      * @throws IllegalArgumentException if aFilePathString is empty or blank.
      */
-    public MarkDownReporter(String aFilePathString) throws NullPointerException, IllegalArgumentException {
+    public MarkDownReporter(String aFilePathString, SortProperty aSortProperty) throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(aFilePathString, "aFilePathString (instance of String) is null.");
         if (aFilePathString.isBlank()){
             throw new IllegalArgumentException("aFilePathString (instance of String) is empty or blank.");
@@ -94,13 +104,14 @@ public class MarkDownReporter implements IReporter {
         if (Files.isDirectory(filePath)) {
             this.filePathString = aFilePathString;
         }
+        this.sortComparator = aSortProperty.getComparator();
     }
 
     /**
      * Constructor workaround: TODO remove after merge
      */
     public MarkDownReporter() {
-        this( MarkDownReporter.REPORTS_FOLDER_PATH_STRING);
+        this(MarkDownReporter.REPORTS_FOLDER_PATH_STRING, SortProperty.PROCESSING_STEP_ID);
     }
 
     /**
@@ -134,34 +145,29 @@ public class MarkDownReporter implements IReporter {
     public void report() throws CDKException, IOException {
         // sorting list of objects for ProcessingStep
         List<ReportDataObject> sortedReportDataObjects = reportDataObjectList.stream()
-                .sorted(Comparator.comparing(ReportDataObject::getProcessingStepIdentifier)
-                        .thenComparing(ReportDataObject::getErrorCode)).toList();
+                .sorted(sortComparator).toList();
         
         StringBuilder markdownReport = new StringBuilder();
         markdownReport.append("# ").append(reportStringLiterals.getString("HEADER")).append("\n");
-        markdownReport.append(reportStringLiterals.getString("TIMESTAMPOFREPORTGENERATION")).append(getCurrentTimeStamp()).append("\n\n");
+        markdownReport.append(reportStringLiterals.getString("TIMESTAMPOFREPORTGENERATION")).append(getCurrentTime()).append("\n");
+        markdownReport.append(reportStringLiterals.getString("DATESTAMPOFREPORTGENERATION")).append(getCurrentDate()).append("\n\n");
+        markdownReport.append(reportStringLiterals.getString("FILENAME"));//TODO
         markdownReport.append(reportStringLiterals.getString("NUMBEROFERRORS")).append(sortedReportDataObjects.size()).append("\n\n");
         markdownReport.append("## ").append(reportStringLiterals.getString("DETAILS")).append("\n\n");
 
         //TODO  not repeating the ProcessingStep for more than one object with the same ProcessingStep
         //TODO Bringing string literals into properties file
+
+        int index = 1;
         for (ReportDataObject reportDataObject : this.reportDataObjectList) {
-            markdownReport.append("Processing Step ID: ").append(reportDataObject.getProcessingStepIdentifier()).append("\n");
-            markdownReport.append("* **Processing Step Class:** ").append(reportDataObject.getClassOfProcessingStep()).append("\n");
-            markdownReport.append("* **Error Code:** ").append(reportDataObject.getErrorCode()).append("\n");
-            markdownReport.append("* **Identifier:** ").append(reportDataObject.getIdentifier()).append("\n");
-            markdownReport.append("* **External Identifier:** ").append(reportDataObject.getExternalIdentifier()).append("\n");
-
+            markdownReport.append("**Error number:** ").append(index).append("\n\n");
             IAtomContainer atomContainer = reportDataObject.getAtomContainer();
-
-            // Check if AtomContainer is available and valid, if so, create depiction, else error message
-            //TODO bring depiction in line
             boolean tmpImageCouldBeGenerated;
             if (atomContainer != null && atomContainer.getAtomCount() > 0) {
                 try {
                     String depictionBase64 = ReportDepictionUtils.getDepictionAsString(atomContainer);
-                    markdownReport.append(" * **Molecule Depiction:**\n");
-                    markdownReport.append("![Molecule Depiction](data:image/png;base64,").append(depictionBase64).append(")\n");
+                    markdownReport.append("**Molecule Depiction:**\n\n");
+                    markdownReport.append("\n![Molecule Depiction](data:image/png;base64,").append(depictionBase64).append(")\n\n");
                     //
                     tmpImageCouldBeGenerated = true;
                 } catch (Exception anException) {
@@ -172,10 +178,20 @@ public class MarkDownReporter implements IReporter {
                 tmpImageCouldBeGenerated = false;
             }
             // image generation failed
-            if (!tmpImageCouldBeGenerated) {//TODO bring message in line
+            if (!tmpImageCouldBeGenerated) {
                 String ErrorMessageBase64 = ReportDepictionUtils.getErrorMessageImage();
-                markdownReport.append("* ![Error Message](data:image/png;base64,").append(ErrorMessageBase64).append(")\n");
+                markdownReport.append("\n![Error Message](data:image/png;base64,").append(ErrorMessageBase64).append(")\n\n");
             }
+            markdownReport.append("**Processing Step ID:** ").append(reportDataObject.getProcessingStepIdentifier()).append("\n\n");
+            markdownReport.append("**Processing Step Class:** ").append(reportDataObject.getSimpleNameOfClassOfProcessingStep()).append("\n\n");
+            markdownReport.append("**Error Code:** ").append(reportDataObject.getErrorCode()).append("\n\n");
+            markdownReport.append("**Error Message:** ").append(errorMessages.getString(reportDataObject.getErrorCode().toString())).append("\n\n");
+            markdownReport.append("**Identifier:** ").append(reportDataObject.getIdentifier()).append("\n\n");
+            if (reportDataObject.getExternalIdentifier() != null) {
+                markdownReport.append("**External Identifier:** ").append(reportDataObject.getExternalIdentifier()).append("\n\n");
+            }
+            markdownReport.append("______");
+            index++;
             markdownReport.append("\n\n");
         }
 
@@ -223,7 +239,7 @@ public class MarkDownReporter implements IReporter {
     }
 
     private static String getFileName(){
-        return "Report_" + getCurrentTimeStamp() + ".md";
+        return "Report_" + getCurrentTimeStampForFilename() + ".md";
     }
 
     /**
@@ -231,10 +247,20 @@ public class MarkDownReporter implements IReporter {
      *
      * @return timestamp as legit String for filename
      */
-    private static String getCurrentTimeStamp(){
+    private static String getCurrentTimeStampForFilename(){
         LocalDateTime tmpNow = LocalDateTime.now();
         DateTimeFormatter tmpFormatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
         return tmpNow.format(tmpFormatter);
+    }
+    private static String getCurrentTime(){
+        LocalDateTime tmpTime = LocalDateTime.now();
+        DateTimeFormatter tmpTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return tmpTime.format(tmpTimeFormatter);
+    }
+    private static String getCurrentDate(){
+        LocalDateTime tmpDate = LocalDateTime.now();
+        DateTimeFormatter tmpDateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        return tmpDate.format(tmpDateFormatter);
     }
 
 }

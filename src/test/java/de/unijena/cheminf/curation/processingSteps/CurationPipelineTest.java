@@ -95,6 +95,15 @@ public class CurationPipelineTest {
                 tmpFileToImport
         );
     }
+    /* TODO getting the name of the imported file
+    /**
+     * Method to return the name of the file that is imported and tested
+     * @return String name of the file
+
+    private static String getNameOfFileToImport(){
+        return CHEBI_ID_SDF_ITEM_NAME;
+    }
+     */
 
     /**
      * Method for testing the new import routine. TODO: remove or clean up
